@@ -77,7 +77,7 @@ namespace System.Collections.Generic
                 T first = this[i];
                 T second = item;
 
-                if (first == second)
+                if (first.Equals(second))
                     return i;
             }
 

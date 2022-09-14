@@ -1,5 +1,6 @@
 using Internal.Runtime.CompilerServices;
 using System;
+using System.Diagnostics;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,6 +9,45 @@ namespace Internal.Runtime.CompilerHelpers
 {
     public unsafe class StartupCodeHelpers
     {
+        [RuntimeExport("RhUnbox2")]
+        public static unsafe ref byte RhUnbox2(EEType* pUnboxToEEType, object obj)
+        {
+            if ((obj == null) || !UnboxAnyTypeCompare(obj.m_pEEType, pUnboxToEEType))
+            {
+                ExceptionIDs exID = obj == null ? ExceptionIDs.NullReference : ExceptionIDs.InvalidCast;
+                //throw pUnboxToEEType->GetClasslibException(exID);
+            }
+            return ref obj.GetRawData();
+        }
+
+        static unsafe bool UnboxAnyTypeCompare(EEType* pEEType, EEType* ptrUnboxToEEType)
+        {
+            if (TypeCast.AreTypesEquivalent(pEEType, ptrUnboxToEEType))
+                return true;
+
+            if (pEEType->ElementType == ptrUnboxToEEType->ElementType)
+            {
+                // Enum's and primitive types should pass the UnboxAny exception cases
+                // if they have an exactly matching cor element type.
+                switch (ptrUnboxToEEType->ElementType)
+                {
+                    case EETypeElementType.Byte:
+                    case EETypeElementType.SByte:
+                    case EETypeElementType.Int16:
+                    case EETypeElementType.UInt16:
+                    case EETypeElementType.Int32:
+                    case EETypeElementType.UInt32:
+                    case EETypeElementType.Int64:
+                    case EETypeElementType.UInt64:
+                    case EETypeElementType.IntPtr:
+                    case EETypeElementType.UIntPtr:
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         [RuntimeExport("__imp_GetCurrentThreadId")]
         public static int __imp_GetCurrentThreadId() => 0;
 

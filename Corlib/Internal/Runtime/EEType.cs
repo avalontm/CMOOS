@@ -1,4 +1,5 @@
 using System;
+using System.Runtime;
 using System.Runtime.InteropServices;
 
 namespace Internal.Runtime
@@ -24,9 +25,9 @@ namespace Internal.Runtime
         Double = 0x0F,
 
         ValueType = 0x10,
-        // Enum = 0x11, // EETypes store enums as their underlying type
+        //Enum = 0x11, // EETypes store enums as their underlying type
         Nullable = 0x12,
-        // Unused 0x13,
+        //Unused = 0x13,
 
         Class = 0x14,
         Interface = 0x15,
@@ -1032,6 +1033,19 @@ namespace Internal.Runtime
             {
                 return (EETypeElementType)((_usFlags & (ushort)EETypeFlags.ElementTypeMask) >> (ushort)EETypeFlags.ElementTypeShift);
             }
+        }
+
+        public bool IsParameterizedType
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public Exception GetClasslibException(ExceptionIDs exID)
+        {
+            return new InternalException($"{exID}");
         }
 
         //public bool HasCctor {

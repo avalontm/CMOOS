@@ -3,7 +3,7 @@
     "Run.bat": {
       "commandName": "Executable",
       "executablePath": "Run.bat",
-      "commandLineArgs": "MOOS qemu",
+      "commandLineArgs": "MOOS vmware",
       "workingDirectory": "../"
     }
   }
