@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System
 {
-    public abstract class Type
+    public unsafe class Type
     {
-        //protected TypeDefRow typeDefRow;
-        protected Type()
+        public string Name { set; get; }
+
+        public override string ToString()
         {
+            return $"Type: {Name}";
         }
     }
 }

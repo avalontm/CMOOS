@@ -7,8 +7,25 @@ namespace System
 {
     public unsafe class Object
     {
-        // The layout of object is a contract with the compiler.
-        internal unsafe EEType* m_pEEType;
+        EEType* m_pEEType;
+        internal EEType* EEType
+        {
+            get
+            {
+                // NOTE:  if managed code can be run when the GC has objects marked, then this method is 
+                //        unsafe.  But, generically, we don't expect managed code such as this to be allowed
+                //        to run while the GC is running.
+                return m_pEEType;
+            }
+        }
+
+        internal EETypePtr EETypePtr
+        {
+            get
+            {
+                return new EETypePtr(new IntPtr(m_pEEType));
+            }
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         private class RawData
@@ -26,14 +43,22 @@ namespace System
             return m_pEEType->BaseSize - (uint)sizeof(ObjHeader) - (uint)sizeof(EEType*);
         }
 
-        public Object() 
-        { 
+        // Creates a new instance of an Object.
+        public Object() { }
 
-        }
-
+        // Allow an object to free resources before the object is reclaimed by the GC.
+        // This method's virtual slot number is hardcoded in runtimes. Do not add any virtual methods ahead of this.
+        ~Object() { }
+        
         public unsafe virtual bool Equals(object b)
         {
             object a = this;
+
+            if (a== null || b == null)
+            {
+                Debug.WriteLine($"[Equals] NULL");
+                return false;
+            }
 
             switch (a.m_pEEType->ElementType)
             {
@@ -60,42 +85,41 @@ namespace System
                 case EETypeElementType.Char:
                     return ((Char)a == (Char)b);
                 case EETypeElementType.Class:
-                    return (a == b);
+                      return (a == b);
+                    
             }
 
             return false;
         }
-
+        
+        
         public unsafe static bool ReferenceEquals(object a, object b)
         {
             return a.Equals(b);
         }
-
+        
         /*
-        public static bool operator ==(object a, object b)
+        public unsafe static bool operator ==(object a, object b)
         {
-            return a.Equals(b);;
+            return a.Equals(b);
         }
 
         public static bool operator !=(object a, object b)
         {
-            return !a.Equals(b);;
+            return !a.Equals(b);
         }
         */
+
         public virtual int GetHashCode()
         {
-            return 0; // TODO
+            return (int)this.EEType->HashCode;
         }
 
         public virtual string ToString()
         {
-            return "System.Object";
+            return $"Type: {(int)EEType->ElementType}";// GetType().ToString();
         }
 
-        public unsafe Type GetType()
-        {
-            return null; // TODO
-        }
 
         public virtual void Dispose()
         {

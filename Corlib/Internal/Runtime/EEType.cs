@@ -1,143 +1,18 @@
+using Internal.NativeFormat;
+using Internal.Runtime.CompilerServices;
 using System;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Internal.Runtime
 {
-    internal enum EETypeElementType
-    {
-        // Primitive
-        Unknown = 0x00,
-        Void = 0x01,
-        Boolean = 0x02,
-        Char = 0x03,
-        SByte = 0x04,
-        Byte = 0x05,
-        Int16 = 0x06,
-        UInt16 = 0x07,
-        Int32 = 0x08,
-        UInt32 = 0x09,
-        Int64 = 0x0A,
-        UInt64 = 0x0B,
-        IntPtr = 0x0C,
-        UIntPtr = 0x0D,
-        Single = 0x0E,
-        Double = 0x0F,
-
-        ValueType = 0x10,
-        //Enum = 0x11, // EETypes store enums as their underlying type
-        Nullable = 0x12,
-        //Unused = 0x13,
-
-        Class = 0x14,
-        Interface = 0x15,
-
-        SystemArray = 0x16, // System.Array type
-
-        Array = 0x17,
-        SzArray = 0x18,
-        ByRef = 0x19,
-        Pointer = 0x1A,
-    }
-
-    [Flags]
-    internal enum EETypeFlags : ushort
-    {
-        /// <summary>
-        /// There are four kinds of EETypes, defined in <c>Kinds</c>.
-        /// </summary>
-        EETypeKindMask = 0x0003,
-
-        /// <summary>
-        /// This flag is set when m_RelatedType is in a different module.  In that case, _pRelatedType
-        /// actually points to an IAT slot in this module, which then points to the desired EEType in the
-        /// other module.  In other words, there is an extra indirection through m_RelatedType to get to 
-        /// the related type in the other module.  When this flag is set, it is expected that you use the 
-        /// "_ppXxxxViaIAT" member of the RelatedTypeUnion for the particular related type you're 
-        /// accessing.
-        /// </summary>
-        RelatedTypeViaIATFlag = 0x0004,
-
-        /// <summary>
-        /// This type was dynamically allocated at runtime.
-        /// </summary>
-        IsDynamicTypeFlag = 0x0008,
-
-        /// <summary>
-        /// This EEType represents a type which requires finalization.
-        /// </summary>
-        HasFinalizerFlag = 0x0010,
-
-        /// <summary>
-        /// This type contain GC pointers.
-        /// </summary>
-        HasPointersFlag = 0x0020,
-
-        /// <summary>
-        /// Type implements ICastable to allow dynamic resolution of interface casts.
-        /// </summary>
-        ICastableFlag = 0x0040,
-
-        /// <summary>
-        /// This type is generic and one or more of its type parameters is co- or contra-variant. This
-        /// only applies to interface and delegate types.
-        /// </summary>
-        GenericVarianceFlag = 0x0080,
-
-        /// <summary>
-        /// This type has optional fields present.
-        /// </summary>
-        OptionalFieldsFlag = 0x0100,
-
-        // Unused = 0x0200,
-
-        /// <summary>
-        /// This type is generic.
-        /// </summary>
-        IsGenericFlag = 0x0400,
-
-        /// <summary>
-        /// We are storing a EETypeElementType in the upper bits for unboxing enums.
-        /// </summary>
-        ElementTypeMask = 0xf800,
-        ElementTypeShift = 11,
-
-        /// <summary>
-        /// Single mark to check TypeKind and two flags. When non-zero, casting is more complicated.
-        /// </summary>
-        ComplexCastingMask = EETypeKindMask | RelatedTypeViaIATFlag | GenericVarianceFlag
-    };
-
-    internal enum EETypeKind : ushort
-    {
-        /// <summary>
-        /// Represents a standard ECMA type
-        /// </summary>
-        CanonicalEEType = 0x0000,
-
-        /// <summary>
-        /// Represents a type cloned from another EEType
-        /// </summary>
-        ClonedEEType = 0x0001,
-
-        /// <summary>
-        /// Represents a parameterized type. For example a single dimensional array or pointer type
-        /// </summary>
-        ParameterizedEEType = 0x0002,
-
-        /// <summary>
-        /// Represents an uninstantiated generic type definition
-        /// </summary>
-        GenericTypeDefEEType = 0x0003,
-    }
-
-
     [StructLayout(LayoutKind.Sequential)]
     internal struct ObjHeader 
     {
         // Contents of the object header
         private IntPtr _objHeaderContents;
-    }
+    
 
     //    [StructLayout(LayoutKind.Sequential)]
     //    internal unsafe struct EEInterfaceInfo {
@@ -178,26 +53,26 @@ namespace Internal.Runtime
     //            internal ushort _usImplMethodSlot;
     //        }
 
-    //        private uint _entryCount;
+            private uint _entryCount;
     //        private DispatchMapEntry _dispatchMap; // at least one entry if any interfaces defined
 
-    //        public bool IsEmpty {
-    //            get {
-    //                return _entryCount == 0;
-    //            }
-    //        }
+            public bool IsEmpty {
+               get {
+                    return _entryCount == 0;
+                }
+            }
 
-    //        public uint NumEntries {
-    //            get {
-    //                return _entryCount;
-    //            }
-    //#if TYPE_LOADER_IMPLEMENTATION
-    //            set
-    //            {
-    //                _entryCount = value;
-    //            }
-    //#endif
-    //        }
+            public uint NumEntries {
+                get {
+                    return _entryCount;
+                }
+    #if TYPE_LOADER_IMPLEMENTATION
+                set
+                {
+                    _entryCount = value;
+                }
+    #endif
+            }
 
     //        public int Size {
     //            get {
@@ -211,7 +86,7 @@ namespace Internal.Runtime
     //                    return (DispatchMapEntry*)((byte*)pThis + sizeof(uint) + (sizeof(DispatchMapEntry) * index));
     //            }
     //        }
-    //    }
+        }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct EEType
@@ -241,39 +116,49 @@ namespace Internal.Runtime
             [FieldOffset(0)]
             public EEType** _ppRelatedParameterTypeViaIAT;
         }
+        /*
+        internal EEType* GetArrayEEType()
+        {
+            fixed (EEType* pThis = &this)
+            {
+                IntPtr pGetArrayEEType = (IntPtr)InternalCalls.RhpGetClasslibFunctionFromEEType(new IntPtr(pThis), ClassLibFunctionId.GetSystemArrayEEType);
+                return (EEType*)CalliIntrinsics.Call<IntPtr>(pGetArrayEEType);
+            }
+        }
+        */
+        private static unsafe class OptionalFieldsReader {
+            internal static uint GetInlineField(byte* pFields, EETypeOptionalFieldTag eTag, uint uiDefaultValue) {
+                if (pFields == null)
+                    return uiDefaultValue;
 
-        //private static unsafe class OptionalFieldsReader {
-        //    internal static uint GetInlineField(byte* pFields, EETypeOptionalFieldTag eTag, uint uiDefaultValue) {
-        //        if (pFields == null)
-        //            return uiDefaultValue;
+                bool isLastField = false;
+                while (!isLastField) {
+                    byte fieldHeader = NativePrimitiveDecoder.ReadUInt8(ref pFields);
+                    isLastField = (fieldHeader & 0x80) != 0;
+                    EETypeOptionalFieldTag eCurrentTag = (EETypeOptionalFieldTag)(fieldHeader & 0x7f);
+                    uint uiCurrentValue = NativePrimitiveDecoder.DecodeUnsigned(ref pFields);
 
-        //        bool isLastField = false;
-        //        while (!isLastField) {
-        //            byte fieldHeader = NativePrimitiveDecoder.ReadUInt8(ref pFields);
-        //            isLastField = (fieldHeader & 0x80) != 0;
-        //            EETypeOptionalFieldTag eCurrentTag = (EETypeOptionalFieldTag)(fieldHeader & 0x7f);
-        //            uint uiCurrentValue = NativePrimitiveDecoder.DecodeUnsigned(ref pFields);
+                    // If we found a tag match return the current value.
+                    if (eCurrentTag == eTag)
+                       return uiCurrentValue;
+                }
 
-        //            // If we found a tag match return the current value.
-        //            if (eCurrentTag == eTag)
-        //                return uiCurrentValue;
-        //        }
-
-        //        // Reached end of stream without getting a match. Field is not present so return default value.
-        //        return uiDefaultValue;
-        //    }
-        //}
+                // Reached end of stream without getting a match. Field is not present so return default value.
+                return uiDefaultValue;
+            }
+        }
 
         ///// <summary>
         ///// Gets a value indicating whether the statically generated data structures use relative pointers.
         ///// </summary>
-        //internal static bool SupportsRelativePointers {
-        //    [Intrinsic]
-        //    get {
-        //        throw new NotImplementedException();
-        //    }
-        //}
-
+        /*
+        internal static bool SupportsRelativePointers {
+            [Intrinsic]
+            get {
+                throw new NotImplementedException();
+            }
+        }
+        */
         private ushort _usComponentSize;
         private ushort _usFlags;
         private uint _uBaseSize;
@@ -303,18 +188,17 @@ namespace Internal.Runtime
             }
         }
 
-        //internal ushort GenericArgumentCount {
-        //	get {
-        //		Debug.Assert(IsGenericTypeDefinition);
-        //		return _usComponentSize;
-        //	}
-        //}
+        internal ushort GenericArgumentCount {
+        	get {
+        		return _usComponentSize;
+        	}
+        }
 
-        //internal ushort Flags {
-        //	get {
-        //		return _usFlags;
-        //	}
-        //}
+        internal ushort Flags {
+        	get {
+        		return _usFlags;
+        	}
+        }
 
         internal uint BaseSize
         {
@@ -324,25 +208,25 @@ namespace Internal.Runtime
             }
         }
 
-        //internal ushort NumVtableSlots {
-        //	get {
-        //		return _usNumVtableSlots;
-        //	}
-        //}
+        internal ushort NumVtableSlots {
+        	get {
+        		return _usNumVtableSlots;
+        	}
+        }
 
-        //internal ushort NumInterfaces {
-        //	get {
-        //		return _usNumInterfaces;
-        //	}
-        //}
+        internal ushort NumInterfaces {
+        	get {
+        		return _usNumInterfaces;
+        	}
+        }
 
-        //internal uint HashCode {
-        //	get {
-        //		return _uHashCode;
-        //	}
-        //}
+        internal uint HashCode {
+        	get {
+        		return _uHashCode;
+        	}
+        }
 
-        private EETypeKind Kind
+        internal EETypeKind Kind
         {
             get
             {
@@ -350,11 +234,11 @@ namespace Internal.Runtime
             }
         }
 
-        //internal bool HasOptionalFields {
-        //	get {
-        //		return ((_usFlags & (ushort)EETypeFlags.OptionalFieldsFlag) != 0);
-        //	}
-        //}
+        internal bool HasOptionalFields {
+        	get {
+        		return ((_usFlags & (ushort)EETypeFlags.OptionalFieldsFlag) != 0);
+        	}
+        }
 
         //// Mark or determine that a type is generic and one or more of it's type parameters is co- or
         //// contra-variant. This only applies to interface and delegate types.
@@ -365,17 +249,17 @@ namespace Internal.Runtime
         	}
         }
 
-        //internal bool IsFinalizable {
-        //	get {
-        //		return ((_usFlags & (ushort)EETypeFlags.HasFinalizerFlag) != 0);
-        //	}
-        //}
+        internal bool IsFinalizable {
+        	get {
+        		return ((_usFlags & (ushort)EETypeFlags.HasFinalizerFlag) != 0);
+        	}
+        }
 
-        //internal bool IsNullable {
-        //	get {
-        //		return ElementType == EETypeElementType.Nullable;
-        //	}
-        //}
+        internal bool IsNullable {
+        	get {
+        		return ElementType == EETypeElementType.Nullable;
+        	}
+        }
 
         internal bool IsCloned 
         {
@@ -385,11 +269,11 @@ namespace Internal.Runtime
             }
         }
 
-        //internal bool IsCanonical {
-        //	get {
-        //		return Kind == EETypeKind.CanonicalEEType;
-        //	}
-        //}
+        internal bool IsCanonical {
+        	get {
+        		return Kind == EETypeKind.CanonicalEEType;
+        	}
+        }
 
         internal bool IsString
         {
@@ -450,11 +334,11 @@ namespace Internal.Runtime
             }
         }
 
-        //internal bool IsGeneric {
-        //	get {
-        //		return ((_usFlags & (ushort)EETypeFlags.IsGenericFlag) != 0);
-        //	}
-        //}
+        internal bool IsGeneric {
+        	get {
+        		return ((_usFlags & (ushort)EETypeFlags.IsGenericFlag) != 0);
+        	}
+        }
 
         internal bool IsGenericTypeDefinition
         {
@@ -527,17 +411,17 @@ namespace Internal.Runtime
         //	}
         //}
 
-        //internal bool IsPointerType {
-        //	get {
-        //		return ElementType == EETypeElementType.Pointer;
-        //	}
-        //}
+        internal bool IsPointerType {
+        	get {
+        		return ElementType == EETypeElementType.Pointer;
+        	}
+        }
 
-        //internal bool IsByRefType {
-        //	get {
-        //		return ElementType == EETypeElementType.ByRef;
-        //	}
-        //}
+        internal bool IsByRefType {
+        	get {
+        		return ElementType == EETypeElementType.ByRef;
+        	}
+        }
 
         internal bool IsInterface 
         {
@@ -546,36 +430,36 @@ namespace Internal.Runtime
         		return ElementType == EETypeElementType.Interface;
         	}
         }
-
-        //internal bool IsAbstract {
-        //	get {
-        //		return IsInterface || (RareFlags & EETypeRareFlags.IsAbstractClassFlag) != 0;
-        //	}
-        //}
-
-        //internal bool IsByRefLike {
-        //	get {
-        //		return (RareFlags & EETypeRareFlags.IsByRefLikeFlag) != 0;
-        //	}
-        //}
-
-        //internal bool IsDynamicType {
-        //	get {
-        //		return (_usFlags & (ushort)EETypeFlags.IsDynamicTypeFlag) != 0;
-        //	}
-        //}
-
-        //internal bool HasDynamicallyAllocatedDispatchMap {
-        //	get {
-        //		return (RareFlags & EETypeRareFlags.HasDynamicallyAllocatedDispatchMapFlag) != 0;
-        //	}
-        //}
-
-        //internal bool IsParameterizedType {
-        //	get {
-        //		return Kind == EETypeKind.ParameterizedEEType;
-        //	}
-        //}
+        /*
+        internal bool IsAbstract {
+        	get {
+        		return IsInterface || (RareFlags & EETypeRareFlags.IsAbstractClassFlag) != 0;
+        	}
+        }
+        
+        internal bool IsByRefLike {
+        	get {
+        		return (RareFlags & EETypeRareFlags.IsByRefLikeFlag) != 0;
+        	}
+        }
+        */
+        internal bool IsDynamicType {
+        	get {
+        		return (_usFlags & (ushort)EETypeFlags.IsDynamicTypeFlag) != 0;
+        	}
+        }
+        /*
+        internal bool HasDynamicallyAllocatedDispatchMap {
+        	get {
+        		return (RareFlags & EETypeRareFlags.HasDynamicallyAllocatedDispatchMapFlag) != 0;
+        	}
+        }
+        */
+        internal bool IsParameterizedType {
+        	get {
+        		return Kind == EETypeKind.ParameterizedEEType;
+        	}
+        }
 
         //// The parameterized type shape defines the particular form of parameterized type that
         //// is being represented.
@@ -595,12 +479,13 @@ namespace Internal.Runtime
         		return ((_usFlags & (ushort)EETypeFlags.RelatedTypeViaIATFlag) != 0);
         	}
         }
-
-        //internal bool RequiresAlign8 {
-        //	get {
-        //		return (RareFlags & EETypeRareFlags.RequiresAlign8Flag) != 0;
-        //	}
-        //}
+        /*
+        internal bool RequiresAlign8 {
+        	get {
+        		return (RareFlags & EETypeRareFlags.RequiresAlign8Flag) != 0;
+        	}
+        }
+        */
 
         //internal bool IsICastable {
         //	get {
@@ -682,33 +567,37 @@ namespace Internal.Runtime
         //	}
         //}
 
-        //internal uint ValueTypeFieldPadding {
-        //	get {
-        //		byte* optionalFields = OptionalFieldsPtr;
+        /*
+        internal uint ValueTypeFieldPadding {
+        	get {
+        		byte* optionalFields = OptionalFieldsPtr;
 
-        //		// If there are no optional fields then the padding must have been the default, 0.
-        //		if (optionalFields == null)
-        //			return 0;
+        		// If there are no optional fields then the padding must have been the default, 0.
+        		if (optionalFields == null)
+        			return 0;
 
-        //		// Get the value from the optional fields. The default is zero if that particular field was not included.
-        //		// The low bits of this field is the ValueType field padding, the rest of the byte is the alignment if present
-        //		uint ValueTypeFieldPaddingData = OptionalFieldsReader.GetInlineField(optionalFields, EETypeOptionalFieldTag.ValueTypeFieldPadding, 0);
-        //		uint padding = ValueTypeFieldPaddingData & ValueTypePaddingLowMask;
-        //		// If there is additional padding, the other bits have that data
-        //		padding |= (ValueTypeFieldPaddingData & ValueTypePaddingHighMask) >> (ValueTypePaddingHighShift - ValueTypePaddingAlignmentShift);
-        //		return padding;
-        //	}
-        //}
+        		// Get the value from the optional fields. The default is zero if that particular field was not included.
+        		// The low bits of this field is the ValueType field padding, the rest of the byte is the alignment if present
+        		uint ValueTypeFieldPaddingData = OptionalFieldsReader.GetInlineField(optionalFields, EETypeOptionalFieldTag.ValueTypeFieldPadding, 0);
+        		uint padding = ValueTypeFieldPaddingData & ValueTypePaddingLowMask;
+        		// If there is additional padding, the other bits have that data
+        		padding |= (ValueTypeFieldPaddingData & ValueTypePaddingHighMask) >> (ValueTypePaddingHighShift - ValueTypePaddingAlignmentShift);
+        		return padding;
+        	}
+        }
+        */
 
-        //internal uint ValueTypeSize {
-        //	get {
-        //		Debug.Assert(IsValueType);
-        //		// get_BaseSize returns the GC size including space for the sync block index field, the EEType* and
-        //		// padding for GC heap alignment. Must subtract all of these to get the size used for locals, array
-        //		// elements or fields of another type.
-        //		return BaseSize - ((uint)sizeof(ObjHeader) + (uint)sizeof(EEType*) + ValueTypeFieldPadding);
-        //	}
-        //}
+        /*
+        internal uint ValueTypeSize {
+        	get {
+        		//Debug.Assert(IsValueType);
+        		// get_BaseSize returns the GC size including space for the sync block index field, the EEType* and
+        		// padding for GC heap alignment. Must subtract all of these to get the size used for locals, array
+        		// elements or fields of another type.
+        		return BaseSize - ((uint)sizeof(ObjHeader) + (uint)sizeof(EEType*) + ValueTypeFieldPadding);
+        	}
+        }
+        */
 
         //internal uint FieldByteCountNonGCAligned {
         //	get {
@@ -785,27 +674,28 @@ namespace Internal.Runtime
         //	}
         //}
 
-        //internal EEType* BaseType {
-        //	get {
-        //		if (IsCloned) {
-        //			return CanonicalEEType->BaseType;
-        //		}
+        /*
+        internal EEType* BaseType {
+        	get {
+        		if (IsCloned) {
+        			return CanonicalEEType->BaseType;
+        		}
 
-        //		if (IsParameterizedType) {
-        //			if (IsArray)
-        //				return GetArrayEEType();
-        //			else
-        //				return null;
-        //		}
+        		if (IsParameterizedType) {
+        			if (IsArray)
+        				return GetArrayEEType();
+        			else
+        				return null;
+        		}
 
         //		Debug.Assert(IsCanonical);
 
-        //		if (IsRelatedTypeViaIAT)
-        //			return *_relatedType._ppBaseTypeViaIAT;
-        //		else
-        //			return _relatedType._pBaseType;
-        //	}
-        //}
+        		if (IsRelatedTypeViaIAT)
+        			return *_relatedType._ppBaseTypeViaIAT;
+        		else
+        			return _relatedType._pBaseType;
+        	}
+        }*/
 
         internal EEType* NonArrayBaseType {
         	get {
@@ -855,14 +745,15 @@ namespace Internal.Runtime
         			return _relatedType._pCanonicalType;
         	}
         }
-
-        //internal EEType* NullableType {
-        //	get {
-        //		Debug.Assert(IsNullable);
-        //		Debug.Assert(GenericArity == 1);
-        //		return GenericArguments[0].Value;
-        //	}
-        //}
+        /*
+        internal EEType* NullableType {
+        	get {
+        		//Debug.Assert(IsNullable);
+        		//Debug.Assert(GenericArity == 1);
+        		return GenericArguments[0].Value;
+        	}
+        }
+        */
 
         ///// <summary>
         ///// Gets the offset of the value embedded in a Nullable&lt;T&gt;.
@@ -895,22 +786,22 @@ namespace Internal.Runtime
             }
         }
 
-        //internal unsafe IntPtr* GetVTableStartAddress() {
-        //	byte* pResult;
+        internal unsafe IntPtr* GetVTableStartAddress() {
+        	byte* pResult;
 
-        //	// EETypes are always in unmanaged memory, so 'leaking' the 'fixed pointer' is safe.
-        //	fixed (EEType* pThis = &this)
-        //		pResult = (byte*)pThis;
+        	// EETypes are always in unmanaged memory, so 'leaking' the 'fixed pointer' is safe.
+        	fixed (EEType* pThis = &this)
+        		pResult = (byte*)pThis;
 
-        //	pResult += sizeof(EEType);
-        //	return (IntPtr*)pResult;
-        //}
+        	pResult += sizeof(EEType);
+        	return (IntPtr*)pResult;
+        }
 
-        //private static IntPtr FollowRelativePointer(int* pDist) {
-        //	int dist = *pDist;
-        //	IntPtr result = (IntPtr)((byte*)pDist + dist);
-        //	return result;
-        //}
+        private static IntPtr FollowRelativePointer(int* pDist) {
+        	int dist = *pDist;
+        	IntPtr result = (IntPtr)((byte*)pDist + dist);
+        	return result;
+        }
 
         //internal IntPtr GetSealedVirtualSlot(ushort slotNumber) {
         //	Debug.Assert((RareFlags & EETypeRareFlags.HasSealedVTableEntriesFlag) != 0);
@@ -930,17 +821,19 @@ namespace Internal.Runtime
         //	}
         //}
 
-        //internal byte* OptionalFieldsPtr {
-        //	get {
-        //		if (!HasOptionalFields)
-        //			return null;
+        /*
+        internal byte* OptionalFieldsPtr {
+        	get {
+        		if (!HasOptionalFields)
+        			return null;
 
-        //		if (IsDynamicType || !SupportsRelativePointers)
-        //			return GetField<Pointer<byte>>(EETypeField.ETF_OptionalFieldsPtr).Value;
+        		if (IsDynamicType || !SupportsRelativePointers)
+        			return GetField<Pointer<byte>>(EETypeField.ETF_OptionalFieldsPtr).Value;
 
-        //		return GetField<RelativePointer<byte>>(EETypeField.ETF_OptionalFieldsPtr).Value;
-        //	}
-        //}
+        		return GetField<RelativePointer<byte>>(EETypeField.ETF_OptionalFieldsPtr).Value;
+        	}
+        }
+        */
 
         //internal EEType* DynamicTemplateType {
         //	get {
@@ -998,13 +891,15 @@ namespace Internal.Runtime
         //	}
         //}
 
-        //internal unsafe EETypeRareFlags RareFlags {
-        //	get {
-        //		// If there are no optional fields then none of the rare flags have been set.
-        //		// Get the flags from the optional fields. The default is zero if that particular field was not included.
-        //		return HasOptionalFields ? (EETypeRareFlags)OptionalFieldsReader.GetInlineField(OptionalFieldsPtr, EETypeOptionalFieldTag.RareFlags, 0) : 0;
-        //	}
-        //}
+        /*
+        internal unsafe EETypeRareFlags RareFlags {
+        	get {
+        		// If there are no optional fields then none of the rare flags have been set.
+        		// Get the flags from the optional fields. The default is zero if that particular field was not included.
+        		return HasOptionalFields ? (EETypeRareFlags)OptionalFieldsReader.GetInlineField(OptionalFieldsPtr, EETypeOptionalFieldTag.RareFlags, 0) : 0;
+        	}
+        }
+        */
 
         //internal int FieldAlignmentRequirement {
         //	get {
@@ -1035,24 +930,17 @@ namespace Internal.Runtime
             }
         }
 
-        public bool IsParameterizedType
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public Exception GetClasslibException(ExceptionIDs exID)
         {
             return new InternalException($"{exID}");
         }
 
-        //public bool HasCctor {
-        //	get {
-        //		return (RareFlags & EETypeRareFlags.HasCctorFlag) != 0;
-        //	}
-        //}
+        /*
+        public bool HasCctor {
+        	get {
+        		return (RareFlags & EETypeRareFlags.HasCctorFlag) != 0;
+        	}
+        }*/
 
         //public uint GetFieldOffset(EETypeField eField) {
         //	// First part of EEType consists of the fixed portion followed by the vtable.
@@ -1182,83 +1070,83 @@ namespace Internal.Runtime
     //}
 
     //// Wrapper around pointers
-    //[StructLayout(LayoutKind.Sequential)]
-    //internal readonly struct Pointer {
-    //	private readonly IntPtr _value;
+    [StructLayout(LayoutKind.Sequential)]
+    internal readonly struct Pointer {
+    	private readonly IntPtr _value;
 
-    //	public IntPtr Value {
-    //		get {
-    //			return _value;
-    //		}
-    //	}
-    //}
+    	public IntPtr Value {
+    		get {
+    			return _value;
+    		}
+    	}
+    }
 
     //// Wrapper around pointers
-    //[StructLayout(LayoutKind.Sequential)]
-    //internal unsafe readonly struct Pointer<T> where T : unmanaged {
-    //	private readonly T* _value;
+    [StructLayout(LayoutKind.Sequential)]
+    internal unsafe readonly struct Pointer<T> where T : unmanaged {
+    	private readonly T* _value;
 
-    //	public T* Value {
-    //		get {
-    //			return _value;
-    //		}
-    //	}
-    //}
+    	public T* Value {
+    		get {
+    			return _value;
+    		}
+    	}
+    }
 
     //// Wrapper around pointers that might be indirected through IAT
-    //[StructLayout(LayoutKind.Sequential)]
-    //internal unsafe readonly struct IatAwarePointer<T> where T : unmanaged {
-    //	private readonly T* _value;
+    [StructLayout(LayoutKind.Sequential)]
+    internal unsafe readonly struct IatAwarePointer<T> where T : unmanaged {
+    	private readonly T* _value;
 
-    //	public T* Value {
-    //		get {
-    //			if (((int)_value & IndirectionConstants.IndirectionCellPointer) == 0)
-    //				return _value;
-    //			return *(T**)((byte*)_value - IndirectionConstants.IndirectionCellPointer);
-    //		}
-    //	}
-    //}
-
-    //// Wrapper around relative pointers
-    //[StructLayout(LayoutKind.Sequential)]
-    //internal readonly struct RelativePointer {
-    //	private readonly int _value;
-
-    //	public unsafe IntPtr Value {
-    //		get {
-    //			return (IntPtr)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + _value);
-    //		}
-    //	}
-    //}
+    	public T* Value {
+    		get {
+    			if (((int)_value & IndirectionConstants.IndirectionCellPointer) == 0)
+    				return _value;
+    			return *(T**)((byte*)_value - IndirectionConstants.IndirectionCellPointer);
+    		}
+    	}
+    }
 
     //// Wrapper around relative pointers
-    //[StructLayout(LayoutKind.Sequential)]
-    //internal unsafe readonly struct RelativePointer<T> where T : unmanaged {
-    //	private readonly int _value;
+    [StructLayout(LayoutKind.Sequential)]
+    internal readonly struct RelativePointer {
+    	private readonly int _value;
 
-    //	public T* Value {
-    //		get {
-    //			return (T*)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + _value);
-    //		}
-    //	}
-    //}
+    	public unsafe IntPtr Value {
+    		get {
+    			return (IntPtr)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + _value);
+    		}
+    	}
+    }
+
+    //// Wrapper around relative pointers
+    [StructLayout(LayoutKind.Sequential)]
+    internal unsafe readonly struct RelativePointer<T> where T : unmanaged {
+    	private readonly int _value;
+
+    	public T* Value {
+    		get {
+    			return (T*)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + _value);
+    		}
+    	}
+    }
 
     //// Wrapper around relative pointers that might be indirected through IAT
-    //[StructLayout(LayoutKind.Sequential)]
-    //internal unsafe readonly struct IatAwareRelativePointer<T> where T : unmanaged {
-    //	private readonly int _value;
+    [StructLayout(LayoutKind.Sequential)]
+    internal unsafe readonly struct IatAwareRelativePointer<T> where T : unmanaged {
+    	private readonly int _value;
 
-    //	public T* Value {
-    //		get {
-    //			if ((_value & IndirectionConstants.IndirectionCellPointer) == 0) {
-    //				return (T*)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + _value);
-    //			}
-    //			else {
-    //				return *(T**)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + (_value & ~IndirectionConstants.IndirectionCellPointer));
-    //			}
-    //		}
-    //	}
-    //}
+    	public T* Value {
+    		get {
+    			if ((_value & IndirectionConstants.IndirectionCellPointer) == 0) {
+    				return (T*)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + _value);
+    			}
+    			else {
+    				return *(T**)((byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in _value)) + (_value & ~IndirectionConstants.IndirectionCellPointer));
+    			}
+    		}
+    	}
+    }
 
     //[StructLayout(LayoutKind.Sequential)]
     //internal struct DynamicModule {

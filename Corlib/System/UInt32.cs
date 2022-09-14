@@ -1,4 +1,6 @@
 
+using System.Diagnostics;
+
 namespace System
 {
     public struct UInt32
@@ -12,5 +14,6 @@ namespace System
         {
             return ((ulong)this).ToString(format);
         }
+
     }
 }

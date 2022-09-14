@@ -1,11 +1,30 @@
 using Internal.Runtime;
 using Internal.Runtime.CompilerHelpers;
+using System.Runtime.CompilerServices;
 using static Internal.Runtime.EEType;
 
 namespace System.Runtime
 {
     public static class TypeCast
     {
+        [Flags]
+        internal enum AssignmentVariation
+        {
+            Normal = 0,
+
+            /// <summary>
+            /// Assume the source type is boxed so that value types and enums are compatible with Object, ValueType 
+            /// and Enum (if applicable)
+            /// </summary>
+            BoxedSource = 1,
+
+            /// <summary>
+            /// Allow identically sized integral types and enums to be considered equivalent (currently used only for 
+            /// array element types)
+            /// </summary>
+            AllowSizeEquivalence = 2,
+        }
+
         [RuntimeExport("RhTypeCast_CheckCastClass")]
         public static unsafe object CheckCastClass(EEType* pTargetEEType, object obj)
         {
@@ -56,7 +75,7 @@ namespace System.Runtime
                 return null;
             }
 
-            EEType* pObjType = obj.m_pEEType;
+            EEType* pObjType = obj.EEType;
 
             // if the types match, we are done
             if (pObjType == pTargetType)
@@ -111,6 +130,45 @@ namespace System.Runtime
                 return AreTypesEquivalent(pType1->RelatedParameterType, pType2->RelatedParameterType) && pType1->ParameterizedTypeShape == pType2->ParameterizedTypeShape;
 
             return false;
+        }
+
+        private unsafe struct Key
+        {
+            private IntPtr _sourceTypeAndVariation;
+            private IntPtr _targetType;
+
+
+            public Key(EEType* pSourceType, EEType* pTargetType, AssignmentVariation variation)
+            {
+                //Debug.Assert((((long)pSourceType) & 3) == 0, "misaligned EEType!");
+                //Debug.Assert(((uint)variation) <= 3, "variation enum has an unexpectedly large value!");
+
+                _sourceTypeAndVariation = (IntPtr)(((byte*)pSourceType) + ((int)variation));
+                _targetType = (IntPtr)pTargetType;
+            }
+
+            private static int GetHashCode(IntPtr intptr)
+            {
+                return unchecked((int)((long)intptr));
+            }
+
+            public int CalculateHashCode()
+            {
+                return ((GetHashCode(_targetType) >> 4) ^ GetHashCode(_sourceTypeAndVariation));
+            }
+
+            public bool Equals(ref Key other)
+            {
+                return (_sourceTypeAndVariation == other._sourceTypeAndVariation) && (_targetType == other._targetType);
+            }
+
+            public AssignmentVariation Variation
+            {
+                get { return (AssignmentVariation)(unchecked((int)(long)_sourceTypeAndVariation) & 3); }
+            }
+
+            public EEType* SourceType { get { return (EEType*)(((long)_sourceTypeAndVariation) & ~3L); } }
+            public EEType* TargetType { get { return (EEType*)_targetType; } }
         }
     }
 }

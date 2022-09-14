@@ -11,5 +11,6 @@
 		}
 
 		public static implicit operator uint(int value)=>(uint)value;
+
 	}
 }
