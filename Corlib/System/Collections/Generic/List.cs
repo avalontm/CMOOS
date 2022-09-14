@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace System.Collections.Generic
 {
     public class List<T>
@@ -75,7 +77,7 @@ namespace System.Collections.Generic
                 T first = this[i];
                 T second = item;
 
-                if (this[i] == item)
+                if (first == second)
                     return i;
             }
 

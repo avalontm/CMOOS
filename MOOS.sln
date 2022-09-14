@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corlib", "Corlib\Corlib.csproj", "{05B0CB63-093D-445D-BE05-C2146D57D419}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UIKernel", "UIKernel\UIKernel.shproj", "{CBF8A3A1-5076-42AD-8189-A54052C8DAB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,7 +147,9 @@ Global
 		CosmosCompatible\CosmosCompatible.projitems*{2d5fce45-0d99-421f-adda-a248917b4e88}*SharedItemsImports = 5
 		Kernel\Kernel.projitems*{2d5fce45-0d99-421f-adda-a248917b4e88}*SharedItemsImports = 5
 		Kernel\Kernel.projitems*{3880e378-077b-4f24-ad1e-9e157679c9ba}*SharedItemsImports = 5
+		UIKernel\UIKernel.projitems*{3880e378-077b-4f24-ad1e-9e157679c9ba}*SharedItemsImports = 5
 		Kernel\Kernel.projitems*{479ee355-d81e-4162-aa5c-38f30c1abdb4}*SharedItemsImports = 5
 		CosmosCompatible\CosmosCompatible.projitems*{86e84b0f-9ede-4f25-ad24-75b350d6cb26}*SharedItemsImports = 13
+		UIKernel\UIKernel.projitems*{cbf8a3a1-5076-42ad-8189-a54052c8dab2}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

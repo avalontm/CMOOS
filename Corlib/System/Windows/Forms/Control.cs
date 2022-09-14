@@ -6,5 +6,12 @@ namespace System.Windows.Forms
     {
         public static Point MousePosition;
         public static MouseButtons MouseButtons;
+
+        public static bool Clicked;
+
+        public static void OnUpdate()
+        {
+
+        }
     }
 }

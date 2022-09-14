@@ -1,5 +1,7 @@
 namespace System
 {
+    public delegate void OnKeyHandler(ConsoleKeyInfo key);
+
     public struct ConsoleKeyInfo
     {
         public int ScanCode;

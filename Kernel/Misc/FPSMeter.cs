@@ -1,6 +1,6 @@
 namespace MOOS
 {
-    internal class FPSMeter
+    public class FPSMeter
     {
         public int FPS = 0;
 

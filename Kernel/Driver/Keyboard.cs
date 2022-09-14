@@ -1,23 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MOOS
 {
-    public delegate void OnKeyHandler(ConsoleKeyInfo key);
-
     public static class Keyboard
     {
         public static ConsoleKeyInfo KeyInfo;
 
-        public static EventHandler<ConsoleKeyInfo> OnKeyChanged;
-
-        public static void Initialize() 
+        public static event OnKeyHandler OnKeyChanged
         {
-            OnKeyChanged = null;
+            add
+            {
+                _KeyKeyChangeds.Add(value);
+            }
+
+            remove
+            {
+                _KeyKeyChangeds.Remove(value);
+            }
         }
 
-        internal static void InvokeOnKeyChanged(ConsoleKeyInfo info) 
+        static List<OnKeyHandler> _KeyKeyChangeds;
+        static List<OnKeyHandler> KeyKeyChangeds { get { return _KeyKeyChangeds; } }
+
+        public static void Initialize()
         {
-            OnKeyChanged?.Invoke(null, info);
+            _KeyKeyChangeds = new List<OnKeyHandler>();
+        }
+
+        public static void InvokeOnKeyChanged(ConsoleKeyInfo info) 
+        {
+            for (int i = 0; i < KeyKeyChangeds.Count; i++)
+            {
+                KeyKeyChangeds[i]?.Invoke(info);
+            }
         }
 
         public static void CleanKeyInfo(bool NoModifiers = false)

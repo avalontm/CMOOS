@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Runtime;
 using static IDT;
 using static Internal.Runtime.CompilerHelpers.InteropHelpers;
+using System.Windows;
 
 #if HasGUI
 using MOOS.GUI;
@@ -75,7 +76,7 @@ namespace MOOS
                 case "GetWindowScreenBuf":
                     return (delegate*<IntPtr, IntPtr>)&API_GetWindowScreenBuf;
                 case "BindOnKeyChangedHandler":
-                    return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
+                    return (delegate*<OnKeyHandler, void>)&API_BindOnKeyChangedHandler;
 #endif
                 case "Calloc":
                     return (delegate*<ulong, ulong, void*>)&API_Calloc;
@@ -111,10 +112,9 @@ namespace MOOS
             return stdlib.calloc(num, size);
         }
 
-        public static void API_BindOnKeyChangedHandler(EventHandler<ConsoleKeyInfo> handler)
+        public static void API_BindOnKeyChangedHandler(OnKeyHandler handler)
         {
-            Keyboard.OnKeyChanged = handler;
-
+            Keyboard.OnKeyChanged += handler;
         }
 
         public static void API_StartThread(delegate* <void> func)
