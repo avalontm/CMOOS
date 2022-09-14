@@ -250,7 +250,7 @@ namespace System.Desktops
 
         static void onDesktopIconClick(object obj)
         {
-            string file = obj.ToString().ToLower();
+            string file = obj as string;
             Window frm = null;
 
             Debug.WriteLine($"[Icon] {file}");
