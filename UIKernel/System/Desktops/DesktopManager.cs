@@ -124,7 +124,7 @@ namespace System.Desktops
 
             string dirDesktop = $"home/{User}/Desktop";
 
-            List<FileInfo> files = File.GetFiles(dirDesktop);
+            List<FileInfo> files = File.GetFiles(dirDesktop + devider);
 
             if (IsAtRoot)
             {
@@ -228,8 +228,8 @@ namespace System.Desktops
                     //frm.ShowDialog();
                     break;
                 case 3:
-                    //frm = new Paint(500, 200);
-                    //frm.ShowDialog();
+                    frm = new Paint(500, 200);
+                    frm.ShowDialog();
                     break;
                 case 4:
                     //frm = new Snake(600, 100);
@@ -267,16 +267,16 @@ namespace System.Desktops
                 byte[] buffer = File.ReadAllBytes(file);
                 PNG png = new(buffer);
                 buffer.Dispose();
-                //ImageViewer img = new ImageViewer(100, 100);
-               // img.SetImage(png);
-               // img.ShowDialog();
+                ImageViewer img = new ImageViewer(100, 100);
+                img.SetImage(png);
+                img.ShowDialog();
             }
             else if (file.EndsWith("doom1.wad"))
             {
                 //frm = new Doom(300, 250, file);
                 //frm.ShowDialog();
             }
-            else if (file.EndsWith(".exe"))
+            else if (file.EndsWith(".mue"))
             {
                 byte[] buffer = File.ReadAllBytes(file);
                 Process.Start(buffer);
