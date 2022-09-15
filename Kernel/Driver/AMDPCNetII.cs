@@ -103,7 +103,8 @@ namespace MOOS.Driver
 
             instance = this;
 
-            Interrupts.EnableInterrupt(device.InterruptLine, &OnInterrupt);
+            // Setup interrupt handling
+            Pollings.AddPoll(&OnInterrupt);
         }
 
         internal static void OnInterrupt()

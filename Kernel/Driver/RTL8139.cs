@@ -67,8 +67,9 @@ namespace MOOS.NET
             mTransmitBuffer = new Queue<byte[]>();
 
             instance = this;
+
             // Setup interrupt handling
-            Interrupts.EnableInterrupt(device.InterruptLine, &OnInterrupt);
+            Pollings.AddPoll(&OnInterrupt);
         }
 
         internal static void OnInterrupt()

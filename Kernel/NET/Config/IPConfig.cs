@@ -92,7 +92,6 @@ namespace MOOS.NET.Config
             {
                 IPConfig config = new IPConfig(ip, subnet, gw);
                 NetworkStack.ConfigIP(device, config);
-                Console.WriteLine($"[NetworkDevice] {device.NameID}");
                 return true;
             }
             return false;

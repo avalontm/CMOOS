@@ -169,22 +169,29 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                 {
                     if (message)
                     {
-                        Console.WriteLine("[DHCP ACK][" + NetworkDevice.Devices[i].Name + "] Packet received, applying IP configuration...");
+                        Console.WriteLine("[DHCP ACK][" + NetworkDevice.Devices[i].Name + "] Packet received, applying IP configuration...");  
+                    }
+
+                    if (packet.Client != null && packet.Subnet != null && packet.Server && packet.DNS != null)
+                    {
                         Console.WriteLine("   IP Address  : " + packet.Client);
                         Console.WriteLine("   Subnet mask : " + packet.Subnet);
                         Console.WriteLine("   Gateway     : " + packet.Server);
                         Console.WriteLine("   DNS server  : " + packet.DNS);
+
+                        IPConfig.Enable(NetworkDevice.Devices[i], packet.Client, packet.Subnet, packet.Server);
+
+                        DNSConfig.Add(packet.DNS);
+
+                        if (message)
+                        {
+                            Console.WriteLine("[DHCP CONFIG][" + NetworkDevice.Devices[i].Name + "] IP configuration applied.");
+                            asked = false;
+                        }
                     }
-
-                    IPConfig.Enable(NetworkDevice.Devices[i], packet.Client, packet.Subnet, packet.Server);
-
-                   
-                    DNSConfig.Add(packet.DNS);
-
-                    if (message)
+                    else
                     {
-                        Console.WriteLine("[DHCP CONFIG][" + NetworkDevice.Devices[i].Name + "] IP configuration applied.");
-                        asked = false;
+                        Console.WriteLine("[DHCP ERROR][" + NetworkDevice.Devices[i].Name + "] IP configuration not applied.");
                     }
                 }
             }

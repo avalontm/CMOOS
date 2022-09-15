@@ -1,6 +1,8 @@
 ﻿#if HasGUI
 using MOOS.Driver;
 using MOOS.Misc;
+using MOOS.NET;
+using MOOS.NET.Config;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -67,8 +69,16 @@ namespace MOOS.GUI
 #else
             Add(new Nofity("Welcome to MOOS"));
             Add(new Nofity(Audio.HasAudioDevice ? "Info: Audio controller available" : "Warn: No audio controller found on this PC", Audio.HasAudioDevice ? NotificationLevel.None : NotificationLevel.Error));
+            
+            if (NetworkDevice.Devices.Count > 0)
+            {
+                Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} {NetworkConfiguration.CurrentAddress.ToString()}", NotificationLevel.None));
+            }
+
             if (VMwareTools.Available)
+            {
                 Add(new Nofity("VMware Tools is working", NotificationLevel.None));
+            }
 #endif
         }
 

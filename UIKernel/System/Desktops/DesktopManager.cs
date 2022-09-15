@@ -91,7 +91,7 @@ namespace System.Desktops
 
             onLoadIcons();
 
-            Lockscreen.Initialize();
+            //Lockscreen.Initialize();
 
             #region Animation of entering Desktop
             Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper, false);

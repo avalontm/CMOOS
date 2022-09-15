@@ -53,13 +53,9 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
-    /*    
-        //Network Config
+        //Network Config (AvalonTM)
         Network.Initialize();
         NetworkStack.Initialize();
-
-        Thread task = new Thread(&onHandleInterrupt);
-        task.Start();
 
         if (NetworkDevice.Devices.Count > 0)
         {
@@ -67,21 +63,9 @@ unsafe class Program
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             xClient.SendDiscoverPacket();
-
-            Console.WriteLine($"[MACAddress] {NetworkDevice.Devices[0].MACAddress}");
-            Console.WriteLine($"[CurrentAddress] {NetworkConfiguration.CurrentAddress}");
         }
-    */
+    
         SMain();
-    }
-
-    static void onHandleInterrupt()
-    {
-        for (; ; )
-        {
-            Interrupts.Update(); //CALL HandleInterrupt
-            Native.Hlt();
-        }
     }
 
     public static void SMain()
