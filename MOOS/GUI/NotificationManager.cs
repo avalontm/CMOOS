@@ -72,7 +72,7 @@ namespace MOOS.GUI
             
             if (NetworkDevice.Devices.Count > 0)
             {
-                Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} {NetworkConfiguration.CurrentAddress.ToString()}", NotificationLevel.None));
+                Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} ({NetworkConfiguration.CurrentAddress.ToString()})", NotificationLevel.None));
             }
 
             if (VMwareTools.Available)
