@@ -96,7 +96,7 @@ namespace System.Desktops
             #region Animation of entering Desktop
             Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper, false);
             DesktopManager.Update();
-            WindowManager.DrawAll();
+            WindowManager.Draw();
             Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor);
             Image _screen = Framebuffer.Graphics.Save();
             Framebuffer.Graphics.Clear(0x0);
@@ -396,7 +396,7 @@ namespace System.Desktops
 
         public static void Draw()
         {
-            Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper);
+            Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (Wallpaper.Width / 2), (Framebuffer.Height / 2) - (Wallpaper.Height / 2), Wallpaper);
 
             for (int i = 0; i < icons.Count; i++)
             {

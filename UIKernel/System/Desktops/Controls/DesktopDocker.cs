@@ -108,7 +108,7 @@ namespace System.Desktops.Controls
         public override void Draw()
         {
             base.Draw();
-
+            
             int _x = (X + Framebuffer.Width) - ((Framebuffer.Width / 2) + (Width / 2));
             int _y = (Y + (Framebuffer.Height - Height) - 2);
 

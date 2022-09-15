@@ -92,17 +92,17 @@ unsafe class Program
 
         for (; ; )
         {
-            Control.OnUpdate();
-            WindowManager.InputAll();
+            Control.Update();
 
             //UIKernel
             DesktopManager.Update();
-            WindowManager.UpdateAll();
-            NotificationManager.Update();
+            WindowManager.Update();
+
             CursorManager.Update();
 
             DesktopManager.Draw();
-            WindowManager.DrawAll();
+            WindowManager.Draw();
+            NotificationManager.Draw();
 
             //Mouse
             Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);

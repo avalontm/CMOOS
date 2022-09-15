@@ -9,7 +9,7 @@ namespace System.Windows.Forms
         static MouseButtons lastMouseButtons;
         public static bool Clicked { private set; get; }
 
-        public static void OnUpdate()
+        public static void Update()
         {
             if (lastMouseButtons == MouseButtons.None && MouseButtons == MouseButtons.Left)
             {

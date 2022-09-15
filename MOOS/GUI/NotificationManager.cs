@@ -1,9 +1,9 @@
 ﻿#if HasGUI
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows;
 using MOOS.Driver;
 using MOOS.Misc;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace MOOS.GUI
 {
@@ -28,8 +28,7 @@ namespace MOOS.GUI
         {
             DisposeUntil = 0;
             Message = msg;
-            X = 0;
-            Y = 0;
+            X = 0; Y = 0;
             SWidth = WindowManager.font.MeasureString(msg);
             SHeight = WindowManager.font.FontSize;
             NotificationLevel = level;
@@ -45,29 +44,31 @@ namespace MOOS.GUI
         public override void Dispose()
         {
             Message.Dispose();
-            ani.Dispose();
+            Animator.DisposeAnimation(ani);
             base.Dispose();
         }
     }
 
     public static class NotificationManager
     {
-        private static List<Nofity> Notifications;
+        static List<Nofity> Notifications;
 
         public static unsafe void Initialize()
         {
             Notifications = new();
 
 #if Chinese
-			Add(new Nofity("欢迎使用MOOS"));
-			Add(new Nofity(Audio.HasAudioDevice ? "信息: 声卡可用" : "警告: 此设备上没有可用的声卡", Audio.HasAudioDevice ? NotificationLevel.None : NotificationLevel.Error));
-			Add(new Nofity(HID.Mouse ? "信息: USB鼠标可用" : "警告: 此设备上没有USB鼠标", HID.Mouse ? NotificationLevel.None : NotificationLevel.Error));
-			Add(new Nofity(HID.Keyboard ? "信息: USB键盘可用" : "警告: 此设备上没有USB键盘", HID.Keyboard ? NotificationLevel.None : NotificationLevel.Error));
+            Add(new Nofity("欢迎使用MOOS"));
+            Add(new Nofity(Audio.HasAudioDevice ? "信息: 声卡可用" : "警告: 此设备上没有可用的声卡", Audio.HasAudioDevice ? NotificationLevel.None : NotificationLevel.Error));
+            Add(new Nofity(HID.Mouse ? "信息: USB鼠标可用" : "警告: 此设备上没有USB鼠标", HID.Mouse ? NotificationLevel.None : NotificationLevel.Error));
+            Add(new Nofity(HID.Keyboard ? "信息: USB键盘可用" : "警告: 此设备上没有USB键盘", HID.Keyboard ? NotificationLevel.None : NotificationLevel.Error));
+            if (VMwareTools.Available)
+                Add(new Nofity("VMware Tools 正在运行", NotificationLevel.None));
 #else
             Add(new Nofity("Welcome to MOOS"));
             Add(new Nofity(Audio.HasAudioDevice ? "Info: Audio controller available" : "Warn: No audio controller found on this PC", Audio.HasAudioDevice ? NotificationLevel.None : NotificationLevel.Error));
-            Add(new Nofity(HID.Mouse ? "Info: USB mouse available" : "Warn: No USB mouse found on this PC", HID.Mouse ? NotificationLevel.None : NotificationLevel.Error));
-            Add(new Nofity(HID.Keyboard ? "Info: USB keyboard available" : "Warn: No USB keyboard found on this PC", HID.Keyboard ? NotificationLevel.None : NotificationLevel.Error));
+            if (VMwareTools.Available)
+                Add(new Nofity("VMware Tools is working", NotificationLevel.None));
 #endif
         }
 
@@ -82,11 +83,11 @@ namespace MOOS.GUI
 
         public const int DisposeUntil = 1000;
 
-        public static void Update()
+        public static void Draw()
         {
             for (int i = 0; i < Notifications.Count; i++)
             {
-                Nofity v = Notifications[i];
+                var v = Notifications[i];
                 if (v.X < (Threshold + v.SWidth))
                 {
                     v.ani.Stopped = false;
@@ -97,11 +98,11 @@ namespace MOOS.GUI
 
             for (int i = 0; i < Notifications.Count; i++)
             {
-                Nofity v = Notifications[i];
+                var v = Notifications[i];
 
                 if (v.X < (Threshold + v.SWidth))
                 {
-                    continue;
+                    break;
                 }
                 else
                 {
@@ -113,11 +114,11 @@ namespace MOOS.GUI
                     {
                         Notifications.Remove(v);
                         v.Dispose();
-                        continue;
+                        break;
                     }
                     else
                     {
-                        continue;
+                        break;
                     }
                 }
             }
@@ -125,7 +126,7 @@ namespace MOOS.GUI
             int y = Devide * 2;
             for (int i = 0; i < Notifications.Count; i++)
             {
-                Nofity v = Notifications[i];
+                var v = Notifications[i];
 
                 Framebuffer.Graphics.FillRectangle(Framebuffer.Width - v.X, v.Y + y, v.SWidth + Devide, v.SHeight + Devide, 0xFF111111);
                 Framebuffer.Graphics.DrawRectangle(Framebuffer.Width - v.X, v.Y + y, v.SWidth + Devide, v.SHeight + Devide, 0xFF222222);

@@ -31,7 +31,7 @@ namespace System.Windows
             FocusWindow = window;
         }
 
-        public static void DrawAll()
+        public static void Draw()
         {
             for (int i = Childrens.Count - 1; i >= 0; i--)
             {
@@ -40,17 +40,14 @@ namespace System.Windows
             }
         }
 
-        public static void InputAll()
+        public static void Update()
         {
             for (int i = 0; i < Childrens.Count; i++)
             {
                 if (Childrens[i].Visible)
                     Childrens[i].OnInput();
             }
-        }
 
-        public static void UpdateAll()
-        {
             for (int i = 0; i < Childrens.Count; i++)
             {
                 if (Childrens[i].Visible)
