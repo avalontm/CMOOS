@@ -14,7 +14,6 @@ namespace System.Windows
         public static IFont font;
         public static Image CloseButton;
 
-
         public static void Initialize()
         {
             Childrens = new List<Window>();

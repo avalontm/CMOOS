@@ -46,6 +46,12 @@ namespace MOOS.GUI
                 this.image = image.ResizeImage((int)(Height * 0.8f), (int)(Height * ratio * 0.8f));
             }
         }
+
+        public override void OnClose()
+        {
+            base.OnClose();
+            image.Dispose();
+        }
     }
 }
 #endif

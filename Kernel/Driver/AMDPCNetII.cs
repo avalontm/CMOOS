@@ -102,11 +102,11 @@ namespace MOOS.Driver
             mRecvBuffer = new Queue<byte[]>();
 
             instance = this;
-           // INTs.SetIrqHandler(device.InterruptLine, HandleNetworkInterrupt);
+
             Interrupts.EnableInterrupt(device.InterruptLine, &OnInterrupt);
         }
 
-        public static void OnInterrupt()
+        internal static void OnInterrupt()
         {
             uint cur_status = instance.StatusRegister;
 

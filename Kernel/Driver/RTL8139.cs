@@ -10,7 +10,7 @@ using static Native;
 
 namespace MOOS.NET
 {
-    public class RTL8139 : NetworkDevice
+    public unsafe class RTL8139 : NetworkDevice
     {
         protected PCIDevice pciCard;
         protected MACAddress mac;
@@ -22,6 +22,7 @@ namespace MOOS.NET
         protected Queue<byte[]> mTransmitBuffer;
         private int mNextTXDesc;
         const ushort RxBufferSize = 32768;
+        static RTL8139 instance;
 
         private uint Base;
         public RTL8139(PCIDevice device)
@@ -37,8 +38,6 @@ namespace MOOS.NET
             Base = device.BaseAddressBar[0].BaseAddress;
             // We are handling this device
             pciCard.Claimed = true;
-            // Setup interrupt handling
-           // INTs.SetIrqHandler(device.InterruptLine, HandleNetworkInterrupt);
             // Get IO Address from PCI Bus
             // Enable the card
             pciCard.EnableDevice();
@@ -66,6 +65,42 @@ namespace MOOS.NET
             // Setup our Receive and Transmit Queues
             mRecvBuffer = new Queue<byte[]>();
             mTransmitBuffer = new Queue<byte[]>();
+
+            instance = this;
+            // Setup interrupt handling
+            Interrupts.EnableInterrupt(device.InterruptLine, &OnInterrupt);
+        }
+
+        internal static void OnInterrupt()
+        {
+            ushort cur_status = instance.IntStatusRegister;
+            Console.WriteLine("RTL8139 Interrupt: ISR=" + cur_status.ToString());
+            if ((cur_status & 0x01) != 0)
+            {
+                while ((instance.CommandRegister & 0x01) == 0)
+                {
+                    //UInt32 packetHeader = BitConverter.ToUInt32(rxBuffer, rxBufferOffset + capr);
+                    uint packetHeader = instance.rxBuffer.Read32(instance.capr);
+                    ushort packetLen = (ushort)(packetHeader >> 16);
+                    if ((packetHeader & 0x3E) != 0x00)
+                    {
+                        instance.CommandRegister = 0x04; // TX Only;
+                        instance.capr = instance.CurBufferAddressRegister;
+                        instance.CommandRegister = 0x0C; // RX and TX Enabled
+                    }
+                    else if ((packetHeader & 0x01) == 0x01)
+                    {
+                        instance.ReadRawData(packetLen);
+                    }
+                    instance.CurAddressPointerReadRegister = (ushort)(instance.capr - 0x10);
+                }
+            }
+            if ((cur_status & 0x10) != 0)
+            {
+                instance.CurAddressPointerReadRegister = (ushort)(instance.CurBufferAddressRegister - 0x10);
+                cur_status = (ushort)(cur_status | 0x01);
+            }
+            instance.IntStatusRegister = cur_status;
         }
 
         private static byte Inb(uint port)
@@ -112,39 +147,7 @@ namespace MOOS.NET
             }
             return cards;
         }
-        /*
-        protected void HandleNetworkInterrupt(ref IRQContext aContext)
-        {
-            ushort cur_status = IntStatusRegister;
-            Console.WriteLine("RTL8139 Interrupt: ISR=" + cur_status.ToString());
-            if ((cur_status & 0x01) != 0)
-            {
-                while ((CommandRegister & 0x01) == 0)
-                {
-                    //UInt32 packetHeader = BitConverter.ToUInt32(rxBuffer, rxBufferOffset + capr);
-                    uint packetHeader = rxBuffer.Read32(capr);
-                    ushort packetLen = (ushort)(packetHeader >> 16);
-                    if ((packetHeader & 0x3E) != 0x00)
-                    {
-                        CommandRegister = 0x04; // TX Only;
-                        capr = CurBufferAddressRegister;
-                        CommandRegister = 0x0C; // RX and TX Enabled
-                    }
-                    else if ((packetHeader & 0x01) == 0x01)
-                    {
-                        ReadRawData(packetLen);
-                    }
-                    CurAddressPointerReadRegister = (ushort)(capr - 0x10);
-                }
-            }
-            if ((cur_status & 0x10) != 0)
-            {
-                CurAddressPointerReadRegister = (ushort)(CurBufferAddressRegister - 0x10);
-                cur_status = (ushort)(cur_status | 0x01);
-            }
-            IntStatusRegister = cur_status;
-        }
-        */
+
         #region Register Access
         protected uint RBStartRegister
         {

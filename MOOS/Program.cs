@@ -47,14 +47,13 @@ unsafe class Program
 
         fpsMeter = new FPSMeter();
 
-        Serial.WriteLine("Hello World");
-        Console.WriteLine("Hello, World!");
         Console.WriteLine("Use Native AOT (Core RT) Technology.");
 
         Audio.Initialize();
         AC97.Initialize();
         ES1371.Initialize();
 
+    /*    
         //Network Config
         Network.Initialize();
         NetworkStack.Initialize();
@@ -64,22 +63,16 @@ unsafe class Program
 
         if (NetworkDevice.Devices.Count > 0)
         {
-            // Send a DHCP Discover packet 
+            //Send a DHCP Discover packet 
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             xClient.SendDiscoverPacket();
 
             Console.WriteLine($"[MACAddress] {NetworkDevice.Devices[0].MACAddress}");
-            Console.WriteLine($"[CurrentAddress] {NetworkConfiguration.CurrentAddress.ToString()}");
-
-            /*
-            TcpClient client = new TcpClient(5000);
-            client.Connect(Address.Parse("192.168.10.1"), 5000);
-            client.Send(new byte[1] {0x01});
-            */
+            Console.WriteLine($"[CurrentAddress] {NetworkConfiguration.CurrentAddress}");
         }
-
-        //SMain();
+    */
+        SMain();
     }
 
     static void onHandleInterrupt()
@@ -87,6 +80,7 @@ unsafe class Program
         for (; ; )
         {
             Interrupts.Update(); //CALL HandleInterrupt
+            Native.Hlt();
         }
     }
 
@@ -96,51 +90,6 @@ unsafe class Program
 
         DesktopManager.Initialize();
 
-        #region Animation of entering Desktop
-        Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper, false);
-        DesktopManager.Update();
-        WindowManager.DrawAll();
-        Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor);
-        Image _screen = Framebuffer.Graphics.Save();
-        Framebuffer.Graphics.Clear(0x0);
-
-        var SizedScreens = new Image[60];
-        int startat = 40;
-        for (int i = startat; i < SizedScreens.Length; i++)
-        {
-            SizedScreens[i] = _screen.ResizeImage(
-                (int)(_screen.Width * (i / ((float)SizedScreens.Length))),
-                (int)(_screen.Height * (i / ((float)SizedScreens.Length)))
-                );
-        }
-
-        Animation ani = new Animation()
-        {
-            Value = startat + 1,
-            MinimumValue = startat + 1,
-            MaximumValue = SizedScreens.Length - 1,
-            ValueChangesInPeriod = 1,
-            PeriodInMS = 16
-        };
-        Animator.AddAnimation(ani);
-        while (ani.Value < SizedScreens.Length - 1)
-        {
-            int i = ani.Value;
-            Image img = SizedScreens[i];
-            Framebuffer.Graphics.Clear(0x0);
-            Framebuffer.Graphics.ADrawImage(
-                (Framebuffer.Graphics.Width / 2) - (img.Width / 2),
-                (Framebuffer.Graphics.Height / 2) - (img.Height / 2),
-                img, (byte)(255 * (i / (float)(SizedScreens.Length - startat))));
-            Framebuffer.Update();
-        }
-        Animator.DisposeAnimation(ani);
-
-        _screen.Dispose();
-        for (int i = 0; i < SizedScreens.Length; i++) SizedScreens[i]?.Dispose();
-        SizedScreens.Dispose();
-        #endregion
-
         for (; ; )
         {
             Control.OnUpdate();
@@ -148,11 +97,13 @@ unsafe class Program
 
             //UIKernel
             DesktopManager.Update();
-            DesktopManager.Draw();
             WindowManager.UpdateAll();
-            WindowManager.DrawAll();
-            //NotificationManager.Update();
+            NotificationManager.Update();
             CursorManager.Update();
+
+            DesktopManager.Draw();
+            WindowManager.DrawAll();
+
             //Mouse
             Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
             Framebuffer.Update();

@@ -83,6 +83,7 @@ namespace System.Collections.Generic
 
             return -1;
         }
+
         public bool Remove(T item)
         {
             int at = IndexOf(item);

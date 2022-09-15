@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Explorers;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
 using static MOOS.stdio;
 
@@ -89,6 +90,56 @@ namespace System.Desktops
             barMenu.Add(clock);
 
             onLoadIcons();
+
+            Lockscreen.Initialize();
+
+            #region Animation of entering Desktop
+            Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper, false);
+            DesktopManager.Update();
+            WindowManager.DrawAll();
+            Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor);
+            Image _screen = Framebuffer.Graphics.Save();
+            Framebuffer.Graphics.Clear(0x0);
+
+            var SizedScreens = new Image[60];
+            int startat = 40;
+            for (int i = startat; i < SizedScreens.Length; i++)
+            {
+                SizedScreens[i] = _screen.ResizeImage(
+                    (int)(_screen.Width * (i / ((float)SizedScreens.Length))),
+                    (int)(_screen.Height * (i / ((float)SizedScreens.Length)))
+                    );
+            }
+
+            Animation ani = new Animation()
+            {
+                Value = startat + 1,
+                MinimumValue = startat + 1,
+                MaximumValue = SizedScreens.Length - 1,
+                ValueChangesInPeriod = 1,
+                PeriodInMS = 16
+            };
+            Animator.AddAnimation(ani);
+            while (ani.Value < SizedScreens.Length - 1)
+            {
+                int i = ani.Value;
+                Image img = SizedScreens[i];
+                Framebuffer.Graphics.Clear(0x0);
+                Framebuffer.Graphics.ADrawImage(
+                    (Framebuffer.Graphics.Width / 2) - (img.Width / 2),
+                    (Framebuffer.Graphics.Height / 2) - (img.Height / 2),
+                    img, (byte)(255 * (i / (float)(SizedScreens.Length - startat))));
+                Framebuffer.Update();
+            }
+            Animator.DisposeAnimation(ani);
+
+            _screen.Dispose();
+            for (int i = 0; i < SizedScreens.Length; i++) SizedScreens[i]?.Dispose();
+            SizedScreens.Dispose();
+            #endregion
+
+            NotificationManager.Initialize();
+
         }
 
         static void onLoadIcons()
@@ -307,7 +358,10 @@ namespace System.Desktops
                 MessageBox.Show("Can't open file.", "Not Found");
             }
 
-            file.Dispose();
+            if (frm != null)
+            {
+                file.Dispose();
+            }
         }
 
         static void onItemDesktop(object obj)
@@ -326,10 +380,14 @@ namespace System.Desktops
             {
                 icons[i].Update();
             }
-
-            docker.Update();
-            bar.Update();
-
+            if (docker != null)
+            {
+                docker.Update();
+            }
+            if (bar != null)
+            {
+                bar.Update();
+            }
             for (int i = 0; i < barMenu.Count; i++)
             {
                 barMenu[i].Update();
@@ -344,10 +402,14 @@ namespace System.Desktops
             {
                 icons[i].Draw();
             }
-
-            docker.Draw();
-            bar.Draw();
-
+            if (docker != null)
+            {
+                docker.Draw();
+            }
+            if (bar != null)
+            {
+                bar.Draw();
+            }
             for (int i = 0; i < barMenu.Count; i++)
             {
                 barMenu[i].Draw();

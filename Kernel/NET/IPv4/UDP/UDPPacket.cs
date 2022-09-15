@@ -26,8 +26,6 @@ namespace MOOS.NET.IPv4.UDP
         {
             UDPPacket udp_packet = new UDPPacket(packetData);
 
-            Console.WriteLine("[Received] UDP packet from " + udp_packet.SourceIP.ToString() + ":" + udp_packet.SourcePort.ToString());
-
             if (udp_packet.SourcePort == 67)
             {
                 DHCPPacket.DHCPHandler(packetData);

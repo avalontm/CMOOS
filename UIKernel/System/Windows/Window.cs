@@ -207,8 +207,13 @@ namespace System.Windows
             if (Content != null)
             {
                 Content.Dispose();
+                Content = null;
             }
-            WindowManager.Childrens.Remove(this);
+
+            if (WindowManager.Childrens.Remove(this))
+            {
+                this.Dispose();
+            }
         }
 
     }
