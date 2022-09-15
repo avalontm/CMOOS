@@ -254,7 +254,7 @@ namespace System.Desktops
             Window frm = null;
 
             Debug.WriteLine($"[Icon] {file}");
-
+           
             if (string.IsNullOrEmpty(file))
             {
                 file.Dispose();

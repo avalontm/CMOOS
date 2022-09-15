@@ -34,19 +34,10 @@ namespace System.Windows
 
         public static void DrawAll()
         {
-            for (int i = 0;  i < Childrens.Count; i++)
+            for (int i = Childrens.Count - 1; i >= 0; i--)
             {
                 if (Childrens[i].Visible)
                     Childrens[i].OnDraw();
-            }
-        }
-
-        public static void UpdateAll()
-        {
-            for (int i = 0 ; i < Childrens.Count; i++)
-            {
-                if (Childrens[i].Visible)
-                    Childrens[i].OnUpdate();
             }
         }
 
@@ -56,6 +47,15 @@ namespace System.Windows
             {
                 if (Childrens[i].Visible)
                     Childrens[i].OnInput();
+            }
+        }
+
+        public static void UpdateAll()
+        {
+            for (int i = 0; i < Childrens.Count; i++)
+            {
+                if (Childrens[i].Visible)
+                    Childrens[i].OnUpdate();
             }
         }
 

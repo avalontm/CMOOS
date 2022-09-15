@@ -34,7 +34,7 @@ namespace System.Explorers
             int Y = BarHeight;
             string devider = "/";
 
-            List<FileInfo> files = File.GetFiles(Dir);
+            List<FileInfo> files = File.GetFiles(Dir + devider);
 
             for (int i = 0; i < files.Count; i++)
             {
