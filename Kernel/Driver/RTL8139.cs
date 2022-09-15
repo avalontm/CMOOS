@@ -6,8 +6,6 @@ using MOOS.Misc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static MOOS.INTs;
-using static MOOS.Misc.Interrupts;
 using static Native;
 
 namespace MOOS.NET
@@ -40,7 +38,7 @@ namespace MOOS.NET
             // We are handling this device
             pciCard.Claimed = true;
             // Setup interrupt handling
-            INTs.SetIrqHandler(device.InterruptLine, HandleNetworkInterrupt);
+           // INTs.SetIrqHandler(device.InterruptLine, HandleNetworkInterrupt);
             // Get IO Address from PCI Bus
             // Enable the card
             pciCard.EnableDevice();
@@ -114,7 +112,7 @@ namespace MOOS.NET
             }
             return cards;
         }
-
+        /*
         protected void HandleNetworkInterrupt(ref IRQContext aContext)
         {
             ushort cur_status = IntStatusRegister;
@@ -146,7 +144,7 @@ namespace MOOS.NET
             }
             IntStatusRegister = cur_status;
         }
-
+        */
         #region Register Access
         protected uint RBStartRegister
         {

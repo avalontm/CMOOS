@@ -60,12 +60,11 @@ namespace MOOS.NET.IPv4.UDP.DHCP
             }
 
             var packet = new DHCPPacket(rxBuffer.Dequeue().RawData);
-            Console.WriteLine($"[packet] {packet.DataLength}");
+
             if (packet.MessageType == 2) //Boot Reply
             {
                 if (packet.RawData[284] == 0x02) //Offer packet received
                 {
-                    Console.WriteLine("Offer received.");
                     return SendRequestPacket(packet.Client);
                 }
                 else if (packet.RawData[284] == 0x05 || packet.RawData[284] == 0x06) //ACK or NAK DHCP packet received
@@ -171,13 +170,15 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                     if (message)
                     {
                         Console.WriteLine("[DHCP ACK][" + NetworkDevice.Devices[i].Name + "] Packet received, applying IP configuration...");
-                        Console.WriteLine("   IP Address  : " + packet.Client.ToString());
-                        Console.WriteLine("   Subnet mask : " + packet.Subnet.ToString());
-                        Console.WriteLine("   Gateway     : " + packet.Server.ToString());
-                        Console.WriteLine("   DNS server  : " + packet.DNS.ToString());
+                        Console.WriteLine("   IP Address  : " + packet.Client);
+                        Console.WriteLine("   Subnet mask : " + packet.Subnet);
+                        Console.WriteLine("   Gateway     : " + packet.Server);
+                        Console.WriteLine("   DNS server  : " + packet.DNS);
                     }
 
                     IPConfig.Enable(NetworkDevice.Devices[i], packet.Client, packet.Subnet, packet.Server);
+
+                   
                     DNSConfig.Add(packet.DNS);
 
                     if (message)

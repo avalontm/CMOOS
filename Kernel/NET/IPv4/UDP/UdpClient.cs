@@ -1,4 +1,5 @@
 ﻿using MOOS.NET.Config;
+using MOOS.NET.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -50,25 +51,8 @@ namespace MOOS.NET.IPv4.UDP
         internal static UdpClient GetClient(ushort destPort)
         {
             UdpClient client;
-            Console.WriteLine($"[GetClient] {destPort}");
-            if (clients.ContainsKey(destPort))
-            {
-                client = clients.Values[destPort];
-                return client;
-            }
-            else
-            {
-                return null;
-            }
-            /*
-            if (clients.TryGetValue(destPort, out client))
-            {
-                return client;
-            }
-            else
-            {
-                return null;
-            }*/
+            clients.TryGetValue(destPort, out client);
+            return client;
         }
 
         /// <summary>
@@ -126,10 +110,15 @@ namespace MOOS.NET.IPv4.UDP
         /// <exception cref="ArgumentOutOfRangeException">Thrown on fatal error (contact support).</exception>
         public void Close()
         {
-            if (clients.ContainsKey((uint)localPort) == true)
+            UdpClient client;
+
+            clients.TryGetValue((uint)localPort, out client);
+
+            if(client != null)
             {
                 clients.Remove((uint)localPort);
             }
+
         }
 
         /// <summary>
@@ -197,7 +186,6 @@ namespace MOOS.NET.IPv4.UDP
         /// <exception cref="InvalidOperationException">Thrown on fatal error (contact support).</exception>
         public byte[] Receive(ref EndPoint source)
         {
-            Console.WriteLine($"[Receive] {source.Address}");
             while (rxBuffer.Count < 1) ;
 
             var packet = new UDPPacket(rxBuffer.Dequeue().RawData);
@@ -215,7 +203,6 @@ namespace MOOS.NET.IPv4.UDP
         /// <exception cref="Sys.IO.IOException">Thrown on IO error.</exception>
         public void ReceiveData(UDPPacket packet)
         {
-            Console.WriteLine($"[ReceiveData] {packet.RawData.Length}");
             rxBuffer.Enqueue(packet);
         }
 

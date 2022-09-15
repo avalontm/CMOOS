@@ -27,7 +27,6 @@ namespace MOOS.NET.IPv4
         /// <exception cref="sys.OverflowException">Thrown if packetData array length is greater than Int32.MaxValue.</exception>
         public static void IPv4Handler(byte[] packetData)
         {
-            Console.WriteLine($"[IPv4Handler] {packetData.Length}");
             var ip_packet = new IPPacket(packetData);
 
             if (ip_packet.SourceIP == null)
@@ -55,7 +54,6 @@ namespace MOOS.NET.IPv4
             }
             else if (NetworkStack.MACMap.ContainsKey(ip_packet.DestinationMAC.Hash))
             {
-                Console.WriteLine($"[DHCPHandler] {packetData.Length}");
                 DHCPPacket.DHCPHandler(packetData);
             }
         }

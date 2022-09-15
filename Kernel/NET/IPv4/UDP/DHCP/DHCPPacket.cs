@@ -40,10 +40,10 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// <exception cref="sysIO.IOException">Thrown on IO error.</exception>
         public static void DHCPHandler(byte[] packetData)
         {
-            Console.WriteLine($"[DHCPHandler] {packetData.Length}");
             var dhcp_packet = new DHCPPacket(packetData);
 
             var receiver = UdpClient.GetClient(dhcp_packet.DestinationPort);
+
             if (receiver != null)
             {
                 receiver.ReceiveData(dhcp_packet);

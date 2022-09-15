@@ -134,7 +134,6 @@ namespace MOOS.NET.IPv4.UDP.DNS
         public string ParseName(byte[] RawData, ref int index)
         {
             string url = "";
-            Console.WriteLine($"[ParseName] {RawData.Length}");
             while (RawData[index] != 0x00 && index < RawData.Length)
             {
                 byte wordlength = RawData[index];
@@ -147,7 +146,6 @@ namespace MOOS.NET.IPv4.UDP.DNS
                 url += ('.');
             }
             url = url.ToString().Remove(url.Length - 1);
-            Console.WriteLine($"[ParseName] {url}");
             index++; //End 0x00
             return url;
         }

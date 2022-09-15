@@ -20,6 +20,8 @@ using MOOS.NET.IPv4.UDP.DHCP;
 using MOOS.NET.Config;
 using System.Windows;
 using System.Desktops;
+using MOOS.NET.IPv4.TCP;
+using MOOS.NET.IPv4;
 
 unsafe class Program
 {
@@ -57,6 +59,9 @@ unsafe class Program
         Network.Initialize();
         NetworkStack.Initialize();
 
+        Thread task = new Thread(&onHandleInterrupt);
+        task.Start();
+
         if (NetworkDevice.Devices.Count > 0)
         {
             // Send a DHCP Discover packet 
@@ -67,9 +72,22 @@ unsafe class Program
             Console.WriteLine($"[MACAddress] {NetworkDevice.Devices[0].MACAddress}");
             Console.WriteLine($"[CurrentAddress] {NetworkConfiguration.CurrentAddress.ToString()}");
 
+            /*
+            TcpClient client = new TcpClient(5000);
+            client.Connect(Address.Parse("192.168.10.1"), 5000);
+            client.Send(new byte[1] {0x01});
+            */
         }
 
-        SMain();
+        //SMain();
+    }
+
+    static void onHandleInterrupt()
+    {
+        for (; ; )
+        {
+            Interrupts.Update(); //CALL HandleInterrupt
+        }
     }
 
     public static void SMain()
@@ -135,7 +153,6 @@ unsafe class Program
             WindowManager.DrawAll();
             //NotificationManager.Update();
             CursorManager.Update();
-
             //Mouse
             Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
             Framebuffer.Update();

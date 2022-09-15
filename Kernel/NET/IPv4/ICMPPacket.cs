@@ -33,7 +33,6 @@ namespace MOOS.NET.IPv4
         /// <exception cref="ArgumentException">Thrown if packetData is invalid.</exception>
         internal static void ICMPHandler(byte[] packetData)
         {
-            Debug.WriteLine("ICMP Handler called");
             var icmp_packet = new ICMPPacket(packetData);
             switch (icmp_packet.ICMPType)
             {

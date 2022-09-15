@@ -9,6 +9,47 @@ namespace Internal.Runtime.CompilerHelpers
 {
     public unsafe class StartupCodeHelpers
     {
+        [RuntimeExport("RhpLdelemaRef")]
+        public static unsafe ref object LdelemaRef(Array array, int index, IntPtr elementType)
+        {
+            //Debug.Assert(array.EEType->IsArray, "first argument must be an array");
+
+            EEType* elemType = (EEType*)elementType;
+            EEType* arrayElemType = array.EEType->RelatedParameterType;
+
+            if (!AreTypesEquivalent(elemType, arrayElemType))
+            {
+                // Throw the array type mismatch exception defined by the classlib, using the input array's EEType* 
+                // to find the correct classlib.
+
+               // throw array.EEType->GetClasslibException(ExceptionIDs.ArrayTypeMismatch);
+            }
+
+            ref object rawData = ref Unsafe.As<byte, object>(ref Unsafe.As<RawArrayData>(array).Data);
+            return ref Unsafe.Add(ref rawData, index);
+        }
+
+        [RuntimeExport("RhTypeCast_AreTypesEquivalent")]
+        public static unsafe bool AreTypesEquivalent(EEType* pType1, EEType* pType2)
+        {
+            if (pType1 == pType2)
+                return true;
+
+            if (pType1->IsCloned)
+                pType1 = pType1->CanonicalEEType;
+
+            if (pType2->IsCloned)
+                pType2 = pType2->CanonicalEEType;
+
+            if (pType1 == pType2)
+                return true;
+
+            if (pType1->IsParameterizedType && pType2->IsParameterizedType)
+                return AreTypesEquivalent(pType1->RelatedParameterType, pType2->RelatedParameterType) && pType1->ParameterizedTypeShape == pType2->ParameterizedTypeShape;
+
+            return false;
+        }
+
         [RuntimeExport("RhUnbox2")]
         public static unsafe ref byte RhUnbox2(EEType* pUnboxToEEType, object obj)
         {

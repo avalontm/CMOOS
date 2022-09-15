@@ -40,10 +40,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Driver\SMBIOS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\Timer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\VMwareTools.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Driver\EHCI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Driver\EHCI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\HID.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Driver\HUB.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Driver\AMDPCNetII.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Driver\HUB.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Driver\AMDPCNetII.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FS\Disk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FS\FATFS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FS\FileSystem.cs" />
@@ -74,32 +74,29 @@
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Threading.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\VendorID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\WAV.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Misc\USB.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Misc\USB.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SMP.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSE.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)stdio.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)stdlib.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VHD.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Driver\PCIDevice.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)IO\IOPort.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Memory\ManagedMemoryBlock.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Memory\MemoryBlock.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)Memory\MemoryOperations.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)INTs.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)IOGroup\Network\AMDPCNetIIIOGroup.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)IOGroup\IOGroup.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)IOGroup\PCI.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)IOGroup\PIC.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\ARP\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\Config\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\TCP\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\UDP\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\UDP\DNS\*.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\UDP\DHCP\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)NET\README.md" />
+    <Compile Include="$(MSBuildThisFileDirectory)Driver\PCIDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\IOPort.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Memory\ManagedMemoryBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Memory\MemoryBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Memory\MemoryOperations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INTs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOGroup\Network\AMDPCNetIIIOGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOGroup\IOGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOGroup\PCI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOGroup\PIC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\ARP\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\Config\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\TCP\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\UDP\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\UDP\DNS\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\IPv4\UDP\DHCP\*.cs" />
   </ItemGroup>
 </Project>

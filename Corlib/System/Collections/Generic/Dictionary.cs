@@ -62,6 +62,13 @@ namespace System.Collections.Generic
             base.Dispose();
         }
 
+        public bool TryGetValue(TKey key, out TValue client)
+        {
+            int index = Keys.IndexOf(key);
+            client = Values[index];
+            return index != -1;
+        }
+
         public List<TKey> Keys;
         public List<TValue> Values;
     }

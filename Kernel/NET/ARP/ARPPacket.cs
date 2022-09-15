@@ -43,12 +43,12 @@ namespace MOOS.NET.ARP
         internal static void ARPHandler(byte[] packetData)
         {
             ARPPacket arp_packet = new ARPPacket(packetData);
-            Console.WriteLine("Received ARP Packet");
-            Console.WriteLine(arp_packet.ToString());
+
             if (arp_packet.Operation == 0x01)
             {
                 if ((arp_packet.HardwareType == 1) && (arp_packet.ProtocolType == 0x0800))
                 {
+                   // Console.WriteLine($"[Received ARP Packet] {arp_packet.ProtocolType}");
                     ARPRequest_Ethernet arp_request = new ARPRequest_Ethernet(packetData);
                     if (arp_request.SenderIP == null)
                     {
@@ -76,7 +76,6 @@ namespace MOOS.NET.ARP
                 {
                     ARPReply_Ethernet arp_reply = new ARPReply_Ethernet(packetData);
                     Console.WriteLine("Received ARP Reply");
-                    Console.WriteLine(arp_reply.ToString());
                     Console.WriteLine("ARP Reply Recvd from " + arp_reply.SenderIP.ToString());
                     ARPCache.Update(arp_reply.SenderIP, arp_reply.SenderMAC);
 

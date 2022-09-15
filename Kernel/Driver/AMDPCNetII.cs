@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Common;
 using System.Diagnostics;
 using System.Text;
-using static MOOS.INTs;
 using static MOOS.Misc.Interrupts;
 
 namespace MOOS.Driver
@@ -28,6 +27,7 @@ namespace MOOS.Driver
         protected Queue<byte[]> mTransmitBuffer;
         private int mNextTXDesc;
 
+        static AMDPCNetII instance;
         public AMDPCNetII(PCIDevice device) : base()
         {
             if (device == null)
@@ -100,36 +100,37 @@ namespace MOOS.Driver
             // Setup our Receive and Transmit Queues
             mTransmitBuffer = new Queue<byte[]>();
             mRecvBuffer = new Queue<byte[]>();
-       
-            INTs.SetIrqHandler(device.InterruptLine, HandleNetworkInterrupt);
+
+            instance = this;
+           // INTs.SetIrqHandler(device.InterruptLine, HandleNetworkInterrupt);
+            Interrupts.EnableInterrupt(device.InterruptLine, &OnInterrupt);
         }
 
-        protected void HandleNetworkInterrupt(ref IRQContext aContext)
+        public static void OnInterrupt()
         {
-            Console.WriteLine("[HandleNetworkInterrupt]");
-            uint cur_status = StatusRegister;
+            uint cur_status = instance.StatusRegister;
 
             if ((cur_status & 0x100) != 0)
             {
-                mInitDone = true;
+                instance.mInitDone = true;
             }
             if ((cur_status & 0x200) != 0)
             {
-                if (mTransmitBuffer.Count > 0)
+                if (instance.mTransmitBuffer.Count > 0)
                 {
-                    byte[] data = mTransmitBuffer.Peek();
-                    if (SendBytes(ref data) == true)
+                    byte[] data = instance.mTransmitBuffer.Peek();
+                    if (instance.SendBytes(ref data) == true)
                     {
-                        mTransmitBuffer.Dequeue();
+                        instance.mTransmitBuffer.Dequeue();
                     }
                 }
             }
             if ((cur_status & 0x400) != 0)
             {
-                ReadRawData();
+                instance.ReadRawData();
             }
 
-            StatusRegister = cur_status;
+            instance.StatusRegister = cur_status;
             PIC.EoiSlave();
         }
 
@@ -237,7 +238,6 @@ namespace MOOS.Driver
         /// <exception cref="OverflowException">Thrown if length is bigger than Int32.MaxValue.</exception>
         public override bool QueueBytes(byte[] buffer, int offset, int length)
         {
-            Console.WriteLine($"[QueueBytes] {length}");
             byte[] data = new byte[length];
             for (int b = 0; b < length; b++)
             {
@@ -334,7 +334,6 @@ namespace MOOS.Driver
 
         private void ReadRawData()
         {
-            Console.WriteLine($"[ReadRawData]");
             uint status;
             ushort recv_size;
             byte[] recv_data;

@@ -133,7 +133,6 @@ namespace MOOS.NET
         /// <exception cref="OverflowException">Thrown on fatal error (contact support).</exception>
         public static void HandlePacket(byte[] packetData)
         {
-            Console.WriteLine($"[HandlePacket] {packetData.Length}");
             if (packetData == null)
             {
                 Console.WriteLine("Error packet data null");

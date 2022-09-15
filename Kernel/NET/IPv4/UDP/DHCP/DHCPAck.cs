@@ -30,7 +30,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         {
             base.InitFields();
 
-            for(int i =0; i < Options.Count; i++)
+            for (int i =0; i < Options.Count; i++)
             {
                 if (Options[i].Type == 1) //Mask
                 {
