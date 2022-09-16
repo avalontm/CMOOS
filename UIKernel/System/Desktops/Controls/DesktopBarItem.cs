@@ -10,9 +10,6 @@ namespace System.Desktops.Controls
 {
     public class DesktopBarItem : DesktopControl
     {
-        bool _isFocus;
-        bool _clicked;
-
         public DesktopBarItem()
         {
             Width = 32;
@@ -24,7 +21,12 @@ namespace System.Desktops.Controls
         {
             base.Update();
 
-            int minWidth = (WindowManager.font.MeasureString(Content) + 10);
+            int minWidth = 10;
+
+            if (!string.IsNullOrEmpty(Content))
+            {
+                minWidth = (WindowManager.font.MeasureString(Content) + 10);
+            }
 
             if (Width == 0 || Width < minWidth)
             {
@@ -35,41 +37,46 @@ namespace System.Desktops.Controls
             {
                 if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
                 {
-                    _isFocus = true;
-
                     if (Command != null && Command != null)
                     {
-                        if (!_clicked)
+                        if (Control.Clicked)
                         {
-                            _clicked = true;
-
                             Command.Execute.Invoke(CommandParameter);
                         }
                     }
                 }
             }
 
-            if (Control.MouseButtons == MouseButtons.None)
-            {
-                _clicked = false;
-            }
         }
 
         public override void Draw()
         {
             base.Draw();
 
-
             switch (HorizontalAlignment)
             {
                 case HorizontalAlignment.Left:
-                    WindowManager.font.DrawString(X + ((Width / 2) - (WindowManager.font.MeasureString(Content) / 2)), Y + (WindowManager.font.FontSize / 2), Content, Foreground.Value);
+                    if (!string.IsNullOrEmpty(Content))
+                    {
+                        WindowManager.font.DrawString(X + ((Width / 2) - (WindowManager.font.MeasureString(Content) / 2)), Y + (WindowManager.font.FontSize / 2), Content, Foreground.Value);
+                    }
+                    if (Icon != null)
+                    {
+                        Framebuffer.Graphics.DrawImage(X + ((Width / 2) - (Icon.Width / 2)), Y+5, Icon);
+                    }
                     break;
                 case HorizontalAlignment.Center:
                     //Nothing
                     break;
                 case HorizontalAlignment.Right:
-                    WindowManager.font.DrawString((Framebuffer.Graphics.Width - X) - ((Width / 2) + (WindowManager.font.MeasureString(Content) / 2)), Y + (WindowManager.font.FontSize / 2), Content, Foreground.Value);
+                    if (!string.IsNullOrEmpty(Content))
+                    {
+                        WindowManager.font.DrawString((Framebuffer.Graphics.Width - X) - ((Width / 2) + (WindowManager.font.MeasureString(Content) / 2)), Y + (WindowManager.font.FontSize / 2), Content, Foreground.Value);
+                    }
+                    if (Icon != null)
+                    {
+                        Framebuffer.Graphics.DrawImage((Framebuffer.Graphics.Width - X) - ((Width / 2) + (Icon.Width / 2)), Y + 5, Icon);
+                    }
                     break;
             }
          

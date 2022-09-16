@@ -223,14 +223,22 @@ namespace MOOS.NET.IPv4.TCP
                     Console.WriteLine("Client must be connected before receiving data.");
                     return null;
                 }
+                Native.Hlt();
             }
 
             var packet = StateMachine.rxBuffer.Dequeue();
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;
 
-            var tmp = StateMachine.Data;
-            StateMachine.Data = null;
+            byte[] tmp = new byte[StateMachine.Data.Length];
+
+            for (int i = 0; i < tmp.Length; i++)
+            {
+                tmp[i] = StateMachine.Data[i];
+            }
+
+            StateMachine.Data.Dispose();
+
             return tmp;
         }
 

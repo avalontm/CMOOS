@@ -52,7 +52,7 @@ namespace System.Desktops
             Cursor = new PNG(File.ReadAllBytes("sys/media/Cursor.png"));
             CursorMoving = new PNG(File.ReadAllBytes("sys/media/Grab.png"));
             //Image from unsplash
-            Wallpaper = new PNG(File.ReadAllBytes("sys/media/Wallpaper1.png"));
+            Wallpaper = new PNG(File.ReadAllBytes("sys/media/Wallpaper.png"));
 
             BitFont.Initialize();
 
@@ -73,15 +73,23 @@ namespace System.Desktops
             barMenu = new List<DesktopControl>();
             icons = new List<IconFile>();
             BuiltInAppNames = new Dictionary<int, string>();
-
+            
             //Bar Elements
             DesktopBarItem item = new DesktopBarItem();
-            item.Content = "Desktop";
+            item.Icon = DesktopIcons.StartIcon.ResizeImage(24, 24);
             item.X = 0;
             item.Y = 0;
             item.Command = new ICommand(onItemDesktop);
             barMenu.Add(item);
 
+            DesktopBarItem wlan = new DesktopBarItem();
+            wlan.HorizontalAlignment = Windows.HorizontalAlignment.Right;
+            wlan.X = 64;
+            wlan.Y = 0;
+            wlan.Icon = DesktopIcons.WLanIcon.ResizeImage(24,24);
+            wlan.Command = new ICommand(onItemWlan);
+            barMenu.Add(wlan);
+            
             DesktopBarClock clock = new DesktopBarClock();
             clock.HorizontalAlignment = Windows.HorizontalAlignment.Right;
             clock.X = 5;
@@ -142,11 +150,16 @@ namespace System.Desktops
 
         }
 
+        static void onItemWlan(object obj)
+        {
+           
+        }
+
         static void onLoadIcons()
         {
             int BarHeight = bar.Height + 5;
             int Devide = 60;
-            int X = 5;
+            int X = 30;
             int Y = BarHeight;
             string devider = "/";
 

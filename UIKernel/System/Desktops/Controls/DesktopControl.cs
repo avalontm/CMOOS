@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -15,6 +16,7 @@ namespace System.Desktops.Controls
         public int Height { set; get; }
         public string Name { set; get; }
         public string Content { set; get; }
+        public Image Icon { set; get; }
         public Brush Background { set; get; }
         public Brush Foreground { set; get; }
         public HorizontalAlignment HorizontalAlignment { set; get; }

@@ -2,9 +2,10 @@
 {
     public abstract unsafe class Encoding
     {
-        public static Encoding UTF8;
-        public static Encoding ASCII;
+        public static UTF8Encoding UTF8;
+        public static ASCIIEncoding ASCII;
 
+        public abstract string GetString(byte[] bytes);
         public abstract string GetString(byte* ptr);
 
         public byte[] GetBytes(string s)
@@ -13,5 +14,17 @@
             for (int i = 0; i < buffer.Length; i++) buffer[i] = (byte)s[i];
             return buffer;
         }
+        /*
+        public string GetString(byte[] bytes)
+        {
+            string response = string.Empty;
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                response += (char)bytes[i];
+            }
+
+            return response;
+        }*/
     }
 }

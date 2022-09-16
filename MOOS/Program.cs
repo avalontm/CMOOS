@@ -22,6 +22,8 @@ using System.Windows;
 using System.Desktops;
 using MOOS.NET.IPv4.TCP;
 using MOOS.NET.IPv4;
+using MOOS.NET.ARP;
+using System.Net.Http;
 
 unsafe class Program
 {
@@ -63,6 +65,9 @@ unsafe class Program
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             xClient.SendDiscoverPacket();
+
+           // HttpClient http = new HttpClient("192.168.1.113", 5000);
+           // Console.WriteLine($"[HttpClient1] {http.GetAsync("moos")}");
         }
     
         SMain();

@@ -34,6 +34,7 @@ namespace MOOS.NET.IPv4
         internal static void ICMPHandler(byte[] packetData)
         {
             var icmp_packet = new ICMPPacket(packetData);
+            Debug.WriteLine("[ICMPHandler]" + icmp_packet.ICMPType);
             switch (icmp_packet.ICMPType)
             {
                 case 0:
@@ -94,8 +95,7 @@ namespace MOOS.NET.IPv4
         /// <param name="seq">SEQ.</param>
         /// <param name="icmpDataSize">Data size.</param>
         /// <exception cref="ArgumentException">Thrown if RawData is invalid or null.</exception>
-        internal ICMPPacket(Address source, Address dest, byte type, byte code, ushort id, ushort seq, ushort icmpDataSize)
-            : base(icmpDataSize, 1, source, dest, 0x00)
+        internal ICMPPacket(Address source, Address dest, byte type, byte code, ushort id, ushort seq, ushort icmpDataSize): base(icmpDataSize, 1, source, dest, 0x00)
         {
             RawData[DataOffset] = type;
             RawData[DataOffset + 1] = code;

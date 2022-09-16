@@ -140,6 +140,7 @@ namespace MOOS.NET
             }
 
             ushort etherType = (ushort)((packetData[12] << 8) | packetData[13]);
+
             switch (etherType)
             {
                 case 0x0806:

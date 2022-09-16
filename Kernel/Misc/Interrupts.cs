@@ -53,14 +53,5 @@ namespace MOOS.Misc
                 if (INTs[i].IRQ == irq) INTs[i].Handler();
             }
         }
-
-        public static unsafe void Update()
-        {
-            for (int i = 0; i < INTs.Count; i++)
-            {
-                INTs[i].Handler();
-            }
-        }
-
     }
 }

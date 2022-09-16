@@ -14,12 +14,15 @@ namespace System.Desktops
         public static PNG FolderIcon { get; set; }
         public static PNG DoomIcon { get; set; }
         public static Image AppTerminal { set; get; }
+        public static Image WLanIcon { set; get; }
         public static Image FileIcon { get;  set; }
         public static PNG ImageIcon { get; set; }
         public static PNG GameIcon { get; set; }
+        public static Image StartIcon { get; set; }
 
         public static void Initialize()
         {
+            StartIcon = new PNG(File.Instance.ReadAllBytes("sys/media/Start.png"));
             FileIcon = new PNG(File.ReadAllBytes("sys/media/file.png"));
             ImageIcon = new PNG(File.ReadAllBytes("sys/media/Image.png"));
             GameIcon = new PNG(File.ReadAllBytes("sys/media/Game.png"));
@@ -29,6 +32,7 @@ namespace System.Desktops
             FolderIcon = new PNG(File.ReadAllBytes("sys/media/folder.png"));
             DoomIcon = new PNG(File.ReadAllBytes("sys/media/Doom1.png"));
             AppTerminal = new PNG(File.Instance.ReadAllBytes("sys/media/Terminal.png"));
+            WLanIcon = new PNG(File.Instance.ReadAllBytes("sys/media/Wlan.png"));
         }
     }
 }

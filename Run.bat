@@ -42,6 +42,16 @@ if "%2" equ "qemu" (
 		pause
 		exit
 	)
+	) else if "%2" equ "vbox" (
+	if exist "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" (
+		"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" "startvm" "MOOS"
+	) else if exist "C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe" (
+		"C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe" "startvm" "MOOS"
+	) else (
+		echo "Please install VirtualBox in order to Run MOOS!"
+		pause
+		exit
+	)
 ) else (
 	:error
 	echo "Invalid parameters, do not running this batch file manually!" 

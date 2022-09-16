@@ -63,8 +63,7 @@ namespace MOOS.NET.ARP
                         Console.WriteLine("ARP Request Recvd from " + arp_request.SenderIP.ToString());
                         NetworkDevice nic = NetworkStack.AddressMap[arp_request.TargetIP.Hash];
 
-                        ARPReply_Ethernet reply =
-                            new ARPReply_Ethernet(nic.MACAddress, arp_request.TargetIP, arp_request.SenderMAC, arp_request.SenderIP);
+                        ARPReply_Ethernet reply = new ARPReply_Ethernet(nic.MACAddress, arp_request.TargetIP, arp_request.SenderMAC, arp_request.SenderIP);
 
                         nic.QueueBytes(reply.RawData);
                     }

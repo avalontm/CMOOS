@@ -75,6 +75,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Misc\VendorID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\WAV.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\USB.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NET\Http\HttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SMP.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSE.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)stdio.cs" />

@@ -223,7 +223,7 @@ namespace MOOS.NET.IPv4.TCP
                 {
                     Connections.RemoveAt(i);
 
-                    Console.WriteLine("Connection removed!");
+                    Console.WriteLine("Connection Closed");
                     return;
                 }
             }
@@ -281,8 +281,6 @@ namespace MOOS.NET.IPv4.TCP
         /// <exception cref="Sys.IO.IOException">Thrown on IO error.</exception>
         public void ReceiveData(TCPPacket packet)
         {
-            Console.WriteLine("[" + table[(int)Status] + "] " + packet.ToString());
-
             if (Status == Status.CLOSED)
             {
                 //DO NOTHING
@@ -654,14 +652,15 @@ if (packet.PSH)
             Status = Status.TIME_WAIT;
 
             //TODO: Calculate time value
-            PIT.Wait(300);
+            //PIT.Wait(300);
+            ACPITimer.Sleep(300);
             Status = Status.CLOSED;
         }
 
         /// <summary>
         /// Wait for new TCP connection status.
         /// </summary>
-        internal bool WaitStatus(Status status, int timeout)
+        public bool WaitStatus(Status status, int timeout)
         {
             int second = 0;
             int _deltaT = 0;
@@ -713,7 +712,6 @@ if (packet.PSH)
         /// </summary>
         private void SendPacket(TCPPacket packet)
         {
-            Console.WriteLine($"[SendPacket] {packet.DataLength}");
             OutgoingBuffer.AddPacket(packet);
             NetworkStack.Update();
 

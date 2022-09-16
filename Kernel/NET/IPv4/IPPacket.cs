@@ -8,6 +8,12 @@ using System.Diagnostics;
 
 namespace MOOS.NET.IPv4
 {
+    public enum IPv4Protocol
+    {
+        ICMP = 1,
+        TCP = 6,
+        UDP = 17,
+    }
     /// <summary>
     /// IPPacket class. See also: <seealso cref="EthernetPacket"/>.
     /// </summary>
@@ -37,7 +43,7 @@ namespace MOOS.NET.IPv4
 
             ARPCache.Update(ip_packet.SourceIP, ip_packet.SourceMAC);
 
-            if ((NetworkStack.AddressMap.ContainsKey(ip_packet.DestinationIP.Hash) == true) || (ip_packet.DestinationIP.address[3] == 255))
+            if (NetworkStack.AddressMap.ContainsKey(ip_packet.DestinationIP.Hash) || (ip_packet.DestinationIP.address[3] == 255))
             {
                 switch (ip_packet.Protocol)
                 {

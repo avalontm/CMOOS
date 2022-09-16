@@ -207,12 +207,11 @@ namespace System.Windows
             if (Content != null)
             {
                 Content.Dispose();
-                Content = null;
             }
 
             if (WindowManager.Childrens.Remove(this))
             {
-                this.Dispose();
+               // this.Dispose();
             }
         }
 

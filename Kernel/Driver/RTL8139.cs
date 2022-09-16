@@ -69,7 +69,7 @@ namespace MOOS.NET
             instance = this;
 
             // Setup interrupt handling
-            Pollings.AddPoll(&OnInterrupt);
+            Interrupts.EnableInterrupt((byte)(0x20 + device.IRQ), &OnInterrupt);
         }
 
         internal static void OnInterrupt()

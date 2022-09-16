@@ -21,10 +21,9 @@ namespace MOOS
             Interrupts.EnableInterrupt(0x20);
         }
 
-        public static void Wait(int vms)
+        public static void Wait(int Microseconds)
         {
-            Debug.WriteLine("NotImplementedException");
-            return;
+            ACPITimer.Sleep(Microseconds);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace MOOS.NET
                     if (PCI.Devices[i].VendorID == (ushort)VendorID.AMD && PCI.Devices[i].DeviceID == (ushort)DeviceID.PCNETII)
                     {
 
-                        Console.WriteLine("NIC IRQ: " + PCI.Devices[i].InterruptLine);
+                        Console.WriteLine("NIC IRQ: " + PCI.Devices[i].IRQ);
 
                         var AMDPCNetIIDevice = new AMDPCNetII(PCI.Devices[i]);
 

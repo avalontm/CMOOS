@@ -63,7 +63,7 @@ namespace MOOS.Driver
             PrefBase16Upper = 48, PrefLimit16upper = 50,
             CapabilityPointer = 52, Reserved = 53,
             ExpROMBaseAddress = 56,
-            InterruptLine = 60, InterruptPIN = 61, BridgeControl = 62
+            IRQ = 60, InterruptPIN = 61, BridgeControl = 62
         };
         #endregion
 
@@ -106,7 +106,6 @@ namespace MOOS.Driver
 
         protected static IOGroup.PCI IO = new IOGroup.PCI();
 
-        public byte InterruptLine { get; private set; }
         public PCICommand Command { get { return (PCICommand)ReadRegister16(0x04); } set { WriteRegister16(0x04, (ushort)value); } }
 
         /// <summary>
@@ -143,7 +142,7 @@ namespace MOOS.Driver
             HeaderType = (PCIHeaderType)ReadRegister8((byte)Config.HeaderType);
             BIST = (PCIBist)ReadRegister8((byte)Config.BIST);
             InterruptPIN = (PCIInterruptPIN)ReadRegister8((byte)Config.InterruptPIN);
-            InterruptLine = ReadRegister8((byte)Config.InterruptLine);
+            IRQ = ReadRegister8((byte)Config.IRQ);
 
             if ((uint)VendorID == 0xFF && (uint)DeviceID == 0xFFFF)
             {

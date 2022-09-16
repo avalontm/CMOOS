@@ -463,7 +463,41 @@ namespace System
 
             return result;
         }
-    }
+
+        public string Trim()
+        {
+            string result = "";
+
+            for (int i = 0; i < this.Length; i++)
+            {
+                if (!char.IsWhiteSpace(this[i]))
+				{
+					result += this[i];
+				}
+            }
+
+            return result;
+        }
+
+		public string Replace(string a, string b)
+		{
+            string result = "";
+
+            for (int i = 0; i < this.Length; i++)
+            {
+				if (this[i] == a[0])
+				{
+					this[i] = b[0];
+                }
+                if (!char.IsWhiteSpace(this[i]))
+                {
+                    result += this[i];
+                }
+            }
+
+            return result;
+        }
+	}
 }
 /*
  * TODO: .NET String

@@ -104,7 +104,7 @@ namespace MOOS.Driver
             instance = this;
 
             // Setup interrupt handling
-            Pollings.AddPoll(&OnInterrupt);
+            Interrupts.EnableInterrupt((byte)(0x20 + device.IRQ), &OnInterrupt);
         }
 
         internal static void OnInterrupt()
@@ -147,7 +147,7 @@ namespace MOOS.Driver
                 AMDPCNetII nic = new AMDPCNetII((PCIDevice)device);
 
                 Console.WriteLine("Found AMD PCNetII NIC on PCI " + device.Bus + ":" + device.Slot + ":" + device.Function);
-                Console.WriteLine("NIC IRQ: " + device.InterruptLine);
+                Console.WriteLine("NIC IRQ: " + device.IRQ);
                 Console.WriteLine("NIC MAC Address: " + nic.MACAddress.ToString());
             }
         }
