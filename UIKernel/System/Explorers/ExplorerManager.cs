@@ -28,10 +28,10 @@ namespace System.Explorers
         public override void OnLoaded()
         {
             base.OnLoaded();
-            int BarHeight = 5;
+            int BarHeight = 40;
             int Devide = 60;
-            int X = 5;
-            int Y = BarHeight;
+            int X = 20;
+            int Y = 60 + BarHeight;
             string devider = "/";
 
             List<FileInfo> files = File.GetFiles(Dir + devider);

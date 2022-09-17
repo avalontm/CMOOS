@@ -134,6 +134,7 @@ namespace MOOS.GUI
             }
 
             int y = Devide * 2;
+
             for (int i = 0; i < Notifications.Count; i++)
             {
                 var v = Notifications[i];

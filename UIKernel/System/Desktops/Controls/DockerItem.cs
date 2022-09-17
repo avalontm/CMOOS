@@ -34,9 +34,8 @@ namespace System.Desktops.Controls
         Image IconZoom;
 
         bool _isFocus;
-        bool _clicked;
 
-        double zoom = 1.5;
+        double zoom = 1.1;
         bool isZoom;
 
         public DockerItem()
@@ -58,10 +57,8 @@ namespace System.Desktops.Controls
                 {
                     if (Command != null && Command != null)
                     {
-                        if (!_clicked)
+                        if (Control.Clicked)
                         {
-                            _clicked = true;
-
                             Command.Execute.Invoke(CommandParameter);
                         }
                     }
@@ -70,11 +67,6 @@ namespace System.Desktops.Controls
             else
             {
                 _isFocus = false;
-            }
-
-            if (Control.MouseButtons == MouseButtons.None)
-            {
-                _clicked = false;
             }
 
         }
@@ -102,8 +94,14 @@ namespace System.Desktops.Controls
 
             if (Icon != null)
             {
-                //Framebuffer.Graphics.FillRectangle((X - (Width/2)), Y, Width, Height , Background.Value);
-                Framebuffer.Graphics.DrawImage((X - (Icon.Width / 3)),( (Y + (Height / 2)) - (Icon.Height/2)), Icon, true);
+                if (_isFocus)
+                {
+                    Framebuffer.Graphics.DrawImage((X - (Icon.Width / 3)), ((Y + (Height / 2)) - ((Icon.Height / 2) + 5)), Icon, true);
+                }
+                else
+                {
+                    Framebuffer.Graphics.DrawImage((X - (Icon.Width / 3)), ((Y + (Height / 2)) - (Icon.Height / 2)), Icon, true);
+                }
             }
         }
     }

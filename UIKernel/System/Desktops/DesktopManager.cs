@@ -2,6 +2,8 @@
 using MOOS.FS;
 using MOOS.GUI;
 using MOOS.Misc;
+using MOOS.NET;
+using MOOS.NET.Config;
 using System;
 using System.Collections.Generic;
 using System.Desktops.Controls;
@@ -79,7 +81,7 @@ namespace System.Desktops
             item.Icon = DesktopIcons.StartIcon.ResizeImage(24, 24);
             item.X = 0;
             item.Y = 0;
-            item.Command = new ICommand(onItemDesktop);
+            item.Command = new ICommand(onItemStart);
             barMenu.Add(item);
 
             DesktopBarItem wlan = new DesktopBarItem();
@@ -99,7 +101,7 @@ namespace System.Desktops
 
             onLoadIcons();
 
-            //Lockscreen.Initialize();
+            Lockscreen.Initialize();
 
             #region Animation of entering Desktop
             Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper, false);
@@ -150,16 +152,11 @@ namespace System.Desktops
 
         }
 
-        static void onItemWlan(object obj)
-        {
-           
-        }
-
         static void onLoadIcons()
         {
-            int BarHeight = bar.Height + 5;
+            int BarHeight = bar.Height + 10;
             int Devide = 60;
-            int X = 30;
+            int X = 20;
             int Y = BarHeight;
             string devider = "/";
 
@@ -377,9 +374,18 @@ namespace System.Desktops
             }
         }
 
-        static void onItemDesktop(object obj)
+        static void onItemStart(object obj)
         {
-            Debug.WriteLine($"[Item] Desktop");
+            NotificationManager.Add(new Nofity($"Welcome to MOOS", NotificationLevel.None));
+
+        }
+
+        static void onItemWlan(object obj)
+        {
+            if (NetworkDevice.Devices.Count > 0)
+            {
+                NotificationManager.Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} ({NetworkConfiguration.CurrentAddress.ToString()})", NotificationLevel.None));
+            }
         }
 
         static void onItemClock(object obj)
@@ -415,13 +421,13 @@ namespace System.Desktops
             {
                 icons[i].Draw();
             }
-            if (docker != null)
-            {
-                docker.Draw();
-            }
             if (bar != null)
             {
                 bar.Draw();
+            }
+            if (docker != null)
+            {
+                docker.Draw();
             }
             for (int i = 0; i < barMenu.Count; i++)
             {

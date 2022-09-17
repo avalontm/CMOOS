@@ -31,13 +31,13 @@ namespace System.Desktops.Controls
         public IconFile()
         {
             Foreground = Brushes.White;
-            FocusBackground = Brushes.CornflowerBlue;
+            FocusBackground = new Brush(Color.ToArgb(50,100,150,240));
 
             icon = DesktopIcons.FileIcon;
             Width = DesktopIcons.FileIcon.Width;
             Height = DesktopIcons.FileIcon.Height;
-            offsetX = 5;
-            offsetY = 5;
+            offsetX = 10;
+            offsetY = 10;
         }
 
         public void onLoadIconExtention()
@@ -52,7 +52,7 @@ namespace System.Desktops.Controls
             {
                 icon = DesktopIcons.DoomIcon;
             }
-            else if (ext.EndsWith(".exe"))
+            else if (ext.EndsWith(".mue"))
             {
                 icon = DesktopIcons.AppIcon;
             }
@@ -152,11 +152,15 @@ namespace System.Desktops.Controls
 
             if (_isFocus)
             {
-                Framebuffer.Graphics.FillRectangle((_x- offsetX), (_y - offsetY), (Width + (offsetX*2)), (Height + ((WindowManager.font.FontSize * 3) + offsetX)), FocusBackground.Value);
+                Framebuffer.Graphics.AFillRectangle((_x- offsetX), (_y - offsetY), (Width + (offsetX*2)), (Height + ((WindowManager.font.FontSize * 3) + offsetX)), FocusBackground.Value);
             }
 
             Framebuffer.Graphics.DrawImage(_x, _y, icon, true);
-            WindowManager.font.DrawString(_x, (_y + icon.Height), Content, Foreground.Value, (icon.Width + 8), (WindowManager.font.FontSize * 3));
+
+            if (!string.IsNullOrEmpty(Content))
+            {
+                WindowManager.font.DrawString(_x, (_y + icon.Height), Content, Foreground.Value, (icon.Width + 8), (WindowManager.font.FontSize * 3));
+            }
         }
     }
 }
