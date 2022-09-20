@@ -14,7 +14,7 @@ namespace System.Net.Http
         int port;
         string host;
         int timeout = 10;
-        public HttpClient(string host, int port)
+        public HttpClient(string host, int port = 80)
         {
             this.address = Address.Parse(host);
             this.port = port;
@@ -71,7 +71,7 @@ namespace System.Net.Http
             string lenght = result.Substring(0, index).Trim();
             http.Lenght = Convert.HexToDec(lenght);
             http.Content = result.Substring((lenght.Length + 2), http.Lenght + (lenght.Length + 2));
-
+            Close();
             return http;
         }
 

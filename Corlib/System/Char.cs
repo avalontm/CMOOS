@@ -4,7 +4,11 @@ namespace System
 {
 	public struct Char
 	{
-		public override string ToString()
+        public const char MaxValue = (char)0xffff;
+        public const char MinValue = (char)0;
+
+
+        public override string ToString()
 		{
 			string r = " ";
 			r._firstChar = this;
@@ -22,7 +26,18 @@ namespace System
 			return this >= 'A' && this <= 'Z' ? (char)(this + 32) : this;
 		}
 
-		public static bool IsDigit(char c)
+        public static bool IsLetter(char c)
+        {
+            /*plug
+			 * IsAscii
+			 * IsLatin1
+			 */
+            c |= ' ';
+            return c >= 'a' && c <= 'z';
+        }
+
+
+        public static bool IsDigit(char c)
 		{
 			return c >= '0' && c <= '9';
 		}
@@ -41,5 +56,29 @@ namespace System
 		{
 			return (c == ' ') || (c >= '\x0009' && c <= '\x000d') || c == '\x00a0' || c == '\x0085';
 		}
-	}
+
+        public static bool IsLetterOrDigit(char c)
+        {
+            return (IsLetter(c) || IsDigit(c));
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Char)
+            {
+                return (this == ((Char)obj));
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public bool Equals(char obj)
+        {
+            return this == obj;
+        }
+    }
 }
