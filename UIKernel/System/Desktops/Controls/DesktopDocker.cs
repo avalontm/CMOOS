@@ -55,7 +55,12 @@ namespace System.Desktops.Controls
 
         void onTermina(object obj)
         {
-            Debug.WriteLine($"[Docker] Terminal");
+            if (DesktopManager.Console == null)
+            {
+                DesktopManager.Console = new MOOS.GUI.FConsole();
+            }
+            DesktopManager.Console.ShowDialog();
+
         }
 
         void onItemsReorder()

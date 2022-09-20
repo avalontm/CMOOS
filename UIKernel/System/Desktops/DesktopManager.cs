@@ -37,6 +37,7 @@ namespace System.Desktops
         public static ICommand IconClickCommand { get; set; }
         public static ICommand IconNativeClickCommand { get; set; }
         public static ICommand IconDirectoryClickCommand { get; set; }
+        public static FConsole Console { get;  set; }
 
         public static void Initialize()
         {
