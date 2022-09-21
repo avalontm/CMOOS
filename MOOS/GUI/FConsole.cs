@@ -8,6 +8,7 @@ using MOOS.NET.IPv4;
 using MOOS.NET.IPv4.TCP;
 using MOOS.NET.IPv4.UDP.DNS;
 using System;
+using System.Collections.Generic;
 using System.Desktops;
 using System.Drawing;
 using System.Net.Http;
@@ -68,6 +69,10 @@ namespace MOOS.GUI
                 if (key.Key == System.ConsoleKey.Enter)
                 {
                     if (Cmd.Length != 0) Cmd.Length -= 1;
+
+
+                    string[] _params = GetCommand(Cmd);
+                    Cmd = _params[0];
 
                     // when a command is invoked
                     switch (Cmd)
@@ -140,9 +145,16 @@ namespace MOOS.GUI
                             }
                             else
                             {
-                                ICMPClient icmp = new ICMPClient();
-                                icmp.Connect(Address.Parse("192.168.1.34"));
-                                icmp.SendEcho();
+                                if (_params.Length <= 1)
+                                {
+                                    Console.Write("Command ping required parameters.");
+                                }
+                                else
+                                {
+                                    ICMPClient icmp = new ICMPClient();
+                                    icmp.Connect(Address.Parse(_params[1]));
+                                    icmp.SendEcho();
+                                }
                             }
                             break;
                         default:
@@ -157,6 +169,18 @@ namespace MOOS.GUI
                 }
                 else if (key.Key == System.ConsoleKey.Backspace) if (Cmd.Length != 0) Cmd.Length -= 1;
             }
+        }
+
+
+        string[] GetCommand(string cmd)
+        {
+            string[] _params = cmd.Split(' ');
+            if (_params.Length == 0)
+            {
+                _params = new string[1];
+                _params[0] = cmd;
+            }
+            return _params;
         }
 
         public override void OnDraw()
