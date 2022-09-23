@@ -65,8 +65,10 @@ unsafe class Program
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             xClient.SendDiscoverPacket();
+
+            Timer.Sleep(200);
         }
-    
+
         SMain();
     }
 

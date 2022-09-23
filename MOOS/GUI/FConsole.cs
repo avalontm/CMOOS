@@ -16,13 +16,13 @@ using System.Windows;
 
 namespace MOOS.GUI
 {
-    public class FConsole : Window
+    public class Terminal : Window
     {
         string Data;
         public Image ScreenBuf;
         string Cmd;
 
-        public FConsole()
+        public Terminal()
         {
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             this.Width = 640;
@@ -30,7 +30,7 @@ namespace MOOS.GUI
 #if Chinese
             Title = "控制台";
 #else
-            Title = "Console";
+            Title = "Terminal";
 #endif
             Cmd = string.Empty;
             Data = string.Empty;
@@ -135,7 +135,7 @@ namespace MOOS.GUI
                             {
                                 Console.WriteLine("[HttpClient] Connecting...");
                                 HttpClient http = new HttpClient("192.168.1.34", 8080);
-                                Console.WriteLine($"[Response] {http.GetAsync("api/lote/1").Lenght}");
+                                Console.WriteLine($"[Response] {http.GetAsync("api/lote/1")}");
                             }
                             break;
                         case "ping":
@@ -220,9 +220,9 @@ namespace MOOS.GUI
 
         void Console_OnWrite(char chr)
         {
-            if (DesktopManager.Console == null)
+            if (DesktopManager.Terminal == null)
             {
-                DesktopManager.Console = new FConsole();
+                DesktopManager.Terminal = new Terminal();
             }
 
             string cs = chr.ToString();
@@ -231,7 +231,7 @@ namespace MOOS.GUI
             cs.Dispose();
             cache.Dispose();
 
-            DesktopManager.Console.ShowDialog();
+            DesktopManager.Terminal.ShowDialog();
         }
     }
 }

@@ -55,11 +55,11 @@ namespace System.Desktops.Controls
 
         void onTermina(object obj)
         {
-            if (DesktopManager.Console == null)
+            if (DesktopManager.Terminal == null)
             {
-                DesktopManager.Console = new MOOS.GUI.FConsole();
+                DesktopManager.Terminal = new MOOS.GUI.Terminal();
             }
-            DesktopManager.Console.ShowDialog();
+            DesktopManager.Terminal.ShowDialog();
 
         }
 
