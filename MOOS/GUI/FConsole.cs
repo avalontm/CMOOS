@@ -19,7 +19,6 @@ namespace MOOS.GUI
     public class Terminal : Window
     {
         string Data;
-        public Image ScreenBuf;
         string Cmd;
 
         public Terminal()
@@ -34,23 +33,20 @@ namespace MOOS.GUI
 #endif
             Cmd = string.Empty;
             Data = string.Empty;
-            ScreenBuf = new Image(640, 320);
             Background = new System.Windows.Media.Brush(0xFFFFFFFF);
             Foreground = new System.Windows.Media.Brush(0xFF000000);
-
-            Rebind();
-            Console.WriteLine("Type help to get information!");
-
-            Console.OnWrite += Console_OnWrite;
-        }
-
-        public void Rebind()
-        {
             Keyboard.OnKeyChanged += Keyboard_OnKeyChanged;
+            Console.OnWrite += Console_OnWrite;
+
         }
 
         void Keyboard_OnKeyChanged(ConsoleKeyInfo key)
         {
+            if (!this.Focus)
+            {
+                return;
+            }
+
             if (key.KeyState == System.ConsoleKeyState.Pressed)
             {
                 if (key.Key == System.ConsoleKey.Backspace)
@@ -62,9 +58,7 @@ namespace MOOS.GUI
                 {
                     Console_OnWrite(key.KeyChar);
 
-                    string cs = key.KeyChar.ToString();
-                    Cmd += cs;
-                    cs.Dispose();
+                    Cmd += key.KeyChar.ToString();
                 }
 
                 if (key.Key == System.ConsoleKey.Enter)
@@ -94,6 +88,8 @@ namespace MOOS.GUI
                             Console.WriteLine("reboot: reboot this computer");
                             Console.WriteLine("cpu: list cpu information");
                             Console.WriteLine("hello: issue kernel panic");
+                            Console.WriteLine("net: network api test");
+                            Console.WriteLine("ping: network");
                             break;
 
                         case "shutdown":
@@ -143,7 +139,6 @@ namespace MOOS.GUI
                                     Console.WriteLine("[HttpClient] Connecting...");
                                     HttpClient http = new HttpClient("192.168.1.34", 8080);
                                     Console.WriteLine($"[Response] {http.GetAsync("api/lote/1")}");
-                                    Thread.Sleep(1000);
                                 }).Start();
                             }
                             break;
@@ -175,7 +170,6 @@ namespace MOOS.GUI
                     }
 
                     //Clear Command
-                    Cmd.Dispose();
                     Cmd = string.Empty;
                 }
             }
@@ -184,11 +178,21 @@ namespace MOOS.GUI
 
         string[] ParseCommand(string cmd)
         {
-            string[] _params = cmd.Split(' ');
-            if (_params.Length == 0)
+            string[] _params = null;
+
+            if (string.IsNullOrEmpty(cmd))
             {
                 _params = new string[1];
                 _params[0] = cmd;
+            }
+            else
+            {
+                _params = cmd.Split(' ');
+                if (_params == null || _params.Length == 0)
+                {
+                    _params = new string[1];
+                    _params[0] = cmd;
+                }
             }
             return _params;
         }
@@ -231,11 +235,10 @@ namespace MOOS.GUI
             {
                 DesktopManager.Terminal = new Terminal();
                 DesktopManager.Terminal.ShowDialog();
+                Console.WriteLine("Type help to get information!");
             }
 
-            string cs = chr.ToString();
-            Data += cs;
-            cs.Dispose();
+            Data += chr.ToString();
         }
     }
 }

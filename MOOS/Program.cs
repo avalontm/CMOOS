@@ -24,6 +24,7 @@ using MOOS.NET.IPv4.TCP;
 using MOOS.NET.IPv4;
 using MOOS.NET.ARP;
 using System.Net.Http;
+using MOOS.NET.IPv4.UDP.DNS;
 
 unsafe class Program
 {
@@ -67,9 +68,21 @@ unsafe class Program
             xClient.SendDiscoverPacket();
 
             Timer.Sleep(200);
+
+            Console.WriteLine($"[DNS] github.com");
+            DnsClient dns = new DnsClient();
+
+            for(int i=0; i < DNSConfig.DNSNameservers.Count; i++)
+            {
+                dns.Connect(DNSConfig.DNSNameservers[i]); //DNS Server address
+                break;
+            }
+
+            dns.SendAsk("github.com");
+            Console.WriteLine($"[DNS] {dns.Receive().ToString()}");
         }
 
-        SMain();
+        //SMain();
     }
 
     public static void SMain()
