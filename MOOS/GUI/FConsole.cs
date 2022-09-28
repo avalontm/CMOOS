@@ -35,6 +35,8 @@ namespace MOOS.GUI
             Cmd = string.Empty;
             Data = string.Empty;
             ScreenBuf = new Image(640, 320);
+            Background = new System.Windows.Media.Brush(0xFFFFFFFF);
+            Foreground = new System.Windows.Media.Brush(0xFF000000);
 
             Rebind();
             Console.WriteLine("Type help to get information!");
@@ -61,21 +63,24 @@ namespace MOOS.GUI
                     Console_OnWrite(key.KeyChar);
 
                     string cs = key.KeyChar.ToString();
-                    string cache1 = Cmd;
-                    Cmd = cache1 + cs;
-                    cache1.Dispose();
+                    Cmd += cs;
+                    cs.Dispose();
                 }
 
                 if (key.Key == System.ConsoleKey.Enter)
                 {
+                    if (string.IsNullOrEmpty(Cmd))
+                    {
+                        return;
+                    }
+
                     if (Cmd.Length != 0) Cmd.Length -= 1;
 
-
-                    string[] _params = GetCommand(Cmd);
+                    string[] _params = ParseCommand(Cmd);
                     Cmd = _params[0];
 
                     // when a command is invoked
-                    switch (Cmd)
+                    switch (Cmd.ToLower())
                     {
                         case "hello":
                             int a = 1;
@@ -133,9 +138,13 @@ namespace MOOS.GUI
                             }
                             else
                             {
-                                Console.WriteLine("[HttpClient] Connecting...");
-                                HttpClient http = new HttpClient("192.168.1.34", 8080);
-                                Console.WriteLine($"[Response] {http.GetAsync("api/lote/1")}");
+                                Thread thread = new Thread(() =>
+                                {
+                                    Console.WriteLine("[HttpClient] Connecting...");
+                                    HttpClient http = new HttpClient("192.168.1.34", 8080);
+                                    Console.WriteLine($"[Response] {http.GetAsync("api/lote/1")}");
+                                    Thread.Sleep(1000);
+                                }).Start();
                             }
                             break;
                         case "ping":
@@ -151,28 +160,29 @@ namespace MOOS.GUI
                                 }
                                 else
                                 {
-                                    ICMPClient icmp = new ICMPClient();
-                                    icmp.Connect(Address.Parse(_params[1]));
-                                    icmp.SendEcho();
+                                    Thread thread = new Thread(() =>
+                                    {
+                                        ICMPClient icmp = new ICMPClient();
+                                        icmp.Connect(Address.Parse(_params[1]));
+                                        icmp.SendEcho();
+                                    }).Start();
                                 }
                             }
                             break;
                         default:
-                            Console.Write("No such command: \"");
-                            Console.Write(Cmd);
-                            Console.WriteLine("\"");
+                            Console.WriteLine($"No such command: \"{Cmd}\"");
                             break;
                     }
 
+                    //Clear Command
                     Cmd.Dispose();
                     Cmd = string.Empty;
                 }
-                else if (key.Key == System.ConsoleKey.Backspace) if (Cmd.Length != 0) Cmd.Length -= 1;
             }
         }
 
 
-        string[] GetCommand(string cmd)
+        string[] ParseCommand(string cmd)
         {
             string[] _params = cmd.Split(' ');
             if (_params.Length == 0)
@@ -186,15 +196,12 @@ namespace MOOS.GUI
         public override void OnDraw()
         {
             base.OnDraw();
-            int w = 0, h = 0;
 
             string s0 = "_";
             string s1 = Data + s0;
-            //BitFont.DrawString("Song", 0xFFFFFFFF, s, X, Y, Width);
             DrawString(X, Y, s1, Height, Width);
             s0.Dispose();
             s1.Dispose();
-            //BitFont.DrawString("Song", 0xFFFFFFFF, Data, X, Y, 640);
         }
 
         public void DrawString(int X, int Y, string Str, int HeightLimit = -1, int LineLimit = -1)
@@ -202,7 +209,7 @@ namespace MOOS.GUI
             int w = 0, h = 0;
             for (int i = 0; i < Str.Length; i++)
             {
-                w += WindowManager.font.DrawChar(Framebuffer.Graphics, X + w, Y + h, Str[i]);
+                w += WindowManager.font.DrawChar(Framebuffer.Graphics, X + w, Y + h, Str[i], Foreground.Value);
                 if (w + WindowManager.font.FontSize > LineLimit && LineLimit != -1 || Str[i] == '\n')
                 {
                     w = 0;
@@ -211,7 +218,7 @@ namespace MOOS.GUI
                     if (HeightLimit != -1 && h >= HeightLimit)
                     {
                         Framebuffer.Graphics.Copy(X, Y, X, Y + WindowManager.font.FontSize, LineLimit, HeightLimit - (WindowManager.font.FontSize));
-                        Framebuffer.Graphics.FillRectangle(X, Y + HeightLimit - (WindowManager.font.FontSize), LineLimit, WindowManager.font.FontSize, 0xFF222222);
+                        Framebuffer.Graphics.FillRectangle(X, Y + HeightLimit - (WindowManager.font.FontSize), LineLimit, WindowManager.font.FontSize, Background.Value);
                         h -= WindowManager.font.FontSize;
                     }
                 }
@@ -223,15 +230,12 @@ namespace MOOS.GUI
             if (DesktopManager.Terminal == null)
             {
                 DesktopManager.Terminal = new Terminal();
+                DesktopManager.Terminal.ShowDialog();
             }
 
             string cs = chr.ToString();
-            string cache = Data;
-            Data = cache + cs;
+            Data += cs;
             cs.Dispose();
-            cache.Dispose();
-
-            DesktopManager.Terminal.ShowDialog();
         }
     }
 }
