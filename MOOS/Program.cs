@@ -68,21 +68,14 @@ unsafe class Program
             xClient.SendDiscoverPacket();
 
             Timer.Sleep(200);
-
-            Console.WriteLine($"[DNS] github.com");
-            DnsClient dns = new DnsClient();
-
-            for(int i=0; i < DNSConfig.DNSNameservers.Count; i++)
-            {
-                dns.Connect(DNSConfig.DNSNameservers[i]); //DNS Server address
-                break;
-            }
-
-            dns.SendAsk("github.com");
-            Console.WriteLine($"[DNS] {dns.Receive().ToString()}");
+            /*
+            HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
+            var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
+            Console.WriteLine($"[RESPONSE] {response.Status}");
+            */
         }
 
-        //SMain();
+        SMain();
     }
 
     public static void SMain()
