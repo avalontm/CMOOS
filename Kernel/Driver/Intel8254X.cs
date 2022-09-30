@@ -1,43 +1,59 @@
 //Reference: https://www.intel.com/content/dam/doc/manual/pci-pci-x-family-gbe-controllers-software-dev-manual.pdf
 
+using MOOS.IO;
+using MOOS.Memory;
 using MOOS.Misc;
 using MOOS.NET;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static MOOS.Misc.MMIO;
 
-/*
+
 namespace MOOS.Driver
 {
-    public unsafe class Intel8254X : NIC
+    public unsafe class Intel8254X : NetworkDevice
     {
-        public static uint BAR0;
-        public static uint RXDescs;
-        public static uint TXDescs;
+        public uint RXDescs;
+        public uint TXDescs;
 
-        public static byte[] MAC;
-        public static int IRQ;
+        public int IRQ;
 
-        public static bool FullDuplex
+        protected PCIDevice pciCard;
+        protected MACAddress mac;
+        protected bool mInitDone;
+        protected ManagedMemoryBlock rxBuffer;
+        protected int rxBufferOffset;
+        protected ushort capr;
+        protected Queue<byte[]> mRecvBuffer;
+        protected Queue<byte[]> mTransmitBuffer;
+        private int mNextTXDesc;
+        const ushort RxBufferSize = 32768;
+
+        static Intel8254X Instance;
+
+        private uint Base;
+
+        public bool FullDuplex
         {
             get
             {
-                return (ReadRegister(8) & (1 << 0)) != 0;
+                return (rxBuffer.Read32(8) & (1 << 0)) != 0;
             }
         }
-        public static int Speed
+        public int Speed
         {
             get
             {
-                if ((ReadRegister(8) & (3 << 6)) == 0)
+                if ((rxBuffer.Read32(8) & (3 << 6)) == 0)
                 {
                     return 10;
                 }
-                if ((ReadRegister(8) & (2 << 6)) != 0)
+                if ((rxBuffer.Read32(8) & (2 << 6)) != 0)
                 {
                     return 1000;
                 }
-                if ((ReadRegister(8) & (1 << 6)) != 0)
+                if ((rxBuffer.Read32(8) & (1 << 6)) != 0)
                 {
                     return 100;
                 }
@@ -45,16 +61,19 @@ namespace MOOS.Driver
             }
         }
 
-        public static void Initialize()
+        public Intel8254X()
         {
-            PCIDevice device = null;
+            Init();
+        }
+
+        public void Init()
+        {
+            PCIDevice device =null;
 
             for (int i = 0; i < PCI.Devices.Count; i++)
             {
-                if (
-                     PCI.Devices[i] != null &&
-                     PCI.Devices[i].VendorID == 0x8086 &&
-                     (
+                if (PCI.Devices[i] != null && PCI.Devices[i].VendorID == 0x8086 && 
+                    (
                         PCI.Devices[i].DeviceID == 0x1000 || //Intel82542
                         PCI.Devices[i].DeviceID == 0x1001 || //Intel82543GC
                         PCI.Devices[i].DeviceID == 0x1004 || //Intel82543GC
@@ -156,66 +175,79 @@ namespace MOOS.Driver
                 }
             }
 
-            if (device == null) return;
+            if (device == null)
+            {
+                //throw new ArgumentException("PCI Device is null. Unable to get Realtek 8139 card");
+                Console.WriteLine("PCI Device is null. Unable to get Intel 8254X card");
+                return;
+            }
 
             Console.WriteLine("[Intel8254X] Intel 8254X Series Gigabit Ethernet Controller Found");
-            device.WriteRegister(0x04, 0x04 | 0x02 | 0x01);
+            rxBuffer.Write32(0x04, 0x04 | 0x02 | 0x01);
 
-            BAR0 = (uint)(device.Bar0 & (~0xF));
+            Base = device.BaseAddressBar[0].BaseAddress;
             Console.Write("[Intel8254X] BAR0: 0x");
-            Console.WriteLine(((ulong)BAR0).ToStringHex());
+            Console.WriteLine(((ulong)Base).ToStringHex());
 
-            WriteRegister(0x14, 0x1);
+            // Get a receive buffer and assign it to the card
+            rxBuffer = new ManagedMemoryBlock(RxBufferSize + 2048 + 16, 4);
+            RBStartRegister = (uint)rxBuffer.Offset;
+            // Setup receive Configuration
+            RecvConfigRegister = 0xF381;
+            // Setup Transmit Configuration
+            TransmitConfigRegister = 0x3000300;
+            // Setup Interrupts
+            IntMaskRegister = 0x7F;
+            IntStatusRegister = 0xFFFF;
+            // Setup our Receive and Transmit Queues
+            mRecvBuffer = new Queue<byte[]>();
+            mTransmitBuffer = new Queue<byte[]>();
+
+            //Do a software reset
+            SoftwareReset();
+
+            rxBuffer.Write32(0x14, 0x1);
             bool HasEEPROM = false;
             for (int i = 0; i < 1024; i++)
             {
-                if ((ReadRegister(0x14) & 0x10) != 0)
+                if ((rxBuffer.Read32(0x14) & 0x10) != 0)
                 {
                     HasEEPROM = true;
                     break;
                 }
             }
 
-            MAC = new byte[6];
-
             //Must be set
             if (!HasEEPROM)
             {
-                MAC[0] = In8((byte*)(BAR0 + 0x5400));
-                MAC[1] = In8((byte*)(BAR0 + 0x5401));
-                MAC[2] = In8((byte*)(BAR0 + 0x5402));
-                MAC[3] = In8((byte*)(BAR0 + 0x5403));
-                MAC[4] = In8((byte*)(BAR0 + 0x5404));
-                MAC[5] = In8((byte*)(BAR0 + 0x5405));
+                mac = new MACAddress( new byte[] {
+                    In8((byte*)(Base + 0x5400)),
+                    In8((byte*)(Base + 0x5401)),
+                    In8((byte*)(Base + 0x5402)),
+                    In8((byte*)(Base + 0x5403)),
+                    In8((byte*)(Base + 0x5404)),
+                    In8((byte*)(Base + 0x5405))
+                });
                 Console.WriteLine("[Intel8254X] This controller has no EEPROM");
             }
             else
             {
-                MAC[0] = (byte)(ReadROM(0) & 0xFF);
-                MAC[1] = (byte)(ReadROM(0) >> 8);
-                MAC[2] = (byte)(ReadROM(1) & 0xFF);
-                MAC[3] = (byte)(ReadROM(1) >> 8);
-                MAC[4] = (byte)(ReadROM(2) & 0xFF);
-                MAC[5] = (byte)(ReadROM(2) >> 8);
+                mac = new MACAddress(new byte[] {
+                    (byte)(ReadROM(0) & 0xFF),
+                    (byte)(ReadROM(0) >> 8),
+                    (byte)(ReadROM(1) & 0xFF),
+                    (byte)(ReadROM(1) >> 8),
+                    (byte)(ReadROM(2) & 0xFF),
+                    (byte)(ReadROM(2) >> 8)
+                });
                 Console.WriteLine("[Intel8254X] EEPROM on this controller");
             }
 
-            Console.Write("[Intel8254X] MAC:");
-            Console.Write(((ulong)MAC[0]).ToStringHex());
-            Console.Write(":");
-            Console.Write(((ulong)MAC[1]).ToStringHex());
-            Console.Write(":");
-            Console.Write(((ulong)MAC[2]).ToStringHex());
-            Console.Write(":");
-            Console.Write(((ulong)MAC[3]).ToStringHex());
-            Console.Write(":");
-            Console.Write(((ulong)MAC[4]).ToStringHex());
-            Console.Write(":");
-            Console.WriteLine(((ulong)MAC[5]).ToStringHex());
+            Console.WriteLine($"[Intel8254X] MAC: {mac}");
 
             Linkup();
             for (int i = 0; i < 0x80; i++)
-                WriteRegister((ushort)(0x5200 + i * 4), 0);
+                rxBuffer.Write32((ushort)(0x5200 + i * 4), 0);
 
             Console.Write("[Intel8254X] IRQ: ");
             Console.WriteLine(((ulong)device.IRQ).ToString("x2"));
@@ -223,8 +255,8 @@ namespace MOOS.Driver
             RXInitialize();
             TXInitialize();
 
-            WriteRegister(0x00D0, 0x1F6DC);
-            ReadRegister(0xC0);
+            rxBuffer.Write32(0x00D0, 0x1F6DC);
+            rxBuffer.Read32(0xC0);
 
             Console.Write("[Intel8254X] Speed: ");
             Console.Write(((ulong)Speed).ToString());
@@ -233,15 +265,23 @@ namespace MOOS.Driver
             Console.WriteLine(FullDuplex?"Yes":"No");
             Console.WriteLine("[Intel8254X] Configuration Done");
 
-            Network.MAC = MAC;
             Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
             IRQ = device.IRQ;
 
-            //Literally instance
-            Network.Controller = new Intel8254X();
+            Instance = this;
+
         }
 
-        private static void TXInitialize()
+        void Linkup()
+        {
+            rxBuffer.Write32(0, rxBuffer.Read32(0) | 0x40);
+
+            Console.Write("[Intel8254X] Waiting for network connection ");
+            Console.Wait((uint*)(Base + 0x08), 1);
+            Console.WriteLine();
+        }
+
+        void TXInitialize()
         {
             TXDescs = (uint)Allocator.Allocate(8 * 16);
 
@@ -252,19 +292,19 @@ namespace MOOS.Driver
                 desc->cmd = 0;
             }
 
-            WriteRegister(0x3800, TXDescs);
-            WriteRegister(0x3804, 0);
-            WriteRegister(0x3808, 8 * 16);
-            WriteRegister(0x3810, 0);
-            WriteRegister(0x3818, 0);
+            rxBuffer.Write32(0x3800, TXDescs);
+            rxBuffer.Write32(0x3804, 0);
+            rxBuffer.Write32(0x3808, 8 * 16);
+            rxBuffer.Write32(0x3810, 0);
+            rxBuffer.Write32(0x3818, 0);
 
-            WriteRegister(0x0400, (1 << 1) | (1 << 3));
+            rxBuffer.Write32(0x0400, (1 << 1) | (1 << 3));
         }
 
         public static uint RXCurr = 0;
         public static uint TXCurr = 0;
 
-        private static void RXInitialize()
+        void RXInitialize()
         {
             RXDescs = (uint)Allocator.Allocate(32 * 16);
 
@@ -275,14 +315,14 @@ namespace MOOS.Driver
                 desc->status = 0;
             }
 
-            WriteRegister(0x2800, RXDescs);
-            WriteRegister(0x2804, 0);
+            rxBuffer.Write32(0x2800, RXDescs);
+            rxBuffer.Write32(0x2804, 0);
 
-            WriteRegister(0x2808, 32 * 16);
-            WriteRegister(0x2810, 0);
-            WriteRegister(0x2818, 32 - 1);
+            rxBuffer.Write32(0x2808, 32 * 16);
+            rxBuffer.Write32(0x2810, 0);
+            rxBuffer.Write32(0x2818, 32 - 1);
 
-            WriteRegister(0x0100,
+            rxBuffer.Write32(0x0100,
                      (1 << 1) |
                      (1 << 2) |
                      (1 << 3) |
@@ -318,32 +358,22 @@ namespace MOOS.Driver
             public ushort special;
         }
 
-        public static void WriteRegister(ushort Reg, uint Val)
-        {
-            Out32((uint*)(BAR0 + Reg), Val);
-        }
-
-        public static uint ReadRegister(ushort Reg)
-        {
-            return In32((uint*)(BAR0 + Reg));
-        }
-
-        public static ushort ReadROM(uint Addr)
+        ushort ReadROM(uint Addr)
         {
             uint Temp;
-            WriteRegister(0x14, 1 | (Addr << 8));
-            while (((Temp = ReadRegister(0x14)) & 0x10) == 0) ;
+            rxBuffer.Write32(0x14, 1 | (Addr << 8));
+            while (((Temp = rxBuffer.Read32(0x14)) & 0x10) == 0) ;
             return ((ushort)((Temp >> 16) & 0xFFFF));
         }
 
         public static void OnInterrupt()
         {
-            uint Status = ReadRegister(0xC0);
+            uint Status = Instance.rxBuffer.Read32(0xC0);
 
             if ((Status & 0x04) != 0)
             {
                 //Console.WriteLine("[Intel8254X] Linking Up");
-                Linkup();
+                //Linkup();
             }
             if ((Status & 0x10) != 0)
             {
@@ -354,39 +384,315 @@ namespace MOOS.Driver
             {
                 //Console.WriteLine("[Intel8254X] Packet Received");
                 uint _RXCurr = RXCurr;
-                RXDesc* desc = (RXDesc*)(RXDescs + (RXCurr * 16));
+                RXDesc* desc = (RXDesc*)(Instance.RXDescs + (RXCurr * 16));
                 while ((desc->status & 0x1) != 0)
                 {
                     //Ethernet.HandlePacket((byte*)desc->addr, desc->length);
                     //desc->addr;
                     desc->status = 0;
                     RXCurr = (RXCurr + 1) % 32;
-                    WriteRegister(0x2818, _RXCurr);
+                    Instance.rxBuffer.Write32(0x2818, _RXCurr);
                 }
             }
         }
 
-        private static void Linkup()
+        private static byte Inb(uint port)
         {
-            WriteRegister(0, ReadRegister(0) | 0x40);
-
-            Console.Write("[Intel8254X] Waiting for network connection ");
-            Console.Wait((uint*)(BAR0 + 0x08), 1);
-            Console.WriteLine();
+            return new IOPort((ushort)port).Byte;
+        }
+        private static void OutB(uint port, byte val)
+        {
+            new IOPort((ushort)port).Byte = val;
         }
 
-        public override void Send(byte* Buffer, int Length)
+        private static ushort Inb16(uint port)
         {
-            TXDesc* desc = (TXDesc*)(TXDescs + (TXCurr * 16));
-            Native.Movsb((void*)desc->addr, Buffer, (ulong)Length);
-            desc->length = (ushort)Length;
-            desc->cmd = (1 << 0) | (1 << 1) | (1 << 3);
-            desc->status = 0;
-
-            byte _TXCurr = (byte)TXCurr;
-            TXCurr = (TXCurr + 1) % 8;
-            WriteRegister(0x3818, TXCurr);
-            while ((desc->status & 0xff) == 0) ;
+            return new IOPort((ushort)port).Word;
         }
+        private static void Out16(uint port, ushort val)
+        {
+            new IOPort((ushort)port).Word = val;
+        }
+
+        private static uint Inb32(uint port)
+        {
+            return new IOPort((ushort)port).DWord;
+        }
+        private static void Out32(uint port, uint val)
+        {
+            new IOPort((ushort)port).DWord = val;
+        }
+
+        /*
+        public static List<RTL8139> FindAll()
+        {
+            Console.WriteLine("Scanning for Intel 8254X cards...");
+
+            List<Intel8254X> cards = new List<Intel8254X>();
+
+            for (int i = 0; i < PCI.Devices.Count; i++)
+            {
+                PCIDevice xDevice = PCI.Devices[i];
+                if ((xDevice.VendorID == 0x10EC) && (xDevice.DeviceID == 0x8139) && (xDevice.Claimed == false))
+                {
+                    Intel8254X nic = new Intel8254X(xDevice);
+                    cards.Add(nic);
+                }
+            }
+            return cards;
+        }
+        */
+        #region Register Access
+        protected uint RBStartRegister
+        {
+            get { return Inb32(Base + 0x30); }
+            set { Out32(Base + 0x30, value); }
+        }
+        internal uint RecvConfigRegister
+        {
+            get { return Inb32(Base + 0x44); }
+            set { Out32(Base + 0x44, value); }
+        }
+        internal ushort CurAddressPointerRegister
+        {
+            get { return Inb16(Base + 0x38); }
+            set { Out16(Base + 0x38, value); }
+        }
+        internal ushort CurBufferAddressRegister
+        {
+            get { return Inb16(Base + 0x3A); }
+            set { Out16(Base + 0x3A, value); }
+        }
+        internal ushort IntMaskRegister
+        {
+            get { return Inb16(Base + 0x3C); }
+            set { Out16(Base + 0x3C, value); }
+        }
+        internal ushort IntStatusRegister
+        {
+            get { return Inb16(Base + 0x3E); }
+            set { Out16(Base + 0x3E, value); }
+        }
+        internal byte CommandRegister
+        {
+            get { return Inb(Base + 0x37); }
+            set { OutB(Base + 0x37, value); }
+        }
+        protected byte MediaStatusRegister
+        {
+            get { return Inb(Base + 0x58); }
+            set { OutB(Base + 0x58, value); }
+        }
+        protected byte Config1Register
+        {
+            get { return Inb(Base + 0x52); }
+            set { OutB(Base + 0x52, value); }
+        }
+        internal uint TransmitConfigRegister
+        {
+            get { return Inb32(Base + 0x40); }
+            set { Out32(Base + 0x40, value); }
+        }
+        internal uint TransmitAddress1Register
+        {
+            get { return Inb32(Base + 0x20); }
+            set { Out32(Base + 0x20, value); }
+        }
+        internal uint TransmitAddress2Register
+        {
+            get { return Inb32(Base + 0x24); }
+            set { Out32(Base + 0x24, value); }
+        }
+        internal uint TransmitAddress3Register
+        {
+            get { return Inb32(Base + 0x28); }
+            set { Out32(Base + 0x28, value); }
+        }
+        internal uint TransmitAddress4Register
+        {
+            get { return Inb32(Base + 0x2C); }
+            set { Out32(Base + 0x2C, value); }
+        }
+        internal uint TransmitDescriptor1Register
+        {
+            get { return Inb32(Base + 0x10); }
+            set { Out32(Base + 0x10, value); }
+        }
+        internal uint TransmitDescriptor2Register
+        {
+            get { return Inb32(Base + 0x14); }
+            set { Out32(Base + 0x14, value); }
+        }
+        internal uint TransmitDescriptor3Register
+        {
+            get { return Inb32(Base + 0x18); }
+            set { Out32(Base + 0x18, value); }
+        }
+        internal uint TransmitDescriptor4Register
+        {
+            get { return Inb32(Base + 0x1C); }
+            set { Out32(Base + 0x1C, value); }
+        }
+        #endregion
+        protected bool CmdBufferEmpty
+        {
+            get { return ((CommandRegister & 0x01) == 0x01); }
+        }
+
+        #region Network Device Implementation
+        public override MACAddress MACAddress
+        {
+            get { return this.mac; }
+        }
+
+        public override bool Enable()
+        {
+            // Enable Receiving and Transmitting of data
+            CommandRegister = 0x0C;
+            while (this.Ready == false)
+            { }
+            return true;
+        }
+        public override bool Ready
+        {
+            get { return ((Config1Register & 0x20) == 0); }
+        }
+        public override bool QueueBytes(byte[] buffer, int offset, int length)
+        {
+            byte[] data = new byte[length];
+            for (int b = 0; b < length; b++)
+            {
+                data[b] = buffer[b + offset];
+            }
+            //Console.WriteLine("Try sending");
+            if (SendBytes(ref data) == false)
+            {
+                // Console.WriteLine("Queuing");
+                mTransmitBuffer.Enqueue(data);
+            }
+            return true;
+        }
+        public override bool ReceiveBytes(byte[] buffer, int offset, int max)
+        {
+            //throw new NotImplementedException();
+            Console.WriteLine("NotImplementedException");
+            return false;
+        }
+        public override byte[] ReceivePacket()
+        {
+            if (mRecvBuffer.Count < 1)
+            {
+                return null;
+            }
+            byte[] data = mRecvBuffer.Dequeue();
+            return data;
+        }
+        public override int BytesAvailable()
+        {
+            if (mRecvBuffer.Count < 1)
+            {
+                return 0;
+            }
+            return mRecvBuffer.Peek().Length;
+        }
+        public override bool IsSendBufferFull()
+        {
+            return false;
+        }
+        public override bool IsReceiveBufferFull()
+        {
+            return false;
+        }
+        public override string Name
+        {
+            get { return "Realtek 8139 Chipset NIC"; }
+        }
+
+        public override CardType CardType => CardType.Ethernet;
+
+        #endregion
+        #region Helper Functions
+        private void ReadRawData(ushort packetLen)
+        {
+            int recv_size = packetLen - 4;
+            byte[] recv_data = new byte[recv_size];
+            for (uint b = 0; b < recv_size; b++)
+            {
+                recv_data[b] = rxBuffer[(uint)(capr + 4 + b)];
+            }
+            if (DataReceived != null)
+            {
+                DataReceived(recv_data);
+            }
+            else
+            {
+                if (mRecvBuffer == null)
+                {
+                }
+                mRecvBuffer.Enqueue(recv_data);
+            }
+            capr += (ushort)((packetLen + 4 + 3) & 0xFFFFFFFC);
+            if (capr > RxBufferSize)
+            {
+                capr -= RxBufferSize;
+            }
+        }
+
+        protected void SoftwareReset()
+        {
+            Console.Write("[Intel8254X] Reseting controller...");
+
+            rxBuffer.Write32(0, 1 << 26);
+            while (BitHelpers.IsBitSet(rxBuffer.Read32(0), 26)) ;
+        }
+
+        protected bool SendBytes(ref byte[] aData)
+        {
+            int txd = mNextTXDesc++;
+            if (mNextTXDesc >= 4)
+            {
+                mNextTXDesc = 0;
+            }
+            ManagedMemoryBlock txBuffer;
+            if (aData.Length < 64)
+            {
+                txBuffer = new ManagedMemoryBlock(64);
+                for (uint b = 0; b < aData.Length; b++)
+                {
+                    txBuffer[b] = aData[b];
+                }
+            }
+            else
+            {
+                txBuffer = new ManagedMemoryBlock((uint)aData.Length);
+                for (uint i = 0; i < aData.Length; i++)
+                {
+                    txBuffer[i] = aData[i];
+                }
+            }
+            switch (txd)
+            {
+                case 0:
+                    TransmitAddress1Register = (uint)txBuffer.Offset;
+                    TransmitDescriptor1Register = txBuffer.Size;
+                    break;
+                case 1:
+                    TransmitAddress2Register = (uint)txBuffer.Offset;
+                    TransmitDescriptor2Register = txBuffer.Size;
+                    break;
+                case 2:
+                    TransmitAddress3Register = (uint)txBuffer.Offset;
+                    TransmitDescriptor3Register = txBuffer.Size;
+                    break;
+                case 3:
+                    TransmitAddress4Register = (uint)txBuffer.Offset;
+                    TransmitDescriptor4Register = txBuffer.Size;
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+        #endregion
     }
-}*/
+}

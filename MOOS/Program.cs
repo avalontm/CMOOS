@@ -75,7 +75,7 @@ unsafe class Program
             */
         }
 
-        SMain();
+        //SMain();
     }
 
     public static void SMain()

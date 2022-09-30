@@ -245,11 +245,13 @@ namespace MOOS.NET
         {
             get { return ((CommandRegister & 0x01) == 0x01); }
         }
+
         #region Network Device Implementation
         public override MACAddress MACAddress
         {
             get { return this.mac; }
         }
+
         public override bool Enable()
         {
             // Enable Receiving and Transmitting of data

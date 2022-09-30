@@ -15,6 +15,18 @@ namespace MOOS.NET
 
             Console.WriteLine("Searching for Ethernet Controllers...");
 
+            #region INTELNIC
+            var INTELNIC = new Intel8254X();
+
+            if (INTELNIC != null)
+            {
+                INTELNIC.NameID = ("eth" + NetworkDeviceID);
+                INTELNIC.Enable();
+                NetworkDeviceID++;
+            }
+            #endregion
+
+
             for (int i = 0; i < PCI.Devices.Count;i++)
             {
                 if ((PCI.Devices[i].ClassCode == 0x02) && (PCI.Devices[i].Subclass == 0x00) && // is Ethernet Controller
@@ -22,7 +34,6 @@ namespace MOOS.NET
                 {
 
                     Console.WriteLine("Found " + PCIDevice.DeviceClass.GetDeviceString(PCI.Devices[i]) + " on PCI " + PCI.Devices[i].Bus + ":" + PCI.Devices[i].Slot + ":" + PCI.Devices[i].Function);
-
                     #region PCNETII
 
                     if (PCI.Devices[i].VendorID == (ushort)VendorID.AMD && PCI.Devices[i].DeviceID == (ushort)DeviceID.PCNETII)
