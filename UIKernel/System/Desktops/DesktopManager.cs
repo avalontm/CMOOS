@@ -38,6 +38,7 @@ namespace System.Desktops
         public static ICommand IconNativeClickCommand { get; set; }
         public static ICommand IconDirectoryClickCommand { get; set; }
         public static Terminal Terminal { get;  set; }
+        public static Point LastPoint;
 
         public static void Initialize()
         {
@@ -422,6 +423,62 @@ namespace System.Desktops
             {
                 icons[i].Draw();
             }
+
+            if (Control.MouseButtons.HasFlag(MouseButtons.Left) && !WindowManager.HasWindowMoving && !WindowManager.MouseHandled)
+            {
+                if (LastPoint.X == -1 && LastPoint.Y == -1)
+                {
+                    LastPoint.X = Control.MousePosition.X;
+                    LastPoint.Y = Control.MousePosition.Y;
+                }
+                else
+                {
+                    if (Control.MousePosition.X > LastPoint.X && Control.MousePosition.Y > LastPoint.Y)
+                    {
+                        Framebuffer.Graphics.AFillRectangle(
+                            LastPoint.X,
+                            LastPoint.Y,
+                            Control.MousePosition.X - LastPoint.X,
+                            Control.MousePosition.Y - LastPoint.Y,
+                            0x7F2E86C1);
+                    }
+
+                    if (Control.MousePosition.X < LastPoint.X && Control.MousePosition.Y < LastPoint.Y)
+                    {
+                        Framebuffer.Graphics.AFillRectangle(
+                            Control.MousePosition.X,
+                            Control.MousePosition.Y,
+                            LastPoint.X - Control.MousePosition.X,
+                            LastPoint.Y - Control.MousePosition.Y,
+                            0x7F2E86C1);
+                    }
+
+                    if (Control.MousePosition.X < LastPoint.X && Control.MousePosition.Y > LastPoint.Y)
+                    {
+                        Framebuffer.Graphics.AFillRectangle(
+                            Control.MousePosition.X,
+                            LastPoint.Y,
+                            LastPoint.X - Control.MousePosition.X,
+                            Control.MousePosition.Y - LastPoint.Y,
+                            0x7F2E86C1);
+                    }
+
+                    if (Control.MousePosition.X > LastPoint.X && Control.MousePosition.Y < LastPoint.Y)
+                    {
+                        Framebuffer.Graphics.AFillRectangle(
+                            LastPoint.X,
+                            Control.MousePosition.Y,
+                            Control.MousePosition.X - LastPoint.X,
+                            LastPoint.Y - Control.MousePosition.Y,
+                            0x7F2E86C1);
+                    }
+                }
+            }
+            else
+            {
+                LastPoint.X = -1;
+                LastPoint.Y = -1;
+            }
             if (bar != null)
             {
                 bar.Draw();
@@ -434,6 +491,7 @@ namespace System.Desktops
             {
                 barMenu[i].Draw();
             }
+
         }
     }
 }

@@ -119,7 +119,6 @@ namespace MOOS.Driver
                 Console.WriteLine("[Intel8254X] EEPROM on this controller");
             }
 
-            Console.WriteLine($"[Intel8254X] MAC: {mac}");
 
             Linkup();
             for (int i = 0; i < 0x80; i++)
@@ -365,13 +364,12 @@ namespace MOOS.Driver
         internal static void OnInterrupt()
         {
             uint Status = Instance.ReadRegister(0xC0);
-            Console.WriteLine("[OnInterrupt] {Status}");
 
-            if ((Status & 0x100) != 0)
+            if ((Status & 0x04) != 0)
             {
-                Instance.mInitDone = true;
+                Console.WriteLine("[Intel8254X] Linking Up");
+                Instance.Linkup();
             }
-
             if ((Status & 0x10) != 0)
             {
                 Console.WriteLine("[Intel8254X] Good Threshold");
@@ -379,12 +377,12 @@ namespace MOOS.Driver
 
             if ((Status & 0x80) != 0)
             {
-                Console.WriteLine("[Intel8254X] Packet Received");
+                //Console.WriteLine("[Intel8254X] Packet Received");
                 uint _RXCurr = Instance.RXCurr;
                 RXDesc* desc = (RXDesc*)(Instance.RXDescs + (Instance.RXCurr * 16));
                 while ((desc->status & 0x1) != 0)
                 {
-                    //Ethernet.HandlePacket((byte*)desc->addr, desc->length);
+                    Instance.SendBytes((byte*)desc->addr, desc->length);
                     //desc->addr;
                     desc->status = 0;
                     Instance.RXCurr = (Instance.RXCurr + 1) % 32;
@@ -395,12 +393,28 @@ namespace MOOS.Driver
 
         #region Register Access
 
+        internal ushort CurAddressPointerReadRegister
+        {
+            get { return In16((ushort*)(Base + 0x38)); }
+            set { Out16((ushort*)(Base + 0x38), value); }
+        }
+
         internal ushort IntStatusRegister
         {
             get { return In16((ushort*)(Base + 0x3E)); }
             set { Out16((ushort*)(Base + 0x3E), value); }
         }
+        internal ushort CurBufferAddressRegister
+        {
+            get { return In16((ushort*)(Base + 0x3A)); }
+            set { Out16((ushort*)(Base + 0x3A), value); }
+        }
 
+        internal byte CommandRegister
+        {
+            get { return In8((byte*)(Base + 0x37)); }
+            set { Out8((byte*)(Base + 0x37), value); }
+        }
 
         internal uint TransmitAddress1Register
         {
@@ -471,13 +485,13 @@ namespace MOOS.Driver
 
         public override bool QueueBytes(byte[] buffer, int offset, int length)
         {
-            Console.WriteLine("[QueueBytes]");
+            Console.WriteLine($"[QueueBytes] {buffer.Length}");
             byte[] data = new byte[length];
             for (int b = 0; b < length; b++)
             {
                 data[b] = buffer[b + offset];
             }
-            Console.WriteLine("Try sending");
+          
             if (SendBytes(ref data) == false)
             {
                 Console.WriteLine("Queuing");
@@ -562,52 +576,45 @@ namespace MOOS.Driver
             return In32((uint*)(Base + Reg));
         }
 
+        protected bool SendBytes(byte* Buffer, ushort length)
+        {
+
+            TXDesc* desc = (TXDesc*)(TXDescs + (TXCurr * 16));
+            Native.Movsb((void*)desc->addr, Buffer, (ulong)length);
+            desc->length = (ushort)length;
+            desc->cmd = (1 << 0) | (1 << 1) | (1 << 3);
+            desc->status = 0;
+
+            byte _TXCurr = (byte)TXCurr;
+            TXCurr = (TXCurr + 1) % 8;
+            WriteRegister(0x3818, TXCurr);
+            while ((desc->status & 0xff) == 0) ;
+
+
+            return true;
+        }
+
         protected bool SendBytes(ref byte[] aData)
         {
-            Console.WriteLine("[SendBytes]");
-            int txd = mNextTXDesc++;
-            if (mNextTXDesc >= 4)
+            fixed (byte* Buffer = aData)
             {
-                mNextTXDesc = 0;
-            }
-            ManagedMemoryBlock txBuffer;
-            if (aData.Length < 64)
-            {
-                txBuffer = new ManagedMemoryBlock(64);
-                for (uint b = 0; b < aData.Length; b++)
+                for (int i = 0; i < aData.Length; i++)
                 {
-                    txBuffer[b] = aData[b];
+                    Buffer[i] = aData[i];
                 }
+
+                TXDesc* desc = (TXDesc*)(TXDescs + (TXCurr * 16));
+                Native.Movsb((void*)desc->addr, Buffer, (ulong)aData.Length);
+                desc->length = (ushort)aData.Length;
+                desc->cmd = (1 << 0) | (1 << 1) | (1 << 3);
+                desc->status = 0;
+
+                byte _TXCurr = (byte)TXCurr;
+                TXCurr = (TXCurr + 1) % 8;
+                WriteRegister(0x3818, TXCurr);
+                while ((desc->status & 0xff) == 0) ;
             }
-            else
-            {
-                txBuffer = new ManagedMemoryBlock((uint)aData.Length);
-                for (uint i = 0; i < aData.Length; i++)
-                {
-                    txBuffer[i] = aData[i];
-                }
-            }
-            switch (txd)
-            {
-                case 0:
-                    TransmitAddress1Register = (uint)txBuffer.Offset;
-                    TransmitDescriptor1Register = txBuffer.Size;
-                    break;
-                case 1:
-                    TransmitAddress2Register = (uint)txBuffer.Offset;
-                    TransmitDescriptor2Register = txBuffer.Size;
-                    break;
-                case 2:
-                    TransmitAddress3Register = (uint)txBuffer.Offset;
-                    TransmitDescriptor3Register = txBuffer.Size;
-                    break;
-                case 3:
-                    TransmitAddress4Register = (uint)txBuffer.Offset;
-                    TransmitDescriptor4Register = txBuffer.Size;
-                    break;
-                default:
-                    return false;
-            }
+
             return true;
         }
         #endregion

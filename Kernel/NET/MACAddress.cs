@@ -71,42 +71,29 @@ namespace MOOS.NET
             bytes[5] = buffer[offset + 5];
         }
 
-        public MACAddress(MACAddress m) : this(m.bytes)
-        {
-        }
-
 
         public bool IsValid()
         {
             return bytes != null && bytes.Length == 6;
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(MACAddress other)
         {
-            if (obj is MACAddress)
-            {
-                MACAddress other = (MACAddress)obj;
-                int i = 0;
-                i = bytes[0].CompareTo(other.bytes[0]);
-                if (i != 0) return i;
-                i = bytes[1].CompareTo(other.bytes[1]);
-                if (i != 0) return i;
-                i = bytes[2].CompareTo(other.bytes[2]);
-                if (i != 0) return i;
-                i = bytes[3].CompareTo(other.bytes[3]);
-                if (i != 0) return i;
-                i = bytes[4].CompareTo(other.bytes[4]);
-                if (i != 0) return i;
-                i = bytes[5].CompareTo(other.bytes[5]);
-                if (i != 0) return i;
+            int i = 0;
+            i = bytes[0].CompareTo(other.bytes[0]);
+            if (i != 0) return i;
+            i = bytes[1].CompareTo(other.bytes[1]);
+            if (i != 0) return i;
+            i = bytes[2].CompareTo(other.bytes[2]);
+            if (i != 0) return i;
+            i = bytes[3].CompareTo(other.bytes[3]);
+            if (i != 0) return i;
+            i = bytes[4].CompareTo(other.bytes[4]);
+            if (i != 0) return i;
+            i = bytes[5].CompareTo(other.bytes[5]);
+            if (i != 0) return i;
 
-                return 0;
-            }
-            else
-            {
-                Console.WriteLine("obj is not a MACAddress");
-                return -1;
-            }
+            return 0;
         }
 
         public bool Equals(MACAddress other)
@@ -178,6 +165,7 @@ namespace MOOS.NET
 
         public override string ToString()
         {
+            Console.WriteLine($"[ToString] {bytes.Length}");
             // mac address consists of 6 2chars pairs, delimited by :
             var xChars = new char[17];
             PutByte(xChars, 0, bytes[0]);

@@ -57,55 +57,57 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
-        #region NETWORK
-        //Network Config (AvalonTM)
-        Network.Initialize();
-        NetworkStack.Initialize();
+ #region NETWORK
+/*
+//Network Config (AvalonTM)
+Network.Initialize();
+NetworkStack.Initialize();
 
-        if (NetworkDevice.Devices.Count > 0)
-        {
-            //Send a DHCP Discover packet 
-            //This will automatically set the IP config after DHCP response
-            DHCPClient xClient = new DHCPClient();
-            xClient.SendDiscoverPacket();
-            Timer.Sleep(200);
-            /*
-            HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
-            var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
-            Console.WriteLine($"[RESPONSE] {response.Status}");
-            */
-        }
-        #endregion
+if (NetworkDevice.Devices.Count > 0)
+{
+    //Send a DHCP Discover packet 
+    //This will automatically set the IP config after DHCP response
+    DHCPClient xClient = new DHCPClient();
+    xClient.SendDiscoverPacket();
+    Timer.Sleep(200);
 
-        SMain();
-    }
+    HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
+    var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
+    Console.WriteLine($"[RESPONSE] {response.Status}");
 
-    public static void SMain()
-    {
-        Framebuffer.TripleBuffered = true;
+}
+*/
+#endregion
 
-        DesktopManager.Initialize();
+SMain();
+}
 
-        for (; ; )
-        {
-            Control.Update();
+public static void SMain()
+{
+Framebuffer.TripleBuffered = true;
 
-            //UIKernel
-            DesktopManager.Update();
-            WindowManager.Update();
+DesktopManager.Initialize();
 
-            CursorManager.Update();
+for (; ; )
+{
+    Control.Update();
 
-            DesktopManager.Draw();
-            WindowManager.Draw();
-            NotificationManager.Draw();
+    //UIKernel
+    DesktopManager.Update();
+    WindowManager.Update();
 
-            //Mouse
-            Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
-            Framebuffer.Update();
+    CursorManager.Update();
 
-            fpsMeter.Update();
-        }
-    }
+    DesktopManager.Draw();
+    WindowManager.Draw();
+    NotificationManager.Draw();
+
+    //Mouse
+    Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
+    Framebuffer.Update();
+
+    fpsMeter.Update();
+}
+}
 }
 
