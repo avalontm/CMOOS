@@ -42,6 +42,7 @@ unsafe class Program
      * 256 MiB - 512MiB   -> System
      * 512 MiB - ∞     -> Free to use
      */
+
     //Check out Kernel/Misc/EntryPoint.cs
     [RuntimeExport("KMain")]
     static void KMain()
@@ -56,6 +57,7 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
+        #region NETWORK
         //Network Config (AvalonTM)
         Network.Initialize();
         NetworkStack.Initialize();
@@ -65,7 +67,7 @@ unsafe class Program
             //Send a DHCP Discover packet 
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
-           // xClient.SendDiscoverPacket();
+            xClient.SendDiscoverPacket();
             Timer.Sleep(200);
             /*
             HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
@@ -73,6 +75,7 @@ unsafe class Program
             Console.WriteLine($"[RESPONSE] {response.Status}");
             */
         }
+        #endregion
 
         SMain();
     }

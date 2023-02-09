@@ -348,7 +348,7 @@ namespace System.Desktops
                 if (Audio.HasAudioDevice)
                 {
                     byte[] buffer = File.ReadAllBytes(file);
-                    WAV.Decode(buffer, out byte[] pcm);
+                    WAV.Decode(buffer, out byte[] pcm, out WAV.Header header);
                     Audio.Play(pcm);
                     pcm.Dispose();
                     buffer.Dispose();

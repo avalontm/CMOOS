@@ -1,6 +1,5 @@
 //Reference: https://www.intel.com/content/dam/doc/manual/pci-pci-x-family-gbe-controllers-software-dev-manual.pdf
 
-using MOOS.IO;
 using MOOS.Memory;
 using MOOS.Misc;
 using MOOS.NET;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static MOOS.Misc.MMIO;
-using static MOOS.Misc.Interrupts;
 
 
 namespace MOOS.Driver
@@ -23,7 +21,7 @@ namespace MOOS.Driver
         protected ushort capr;
         protected Queue<byte[]> mRecvBuffer;
         protected Queue<byte[]> mTransmitBuffer;
-       
+
         const ushort RxBufferSize = 32768;
 
         static Intel8254X Instance;
@@ -63,7 +61,7 @@ namespace MOOS.Driver
             }
         }
 
-        public Intel8254X(PCIDevice device) : base()
+        public Intel8254X(PCIDevice device)
         {
             if (device == null)
             {
@@ -159,7 +157,7 @@ namespace MOOS.Driver
         {
             for (int i = 0; i < PCI.Devices.Count; i++)
             {
-                if (PCI.Devices[i] != null && PCI.Devices[i].VendorID == 0x8086 && 
+                if (PCI.Devices[i] != null && PCI.Devices[i].VendorID == 0x8086 &&
                     (
                         PCI.Devices[i].DeviceID == 0x1000 || //Intel82542
                         PCI.Devices[i].DeviceID == 0x1001 || //Intel82543GC
@@ -396,56 +394,14 @@ namespace MOOS.Driver
         }
 
         #region Register Access
-        protected uint RBStartRegister
-        {
-            get { return In32((uint*)(Base + 0x30)); }
-            set { Out32((uint*)(Base + 0x30), value); }
-        }
-        internal uint RecvConfigRegister
-        {
-            get { return In32((uint*)(Base + 0x44)); }
-            set { Out32((uint*)(Base + 0x44), value); }
-        }
-        internal ushort CurAddressPointerRegister
-        {
-            get { return In16((ushort*)(Base + 0x38)); }
-            set { Out16((ushort*)(Base + 0x38), value); }
-        }
-        internal ushort CurBufferAddressRegister
-        {
-            get { return In16((ushort*)(Base + 0x3A)); }
-            set { Out16((ushort*)(Base + 0x3A), value); }
-        }
-        internal ushort IntMaskRegister
-        {
-            get { return In16((ushort*)(Base + 0x3C)); }
-            set { Out16((ushort*)(Base + 0x3C), value); }
-        }
+
         internal ushort IntStatusRegister
         {
             get { return In16((ushort*)(Base + 0x3E)); }
             set { Out16((ushort*)(Base + 0x3E), value); }
         }
-        internal byte CommandRegister
-        {
-            get { return In8((byte*)(Base + 0x37)); }
-            set { Out8((byte*)(Base + 0x37), value); }
-        }
-        protected byte MediaStatusRegister
-        {
-            get { return In8((byte*)(Base + 0x58)); }
-            set { Out8((byte*)(Base + 0x58), value); }
-        }
-        protected byte Config1Register
-        {
-            get { return In8((byte*)(Base + 0x52)); }
-            set { Out8((byte*)(Base + 0x52), value); }
-        }
-        internal uint TransmitConfigRegister
-        {
-            get { return In32((uint*)(Base + 0x40)); }
-            set { Out32((uint*)(Base + 0x40), value); }
-        }
+
+
         internal uint TransmitAddress1Register
         {
             get { return In32((uint*)(Base + 0x20)); }
@@ -488,10 +444,6 @@ namespace MOOS.Driver
         }
         #endregion
 
-        protected bool CmdBufferEmpty
-        {
-            get { return ((CommandRegister & 0x01) == 0x01); }
-        }
 
         #region Network Device Implementation
         public override string Name
@@ -519,15 +471,16 @@ namespace MOOS.Driver
 
         public override bool QueueBytes(byte[] buffer, int offset, int length)
         {
+            Console.WriteLine("[QueueBytes]");
             byte[] data = new byte[length];
             for (int b = 0; b < length; b++)
             {
                 data[b] = buffer[b + offset];
             }
-            //Console.WriteLine("Try sending");
+            Console.WriteLine("Try sending");
             if (SendBytes(ref data) == false)
             {
-                // Console.WriteLine("Queuing");
+                Console.WriteLine("Queuing");
                 mTransmitBuffer.Enqueue(data);
             }
             return true;
@@ -535,13 +488,13 @@ namespace MOOS.Driver
 
         public override bool ReceiveBytes(byte[] buffer, int offset, int max)
         {
-            //throw new NotImplementedException();
             Console.WriteLine("NotImplementedException");
             return false;
         }
 
         public override byte[] ReceivePacket()
         {
+            Console.WriteLine("[ReceivePacket]");
             if (mRecvBuffer.Count < 1)
             {
                 return null;
@@ -552,6 +505,7 @@ namespace MOOS.Driver
 
         public override int BytesAvailable()
         {
+            Console.WriteLine("[BytesAvailable]");
             if (mRecvBuffer.Count < 1)
             {
                 return 0;
@@ -573,6 +527,7 @@ namespace MOOS.Driver
         #region Helper Functions
         private void ReadRawData(ushort packetLen)
         {
+            Console.WriteLine("[ReadRawData]");
             int recv_size = packetLen - 4;
             byte[] recv_data = new byte[recv_size];
             for (uint b = 0; b < recv_size; b++)
@@ -609,6 +564,7 @@ namespace MOOS.Driver
 
         protected bool SendBytes(ref byte[] aData)
         {
+            Console.WriteLine("[SendBytes]");
             int txd = mNextTXDesc++;
             if (mNextTXDesc >= 4)
             {

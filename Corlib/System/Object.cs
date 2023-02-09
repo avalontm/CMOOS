@@ -7,25 +7,8 @@ namespace System
 {
     public unsafe class Object
     {
-        EEType* m_pEEType;
-        internal EEType* EEType
-        {
-            get
-            {
-                // NOTE:  if managed code can be run when the GC has objects marked, then this method is 
-                //        unsafe.  But, generically, we don't expect managed code such as this to be allowed
-                //        to run while the GC is running.
-                return m_pEEType;
-            }
-        }
-
-        internal EETypePtr EETypePtr
-        {
-            get
-            {
-                return new EETypePtr(new IntPtr(m_pEEType));
-            }
-        }
+        // The layout of object is a contract with the compiler.
+        internal unsafe EEType* EEType;
 
         [StructLayout(LayoutKind.Sequential)]
         private class RawData
@@ -40,7 +23,7 @@ namespace System
 
         internal uint GetRawDataSize()
         {
-            return m_pEEType->BaseSize - (uint)sizeof(ObjHeader) - (uint)sizeof(EEType*);
+            return EEType->BaseSize - (uint)sizeof(ObjHeader) - (uint)sizeof(EEType*);
         }
 
         // Creates a new instance of an Object.
@@ -60,7 +43,7 @@ namespace System
                 return false;
             }
 
-            switch (a.m_pEEType->ElementType)
+            switch (a.EEType->ElementType)
             {
                 case EETypeElementType.Byte:
                     return ((Byte)a == (Byte)b);
@@ -133,6 +116,8 @@ namespace System
         {
             return Unsafe.As<IntPtr, T>(ref handle);
         }
+
+        public static implicit operator IntPtr(object obj) => Unsafe.As<object, IntPtr>(ref obj);
 
         public IntPtr GetHandle()
         {

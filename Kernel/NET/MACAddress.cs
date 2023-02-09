@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MOOS.NET
@@ -108,10 +109,8 @@ namespace MOOS.NET
             }
         }
 
-        public bool Equals(MACAddress obj)
+        public bool Equals(MACAddress other)
         {
-            MACAddress other = (MACAddress)obj;
-
             return bytes[0] == other.bytes[0] &&
                 bytes[1] == other.bytes[1] &&
                 bytes[2] == other.bytes[2] &&

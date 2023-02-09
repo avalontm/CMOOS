@@ -114,9 +114,9 @@ namespace MOOS.NET.IPv4.UDP.DHCP
 
             for (int i = 0; i < NetworkDevice.Devices.Count; i++)
             {
-                Console.WriteLine($"[Device.NameID] {NetworkDevice.Devices[i].NameID}");
-                Console.WriteLine($"[Device.Name] {NetworkDevice.Devices[i].Name}");
-                Console.WriteLine($"[Device.MACAddress] {NetworkDevice.Devices[i].MACAddress}");
+                Console.WriteLine($"[NameID] {NetworkDevice.Devices[i].NameID}");
+                Console.WriteLine($"[Name] {NetworkDevice.Devices[i].Name}");
+                Console.WriteLine($"[MACAddress] {NetworkDevice.Devices[i].MACAddress}");
                 IPConfig.Enable(NetworkDevice.Devices[i], new Address(0, 0, 0, 0), new Address(0, 0, 0, 0), new Address(0, 0, 0, 0));
                 DHCPDiscover dhcp_discover = new DHCPDiscover(NetworkDevice.Devices[i].MACAddress);
 
