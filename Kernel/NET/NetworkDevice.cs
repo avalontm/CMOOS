@@ -12,7 +12,7 @@ namespace MOOS.NET
         Wireless
     }
 
-    public abstract class NetworkDevice //: IDisposable
+    public abstract class NetworkDevice
     {
         public static List<NetworkDevice> Devices { get; private set; }
 

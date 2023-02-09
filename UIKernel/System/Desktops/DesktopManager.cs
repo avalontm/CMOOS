@@ -385,7 +385,7 @@ namespace System.Desktops
         {
             if (NetworkDevice.Devices.Count > 0)
             {
-                NotificationManager.Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} ({NetworkConfiguration.CurrentAddress.ToString()})", NotificationLevel.None));
+               // NotificationManager.Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} ({NetworkConfiguration.CurrentAddress.ToString()})", NotificationLevel.None));
             }
         }
 

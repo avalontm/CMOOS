@@ -170,9 +170,29 @@ namespace MOOS.NET
             }
         }
 
+        static void PutByte(char[] aChars, int aIndex, byte aByte)
+        {
+            string xChars = "0123456789ABCDEF";
+            aChars[aIndex + 0] = xChars[(aByte >> 4) & 0xF];
+            aChars[aIndex + 1] = xChars[aByte & 0xF];
+        }
+
         public override string ToString()
         {
-            return $"{bytes[0].ToString("x2")}:{bytes[1].ToString("x2")}:{bytes[2].ToString("x2")}:{bytes[3].ToString("x2")}:{bytes[4].ToString("x2")}:{bytes[5].ToString("x2")}";
+            // mac address consists of 6 2chars pairs, delimited by :
+            var xChars = new char[17];
+            PutByte(xChars, 0, bytes[0]);
+            xChars[2] = ':';
+            PutByte(xChars, 3, bytes[1]);
+            xChars[5] = ':';
+            PutByte(xChars, 6, bytes[2]);
+            xChars[8] = ':';
+            PutByte(xChars, 9, bytes[3]);
+            xChars[11] = ':';
+            PutByte(xChars, 12, bytes[4]);
+            xChars[14] = ':';
+            PutByte(xChars, 15, bytes[5]);
+            return new string(xChars);
         }
     }
 }

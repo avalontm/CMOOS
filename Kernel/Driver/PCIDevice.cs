@@ -256,7 +256,7 @@ namespace MOOS.Driver
 
         public void WriteRegister32(byte aRegister, uint value)
         {
-            uint xAddr = GetAddressBase(Bus, Slot, Function) | ((uint)(ReadRegister(aRegister) | value));
+            uint xAddr = GetAddressBase(Bus, Slot, Function) | ((uint)(aRegister & 0xFC));
             Native.Out32(0xCF8, xAddr);
             Native.Out32(0xCFC, value);
         }

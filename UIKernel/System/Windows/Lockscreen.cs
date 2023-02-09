@@ -117,11 +117,11 @@ namespace MOOS.GUI
             _4.Dispose();
             res.Dispose();
 
-            /*
+            
             string tips = "Press W or Up Arrow to unlock";
-            WindowManager.font.DrawString((Framebuffer.Width / 2) - (WindowManager.font.MeasureString(tips) / 2), Framebuffer.Height - (Framebuffer.Height / 6), tips);
+            WindowManager.font.DrawString((Framebuffer.Width / 2) - (WindowManager.font.MeasureString(tips) / 2), Framebuffer.Height - (Framebuffer.Height / 6), tips, 0xFFFFFFFF);
             tips.Dispose();
-            */
+            
         }
     }
 }
