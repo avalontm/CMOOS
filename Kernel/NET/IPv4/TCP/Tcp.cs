@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Helpers;
 using System.Text;
 using static MOOS.Driver.EHCI;
-using static MOOS.Misc.GC;
 
 namespace MOOS.NET.IPv4.TCP
 {

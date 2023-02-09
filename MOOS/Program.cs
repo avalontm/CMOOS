@@ -66,7 +66,6 @@ unsafe class Program
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             xClient.SendDiscoverPacket();
-
             Timer.Sleep(200);
             /*
             HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
@@ -75,7 +74,7 @@ unsafe class Program
             */
         }
 
-        //SMain();
+        SMain();
     }
 
     public static void SMain()

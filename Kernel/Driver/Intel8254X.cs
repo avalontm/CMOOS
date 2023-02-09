@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static MOOS.Misc.MMIO;
+using static MOOS.Misc.Interrupts;
 
 
 namespace MOOS.Driver
@@ -16,8 +17,6 @@ namespace MOOS.Driver
     {
         public uint RXDescs;
         public uint TXDescs;
-
-        public int IRQ;
 
         protected PCIDevice pciCard;
         protected MACAddress mac;
@@ -38,22 +37,23 @@ namespace MOOS.Driver
         {
             get
             {
-                return (rxBuffer.Read32(8) & (1 << 0)) != 0;
+                return (ReadRegister(8) & (1 << 0)) != 0;
             }
         }
+
         public int Speed
         {
             get
             {
-                if ((rxBuffer.Read32(8) & (3 << 6)) == 0)
+                if ((ReadRegister(8) & (3 << 6)) == 0)
                 {
                     return 10;
                 }
-                if ((rxBuffer.Read32(8) & (2 << 6)) != 0)
+                if ((ReadRegister(8) & (2 << 6)) != 0)
                 {
                     return 1000;
                 }
-                if ((rxBuffer.Read32(8) & (1 << 6)) != 0)
+                if ((ReadRegister(8) & (1 << 6)) != 0)
                 {
                     return 100;
                 }
@@ -61,14 +61,14 @@ namespace MOOS.Driver
             }
         }
 
-        public Intel8254X()
+        public Intel8254X(PCIDevice device = null) : base()
         {
             Init();
         }
 
-        public void Init()
+        void Init()
         {
-            PCIDevice device =null;
+            PCIDevice device = null;
 
             for (int i = 0; i < PCI.Devices.Count; i++)
             {
@@ -182,35 +182,25 @@ namespace MOOS.Driver
                 return;
             }
 
-            Console.WriteLine("[Intel8254X] Intel 8254X Series Gigabit Ethernet Controller Found");
-            rxBuffer.Write32(0x04, 0x04 | 0x02 | 0x01);
+            this.pciCard = device;
+            this.pciCard.Claimed = true;
+            this.pciCard.EnableDevice();
 
-            Base = device.BaseAddressBar[0].BaseAddress;
+            Console.WriteLine("[Intel8254X] Intel 8254X Series Gigabit Ethernet Controller Found");
+            device.WriteRegister(0x04, 0x04 | 0x02 | 0x01);
+
+            Base = (uint)(device.Bar0 & (~0xF));
             Console.Write("[Intel8254X] BAR0: 0x");
             Console.WriteLine(((ulong)Base).ToStringHex());
-
-            // Get a receive buffer and assign it to the card
-            rxBuffer = new ManagedMemoryBlock(RxBufferSize + 2048 + 16, 4);
-            RBStartRegister = (uint)rxBuffer.Offset;
-            // Setup receive Configuration
-            RecvConfigRegister = 0xF381;
-            // Setup Transmit Configuration
-            TransmitConfigRegister = 0x3000300;
-            // Setup Interrupts
-            IntMaskRegister = 0x7F;
-            IntStatusRegister = 0xFFFF;
-            // Setup our Receive and Transmit Queues
-            mRecvBuffer = new Queue<byte[]>();
-            mTransmitBuffer = new Queue<byte[]>();
 
             //Do a software reset
             SoftwareReset();
 
-            rxBuffer.Write32(0x14, 0x1);
+            WriteRegister(0x14, 0x1);
             bool HasEEPROM = false;
             for (int i = 0; i < 1024; i++)
             {
-                if ((rxBuffer.Read32(0x14) & 0x10) != 0)
+                if ((ReadRegister(0x14) & 0x10) != 0)
                 {
                     HasEEPROM = true;
                     break;
@@ -247,7 +237,7 @@ namespace MOOS.Driver
 
             Linkup();
             for (int i = 0; i < 0x80; i++)
-                rxBuffer.Write32((ushort)(0x5200 + i * 4), 0);
+                WriteRegister((ushort)(0x5200 + i * 4), 0);
 
             Console.Write("[Intel8254X] IRQ: ");
             Console.WriteLine(((ulong)device.IRQ).ToString("x2"));
@@ -255,8 +245,8 @@ namespace MOOS.Driver
             RXInitialize();
             TXInitialize();
 
-            rxBuffer.Write32(0x00D0, 0x1F6DC);
-            rxBuffer.Read32(0xC0);
+            WriteRegister(0x00D0, 0x1F6DC);
+            ReadRegister(0xC0);
 
             Console.Write("[Intel8254X] Speed: ");
             Console.Write(((ulong)Speed).ToString());
@@ -265,16 +255,29 @@ namespace MOOS.Driver
             Console.WriteLine(FullDuplex?"Yes":"No");
             Console.WriteLine("[Intel8254X] Configuration Done");
 
-            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
-            IRQ = device.IRQ;
+            // Get a receive buffer and assign it to the card
+            rxBuffer = new ManagedMemoryBlock(2048);
+
+            // Setup our Receive and Transmit Queues
+            mRecvBuffer = new Queue<byte[]>();
+            mTransmitBuffer = new Queue<byte[]>();
 
             Instance = this;
 
+            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
+        }
+
+        void SoftwareReset()
+        {
+            Console.WriteLine("[Intel8254X] Reseting controller...");
+
+            WriteRegister(0, 1 << 26);
+            while (BitHelpers.IsBitSet(ReadRegister(0), 26)) ;
         }
 
         void Linkup()
         {
-            rxBuffer.Write32(0, rxBuffer.Read32(0) | 0x40);
+            WriteRegister(0, ReadRegister(0) | 0x40);
 
             Console.Write("[Intel8254X] Waiting for network connection ");
             Console.Wait((uint*)(Base + 0x08), 1);
@@ -292,13 +295,13 @@ namespace MOOS.Driver
                 desc->cmd = 0;
             }
 
-            rxBuffer.Write32(0x3800, TXDescs);
-            rxBuffer.Write32(0x3804, 0);
-            rxBuffer.Write32(0x3808, 8 * 16);
-            rxBuffer.Write32(0x3810, 0);
-            rxBuffer.Write32(0x3818, 0);
+            WriteRegister(0x3800, TXDescs);
+            WriteRegister(0x3804, 0);
+            WriteRegister(0x3808, 8 * 16);
+            WriteRegister(0x3810, 0);
+            WriteRegister(0x3818, 0);
 
-            rxBuffer.Write32(0x0400, (1 << 1) | (1 << 3));
+            WriteRegister(0x0400, (1 << 1) | (1 << 3));
         }
 
         public static uint RXCurr = 0;
@@ -315,14 +318,14 @@ namespace MOOS.Driver
                 desc->status = 0;
             }
 
-            rxBuffer.Write32(0x2800, RXDescs);
-            rxBuffer.Write32(0x2804, 0);
+            WriteRegister(0x2800, RXDescs);
+            WriteRegister(0x2804, 0);
 
-            rxBuffer.Write32(0x2808, 32 * 16);
-            rxBuffer.Write32(0x2810, 0);
-            rxBuffer.Write32(0x2818, 32 - 1);
+            WriteRegister(0x2808, 32 * 16);
+            WriteRegister(0x2810, 0);
+            WriteRegister(0x2818, 32 - 1);
 
-            rxBuffer.Write32(0x0100,
+            WriteRegister(0x0100,
                      (1 << 1) |
                      (1 << 2) |
                      (1 << 3) |
@@ -361,28 +364,29 @@ namespace MOOS.Driver
         ushort ReadROM(uint Addr)
         {
             uint Temp;
-            rxBuffer.Write32(0x14, 1 | (Addr << 8));
-            while (((Temp = rxBuffer.Read32(0x14)) & 0x10) == 0) ;
+            WriteRegister(0x14, 1 | (Addr << 8));
+            while (((Temp = ReadRegister(0x14)) & 0x10) == 0) ;
             return ((ushort)((Temp >> 16) & 0xFFFF));
         }
 
-        public static void OnInterrupt()
+        internal static void OnInterrupt()
         {
-            uint Status = Instance.rxBuffer.Read32(0xC0);
+            uint Status = Instance.ReadRegister(0xC0);
+            Console.WriteLine("[OnInterrupt] {Status}");
 
-            if ((Status & 0x04) != 0)
+            if ((Status & 0x100) != 0)
             {
-                //Console.WriteLine("[Intel8254X] Linking Up");
-                //Linkup();
+                Instance.mInitDone = true;
             }
+
             if ((Status & 0x10) != 0)
             {
-                //Console.WriteLine("[Intel8254X] Good Threshold");
+                Console.WriteLine("[Intel8254X] Good Threshold");
             }
 
             if ((Status & 0x80) != 0)
             {
-                //Console.WriteLine("[Intel8254X] Packet Received");
+                Console.WriteLine("[Intel8254X] Packet Received");
                 uint _RXCurr = RXCurr;
                 RXDesc* desc = (RXDesc*)(Instance.RXDescs + (RXCurr * 16));
                 while ((desc->status & 0x1) != 0)
@@ -391,147 +395,101 @@ namespace MOOS.Driver
                     //desc->addr;
                     desc->status = 0;
                     RXCurr = (RXCurr + 1) % 32;
-                    Instance.rxBuffer.Write32(0x2818, _RXCurr);
+                    Instance.WriteRegister(0x2818, _RXCurr);
                 }
             }
         }
 
-        private static byte Inb(uint port)
-        {
-            return new IOPort((ushort)port).Byte;
-        }
-        private static void OutB(uint port, byte val)
-        {
-            new IOPort((ushort)port).Byte = val;
-        }
-
-        private static ushort Inb16(uint port)
-        {
-            return new IOPort((ushort)port).Word;
-        }
-        private static void Out16(uint port, ushort val)
-        {
-            new IOPort((ushort)port).Word = val;
-        }
-
-        private static uint Inb32(uint port)
-        {
-            return new IOPort((ushort)port).DWord;
-        }
-        private static void Out32(uint port, uint val)
-        {
-            new IOPort((ushort)port).DWord = val;
-        }
-
-        /*
-        public static List<RTL8139> FindAll()
-        {
-            Console.WriteLine("Scanning for Intel 8254X cards...");
-
-            List<Intel8254X> cards = new List<Intel8254X>();
-
-            for (int i = 0; i < PCI.Devices.Count; i++)
-            {
-                PCIDevice xDevice = PCI.Devices[i];
-                if ((xDevice.VendorID == 0x10EC) && (xDevice.DeviceID == 0x8139) && (xDevice.Claimed == false))
-                {
-                    Intel8254X nic = new Intel8254X(xDevice);
-                    cards.Add(nic);
-                }
-            }
-            return cards;
-        }
-        */
         #region Register Access
         protected uint RBStartRegister
         {
-            get { return Inb32(Base + 0x30); }
-            set { Out32(Base + 0x30, value); }
+            get { return In32((uint*)(Base + 0x30)); }
+            set { Out32((uint*)(Base + 0x30), value); }
         }
         internal uint RecvConfigRegister
         {
-            get { return Inb32(Base + 0x44); }
-            set { Out32(Base + 0x44, value); }
+            get { return In32((uint*)(Base + 0x44)); }
+            set { Out32((uint*)(Base + 0x44), value); }
         }
         internal ushort CurAddressPointerRegister
         {
-            get { return Inb16(Base + 0x38); }
-            set { Out16(Base + 0x38, value); }
+            get { return In16((ushort*)(Base + 0x38)); }
+            set { Out16((ushort*)(Base + 0x38), value); }
         }
         internal ushort CurBufferAddressRegister
         {
-            get { return Inb16(Base + 0x3A); }
-            set { Out16(Base + 0x3A, value); }
+            get { return In16((ushort*)(Base + 0x3A)); }
+            set { Out16((ushort*)(Base + 0x3A), value); }
         }
         internal ushort IntMaskRegister
         {
-            get { return Inb16(Base + 0x3C); }
-            set { Out16(Base + 0x3C, value); }
+            get { return In16((ushort*)(Base + 0x3C)); }
+            set { Out16((ushort*)(Base + 0x3C), value); }
         }
         internal ushort IntStatusRegister
         {
-            get { return Inb16(Base + 0x3E); }
-            set { Out16(Base + 0x3E, value); }
+            get { return In16((ushort*)(Base + 0x3E)); }
+            set { Out16((ushort*)(Base + 0x3E), value); }
         }
         internal byte CommandRegister
         {
-            get { return Inb(Base + 0x37); }
-            set { OutB(Base + 0x37, value); }
+            get { return In8((byte*)(Base + 0x37)); }
+            set { Out8((byte*)(Base + 0x37), value); }
         }
         protected byte MediaStatusRegister
         {
-            get { return Inb(Base + 0x58); }
-            set { OutB(Base + 0x58, value); }
+            get { return In8((byte*)(Base + 0x58)); }
+            set { Out8((byte*)(Base + 0x58), value); }
         }
         protected byte Config1Register
         {
-            get { return Inb(Base + 0x52); }
-            set { OutB(Base + 0x52, value); }
+            get { return In8((byte*)(Base + 0x52)); }
+            set { Out8((byte*)(Base + 0x52), value); }
         }
         internal uint TransmitConfigRegister
         {
-            get { return Inb32(Base + 0x40); }
-            set { Out32(Base + 0x40, value); }
+            get { return In32((uint*)(Base + 0x40)); }
+            set { Out32((uint*)(Base + 0x40), value); }
         }
         internal uint TransmitAddress1Register
         {
-            get { return Inb32(Base + 0x20); }
-            set { Out32(Base + 0x20, value); }
+            get { return In32((uint*)(Base + 0x20)); }
+            set { Out32((uint*)(Base + 0x20), value); }
         }
         internal uint TransmitAddress2Register
         {
-            get { return Inb32(Base + 0x24); }
-            set { Out32(Base + 0x24, value); }
+            get { return In32((uint*)(Base + 0x24)); }
+            set { Out32((uint*)(Base + 0x24), value); }
         }
         internal uint TransmitAddress3Register
         {
-            get { return Inb32(Base + 0x28); }
-            set { Out32(Base + 0x28, value); }
+            get { return In32((uint*)(Base + 0x28)); }
+            set { Out32((uint*)(Base + 0x28), value); }
         }
         internal uint TransmitAddress4Register
         {
-            get { return Inb32(Base + 0x2C); }
-            set { Out32(Base + 0x2C, value); }
+            get { return In32((uint*)(Base + 0x2C)); }
+            set { Out32((uint*)(Base + 0x2C), value); }
         }
         internal uint TransmitDescriptor1Register
         {
-            get { return Inb32(Base + 0x10); }
-            set { Out32(Base + 0x10, value); }
+            get { return In32((uint*)(Base + 0x10)); }
+            set { Out32((uint*)(Base + 0x10), value); }
         }
         internal uint TransmitDescriptor2Register
         {
-            get { return Inb32(Base + 0x14); }
-            set { Out32(Base + 0x14, value); }
+            get { return In32((uint*)(Base + 0x14)); }
+            set { Out32((uint*)(Base + 0x14), value); }
         }
         internal uint TransmitDescriptor3Register
         {
-            get { return Inb32(Base + 0x18); }
-            set { Out32(Base + 0x18, value); }
+            get { return In32((uint*)(Base + 0x18)); }
+            set { Out32((uint*)(Base + 0x18), value); }
         }
         internal uint TransmitDescriptor4Register
         {
-            get { return Inb32(Base + 0x1C); }
-            set { Out32(Base + 0x1C, value); }
+            get { return In32((uint*)(Base + 0x1C)); }
+            set { Out32((uint*)(Base + 0x1C), value); }
         }
         #endregion
         protected bool CmdBufferEmpty
@@ -540,23 +498,29 @@ namespace MOOS.Driver
         }
 
         #region Network Device Implementation
+        public override string Name
+        {
+            get { return "Realtek 8139 Chipset NIC"; }
+        }
+
+        public override CardType CardType => CardType.Ethernet;
+
         public override MACAddress MACAddress
         {
-            get { return this.mac; }
+            get { return mac; }
         }
 
         public override bool Enable()
         {
-            // Enable Receiving and Transmitting of data
-            CommandRegister = 0x0C;
-            while (this.Ready == false)
-            { }
+            IntStatusRegister = 0x43;
             return true;
         }
+
         public override bool Ready
         {
-            get { return ((Config1Register & 0x20) == 0); }
+            get { return mInitDone; }
         }
+
         public override bool QueueBytes(byte[] buffer, int offset, int length)
         {
             byte[] data = new byte[length];
@@ -599,16 +563,11 @@ namespace MOOS.Driver
         {
             return false;
         }
+
         public override bool IsReceiveBufferFull()
         {
             return false;
         }
-        public override string Name
-        {
-            get { return "Realtek 8139 Chipset NIC"; }
-        }
-
-        public override CardType CardType => CardType.Ethernet;
 
         #endregion
         #region Helper Functions
@@ -638,12 +597,14 @@ namespace MOOS.Driver
             }
         }
 
-        protected void SoftwareReset()
+        public void WriteRegister(ushort Reg, uint Val)
         {
-            Console.Write("[Intel8254X] Reseting controller...");
+            Out32((uint*)(Base + Reg), Val);
+        }
 
-            rxBuffer.Write32(0, 1 << 26);
-            while (BitHelpers.IsBitSet(rxBuffer.Read32(0), 26)) ;
+        public uint ReadRegister(ushort Reg)
+        {
+            return In32((uint*)(Base + Reg));
         }
 
         protected bool SendBytes(ref byte[] aData)
