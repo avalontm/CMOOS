@@ -110,11 +110,11 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// <returns>time value (-1 = timeout)</returns>
         public int SendDiscoverPacket()
         {
-            Console.WriteLine($"[SendDiscoverPacket]");
             NetworkStack.RemoveAllConfigIP();
 
             for (int i = 0; i < NetworkDevice.Devices.Count; i++)
             {
+                Console.WriteLine($"[Device.NameID] {NetworkDevice.Devices[i].NameID}");
                 Console.WriteLine($"[Device.Name] {NetworkDevice.Devices[i].Name}");
                 Console.WriteLine($"[Device.MACAddress] {NetworkDevice.Devices[i].MACAddress}");
                 IPConfig.Enable(NetworkDevice.Devices[i], new Address(0, 0, 0, 0), new Address(0, 0, 0, 0), new Address(0, 0, 0, 0));

@@ -15,9 +15,6 @@ namespace MOOS.Driver
 {
     public unsafe class Intel8254X : NetworkDevice
     {
-        public uint RXDescs;
-        public uint TXDescs;
-
         protected PCIDevice pciCard;
         protected MACAddress mac;
         protected bool mInitDone;
@@ -26,12 +23,17 @@ namespace MOOS.Driver
         protected ushort capr;
         protected Queue<byte[]> mRecvBuffer;
         protected Queue<byte[]> mTransmitBuffer;
-        private int mNextTXDesc;
+       
         const ushort RxBufferSize = 32768;
 
         static Intel8254X Instance;
 
-        private uint Base;
+        uint Base;
+        uint RXDescs;
+        uint TXDescs;
+        int mNextTXDesc;
+        public uint RXCurr = 0;
+        public uint TXCurr = 0;
 
         public bool FullDuplex
         {
@@ -61,15 +63,100 @@ namespace MOOS.Driver
             }
         }
 
-        public Intel8254X(PCIDevice device = null) : base()
+        public Intel8254X(PCIDevice device) : base()
         {
-            Init();
+            if (device == null)
+            {
+                Console.WriteLine("PCI Device is null. Unable to get Intel 8254X card");
+                return;
+            }
+
+            this.pciCard = device;
+            this.pciCard.Claimed = true;
+            this.pciCard.EnableDevice();
+
+            device.WriteRegister(0x04, 0x04 | 0x02 | 0x01);
+
+            Base = (uint)(device.Bar0 & (~0xF));
+            Console.Write("[Intel8254X] BAR0: 0x");
+            Console.WriteLine(((ulong)Base).ToStringHex());
+
+            //Do a software reset
+            SoftwareReset();
+
+            WriteRegister(0x14, 0x1);
+            bool HasEEPROM = false;
+            for (int i = 0; i < 1024; i++)
+            {
+                if ((ReadRegister(0x14) & 0x10) != 0)
+                {
+                    HasEEPROM = true;
+                    break;
+                }
+            }
+
+            //Must be set
+            if (!HasEEPROM)
+            {
+                mac = new MACAddress(new byte[] {
+                    In8((byte*)(Base + 0x5400)),
+                    In8((byte*)(Base + 0x5401)),
+                    In8((byte*)(Base + 0x5402)),
+                    In8((byte*)(Base + 0x5403)),
+                    In8((byte*)(Base + 0x5404)),
+                    In8((byte*)(Base + 0x5405))
+                });
+                Console.WriteLine("[Intel8254X] This controller has no EEPROM");
+            }
+            else
+            {
+                mac = new MACAddress(new byte[] {
+                    (byte)(ReadROM(0) & 0xFF),
+                    (byte)(ReadROM(0) >> 8),
+                    (byte)(ReadROM(1) & 0xFF),
+                    (byte)(ReadROM(1) >> 8),
+                    (byte)(ReadROM(2) & 0xFF),
+                    (byte)(ReadROM(2) >> 8)
+                });
+                Console.WriteLine("[Intel8254X] EEPROM on this controller");
+            }
+
+            Console.WriteLine($"[Intel8254X] MAC: {mac}");
+
+            Linkup();
+            for (int i = 0; i < 0x80; i++)
+                WriteRegister((ushort)(0x5200 + i * 4), 0);
+
+            Console.Write("[Intel8254X] IRQ: ");
+            Console.WriteLine(((ulong)device.IRQ).ToString("x2"));
+
+            RXInitialize();
+            TXInitialize();
+
+            WriteRegister(0x00D0, 0x1F6DC);
+            ReadRegister(0xC0);
+
+            Console.Write("[Intel8254X] Speed: ");
+            Console.Write(((ulong)Speed).ToString());
+            Console.Write(' ');
+            Console.Write("FullDuplex: ");
+            Console.WriteLine(FullDuplex ? "Yes" : "No");
+            Console.WriteLine("[Intel8254X] Configuration Done");
+
+            // Get a receive buffer and assign it to the card
+            rxBuffer = new ManagedMemoryBlock(2048);
+
+            // Setup our Receive and Transmit Queues
+            mRecvBuffer = new Queue<byte[]>();
+            mTransmitBuffer = new Queue<byte[]>();
+
+            Instance = this;
+
+            Interrupts.EnableInterrupt((byte)(0x20 + device.IRQ), &OnInterrupt);
         }
 
-        void Init()
+        public static bool GetDevice()
         {
-            PCIDevice device = null;
-
             for (int i = 0; i < PCI.Devices.Count; i++)
             {
                 if (PCI.Devices[i] != null && PCI.Devices[i].VendorID == 0x8086 && 
@@ -171,100 +258,11 @@ namespace MOOS.Driver
                         )
                     )
                 {
-                    device = PCI.Devices[i];
+                    return true;
                 }
             }
 
-            if (device == null)
-            {
-                //throw new ArgumentException("PCI Device is null. Unable to get Realtek 8139 card");
-                Console.WriteLine("PCI Device is null. Unable to get Intel 8254X card");
-                return;
-            }
-
-            this.pciCard = device;
-            this.pciCard.Claimed = true;
-            this.pciCard.EnableDevice();
-
-            Console.WriteLine("[Intel8254X] Intel 8254X Series Gigabit Ethernet Controller Found");
-            device.WriteRegister(0x04, 0x04 | 0x02 | 0x01);
-
-            Base = (uint)(device.Bar0 & (~0xF));
-            Console.Write("[Intel8254X] BAR0: 0x");
-            Console.WriteLine(((ulong)Base).ToStringHex());
-
-            //Do a software reset
-            SoftwareReset();
-
-            WriteRegister(0x14, 0x1);
-            bool HasEEPROM = false;
-            for (int i = 0; i < 1024; i++)
-            {
-                if ((ReadRegister(0x14) & 0x10) != 0)
-                {
-                    HasEEPROM = true;
-                    break;
-                }
-            }
-
-            //Must be set
-            if (!HasEEPROM)
-            {
-                mac = new MACAddress( new byte[] {
-                    In8((byte*)(Base + 0x5400)),
-                    In8((byte*)(Base + 0x5401)),
-                    In8((byte*)(Base + 0x5402)),
-                    In8((byte*)(Base + 0x5403)),
-                    In8((byte*)(Base + 0x5404)),
-                    In8((byte*)(Base + 0x5405))
-                });
-                Console.WriteLine("[Intel8254X] This controller has no EEPROM");
-            }
-            else
-            {
-                mac = new MACAddress(new byte[] {
-                    (byte)(ReadROM(0) & 0xFF),
-                    (byte)(ReadROM(0) >> 8),
-                    (byte)(ReadROM(1) & 0xFF),
-                    (byte)(ReadROM(1) >> 8),
-                    (byte)(ReadROM(2) & 0xFF),
-                    (byte)(ReadROM(2) >> 8)
-                });
-                Console.WriteLine("[Intel8254X] EEPROM on this controller");
-            }
-
-            Console.WriteLine($"[Intel8254X] MAC: {mac}");
-
-            Linkup();
-            for (int i = 0; i < 0x80; i++)
-                WriteRegister((ushort)(0x5200 + i * 4), 0);
-
-            Console.Write("[Intel8254X] IRQ: ");
-            Console.WriteLine(((ulong)device.IRQ).ToString("x2"));
-
-            RXInitialize();
-            TXInitialize();
-
-            WriteRegister(0x00D0, 0x1F6DC);
-            ReadRegister(0xC0);
-
-            Console.Write("[Intel8254X] Speed: ");
-            Console.Write(((ulong)Speed).ToString());
-            Console.Write(' ');
-            Console.Write("FullDuplex: ");
-            Console.WriteLine(FullDuplex?"Yes":"No");
-            Console.WriteLine("[Intel8254X] Configuration Done");
-
-            // Get a receive buffer and assign it to the card
-            rxBuffer = new ManagedMemoryBlock(2048);
-
-            // Setup our Receive and Transmit Queues
-            mRecvBuffer = new Queue<byte[]>();
-            mTransmitBuffer = new Queue<byte[]>();
-
-            Instance = this;
-
-            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
+            return false;
         }
 
         void SoftwareReset()
@@ -303,9 +301,6 @@ namespace MOOS.Driver
 
             WriteRegister(0x0400, (1 << 1) | (1 << 3));
         }
-
-        public static uint RXCurr = 0;
-        public static uint TXCurr = 0;
 
         void RXInitialize()
         {
@@ -387,14 +382,14 @@ namespace MOOS.Driver
             if ((Status & 0x80) != 0)
             {
                 Console.WriteLine("[Intel8254X] Packet Received");
-                uint _RXCurr = RXCurr;
-                RXDesc* desc = (RXDesc*)(Instance.RXDescs + (RXCurr * 16));
+                uint _RXCurr = Instance.RXCurr;
+                RXDesc* desc = (RXDesc*)(Instance.RXDescs + (Instance.RXCurr * 16));
                 while ((desc->status & 0x1) != 0)
                 {
                     //Ethernet.HandlePacket((byte*)desc->addr, desc->length);
                     //desc->addr;
                     desc->status = 0;
-                    RXCurr = (RXCurr + 1) % 32;
+                    Instance.RXCurr = (Instance.RXCurr + 1) % 32;
                     Instance.WriteRegister(0x2818, _RXCurr);
                 }
             }
@@ -492,6 +487,7 @@ namespace MOOS.Driver
             set { Out32((uint*)(Base + 0x1C), value); }
         }
         #endregion
+
         protected bool CmdBufferEmpty
         {
             get { return ((CommandRegister & 0x01) == 0x01); }
@@ -500,7 +496,7 @@ namespace MOOS.Driver
         #region Network Device Implementation
         public override string Name
         {
-            get { return "Realtek 8139 Chipset NIC"; }
+            get { return "Intel 8254X Series"; }
         }
 
         public override CardType CardType => CardType.Ethernet;
@@ -536,12 +532,14 @@ namespace MOOS.Driver
             }
             return true;
         }
+
         public override bool ReceiveBytes(byte[] buffer, int offset, int max)
         {
             //throw new NotImplementedException();
             Console.WriteLine("NotImplementedException");
             return false;
         }
+
         public override byte[] ReceivePacket()
         {
             if (mRecvBuffer.Count < 1)
@@ -551,6 +549,7 @@ namespace MOOS.Driver
             byte[] data = mRecvBuffer.Dequeue();
             return data;
         }
+
         public override int BytesAvailable()
         {
             if (mRecvBuffer.Count < 1)
@@ -559,6 +558,7 @@ namespace MOOS.Driver
             }
             return mRecvBuffer.Peek().Length;
         }
+
         public override bool IsSendBufferFull()
         {
             return false;

@@ -36,7 +36,6 @@ namespace MOOS.NET
         {
             if (address == null || address.Length != 6)
             {
-                //throw new ArgumentException("MACAddress is null or has wrong length", "address");
                 Console.WriteLine("MACAddress is null or has wrong length");
                 return;
             }
@@ -59,7 +58,6 @@ namespace MOOS.NET
         {
             if (buffer == null || buffer.Length < (offset + 6))
             {
-                //throw new ArgumentException("buffer does not contain enough data starting at offset", "buffer");
                 Console.WriteLine("buffer does not contain enough data starting at offset");
                 return;
             }
@@ -105,31 +103,37 @@ namespace MOOS.NET
             }
             else
             {
-                //throw new ArgumentException("obj is not a MACAddress", "obj");
                 Console.WriteLine("obj is not a MACAddress");
                 return -1;
             }
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(MACAddress obj)
         {
-            if (obj is MACAddress)
-            {
-                MACAddress other = (MACAddress)obj;
+            MACAddress other = (MACAddress)obj;
 
-                return bytes[0] == other.bytes[0] &&
-                    bytes[1] == other.bytes[1] &&
-                    bytes[2] == other.bytes[2] &&
-                    bytes[3] == other.bytes[3] &&
-                    bytes[4] == other.bytes[4] &&
-                    bytes[5] == other.bytes[5];
-            }
-            else
-            {
-                //throw new ArgumentException("obj is not a MACAddress", "obj");
-                Console.WriteLine("obj is not a MACAddress");
-                return false;
-            }
+            return bytes[0] == other.bytes[0] &&
+                bytes[1] == other.bytes[1] &&
+                bytes[2] == other.bytes[2] &&
+                bytes[3] == other.bytes[3] &&
+                bytes[4] == other.bytes[4] &&
+                bytes[5] == other.bytes[5];
+        }
+
+        public static bool operator ==(MACAddress a, MACAddress b)
+        {
+            return
+                a.bytes[0] == b.bytes[0] &&
+                a.bytes[1] == b.bytes[1] &&
+                a.bytes[2] == b.bytes[2] &&
+                a.bytes[3] == b.bytes[3] &&
+                a.bytes[4] == b.bytes[4] &&
+                a.bytes[5] == b.bytes[5];
+        }
+
+        public static bool operator !=(MACAddress a, MACAddress b)
+        {
+            return !(a == b);
         }
 
         public override int GetHashCode()
@@ -141,13 +145,6 @@ namespace MOOS.NET
         {
             return (ulong)((bytes[0] << 40) | (bytes[1] << 32) | (bytes[2] << 24) | (bytes[3] << 16) |
                 (bytes[4] << 8) | (bytes[5] << 0));
-        }
-
-        private static void PutByte(char[] aChars, int aIndex, byte aByte)
-        {
-            string xChars = "0123456789ABCDEF";
-            aChars[aIndex + 0] = xChars[(aByte >> 4) & 0xF];
-            aChars[aIndex + 1] = xChars[aByte & 0xF];
         }
 
         public uint To32BitNumber()
@@ -175,20 +172,7 @@ namespace MOOS.NET
 
         public override string ToString()
         {
-            // mac address consists of 6 2chars pairs, delimited by :
-            var xChars = new char[17];
-            PutByte(xChars, 0, bytes[0]);
-            xChars[2] = ':';
-            PutByte(xChars, 3, bytes[1]);
-            xChars[5] = ':';
-            PutByte(xChars, 6, bytes[2]);
-            xChars[8] = ':';
-            PutByte(xChars, 9, bytes[3]);
-            xChars[11] = ':';
-            PutByte(xChars, 12, bytes[4]);
-            xChars[14] = ':';
-            PutByte(xChars, 15, bytes[5]);
-            return new string(xChars);
+            return $"{bytes[0].ToString("x2")}:{bytes[1].ToString("x2")}:{bytes[2].ToString("x2")}:{bytes[3].ToString("x2")}:{bytes[4].ToString("x2")}:{bytes[5].ToString("x2")}";
         }
     }
 }

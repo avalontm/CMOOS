@@ -15,40 +15,34 @@ namespace MOOS.NET
 
             Console.WriteLine("Searching for Ethernet Controllers...");
 
-            #region INTELNIC
-            var INTELNIC = new Intel8254X();
-
-            if (INTELNIC != null)
-            {
-                INTELNIC.NameID = ("eth" + NetworkDeviceID);
-                INTELNIC.Enable();
-                NetworkDeviceID++;
-            }
-            #endregion
-
-
             for (int i = 0; i < PCI.Devices.Count;i++)
             {
                 if ((PCI.Devices[i].ClassCode == 0x02) && (PCI.Devices[i].Subclass == 0x00) && // is Ethernet Controller
                     PCI.Devices[i] == PCI.GetDevice(PCI.Devices[i].Bus, PCI.Devices[i].Slot, PCI.Devices[i].Function))
                 {
-
                     Console.WriteLine("Found " + PCIDevice.DeviceClass.GetDeviceString(PCI.Devices[i]) + " on PCI " + PCI.Devices[i].Bus + ":" + PCI.Devices[i].Slot + ":" + PCI.Devices[i].Function);
+
+                    #region INTELNIC
+                    if (Intel8254X.GetDevice())
+                    {
+                        var INTELNIC = new Intel8254X(PCI.Devices[i]);
+
+                        if (INTELNIC != null)
+                        {
+                            INTELNIC.NameID = ("eth" + NetworkDeviceID);
+                            INTELNIC.Enable();
+                            NetworkDeviceID++;
+                        }
+                    }
+                    #endregion
+
                     #region PCNETII
 
                     if (PCI.Devices[i].VendorID == (ushort)VendorID.AMD && PCI.Devices[i].DeviceID == (ushort)DeviceID.PCNETII)
                     {
-
-                        Console.WriteLine("NIC IRQ: " + PCI.Devices[i].IRQ);
-
                         var AMDPCNetIIDevice = new AMDPCNetII(PCI.Devices[i]);
-
                         AMDPCNetIIDevice.NameID = ("eth" + NetworkDeviceID);
-
-                        Console.WriteLine("Registered at " + AMDPCNetIIDevice.NameID + " (" + AMDPCNetIIDevice.MACAddress.ToString() + ")");
-
                         AMDPCNetIIDevice.Enable();
- 
                         NetworkDeviceID++;
                     }
 
@@ -58,11 +52,8 @@ namespace MOOS.NET
                     if (PCI.Devices[i].VendorID == 0x10EC && PCI.Devices[i].DeviceID == 0x8139)
                     {
                         var RTL8139Device = new RTL8139(PCI.Devices[i]);
-
                         RTL8139Device.NameID = ("eth" + NetworkDeviceID);
-
                         RTL8139Device.Enable();
-
                         NetworkDeviceID++;
                     }
 

@@ -30,7 +30,10 @@ namespace MOOS.NET
 
         static NetworkDevice()
         {
-            Devices = new List<NetworkDevice>();
+            if (Devices == null)
+            {
+                Devices = new List<NetworkDevice>();
+            }
         }
 
         DataReceivedHandler _dataReceived;
@@ -43,7 +46,6 @@ namespace MOOS.NET
 
         protected NetworkDevice()
         {
-            //mType = DeviceType.Network;
             Devices.Add(this);
         }
 

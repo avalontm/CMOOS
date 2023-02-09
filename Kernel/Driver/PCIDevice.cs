@@ -371,6 +371,27 @@ namespace MOOS.Driver
                     case 0x8086: //Intel
                         switch (device.DeviceID)
                         {
+                            case 0x1000:
+                                return "Intel Intel82542 Gigabit Ethernet Controller";
+                            case 0x1001:
+                                return "Intel Intel82543GC Gigabit Ethernet Controller";
+                            case 0x1004:
+                                return "Intel Intel82543GC Gigabit Ethernet Controller";
+                            case 0x1008:
+                                return "Intel Intel82544EI Gigabit Ethernet Controller";
+                            case 0x1009:
+                                return "Intel Intel82544EI Gigabit Ethernet Controller";
+                            case 0x100C:
+                                return "Intel Intel82544EI Gigabit Ethernet Controller";
+                            case 0x100D:
+                                return "Intel Intel82544GC Gigabit Ethernet Controller";
+                            case 0x100E:
+                                return "Intel Intel82540EM Gigabit Ethernet Controller";
+                            case 0x100F:
+                                return "Intel Intel82545EM Gigabit Ethernet Controller";
+                            case 0x1010:
+                                return "Intel Intel82546EB Gigabit Ethernet Controller";
+                                
                             case 0x7190:
                                 return "Intel 440BX/ZX AGPset Host Bridge";
                             case 0x7191:
