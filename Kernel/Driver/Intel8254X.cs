@@ -541,26 +541,26 @@ namespace MOOS.Driver
         #region Helper Functions
         private void ReadRawData(byte* aData, ushort packetLen)
         {
-            byte[] buffer = new byte[packetLen];
-
             unsafe
             {
+                byte[] buffer = new byte[packetLen];
+
                 for (int i = 0; i < packetLen; i++)
                 {
                     buffer[i] = aData[i];
                 }
-            }
 
-            if (DataReceived != null)
-            {
-                DataReceived(buffer);
-            }
-            else
-            {
-                if (mRecvBuffer == null)
+                if (DataReceived != null)
                 {
+                    DataReceived(buffer);
                 }
-                mRecvBuffer.Enqueue(buffer);
+                else
+                {
+                    if (mRecvBuffer == null)
+                    {
+                    }
+                    mRecvBuffer.Enqueue(buffer);
+                }
             }
         }
 

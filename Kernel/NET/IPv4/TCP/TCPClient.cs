@@ -215,17 +215,16 @@ namespace MOOS.NET.IPv4.TCP
         /// <exception cref="Exception">Thrown if TCP Status is not ESTABLISHED.</exception>
         public byte[] Receive(ref EndPoint source)
         {
-            while (StateMachine.rxBuffer.Count < 1)
+            while (StateMachine.rxBuffer.Count == 0)
             {
                 if (StateMachine.Status != Status.ESTABLISHED)
                 {
-                    //throw new Exception("Client must be connected before receiving data.");
                     Console.WriteLine("Client must be connected before receiving data.");
                     return null;
                 }
                 Native.Hlt();
             }
-
+ 
             var packet = StateMachine.rxBuffer.Dequeue();
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;

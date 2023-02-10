@@ -63,6 +63,8 @@ unsafe class Program
         Network.Initialize();
         NetworkStack.Initialize();
 
+        Timer.Sleep(1000);
+
         if (NetworkDevice.Devices.Count > 0)
         {
             //Send a DHCP Discover packet 
@@ -79,35 +81,35 @@ unsafe class Program
 
 #endregion
 
-    //SMain();
-}
+        //SMain();
+    }
 
-public static void SMain()
-{
-Framebuffer.TripleBuffered = true;
+    public static void SMain()
+    {
+        Framebuffer.TripleBuffered = true;
 
-DesktopManager.Initialize();
+        DesktopManager.Initialize();
 
-for (; ; )
-{
-    Control.Update();
+        for (; ; )
+        {
+            Control.Update();
 
-    //UIKernel
-    DesktopManager.Update();
-    WindowManager.Update();
+            //UIKernel
+            DesktopManager.Update();
+            WindowManager.Update();
 
-    CursorManager.Update();
+            CursorManager.Update();
 
-    DesktopManager.Draw();
-    WindowManager.Draw();
-    NotificationManager.Draw();
+            DesktopManager.Draw();
+            WindowManager.Draw();
+            NotificationManager.Draw();
 
-    //Mouse
-    Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
-    Framebuffer.Update();
+            //Mouse
+            Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
+            Framebuffer.Update();
 
-    fpsMeter.Update();
-}
-}
+            fpsMeter.Update();
+        }
+    }
 }
 

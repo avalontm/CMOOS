@@ -1,4 +1,5 @@
 ﻿using MOOS;
+using MOOS.Driver;
 using MOOS.NET.Config;
 using MOOS.NET.IPv4;
 using MOOS.NET.IPv4.TCP;
@@ -41,27 +42,20 @@ namespace System.Net.Http
             Console.WriteLine($"[DNS Host] {host}");
             DnsClient dns = new DnsClient();
 
-            for (int i = 0; i < DNSConfig.DNSNameservers.Count; i++)
-            {
-                dns.Connect(DNSConfig.DNSNameservers[i]); //DNS Server address
-                break; 
-            }
-          
+            Timer.Sleep(100);
+            dns.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address
+
             dns.SendAsk($"{host}");
-            string _address = dns.Receive().ToString();
+            Address _address = dns.Receive();
+            Timer.Sleep(100);
+            // Console.WriteLine($"[DNS Address] {_address}");
 
-            if (string.IsNullOrEmpty(_address))
-            {
-                Console.WriteLine($"[DNS] Not resolved.");
-                return http;
-            }
-
-            Console.WriteLine($"[DNS Address] {_address}");
-       
             if (!client.IsConnected())
             {
-                client.Connect(Address.Parse(_address), this.port, timeout * 1000);
+                client.Connect(_address, this.port, timeout * 1000);
             }
+
+            Timer.Sleep(100);
 
             if (!client.IsConnected())
             {
@@ -79,9 +73,10 @@ namespace System.Net.Http
             header += "Accept-Encoding: gzip, deflate, br\r\n";
             header += "\r\n\r\n";
 
-            byte[] data = Encoding.ASCII.GetBytes(header);
-
+            byte[] data = UTF8Encoding.UTF8.GetBytes(header);
+          
             client.Send(data);
+            Console.WriteLine($"[Send] {data.Length}");
 
             /** Receive data **/
             EndPoint endpoint = new EndPoint(Address.Zero, 0);
@@ -93,8 +88,8 @@ namespace System.Net.Http
             }
 
             http.Status = 200;
-
-            string response = Encoding.ASCII.GetString(receive);
+            Console.WriteLine($"[STATUS ] {http.Status}");
+            string response = UTF8Encoding.UTF8.GetString(receive);
             Console.WriteLine($"[RESPONSE] {response}");
             if (!string.IsNullOrEmpty(response))
             {

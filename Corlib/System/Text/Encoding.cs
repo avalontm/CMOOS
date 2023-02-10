@@ -11,7 +11,10 @@
         public byte[] GetBytes(string s)
         {
             byte[] buffer = new byte[s.Length];
-            for (int i = 0; i < buffer.Length; i++) buffer[i] = (byte)s[i];
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = (byte)s[i];
+            }
             return buffer;
         }
         /*

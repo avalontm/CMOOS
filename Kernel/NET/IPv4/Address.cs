@@ -203,24 +203,14 @@ namespace MOOS.NET.IPv4
         /// <param name="obj">Other IP to compare with.</param>
         /// <returns>0 if equal, or non-zero otherwise</returns>
         /// <exception cref="ArgumentException">Thrown if obj is not a IPv4Address.</exception>
-        public int CompareTo(object obj)
+        public int CompareTo(Address other)
         {
-            if (obj is Address)
+            if (other.hash != this.hash)
             {
-                Address other = (Address)obj;
-                if (other.hash != this.hash)
-                {
-                    return -1;
-                }
-
-                return 0;
-            }
-            else
-            {
-                //throw new ArgumentException("obj is not a IPv4Address", "obj");
-                Console.WriteLine("obj is not a IPv4Address");
                 return -1;
             }
+
+            return 0;
         }
 
         #endregion
