@@ -58,13 +58,13 @@ namespace MOOS.NET.IPv4.TCP
         /// <param name="dest">Destination address.</param>
         /// <param name="destPort">Destination port.</param>
         /// <exception cref="Exception">Thrown if TCP Status is not CLOSED.</exception>
-        public void Connect(Address dest, int destPort, int timeout = 5000)
+        public bool Connect(Address dest, int destPort, int timeout = 5000)
         {
             if (StateMachine.Status == Status.ESTABLISHED)
             {
                 //throw new Exception("Client must be closed before setting a new connection.");
                 Console.WriteLine("Client must be closed before setting a new connection.");
-                return;
+                return false;
             }
 
             StateMachine.RemoteEndPoint.Address = dest;
@@ -99,8 +99,10 @@ namespace MOOS.NET.IPv4.TCP
             {
                // throw new Exception("Failed to open TCP connection!");
                 Console.WriteLine("Failed to open TCP connection!");
-                return;
+                return false;
             }
+
+            return true;
         }
 
         /// <summary>

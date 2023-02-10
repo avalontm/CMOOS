@@ -52,15 +52,11 @@ namespace System.Net.Http
 
             if (!client.IsConnected())
             {
-                client.Connect(_address, this.port, timeout * 1000);
-            }
-
-            Timer.Sleep(100);
-
-            if (!client.IsConnected())
-            {
-                Console.WriteLine($"[HttpClient] Not Connected!");
-                return http;
+                if (!client.Connect(_address, this.port, timeout * 1000))
+                {
+                    Console.WriteLine($"[HttpClient] Not Connected!");
+                    return http;
+                }
             }
 
             Console.WriteLine($"[HttpClient] Connected! :)");
