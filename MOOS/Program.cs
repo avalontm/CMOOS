@@ -58,7 +58,7 @@ unsafe class Program
         ES1371.Initialize();
 
  #region NETWORK
-
+        /*
         //Network Config (AvalonTM)
         Network.Initialize();
         NetworkStack.Initialize();
@@ -78,10 +78,10 @@ unsafe class Program
             Console.WriteLine($"[RESPONSE] {response.Status}");
 
         }
-
+        */
 #endregion
 
-        //SMain();
+        SMain();
     }
 
     public static void SMain()

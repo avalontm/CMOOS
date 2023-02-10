@@ -25,6 +25,16 @@ namespace System.Drawing
             return (uint)RawData[Y * Width + X];
         }
 
+        public Color GetColor(int X, int Y)
+        {
+            return Color.FromArgb((uint)RawData[Y * Width + X]);
+        }
+
+        public void SetPixel(int x, int y, Color color)
+        {
+            RawData[y * Width + x] = (int)color.ToArgb();
+        }
+
         public static unsafe void Resample(void* input, void* output, int oldw, int oldh, int neww, int newh)
         {
             for (int i = 0; i < newh; i++)

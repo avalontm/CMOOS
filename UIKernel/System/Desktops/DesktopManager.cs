@@ -56,7 +56,7 @@ namespace System.Desktops
             Cursor = new PNG(File.ReadAllBytes("sys/media/Cursor.png"));
             CursorMoving = new PNG(File.ReadAllBytes("sys/media/Grab.png"));
             //Image from unsplash
-            Wallpaper = new PNG(File.ReadAllBytes("sys/media/Wallpaper.png"));
+            Wallpaper = new PNG(File.ReadAllBytes("sys/media/Wallpaper2.png"));
 
             BitFont.Initialize();
 
@@ -65,6 +65,7 @@ namespace System.Desktops
 
             Image wall = Wallpaper;
             Wallpaper = wall.ResizeImage(Framebuffer.Width, Framebuffer.Height);
+           // Wallpaper = ToBlur(Wallpaper);
             wall.Dispose();
 
             DesktopIcons.Initialize();
@@ -152,6 +153,49 @@ namespace System.Desktops
 
             NotificationManager.Initialize();
 
+        }
+
+        static Image ToBlur(Image originalImage, int blurSize = 10)
+        {
+            Image blurredImage = new Image(originalImage.Width, originalImage.Height);
+
+            int offset = (blurSize - 1) / 2;
+
+            for (int x = 0; x < originalImage.Width; x++)
+            {
+                for (int y = 0; y < originalImage.Height; y++)
+                {
+                    int r = 0, g = 0, b = 0;
+                    int count = 0;
+
+                    for (int i = -offset; i <= offset; i++)
+                    {
+                        for (int j = -offset; j <= offset; j++)
+                        {
+                            int xCoordinate = x + i;
+                            int yCoordinate = y + j;
+
+                            if (xCoordinate >= 0 && xCoordinate < originalImage.Width && yCoordinate >= 0 && yCoordinate < originalImage.Height)
+                            {
+                                Color pixel = originalImage.GetColor(xCoordinate, yCoordinate);
+                                r += pixel.R;
+                                g += pixel.G;
+                                b += pixel.B;
+                                count++;
+                            }
+                        }
+                    }
+
+                    r /= count;
+                    g /= count;
+                    b /= count;
+
+                    blurredImage.SetPixel(x, y, Color.FromArgb(r, g, b));
+                }
+            }
+
+            originalImage.Dispose();    
+            return blurredImage;
         }
 
         static void onLoadIcons()

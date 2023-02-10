@@ -232,6 +232,11 @@ namespace System.Drawing
             return new Color() { ARGB = ToArgb(red, green, blue) };
         }
 
+        public static Color FromArgb(int red, int green, int blue)
+        {
+            return new Color() { ARGB = ToArgb((byte)red, (byte)green, (byte)blue) };
+        }
+
         public static Color FromArgb(byte alpha, byte red, byte green, byte blue)
         {
             return new Color() { ARGB = ToArgb(alpha, red, green, blue) };
