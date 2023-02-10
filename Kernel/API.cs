@@ -65,7 +65,7 @@ namespace MOOS
                 case "GetTime":
                     return (delegate*<ulong>)&API_GetTime;
                 case "DrawImage":
-                    return (delegate*<int,int,Image,void>)&API_DrawImage;
+                    return (delegate*<int, int, Image, void>)&API_DrawImage;
                 case "Error":
                     return (delegate*<string, bool, void>)&API_Error;
                 case "StartThread":
@@ -76,7 +76,7 @@ namespace MOOS
                 case "GetWindowScreenBuf":
                     return (delegate*<IntPtr, IntPtr>)&API_GetWindowScreenBuf;
                 case "BindOnKeyChangedHandler":
-                    return (delegate*<OnKeyHandler, void>)&API_BindOnKeyChangedHandler;
+                    return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
 #endif
                 case "Calloc":
                     return (delegate*<ulong, ulong, void*>)&API_Calloc;
@@ -87,44 +87,45 @@ namespace MOOS
             return null;
         }
 
-        public static int API_SndWrite(byte* buffer,int len)
-        {
-            return Audio.snd_write(buffer, len);
-        }
-
 #if Kernel && HasGUI
         public static IntPtr API_CreateWindow(int X, int Y, int Width, int Height, string Title)
         {
             PortableApp papp = new PortableApp(X, Y, Width, Height);
-            papp.Title = Title + $"(CPU{SMP.ThisCPU})";
-            return papp.GetHandle();
+            papp.Title = Title;
+            return papp;
         }
 
         public static IntPtr API_GetWindowScreenBuf(IntPtr handle)
         {
-            PortableApp papp = object.FromHandle<PortableApp>(handle);
-            return papp.ScreenBuf.GetHandle();
+            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handle);
+            return papp.ScreenBuf;
         }
 #endif
+
+        public static int API_SndWrite(byte* buffer, int len)
+        {
+            return Audio.snd_write(buffer, len);
+        }
 
         public static void* API_Calloc(ulong num, ulong size)
         {
             return stdlib.calloc(num, size);
         }
 
-        public static void API_BindOnKeyChangedHandler(OnKeyHandler handler)
+        public static void API_BindOnKeyChangedHandler(EventHandler<ConsoleKeyInfo> handler)
         {
             Keyboard.OnKeyChanged += handler;
+
         }
 
-        public static void API_StartThread(delegate* <void> func)
+        public static void API_StartThread(delegate*<void> func)
         {
-            new Thread(func).Start(Random.Shared.Next(0, SMP.NumCPU - 1));
+            new Thread(func).Start();
         }
 
-        public static void API_Error(string s,bool skippable)
+        public static void API_Error(string s, bool skippable)
         {
-            Panic.Error(s,skippable);
+            Panic.Error(s, skippable);
         }
 
         public static ulong API_GetTime()
@@ -155,7 +156,7 @@ namespace MOOS
             Framebuffer.Graphics.DrawImage(X, Y, image, false);
         }
 
-        public static void API_WriteString(string s) 
+        public static void API_WriteString(string s)
         {
             Console.Write(s);
             s.Dispose();
@@ -185,7 +186,7 @@ namespace MOOS
         }
 
         [RuntimeExport("Lock")]
-        public static void API_Lock() 
+        public static void API_Lock()
         {
             if (ThreadPool.CanLock)
             {
@@ -216,12 +217,12 @@ namespace MOOS
             Framebuffer.Graphics.DrawPoint(x, y, color);
         }
 
-        public static void API_SwitchToConsoleMode() 
+        public static void API_SwitchToConsoleMode()
         {
             Framebuffer.TripleBuffered = false;
         }
 
-        public static void API_ReadAllBytes(string name,ulong* length,byte** data) 
+        public static void API_ReadAllBytes(string name, ulong* length, byte** data)
         {
             byte[] buffer = File.ReadAllBytes(name);
 
@@ -232,22 +233,22 @@ namespace MOOS
             buffer.Dispose();
         }
 
-        public static void API_Sleep(ulong ms) 
+        public static void API_Sleep(ulong ms)
         {
             Thread.Sleep(ms);
         }
 
-        public static ulong API_GetTick() 
+        public static ulong API_GetTick()
         {
             return Timer.Ticks;
         }
 
-        public static void API_Write(char c) 
+        public static void API_Write(char c)
         {
             Console.Write(c);
         }
 
-        public static void API_WriteLine() 
+        public static void API_WriteLine()
         {
             Console.WriteLine();
         }
@@ -264,7 +265,7 @@ namespace MOOS
             return Allocator.Free(ptr);
         }
 
-        public static nint API_Reallocate(nint intPtr, ulong size) 
+        public static nint API_Reallocate(nint intPtr, ulong size)
         {
             return Allocator.Reallocate(intPtr, size);
         }

@@ -58,28 +58,28 @@ unsafe class Program
         ES1371.Initialize();
 
  #region NETWORK
-/*
-//Network Config (AvalonTM)
-Network.Initialize();
-NetworkStack.Initialize();
 
-if (NetworkDevice.Devices.Count > 0)
-{
-    //Send a DHCP Discover packet 
-    //This will automatically set the IP config after DHCP response
-    DHCPClient xClient = new DHCPClient();
-    xClient.SendDiscoverPacket();
-    Timer.Sleep(200);
+        //Network Config (AvalonTM)
+        Network.Initialize();
+        NetworkStack.Initialize();
 
-    HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
-    var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
-    Console.WriteLine($"[RESPONSE] {response.Status}");
+        if (NetworkDevice.Devices.Count > 0)
+        {
+            //Send a DHCP Discover packet 
+            //This will automatically set the IP config after DHCP response
+            DHCPClient xClient = new DHCPClient();
+            xClient.SendDiscoverPacket();
+            Timer.Sleep(1000);
 
-}
-*/
+            HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
+            var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
+            Console.WriteLine($"[RESPONSE] {response.Status}");
+
+        }
+
 #endregion
 
-SMain();
+    //SMain();
 }
 
 public static void SMain()

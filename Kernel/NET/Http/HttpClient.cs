@@ -46,7 +46,7 @@ namespace System.Net.Http
                 dns.Connect(DNSConfig.DNSNameservers[i]); //DNS Server address
                 break; 
             }
-
+          
             dns.SendAsk($"{host}");
             string _address = dns.Receive().ToString();
 
@@ -68,6 +68,8 @@ namespace System.Net.Http
                 Console.WriteLine($"[HttpClient] Not Connected!");
                 return http;
             }
+
+            Console.WriteLine($"[HttpClient] Connected! :)");
 
             string header = $"GET /{path} HTTP/1.1\r\n";
             header += $"Host: {host}\r\n";
@@ -93,7 +95,7 @@ namespace System.Net.Http
             http.Status = 200;
 
             string response = Encoding.ASCII.GetString(receive);
-
+            Console.WriteLine($"[RESPONSE] {response}");
             if (!string.IsNullOrEmpty(response))
             {
                 var index = BinaryMatch(receive, Encoding.ASCII.GetBytes("\r\n\r\n")) + 4;

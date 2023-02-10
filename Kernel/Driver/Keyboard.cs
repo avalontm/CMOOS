@@ -7,7 +7,7 @@ namespace MOOS
     {
         public static ConsoleKeyInfo KeyInfo;
 
-        public static event OnKeyHandler OnKeyChanged
+        public static event EventHandler<ConsoleKeyInfo> OnKeyChanged
         {
             add
             {
@@ -20,19 +20,19 @@ namespace MOOS
             }
         }
 
-        static List<OnKeyHandler> _KeyKeyChangeds;
-        static List<OnKeyHandler> KeyKeyChangeds { get { return _KeyKeyChangeds; } }
+        static List<EventHandler<ConsoleKeyInfo>> _KeyKeyChangeds;
+        static List<EventHandler<ConsoleKeyInfo>> KeyKeyChangeds { get { return _KeyKeyChangeds; } }
 
         public static void Initialize()
         {
-            _KeyKeyChangeds = new List<OnKeyHandler>();
+            _KeyKeyChangeds = new List<EventHandler<ConsoleKeyInfo>>();
         }
 
         public static void InvokeOnKeyChanged(ConsoleKeyInfo info) 
         {
             for (int i = 0; i < KeyKeyChangeds.Count; i++)
             {
-                KeyKeyChangeds[i]?.Invoke(info);
+                KeyKeyChangeds[i]?.Invoke(KeyKeyChangeds, info);
             }
         }
 

@@ -35,7 +35,7 @@ namespace System.Windows.Controls
             Keyboard.OnKeyChanged += Keyboard_OnKeyChanged1;
         }
 
-        void Keyboard_OnKeyChanged1(ConsoleKeyInfo key)
+        void Keyboard_OnKeyChanged1(object sender, ConsoleKeyInfo key)
         {
             if (IsFocus)
             {

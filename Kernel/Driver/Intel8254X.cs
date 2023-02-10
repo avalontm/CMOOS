@@ -149,8 +149,10 @@ namespace MOOS.Driver
 
             Instance = this;
 
-            Interrupts.EnableInterrupt((byte)(0x20 + device.IRQ), &OnInterrupt);
+            Interrupts.EnableInterrupt(0x20, &OnInterrupt);
         }
+
+        #region Devices
 
         public static bool GetDevice()
         {
@@ -261,6 +263,7 @@ namespace MOOS.Driver
 
             return false;
         }
+        #endregion
 
         void SoftwareReset()
         {
@@ -367,27 +370,28 @@ namespace MOOS.Driver
 
             if ((Status & 0x04) != 0)
             {
-                Console.WriteLine("[Intel8254X] Linking Up");
+                //Console.WriteLine("[Intel8254X] Linking Up");
                 Instance.Linkup();
             }
+
             if ((Status & 0x10) != 0)
             {
-                Console.WriteLine("[Intel8254X] Good Threshold");
+               // Console.WriteLine("[Intel8254X] Good Threshold");
             }
 
             if ((Status & 0x80) != 0)
             {
-                //Console.WriteLine("[Intel8254X] Packet Received");
                 uint _RXCurr = Instance.RXCurr;
                 RXDesc* desc = (RXDesc*)(Instance.RXDescs + (Instance.RXCurr * 16));
                 while ((desc->status & 0x1) != 0)
                 {
-                    Instance.SendBytes((byte*)desc->addr, desc->length);
+                    Instance.ReadRawData((byte*)desc->addr, desc->length);
                     //desc->addr;
                     desc->status = 0;
                     Instance.RXCurr = (Instance.RXCurr + 1) % 32;
                     Instance.WriteRegister(0x2818, _RXCurr);
                 }
+               
             }
         }
 
@@ -485,7 +489,6 @@ namespace MOOS.Driver
 
         public override bool QueueBytes(byte[] buffer, int offset, int length)
         {
-            Console.WriteLine($"[QueueBytes] {buffer.Length}");
             byte[] data = new byte[length];
             for (int b = 0; b < length; b++)
             {
@@ -494,7 +497,6 @@ namespace MOOS.Driver
           
             if (SendBytes(ref data) == false)
             {
-                Console.WriteLine("Queuing");
                 mTransmitBuffer.Enqueue(data);
             }
             return true;
@@ -508,7 +510,6 @@ namespace MOOS.Driver
 
         public override byte[] ReceivePacket()
         {
-            Console.WriteLine("[ReceivePacket]");
             if (mRecvBuffer.Count < 1)
             {
                 return null;
@@ -519,7 +520,6 @@ namespace MOOS.Driver
 
         public override int BytesAvailable()
         {
-            Console.WriteLine("[BytesAvailable]");
             if (mRecvBuffer.Count < 1)
             {
                 return 0;
@@ -539,30 +539,28 @@ namespace MOOS.Driver
 
         #endregion
         #region Helper Functions
-        private void ReadRawData(ushort packetLen)
+        private void ReadRawData(byte* aData, ushort packetLen)
         {
-            Console.WriteLine("[ReadRawData]");
-            int recv_size = packetLen - 4;
-            byte[] recv_data = new byte[recv_size];
-            for (uint b = 0; b < recv_size; b++)
+            byte[] buffer = new byte[packetLen];
+
+            unsafe
             {
-                recv_data[b] = rxBuffer[(uint)(capr + 4 + b)];
+                for (int i = 0; i < packetLen; i++)
+                {
+                    buffer[i] = aData[i];
+                }
             }
+
             if (DataReceived != null)
             {
-                DataReceived(recv_data);
+                DataReceived(buffer);
             }
             else
             {
                 if (mRecvBuffer == null)
                 {
                 }
-                mRecvBuffer.Enqueue(recv_data);
-            }
-            capr += (ushort)((packetLen + 4 + 3) & 0xFFFFFFFC);
-            if (capr > RxBufferSize)
-            {
-                capr -= RxBufferSize;
+                mRecvBuffer.Enqueue(buffer);
             }
         }
 
@@ -578,7 +576,6 @@ namespace MOOS.Driver
 
         protected bool SendBytes(byte* Buffer, ushort length)
         {
-
             TXDesc* desc = (TXDesc*)(TXDescs + (TXCurr * 16));
             Native.Movsb((void*)desc->addr, Buffer, (ulong)length);
             desc->length = (ushort)length;
@@ -589,7 +586,6 @@ namespace MOOS.Driver
             TXCurr = (TXCurr + 1) % 8;
             WriteRegister(0x3818, TXCurr);
             while ((desc->status & 0xff) == 0) ;
-
 
             return true;
         }

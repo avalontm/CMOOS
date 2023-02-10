@@ -165,7 +165,6 @@ namespace MOOS.NET
 
         public override string ToString()
         {
-            Console.WriteLine($"[ToString] {bytes.Length}");
             // mac address consists of 6 2chars pairs, delimited by :
             var xChars = new char[17];
             PutByte(xChars, 0, bytes[0]);

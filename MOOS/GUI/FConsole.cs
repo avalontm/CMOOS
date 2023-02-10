@@ -40,7 +40,7 @@ namespace MOOS.GUI
 
         }
 
-        void Keyboard_OnKeyChanged(ConsoleKeyInfo key)
+        void Keyboard_OnKeyChanged(object sender, ConsoleKeyInfo key)
         {
             if (!this.Focus)
             {
