@@ -59,7 +59,7 @@ namespace System.Windows
             Width = 300;
             Height = 150;
             Background = Brushes.White;
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Focus = this;
             WindowManager.Childrens.Add(this);
         }
@@ -72,7 +72,7 @@ namespace System.Windows
             Width = width;
             Height = height;
             Background = Brushes.White;
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Focus = this;
             WindowManager.Childrens.Add(this);
         }
@@ -80,8 +80,8 @@ namespace System.Windows
         public void ShowDialog()
         {
             onWindowStartupLocation();
-            WindowManager.MovetoTop(this);
             OnLoaded();
+            WindowManager.MovetoTop(this);
             this.Visible = true;
         }
 
@@ -171,9 +171,12 @@ namespace System.Windows
         {
             base.OnUpdate();
 
-            if (Content != null)
+            if (this.Visible)
             {
-                Content.OnUpdate();
+                if (Content != null)
+                {
+                    Content.OnUpdate();
+                }
             }
         }
 
@@ -181,23 +184,27 @@ namespace System.Windows
         {
             base.OnDraw();
 
-            //WindowBar
-            Framebuffer.Graphics.FillRectangle(X, Y - BarHeight, Width, BarHeight, 0xFFFFFFFF);
-            WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Title)) / 2), Y - BarHeight + (BarHeight / 4), Title, 0xFF000000);
-
-            Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
-
-            if (Content != null)
+            if (this.Visible)
             {
-                Content.OnDraw();
-            }
+                //WindowBar
+                Framebuffer.Graphics.FillRectangle(X, Y - BarHeight, Width, BarHeight, 0xFFDEDAD7);
+                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Title)) / 2), Y - (BarHeight / 2) - (WindowManager.font.FontSize / 4), Title, 0xFF000000);
 
-            if (BorderBrush != null)
-            {
-                DrawBorder();
-            }
+                //Window Content
+                Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
 
-            Framebuffer.Graphics.DrawImage(CloseButtonX, CloseButtonY, WindowManager.CloseButton);
+                if (Content != null)
+                {
+                    Content.OnDraw();
+                }
+
+                if (BorderBrush != null)
+                {
+                    DrawBorder();
+                }
+
+                Framebuffer.Graphics.DrawImage(CloseButtonX, CloseButtonY, WindowManager.CloseButton);
+            }
         }
 
         public virtual void OnClose()

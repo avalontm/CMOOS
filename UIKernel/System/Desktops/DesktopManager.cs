@@ -155,56 +155,13 @@ namespace System.Desktops
 
         }
 
-        static Image ToBlur(Image originalImage, int blurSize = 10)
-        {
-            Image blurredImage = new Image(originalImage.Width, originalImage.Height);
-
-            int offset = (blurSize - 1) / 2;
-
-            for (int x = 0; x < originalImage.Width; x++)
-            {
-                for (int y = 0; y < originalImage.Height; y++)
-                {
-                    int r = 0, g = 0, b = 0;
-                    int count = 0;
-
-                    for (int i = -offset; i <= offset; i++)
-                    {
-                        for (int j = -offset; j <= offset; j++)
-                        {
-                            int xCoordinate = x + i;
-                            int yCoordinate = y + j;
-
-                            if (xCoordinate >= 0 && xCoordinate < originalImage.Width && yCoordinate >= 0 && yCoordinate < originalImage.Height)
-                            {
-                                Color pixel = originalImage.GetColor(xCoordinate, yCoordinate);
-                                r += pixel.R;
-                                g += pixel.G;
-                                b += pixel.B;
-                                count++;
-                            }
-                        }
-                    }
-
-                    r /= count;
-                    g /= count;
-                    b /= count;
-
-                    blurredImage.SetPixel(x, y, Color.FromArgb(r, g, b));
-                }
-            }
-
-            originalImage.Dispose();    
-            return blurredImage;
-        }
-
         static void onLoadIcons()
         {
-            int BarHeight = bar.Height + 10;
-            int Devide = 60;
-            int X = 20;
-            int Y = BarHeight;
-            string devider = "/";
+            int _barHeight = bar.Height + 10;
+            int _separator = 60;
+            int _x = 20;
+            int _y = _barHeight;
+            string _devider = "/";
 
             BuiltInAppNames.Clear();
 
@@ -231,16 +188,16 @@ namespace System.Desktops
 
             string dirDesktop = $"home/{User}/Desktop";
 
-            List<FileInfo> files = File.GetFiles(dirDesktop + devider);
+            List<FileInfo> files = File.GetFiles(dirDesktop + _devider);
 
             if (IsAtRoot)
             {
                 for (int i = 0; i < BuiltInAppNames.Count; i++)
                 {
-                    if (Y + DesktopIcons.FileIcon.Height + Devide > Framebuffer.Graphics.Height - Devide)
+                    if ((_y + (DesktopIcons.FileIcon.Height + _separator)) > Framebuffer.Graphics.Height - _separator)
                     {
-                        Y =  BarHeight;
-                        X += DesktopIcons.FileIcon.Width + (Devide/2);
+                        _y =  _barHeight;
+                        _x += (DesktopIcons.FileIcon.Width + (_separator / 2));
                     }
 
                     if (BuiltInAppNames.ContainsKey((i + 1)))
@@ -248,27 +205,27 @@ namespace System.Desktops
                         IconFile icon = new IconFile();
                         icon.Key = (i + 1);
                         icon.Content = BuiltInAppNames[icon.Key];
-                        icon.Path = dirDesktop + devider;
-                        icon.FilePath = dirDesktop + devider + icon.Content;
+                        icon.Path = dirDesktop + _devider;
+                        icon.FilePath = dirDesktop + _devider + icon.Content;
                         icon.FileInfo = null;
-                        icon.X = X;
-                        icon.Y = Y;
+                        icon.X = _x;
+                        icon.Y = _y;
                         icon.Command = IconNativeClickCommand;
                         icon.icon = DesktopIcons.BuiltInAppIcon;
 
                         icons.Add(icon);
 
-                        Y += DesktopIcons.FileIcon.Height + Devide;
+                        _y+= (DesktopIcons.FileIcon.Height + _separator);
                     }
                 }
             }
 
             for (int i = 0; i < files.Count; i++)
             {
-                if (Y + DesktopIcons.FileIcon.Height + Devide > Framebuffer.Graphics.Height - Devide)
+                if (_y + DesktopIcons.FileIcon.Height + _separator > Framebuffer.Graphics.Height - _separator)
                 {
-                    Y = BarHeight;
-                    X += DesktopIcons.FileIcon.Width + (Devide / 2);
+                    _y = _barHeight;
+                    _x += DesktopIcons.FileIcon.Width + (_separator / 2);
                 }
 
                 if (files[i].Attribute == FileAttribute.Hidden || files[i].Attribute == FileAttribute.System)
@@ -278,11 +235,11 @@ namespace System.Desktops
 
                 IconFile icon = new IconFile();
                 icon.Content = files[i].Name;
-                icon.Path = dirDesktop + devider;
-                icon.FilePath = dirDesktop + devider + icon.Content;
+                icon.Path = dirDesktop + _devider;
+                icon.FilePath = dirDesktop + _devider + icon.Content;
                 icon.FileInfo = files[i];
-                icon.X = X;
-                icon.Y = Y;
+                icon.X = _x;
+                icon.Y = _y;
 
                 if (files[i].Attribute == FileAttribute.Directory)
                 {
@@ -298,7 +255,7 @@ namespace System.Desktops
 
                 icons.Add(icon);
 
-                Y += DesktopIcons.FileIcon.Height + Devide;
+                _y += DesktopIcons.FileIcon.Height + _separator;
             }
 
             files.Dispose();
@@ -306,14 +263,14 @@ namespace System.Desktops
 
         static void onDesktopDirectoryClick(object obj)
         {
-            string dir = obj as string;
-            Debug.WriteLine($"[Directory] {dir}");
+            IconFile file = obj as IconFile;
 
             ExplorerManager explorer = new ExplorerManager();
-            explorer.Title = dir;
-            explorer.Dir = dir;
+            explorer.Title = file.Content;
+            explorer.Dir = file.FilePath;
             explorer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             explorer.ShowDialog();
+
 
         }
 

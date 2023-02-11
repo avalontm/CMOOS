@@ -16,7 +16,7 @@ namespace System.Windows.Controls
         public int Height { set; get; }
     }
 
-    public class Widget 
+    public abstract class Widget 
     {
         Cursor _cursor;
         Brush _background;
@@ -94,7 +94,7 @@ namespace System.Windows.Controls
             Parent = this;
             Background = Brushes.White;
             Foreground = Brushes.Black;
-            BorderBrush = Brushes.Black;
+            BorderBrush = new Brush(0xFFCDC7C2);
             ColorNormal = new Brush(0xFF111111);
             ColorFocus = new Brush(0xFF141414);
             BorderThickness = new Thickness(1);
@@ -164,7 +164,7 @@ namespace System.Windows.Controls
 
         public void DrawBorder()
         {
-            Framebuffer.Graphics.DrawRectangle(X - (int)(BorderThickness.Left - 1), Y - (int)(BorderThickness.Top - 1), Width + (int)(BorderThickness.Right), Height + (int)(BorderThickness.Bottom), BorderBrush.Value);
+            Framebuffer.Graphics.DrawRectangle(X - (int)(BorderThickness.Left - 1), Y - (int)(BorderThickness.Top - 1), (Width-1) + (int)(BorderThickness.Right), (Height -1) + (int)(BorderThickness.Bottom), BorderBrush.Value);
         }
 
         public void onMouseFocus()

@@ -19,45 +19,44 @@ namespace System.Explorers
         {
             Foreground = Brushes.Black;
             Width = 800;
-            Height=600;
+            Height = 600;
 
             Files = new List<IconFile>();
-
         }
 
         public override void OnLoaded()
         {
             base.OnLoaded();
-            int BarHeight = 40;
-            int Devide = 60;
-            int X = 20;
-            int Y = 60 + BarHeight;
-            string devider = "/";
 
-            List<FileInfo> files = File.GetFiles(Dir + devider);
+            int _separate = 60;
+            int _x = 15;
+            int _y = 15;
+            string _devider = "/";
+
+            List<FileInfo> files = File.GetFiles(Dir + _devider);
 
             for (int i = 0; i < files.Count; i++)
             {
-                if (Y + DesktopIcons.FileIcon.Height + Devide > this.Height - Devide)
+                if ((_y + (DesktopIcons.FileIcon.Height + _separate)) > (this.Height - this.BarHeight))
                 {
-                    Y = BarHeight;
-                    X += DesktopIcons.FileIcon.Width + (Devide / 2);
+                    _y = 15;
+                    _x += DesktopIcons.FileIcon.Width + (_separate / 2);
                 }
-
+                
                 if (files[i].Attribute == FileAttribute.Hidden || files[i].Attribute == FileAttribute.System)
                 {
                     continue;
                 }
-
+                
                 IconFile icon = new IconFile();
                 icon.OwnerWindow = this;
                 icon.Content = files[i].Name;
                 icon.Foreground = Brushes.Black;
-                icon.Path = Dir + devider;
-                icon.FilePath = Dir + devider + icon.Content;
+                icon.Path = Dir + _devider;
+                icon.FilePath = Dir + _devider + icon.Content;
                 icon.FileInfo = files[i];
-                icon.X = X;
-                icon.Y = Y;
+                icon.X = _x;
+                icon.Y = _y;
 
                 if (files[i].Attribute == FileAttribute.Directory)
                 {
@@ -73,7 +72,7 @@ namespace System.Explorers
 
                 Files.Add(icon);
 
-                Y += DesktopIcons.FileIcon.Height + Devide;
+                _y += DesktopIcons.FileIcon.Height + _separate;
             }
 
             files.Dispose();
@@ -103,6 +102,7 @@ namespace System.Explorers
         {
             base.OnClose();
             Files.Clear();
+            Files.Dispose();
             this.Dispose();
         }
 

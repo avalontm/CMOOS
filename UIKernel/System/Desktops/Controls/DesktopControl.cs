@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace System.Desktops.Controls
 {
-    public class DesktopControl
+    public abstract class DesktopControl
     {
         public int X { set; get; }
         public int Y { set; get; }

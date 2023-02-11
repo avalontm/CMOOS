@@ -28,6 +28,7 @@ namespace System.Desktops.Controls
         int offsetX, offsetY;
         int _clickCount;
         ulong _timer;
+
         public IconFile()
         {
             Foreground = Brushes.White;
@@ -78,13 +79,13 @@ namespace System.Desktops.Controls
         public override void Update()
         {
             base.Update();
-            int _x = X;
-            int _y = Y;
+            int _x = this.X;
+            int _y = this.Y;
 
             if (OwnerWindow != null)
             {
-                _x = OwnerWindow.X + X;
-                _y = OwnerWindow.Y + Y;
+                _x = OwnerWindow.X + this.X;
+                _y = OwnerWindow.Y + this.Y;
             }
 
             if (!WindowManager.HasWindowMoving && Control.MousePosition.X > (_x - offsetX) && Control.MousePosition.X < ((_x - offsetX) + Width) && Control.MousePosition.Y > _y && Control.MousePosition.Y < (_y + Height))
@@ -101,7 +102,7 @@ namespace System.Desktops.Controls
 
                             if (isDirectory)
                             {
-                                Command.Execute.Invoke(FilePath);
+                                Command.Execute.Invoke(this);
                             }
                             else
                             {
@@ -141,13 +142,13 @@ namespace System.Desktops.Controls
         {
             base.Draw();
 
-            int _x = X;
-            int _y = Y;
+            int _x = this.X;
+            int _y = this.Y;
 
             if (OwnerWindow != null)
             {
-                _x = OwnerWindow.X + X;
-                _y = OwnerWindow.Y + Y;
+                _x = OwnerWindow.X + this.X;
+                _y = OwnerWindow.Y + this.Y;
             }
 
             if (_isFocus)

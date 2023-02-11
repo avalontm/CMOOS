@@ -124,6 +124,48 @@ namespace System.Drawing
             return image;
         }
 
+        public unsafe Image ToBlur(int blurSize = 10)
+        {
+            Image blurredImage = new Image(this.Width, this.Height);
+
+            int offset = (blurSize - 1) / 2;
+
+            for (int x = 0; x < this.Width; x++)
+            {
+                for (int y = 0; y < this.Height; y++)
+                {
+                    int r = 0, g = 0, b = 0;
+                    int count = 0;
+
+                    for (int i = -offset; i <= offset; i++)
+                    {
+                        for (int j = -offset; j <= offset; j++)
+                        {
+                            int xCoordinate = x + i;
+                            int yCoordinate = y + j;
+
+                            if (xCoordinate >= 0 && xCoordinate < this.Width && yCoordinate >= 0 && yCoordinate < this.Height)
+                            {
+                                Color pixel = this.GetColor(xCoordinate, yCoordinate);
+                                r += pixel.R;
+                                g += pixel.G;
+                                b += pixel.B;
+                                count++;
+                            }
+                        }
+                    }
+
+                    r /= count;
+                    g /= count;
+                    b /= count;
+
+                    blurredImage.SetPixel(x, y, Color.FromArgb(r, g, b));
+                }
+            }
+
+            return blurredImage;
+        }
+
         public override void Dispose()
         {
             RawData.Dispose();
