@@ -77,10 +77,9 @@ namespace System.Windows.Controls
                 Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
             }
          
-
             if (!string.IsNullOrEmpty(Content))
             {
-                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Content)) / 2),(Y + (Height / 2) ) - (WindowManager.font.FontSize/2) , Content, Foreground.Value);
+                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Content)) / 2) - 1,(Y + (Height / 2) ) - (WindowManager.font.FontSize/2) + 2 , Content, Foreground.Value);
             }
 
             if (BorderBrush != null)

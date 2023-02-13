@@ -60,22 +60,7 @@ namespace System.Windows
             Y= 0;
             Width = 300;
             Height = 150;
-            Background = Brushes.White;
-            CloseButton = new Button();
-            CloseButton.UseCircle = true;
-            CloseButton.Width = 28;
-            CloseButton.Height = 28;
-            CloseButton.Command = new Data.Binding();
-            CloseButton.Command.Source = new ICommand(onClose);
-            CloseButton.Content = "X";
-            CloseButton.Background = new Brush(0xd6d6d6);
-            CloseButton.HighlightBackground = new Brush(0xde4343);
-
-            CloseButton.Background = new Brush(0xDDDDDD);
-
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            Focus = this;
-            WindowManager.Childrens.Add(this);
+            onInitWindow();
         }
 
         public Window(int x, int y, int width, int height)
@@ -85,7 +70,22 @@ namespace System.Windows
             Y = y;
             Width = width;
             Height = height;
+            onInitWindow();
+        }
+
+        void onInitWindow()
+        {
             Background = Brushes.White;
+
+            CloseButton = new Button();
+            CloseButton.Width = 28;
+            CloseButton.Height = 28;
+            CloseButton.Command = new Data.Binding();
+            CloseButton.Command.Source = new ICommand(onClose);
+            CloseButton.Content = "X";
+            CloseButton.Background = new Brush(0xd9d9d9);
+            CloseButton.HighlightBackground = new Brush(0xde4343);
+
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Focus = this;
             WindowManager.Childrens.Add(this);
@@ -93,8 +93,8 @@ namespace System.Windows
 
         public void ShowDialog()
         {
-            onWindowStartupLocation();
             OnLoaded();
+            onWindowStartupLocation();
             WindowManager.MovetoTop(this);
             this.Visible = true;
         }
@@ -207,7 +207,11 @@ namespace System.Windows
             {
                 //WindowBar
                 Framebuffer.Graphics.FillRectangle(X, Y - BarHeight, Width, BarHeight, 0xebebeb);
-                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Title)) / 2), Y - (BarHeight / 2) - (WindowManager.font.FontSize / 4), Title, 0xFF000000);
+
+                if(!string.IsNullOrEmpty(Title))
+                {
+                    WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Title)) / 2), Y - (BarHeight / 2) - (WindowManager.font.FontSize / 4), Title, 0xFF000000);
+                }
 
                 //Window Content
                 Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);

@@ -275,12 +275,11 @@ namespace System.Desktops
 
         static void onDesktopNativeOSClick(object obj)
         {
-            int key = Convert.ToInt32(obj.ToString());
+            IconFile file = obj as IconFile;
 
-            Debug.WriteLine($"[Icon] {key}");
             Window frm = null;
 
-            switch (key)
+            switch (file.Key)
             {
                 case 1:
                     //frm = new Calculator(300, 500);
@@ -313,42 +312,33 @@ namespace System.Desktops
 
         static void onDesktopIconClick(object obj)
         {
-            string file = obj as string;
-            Window frm = null;
+            IconFile file = obj as IconFile;
 
-            Debug.WriteLine($"[Icon] {file}");
-           
-            if (string.IsNullOrEmpty(file))
+            if (string.IsNullOrEmpty(file.FilePath))
             {
-                file.Dispose();
                 MessageBox.Show("Can't open file.", "Not Found");
                 return;
             }
 
-            if (file.EndsWith(".png"))
+            if (file.Extention == "png")
             {
-                byte[] buffer = File.ReadAllBytes(file);
+                byte[] buffer = File.ReadAllBytes(file.FilePath);
                 PNG png = new(buffer);
                 buffer.Dispose();
                 ImageViewer img = new ImageViewer(100, 100);
                 img.SetImage(png);
                 img.ShowDialog();
             }
-            else if (file.EndsWith("doom1.wad"))
+            else if (file.Extention == "mue")
             {
-                //frm = new Doom(300, 250, file);
-                //frm.ShowDialog();
-            }
-            else if (file.EndsWith(".mue"))
-            {
-                byte[] buffer = File.ReadAllBytes(file);
+                byte[] buffer = File.ReadAllBytes(file.FilePath);
                 Process.Start(buffer);
             }
-            else if (file.EndsWith(".wav"))
+            else if (file.Extention == "wav")
             {
                 if (Audio.HasAudioDevice)
                 {
-                    byte[] buffer = File.ReadAllBytes(file);
+                    byte[] buffer = File.ReadAllBytes(file.FilePath);
                     WAV.Decode(buffer, out byte[] pcm, out WAV.Header header);
                     Audio.Play(pcm);
                     pcm.Dispose();
@@ -359,20 +349,15 @@ namespace System.Desktops
                     MessageBox.Show("Audio controller is unavailable!", "Error");
                 }
             }
-            else if (file.EndsWith(".nes"))
+            else if (file.Extention == "nes")
             {
                 //NESEmu nes = new NESEmu(100,100);
-               // nes.OpenROM(File.ReadAllBytes(file));
-               // nes.ShowDialog();
+                //nes.OpenROM(File.ReadAllBytes(file.FilePath));
+                //nes.ShowDialog();
             }
             else 
             {
                 MessageBox.Show("Can't open file.", "Not Found");
-            }
-
-            if (frm != null)
-            {
-                file.Dispose();
             }
         }
 

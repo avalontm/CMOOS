@@ -20,6 +20,10 @@ namespace System.Windows.Controls
     {
         Cursor _cursor;
         Brush _background;
+        Brush _foreground;
+        Brush _highlight_foreground;
+        Brush _old_foreground;
+
         Brush _old_background;
         Brush _highlight_background;
         public string Name { set; get; }
@@ -47,6 +51,22 @@ namespace System.Windows.Controls
                 {
                     _highlight_background = new Brush(_old_background.Value - 0x242424);
                 }
+
+                if (_background != null)
+                {
+                    Color color = Color.FromArgb(_background.Value);
+                    double luminosity = (((0.2126 * color.R) + (0.7152 * color.G) + (0.0722 * color.B)) / 255);
+
+                    if (luminosity >= 0.5) //Light
+                    {
+                        _highlight_foreground = Brushes.Black;
+                    }
+                    else
+                    {
+                        _highlight_foreground = Brushes.White;
+                    }
+                    color.Dispose();
+                }
             }
             get { return _background; }
         }
@@ -60,6 +80,15 @@ namespace System.Windows.Controls
             get { return _highlight_background; }
         }
 
+        public Brush HighlightForeground
+        {
+            set
+            {
+                _highlight_foreground = value;
+            }
+            get { return _highlight_foreground; }
+        }
+
         public Cursor Cursor
         {
             set
@@ -69,7 +98,21 @@ namespace System.Windows.Controls
             get { return _cursor; }
         }
 
-        public Brush Foreground { set; get; }
+        public Brush Foreground
+        {
+            set
+            {
+                _foreground = value;
+
+                //Default
+                if (_old_foreground == null)
+                {
+                    _old_foreground = new Brush(_foreground.Value);
+                }
+            }
+            get { return _foreground; }
+        }
+
         public Brush BorderBrush { set; get; }
         public Thickness BorderThickness { set; get; }
         public Brush ColorFocus { set; get; }
@@ -114,6 +157,7 @@ namespace System.Windows.Controls
         public Widget() : base()
         {
             Parent = this;
+            UseHighlight = false;
             Background = Brushes.White;
             Foreground = Brushes.Black;
             BorderBrush = new Brush(0xFFCDC7C2);
@@ -182,10 +226,14 @@ namespace System.Windows.Controls
                     if (MouseEnter)
                     {
                         Background = _highlight_background;
+                        Foreground = _highlight_foreground;
+                        BorderBrush.Value = _highlight_background.Value - 0x242424;
                     }
                     else
                     {
                         Background = _old_background;
+                        Foreground = _old_foreground;
+                        BorderBrush.Value = _old_background.Value - 0x242424;
                     }
                 }
             }
@@ -201,7 +249,7 @@ namespace System.Windows.Controls
 
         public void DrawBorder()
         {
-            Framebuffer.Graphics.DrawRectangle(X - (int)(BorderThickness.Left - 1), Y - (int)(BorderThickness.Top - 1), (Width-1) + (int)(BorderThickness.Right), (Height -1) + (int)(BorderThickness.Bottom), BorderBrush.Value);
+            Framebuffer.Graphics.DrawRectangle(X - BorderThickness.Left, Y - BorderThickness.Top , Width  + (int)(BorderThickness.Right), Height+ (int)(BorderThickness.Bottom), BorderBrush.Value);
         }
 
         public void onMouseFocus()

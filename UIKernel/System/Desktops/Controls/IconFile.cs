@@ -23,7 +23,7 @@ namespace System.Desktops.Controls
         public Brush FocusBackground { set; get; }
         public FileInfo FileInfo { get; set; }
         public ExplorerManager OwnerWindow { get;  set; }
-
+        public string Extention { private set; get; }
         bool _isFocus;
         int offsetX, offsetY;
         int _clickCount;
@@ -48,22 +48,22 @@ namespace System.Desktops.Controls
             if (ext.EndsWith(".png"))
             {
                 icon = DesktopIcons.ImageIcon;
-            }
-            else if (ext.EndsWith("doom1.wad"))
-            {
-                icon = DesktopIcons.DoomIcon;
+                Extention = "png";
             }
             else if (ext.EndsWith(".mue"))
             {
                 icon = DesktopIcons.AppIcon;
+                Extention = "mue";
             }
             else if (ext.EndsWith(".wav"))
             {
                 icon = DesktopIcons.AudioIcon;
+                Extention = "wav";
             }
             else if (ext.EndsWith(".nes"))
             {
                 icon = DesktopIcons.GameIcon;
+                Extention = "nes";
             }
             else if (isDirectory)
             {
@@ -108,11 +108,11 @@ namespace System.Desktops.Controls
                             {
                                 if (Key == 0)
                                 {
-                                    Command.Execute.Invoke(FilePath);
+                                    Command.Execute.Invoke(this);
                                 }
                                 else
                                 {
-                                    Command.Execute.Invoke(Key);
+                                    Command.Execute.Invoke(this);
                                 }
                             }
                         }
