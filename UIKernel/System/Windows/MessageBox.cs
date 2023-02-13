@@ -56,13 +56,10 @@ namespace System.Windows
 
         public static void Show(string text, string title)
         {
-            Instance.SetText(text, title);
-            Instance.ShowDialog();
+            MessageBox frm = new MessageBox();
+            frm.SetText(text, title);
+            frm.ShowDialog();
         }
 
-        public static void Initialize()
-        {
-           Instance = new MessageBox();
-        }
     }
 }

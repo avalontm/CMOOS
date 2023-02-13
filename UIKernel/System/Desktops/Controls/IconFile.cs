@@ -22,7 +22,7 @@ namespace System.Desktops.Controls
         public string FilePath { set; get; }
         public Brush FocusBackground { set; get; }
         public FileInfo FileInfo { get; set; }
-        public ExplorerManager OwnerWindow { get;  set; }
+        public ExplorerManager OwnerWindow { get; set; }
         public string Extention { private set; get; }
         bool _isFocus;
         int offsetX, offsetY;
@@ -32,7 +32,7 @@ namespace System.Desktops.Controls
         public IconFile()
         {
             Foreground = Brushes.White;
-            FocusBackground = new Brush(Color.ToArgb(50,100,150,240));
+            FocusBackground = new Brush(Color.ToArgb(50, 100, 150, 240));
 
             icon = DesktopIcons.FileIcon;
             Width = DesktopIcons.FileIcon.Width;
@@ -43,37 +43,49 @@ namespace System.Desktops.Controls
 
         public void onLoadIconExtention()
         {
-            string ext = Content.ToLower();
+            if (!string.IsNullOrEmpty(Content))
+            {
+                string ext = Content.ToLower();
 
-            if (ext.EndsWith(".png"))
-            {
-                icon = DesktopIcons.ImageIcon;
-                Extention = "png";
+                if (ext.EndsWith(".png"))
+                {
+                    icon = DesktopIcons.ImageIcon;
+                    Extention = "png";
+                }
+                else if (ext.EndsWith(".mue"))
+                {
+                    icon = DesktopIcons.AppIcon;
+                    Extention = "mue";
+                }
+                else if (ext.EndsWith(".wav"))
+                {
+                    icon = DesktopIcons.AudioIcon;
+                    Extention = "wav";
+                }
+                else if (ext.EndsWith(".nes"))
+                {
+                    icon = DesktopIcons.GameIcon;
+                    Extention = "nes";
+                }
+                else if (isDirectory)
+                {
+                    icon = DesktopIcons.FolderIcon;
+                }
+                else
+                {
+                    icon = DesktopIcons.FileIcon;
+                    string[] strings = ext.Split('.');
+                    if (strings.Length > 0)
+                    {
+                        Extention = strings[strings.Length - 1];
+                    }
+                    else
+                    {
+                        Extention = "unk";
+                    }
+                }
+                ext.Dispose();
             }
-            else if (ext.EndsWith(".mue"))
-            {
-                icon = DesktopIcons.AppIcon;
-                Extention = "mue";
-            }
-            else if (ext.EndsWith(".wav"))
-            {
-                icon = DesktopIcons.AudioIcon;
-                Extention = "wav";
-            }
-            else if (ext.EndsWith(".nes"))
-            {
-                icon = DesktopIcons.GameIcon;
-                Extention = "nes";
-            }
-            else if (isDirectory)
-            {
-                icon = DesktopIcons.FolderIcon;
-            }
-            else
-            {
-                icon = DesktopIcons.FileIcon;
-            }
-            ext.Dispose();
         }
 
         public override void Update()

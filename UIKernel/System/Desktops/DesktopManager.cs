@@ -69,7 +69,6 @@ namespace System.Desktops
 
             DesktopIcons.Initialize();
             WindowManager.Initialize();
-            MessageBox.Initialize();
             CursorManager.Initialize();
 
             bar = new DesktopBar();
@@ -310,7 +309,7 @@ namespace System.Desktops
             }
         }
 
-        static void onDesktopIconClick(object obj)
+        static unsafe void onDesktopIconClick(object obj)
         {
             IconFile file = obj as IconFile;
 
@@ -320,44 +319,43 @@ namespace System.Desktops
                 return;
             }
 
-            if (file.Extention == "png")
+            switch (file.Extention)
             {
-                byte[] buffer = File.ReadAllBytes(file.FilePath);
-                PNG png = new(buffer);
-                buffer.Dispose();
-                ImageViewer img = new ImageViewer(100, 100);
-                img.SetImage(png);
-                img.ShowDialog();
-            }
-            else if (file.Extention == "mue")
-            {
-                byte[] buffer = File.ReadAllBytes(file.FilePath);
-                Process.Start(buffer);
-            }
-            else if (file.Extention == "wav")
-            {
-                if (Audio.HasAudioDevice)
-                {
-                    byte[] buffer = File.ReadAllBytes(file.FilePath);
-                    WAV.Decode(buffer, out byte[] pcm, out WAV.Header header);
-                    Audio.Play(pcm);
-                    pcm.Dispose();
-                    buffer.Dispose();
-                }
-                else
-                {
-                    MessageBox.Show("Audio controller is unavailable!", "Error");
-                }
-            }
-            else if (file.Extention == "nes")
-            {
-                //NESEmu nes = new NESEmu(100,100);
-                //nes.OpenROM(File.ReadAllBytes(file.FilePath));
-                //nes.ShowDialog();
-            }
-            else 
-            {
-                MessageBox.Show("Can't open file.", "Not Found");
+                case "png":
+                    {
+                        byte[] buffer = File.ReadAllBytes(file.FilePath);
+                        PNG png = new(buffer);
+                        buffer.Dispose();
+                        ImageViewer img = new ImageViewer(100, 100);
+                        img.SetImage(png);
+                        img.ShowDialog();
+                    }
+                    break;
+                case "mue":
+                    {
+                        byte[] buffer = File.ReadAllBytes(file.FilePath);
+                        Process.Start(buffer);
+                    }
+                    break;
+                case "wav":
+                    {
+                        if (Audio.HasAudioDevice)
+                        {
+                            WAVPlayer wavplayer = new WAVPlayer();
+                            wavplayer.Play(file.FilePath);
+                            wavplayer.ShowDialog();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Audio controller is unavailable!", "Error");
+                        }
+                    }
+                    break;
+                default:
+                    {
+                        MessageBox.Show("The system did not find a suitable program to execute this file.", "Can not be executed");
+                    }
+                    break;
             }
         }
 

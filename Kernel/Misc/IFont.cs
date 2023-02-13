@@ -89,7 +89,7 @@ namespace MOOS.Misc
         }
 
 
-        public void DrawString(int X, int Y, string Str, uint color, int LineLimit = -1, int HeightLimit = -1)
+        public void DrawString(int X, int Y, string Str, uint color = 0xFF000000, int LineLimit = -1, int HeightLimit = -1)
         {
             int w = 0, h = 0;
             for (int i = 0; i < Str.Length; i++)
