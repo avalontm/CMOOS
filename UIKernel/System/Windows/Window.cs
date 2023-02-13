@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace System.Windows
@@ -23,6 +24,7 @@ namespace System.Windows
         public string Title { set; get; }
         public WindowStartupLocation WindowStartupLocation { get; set; }
         public Widget Focus { set; get; }
+        Button CloseButton;
 
         Widget _content;
         public Widget Content
@@ -59,6 +61,18 @@ namespace System.Windows
             Width = 300;
             Height = 150;
             Background = Brushes.White;
+            CloseButton = new Button();
+            CloseButton.UseCircle = true;
+            CloseButton.Width = 28;
+            CloseButton.Height = 28;
+            CloseButton.Command = new Data.Binding();
+            CloseButton.Command.Source = new ICommand(onClose);
+            CloseButton.Content = "X";
+            CloseButton.Background = new Brush(0xd6d6d6);
+            CloseButton.HighlightBackground = new Brush(0xde4343);
+
+            CloseButton.Background = new Brush(0xDDDDDD);
+
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Focus = this;
             WindowManager.Childrens.Add(this);
@@ -164,8 +178,8 @@ namespace System.Windows
             }
         }
 
-        private int CloseButtonX => X + Width + 2 - (BarHeight / 2) - (WindowManager.CloseButton.Width / 2);
-        private int CloseButtonY => Y - BarHeight + (BarHeight / 2) - (WindowManager.CloseButton.Height / 2);
+        private int CloseButtonX => X + Width + 2 - (BarHeight / 2) - (CloseButton.Width / 2);
+        private int CloseButtonY => Y - BarHeight + (BarHeight / 2) - (CloseButton.Height / 2);
 
         public override void OnUpdate()
         {
@@ -177,6 +191,11 @@ namespace System.Windows
                 {
                     Content.OnUpdate();
                 }
+
+                CloseButton.X = CloseButtonX; 
+                CloseButton.Y = CloseButtonY;
+
+                CloseButton.OnUpdate();
             }
         }
 
@@ -187,7 +206,7 @@ namespace System.Windows
             if (this.Visible)
             {
                 //WindowBar
-                Framebuffer.Graphics.FillRectangle(X, Y - BarHeight, Width, BarHeight, 0xFFDEDAD7);
+                Framebuffer.Graphics.FillRectangle(X, Y - BarHeight, Width, BarHeight, 0xebebeb);
                 WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Title)) / 2), Y - (BarHeight / 2) - (WindowManager.font.FontSize / 4), Title, 0xFF000000);
 
                 //Window Content
@@ -203,8 +222,14 @@ namespace System.Windows
                     DrawBorder();
                 }
 
-                Framebuffer.Graphics.DrawImage(CloseButtonX, CloseButtonY, WindowManager.CloseButton);
+                CloseButton.OnDraw();
+
             }
+        }
+
+        void onClose(object obj)
+        {
+            OnClose();
         }
 
         public virtual void OnClose()

@@ -309,6 +309,30 @@ namespace MOOS.Graph
             }
 
         }
+
+        public virtual void FillCircle(int pos_x, int pos_y, int size , uint color)
+        {
+            int centerX = size / 2;
+            int centerY = size / 2;
+            int radius = size / 2;
+
+            //int[,] pixels = new int[size, size];
+
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    int distance = (int)Math.Sqrt(Math.Pow(x - centerX, 2) + Math.Pow(y - centerY, 2));
+                    if (distance <= radius)
+                    {
+                        //pixels[x, y] = 1;
+                        DrawPoint(pos_x+ x, pos_y+y, color);
+                    }
+                }
+            }
+
+        }
+
         #endregion
     }
 }

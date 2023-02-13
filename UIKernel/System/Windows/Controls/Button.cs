@@ -14,6 +14,7 @@ namespace System.Windows.Controls
         public Binding Command { set; get; }
         public static object CommandProperty { get;  set; }
         public object CommandParameter { get; set; }
+        public bool UseCircle;
 
         bool clicked;
 
@@ -24,6 +25,7 @@ namespace System.Windows.Controls
             Width = 300;
             Height = 42;
             Background = new Brush(0xFF111111);
+            UseHighlight = true;
             CommandParameter = string.Empty;
         }
 
@@ -66,7 +68,15 @@ namespace System.Windows.Controls
         {
             base.OnDraw();
 
-            Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+            if (UseCircle)
+            {
+                Framebuffer.Graphics.FillCircle(X, Y, Height, Background.Value);
+            }
+            else
+            {
+                Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+            }
+         
 
             if (!string.IsNullOrEmpty(Content))
             {
@@ -75,7 +85,10 @@ namespace System.Windows.Controls
 
             if (BorderBrush != null)
             {
-                DrawBorder();
+                if (!UseCircle)
+                {
+                    DrawBorder();
+                }
             }
         }
 

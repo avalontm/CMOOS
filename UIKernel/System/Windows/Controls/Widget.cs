@@ -16,10 +16,12 @@ namespace System.Windows.Controls
         public int Height { set; get; }
     }
 
-    public abstract class Widget 
+    public abstract class Widget
     {
         Cursor _cursor;
         Brush _background;
+        Brush _old_background;
+        Brush _highlight_background;
         public string Name { set; get; }
         public int X { set; get; }
         public int Y { set; get; }
@@ -28,14 +30,34 @@ namespace System.Windows.Controls
         public bool MouseEnter { set; get; }
         public Thickness Margin { set; get; }
         public Thickness Padding { set; get; }
-        
+        public bool UseHighlight { set; get; }
+
         public Brush Background
         {
             set
             {
                 _background = value;
+
+                //Default
+                if (_old_background == null)
+                {
+                    _old_background = new Brush(_background.Value);
+                }
+                if (_highlight_background == null)
+                {
+                    _highlight_background = new Brush(_old_background.Value - 0x242424);
+                }
             }
             get { return _background; }
+        }
+
+        public Brush HighlightBackground
+        {
+            set
+            {
+                _highlight_background = value;
+            }
+            get { return _highlight_background; }
         }
 
         public Cursor Cursor
@@ -150,6 +172,21 @@ namespace System.Windows.Controls
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
                     _isFocus = false;
+                }
+            }
+
+            if (UseHighlight)
+            {
+                if (Background != null)
+                {
+                    if (MouseEnter)
+                    {
+                        Background = _highlight_background;
+                    }
+                    else
+                    {
+                        Background = _old_background;
+                    }
                 }
             }
         }
