@@ -30,8 +30,9 @@ namespace System.Explorers
 
             int _separate = 60;
             int _x = 15;
-            int _y = 15;
+            int _y = 0;
             string _devider = "/";
+
 
             List<FileInfo> files = File.GetFiles(Dir + _devider);
 
@@ -39,7 +40,7 @@ namespace System.Explorers
             {
                 if ((_y + (DesktopIcons.FileIcon.Height + _separate)) > (this.Height - this.BarHeight))
                 {
-                    _y = 15;
+                    _y = 0;
                     _x += DesktopIcons.FileIcon.Width + (_separate / 2);
                 }
                 
@@ -56,7 +57,7 @@ namespace System.Explorers
                 icon.FilePath = Dir + _devider + icon.Content;
                 icon.FileInfo = files[i];
                 icon.X = _x;
-                icon.Y = _y;
+                icon.Y = _y + 15;
 
                 if (files[i].Attribute == FileAttribute.Directory)
                 {

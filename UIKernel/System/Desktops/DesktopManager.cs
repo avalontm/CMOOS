@@ -65,7 +65,6 @@ namespace System.Desktops
 
             Image wall = Wallpaper;
             Wallpaper = wall.ResizeImage(Framebuffer.Width, Framebuffer.Height);
-           // Wallpaper = ToBlur(Wallpaper);
             wall.Dispose();
 
             DesktopIcons.Initialize();
@@ -157,9 +156,9 @@ namespace System.Desktops
 
         static void onLoadIcons()
         {
-            int _barHeight = bar.Height + 10;
+            int _barHeight = bar.Height + 20;
             int _separator = 60;
-            int _x = 20;
+            int _x = 0;
             int _y = _barHeight;
             string _devider = "/";
 
@@ -208,7 +207,7 @@ namespace System.Desktops
                         icon.Path = dirDesktop + _devider;
                         icon.FilePath = dirDesktop + _devider + icon.Content;
                         icon.FileInfo = null;
-                        icon.X = _x;
+                        icon.X = _x + 15;
                         icon.Y = _y;
                         icon.Command = IconNativeClickCommand;
                         icon.icon = DesktopIcons.BuiltInAppIcon;
@@ -238,7 +237,7 @@ namespace System.Desktops
                 icon.Path = dirDesktop + _devider;
                 icon.FilePath = dirDesktop + _devider + icon.Content;
                 icon.FileInfo = files[i];
-                icon.X = _x;
+                icon.X = _x + 15;
                 icon.Y = _y;
 
                 if (files[i].Attribute == FileAttribute.Directory)

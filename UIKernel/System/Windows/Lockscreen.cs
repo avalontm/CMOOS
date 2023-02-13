@@ -13,7 +13,7 @@ namespace MOOS.GUI
     {
         static IFont lsfont;
         static string[] mon;
-
+        static Image background;
         public static void Initialize()
         {
             mon = new string[12]
@@ -32,9 +32,11 @@ namespace MOOS.GUI
                 "December"
             };
 
+            background = DesktopManager.Wallpaper.ToBlur();
+
 #if Chinese
             lsfont = new IFont(new PNG(File.ReadAllBytes("sys/media/Yahei128.png")), "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 128);
-#else            
+#else
             lsfont = new IFont(new PNG(File.ReadAllBytes("sys/media/M+128.png")), "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 128);
 #endif
 
@@ -51,7 +53,7 @@ namespace MOOS.GUI
             while (a0.Value < a0.MaximumValue)
             {
                 Framebuffer.Graphics.Clear(0x0);
-                Framebuffer.Graphics.ADrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), i, (byte)a0.Value);
+                Framebuffer.Graphics.ADrawImage((Framebuffer.Width / 2) - (background.Width / 2), (Framebuffer.Height / 2) - (background.Height / 2), i, (byte)a0.Value);
                 Framebuffer.Update();
             }
             Animator.DisposeAnimation(a0);
@@ -70,14 +72,14 @@ namespace MOOS.GUI
             Animation a1 = new Animation()
             {
                 MinimumValue = 0,
-                MaximumValue = DesktopManager.Wallpaper.Height,
+                MaximumValue = background.Height,
                 ValueChangesInPeriod = 1
             };
             Animator.AddAnimation(a1);
-            while (a1.Value < DesktopManager.Wallpaper.Height)
+            while (a1.Value < background.Height)
             {
                 Framebuffer.Graphics.Clear(0x0);
-                Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2) - a1.Value, i, false);
+                Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (background.Width / 2), (Framebuffer.Height / 2) - (background.Height / 2) - a1.Value, i, false);
                 Framebuffer.Update();
             }
             Animator.DisposeAnimation(a1);
@@ -90,7 +92,7 @@ namespace MOOS.GUI
 
         private static void DrawLockscreenUI()
         {
-            Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (DesktopManager.Wallpaper.Width / 2), (Framebuffer.Height / 2) - (DesktopManager.Wallpaper.Height / 2), DesktopManager.Wallpaper, false);
+            Framebuffer.Graphics.DrawImage((Framebuffer.Width / 2) - (background.Width / 2), (Framebuffer.Height / 2) - (background.Height / 2), background, false);
 
             string s = null;
             if (RTC.Minute < 10)
@@ -121,7 +123,6 @@ namespace MOOS.GUI
             string tips = "Press W or Up Arrow to unlock";
             WindowManager.font.DrawString((Framebuffer.Width / 2) - (WindowManager.font.MeasureString(tips) / 2), Framebuffer.Height - (Framebuffer.Height / 6), tips, 0xFFFFFFFF);
             tips.Dispose();
-            
         }
     }
 }
