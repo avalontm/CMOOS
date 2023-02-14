@@ -30,9 +30,9 @@ namespace MOOS
         public uint VBEInterfaceOff;
         public uint VBEInterfaceLen;
 
-        public uint* Modules 
+        public uint* Mods
         {
-            get 
+            get
             {
                 return (uint*)ModAddr;
             }

@@ -1,30 +1,14 @@
 //#define NETWORK
 
-using Internal.Runtime.CompilerHelpers;
 using MOOS;
 using MOOS.Driver;
-using MOOS.FS;
-using MOOS.Graph;
 using MOOS.GUI;
 using MOOS.Misc;
-using MOOS.NET;
-using MOOS.GUI;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
+using System.Desktops;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using MOOS.NET.IPv4.UDP.DHCP;
-using MOOS.NET.Config;
 using System.Windows;
-using System.Desktops;
-using MOOS.NET.IPv4.TCP;
-using MOOS.NET.IPv4;
-using MOOS.NET.ARP;
-using System.Net.Http;
-using MOOS.NET.IPv4.UDP.DNS;
+using System.Windows.Forms;
 
 unsafe class Program
 {

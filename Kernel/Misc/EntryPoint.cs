@@ -22,11 +22,7 @@ namespace MOOS.Misc
         {
             Allocator.Initialize((IntPtr)0x20000000);
 
-            StartupCodeHelpers.InitializeModules(Modules, true);
-
-#if HasGC
-            GC.AllowCollect = false;
-#endif
+            StartupCodeHelpers.InitializeModules(Modules);
 
             PageTable.Initialise();
 
@@ -38,7 +34,7 @@ namespace MOOS.Misc
                 Framebuffer.Initialize(info->ScreenWidth, info->ScreenHeight, (uint*)info->PhysBase);
                 Framebuffer.Graphics.Clear(0x0);
             }
-            else 
+            else
             {
                 for (; ; ) Native.Hlt();
             }
@@ -84,15 +80,11 @@ namespace MOOS.Misc
 
             SMP.Initialize((uint)SMP.Trampoline);
 
-#if HasGC
-            GC.AllowCollect = true;
-#endif
-
             //Only fixed size vhds are supported!
             Console.Write("[Initrd] Initrd: 0x");
-            Console.WriteLine((Info->Modules[0]).ToString("x2"));
+            Console.WriteLine((Info->Mods[0]).ToString("x2"));
             Console.WriteLine("[Initrd] Initializing Ramdisk");
-            new Ramdisk((IntPtr)(Info->Modules[0]));
+            new Ramdisk((IntPtr)(Info->Mods[0]));
             //new FATFS();
             new TarFS();
 
