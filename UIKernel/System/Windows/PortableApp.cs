@@ -10,8 +10,13 @@ namespace System.Windows
     {
         public Image ScreenBuf;
 
-        public PortableApp(int X, int Y, int Width, int Height) : base(X, Y, Width, Height)
+        public PortableApp(int X, int Y, int Width, int Height, string Title)
         {
+            this.Title = Title; 
+            this.X = X;
+            this.Y = Y;
+            this.Width = Width + 1;
+            this.Height = Height + 1;
             ScreenBuf = new Image(Width, Height);
         }
 
@@ -22,13 +27,22 @@ namespace System.Windows
             //TO-DO...
         }
 
+        public override void OnUpdate()
+        {
+            base.OnUpdate();
+
+        }
+
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+        }
+
         public override void OnDraw()
         {
             base.OnDraw();
 
-            Framebuffer.Graphics.DrawImage(this.X, this.Y, ScreenBuf, false);
-
-            base.DrawBorder();
+            Framebuffer.Graphics.DrawImage(this.X, this.Y, ScreenBuf, true);
         }
     }
 }

@@ -90,8 +90,8 @@ namespace MOOS
 #if Kernel && HasGUI
         public static IntPtr API_CreateWindow(int X, int Y, int Width, int Height, string Title)
         {
-            PortableApp papp = new PortableApp(X, Y, Width, Height);
-            papp.Title = Title;
+            PortableApp papp = new PortableApp(X, Y, Width, Height, Title);
+            papp.ShowDialog();
             return papp;
         }
 
