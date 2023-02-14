@@ -9,6 +9,8 @@ using System.Runtime;
 using static IDT;
 using static Internal.Runtime.CompilerHelpers.InteropHelpers;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 #if HasGUI
 using MOOS.GUI;
@@ -22,6 +24,8 @@ namespace MOOS
         {
             switch (name)
             {
+                case "MessageBox":
+                    return (delegate*<string, string, void>)&API_MessageBox;
                 case "SayHello":
                     return (delegate*<void>)&SayHello;
                 case "WriteLine":
@@ -73,6 +77,8 @@ namespace MOOS
 #if Kernel && HasGUI
                 case "CreateWindow":
                     return (delegate*<int, int, int, int, string, IntPtr>)&API_CreateWindow;
+                case "CreateButton":
+                    return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr, IntPtr, void>)&API_CreateButton;
                 case "GetWindowScreenBuf":
                     return (delegate*<IntPtr, IntPtr>)&API_GetWindowScreenBuf;
                 case "BindOnKeyChangedHandler":
@@ -95,12 +101,36 @@ namespace MOOS
             return papp;
         }
 
+        public static void API_CreateButton(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background, IntPtr Command, IntPtr CommandParameter)
+        {
+            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref Owner);
+            
+            Button button= new Button();
+            button.Parent = papp;
+            button.X = X;
+            button.Y = Y;
+            button.Width = Width;
+            button.Height = Height;
+            button.Content = Content;
+            button.Background = new System.Windows.Media.Brush(Background);
+            button.Command = new System.Windows.Data.Binding();
+            button.Command.Source = Unsafe.As<IntPtr, ICommand>(ref Command);
+            button.CommandParameter = Unsafe.As<IntPtr, ICommand>(ref CommandParameter);
+
+            papp.Content = button;
+        }
+        
         public static IntPtr API_GetWindowScreenBuf(IntPtr handle)
         {
             PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handle);
             return papp.ScreenBuf;
         }
 #endif
+
+        public static void API_MessageBox(string title, string message)
+        {
+            MessageBox.Show(message, title);
+        }
 
         public static int API_SndWrite(byte* buffer, int len)
         {

@@ -5,7 +5,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BaseOutputPath>..\bin</BaseOutputPath>
-		
+
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
@@ -23,7 +23,7 @@
 		<Copy SourceFiles="$(NativeOutputPath)$(TargetName)$(NativeBinaryExt)" DestinationFiles="$(NativeOutputPath)$(TargetName).mue"></Copy>
 		<Delete Files="$(NativeOutputPath)$(TargetName)$(NativeBinaryExt)"></Delete>
 	</Target>
-	
+
 	<Target Name="HandleBuild" AfterTargets="AfterBuild" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
 		<Exec Command="dotnet publish -r win-x64"></Exec>
 	</Target>
@@ -41,6 +41,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Page Include="App.xaml" />
+	
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Corlib\Corlib.csproj" />
 	</ItemGroup>
+
+	<Import Project="..\MoosFramework\MoosFramework.projitems" Label="Shared" />
 </Project>
