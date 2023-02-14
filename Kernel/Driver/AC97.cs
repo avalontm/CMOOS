@@ -37,7 +37,7 @@ namespace MOOS
 
             BufferDescriptors = (BufferDescriptor*)Allocator.Allocate((ulong)(sizeof(BufferDescriptor) * 32));
 
-            for(int i = 0; i < NumDescriptors; i++)
+            for (int i = 0; i < NumDescriptors; i++)
             {
                 ulong ptr = (ulong)Allocator.Allocate(Audio.SizePerPacket);
                 if (ptr > 0xFFFFFFFF) Panic.Error("Invalid buf");
@@ -65,7 +65,7 @@ namespace MOOS
         public static void OnInterrupt()
         {
             ushort Status = In16((ushort)(NABM + 0x16));
-            if((Status & (1 << 3)) != 0)
+            if ((Status & (1 << 3)) != 0)
             {
                 //Clear last buffer
                 int LastIndex = Index;

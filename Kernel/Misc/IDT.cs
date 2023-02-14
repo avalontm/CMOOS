@@ -67,67 +67,7 @@ public static class IDT
         Native.Cli();
     }
 
-    //interrupts_asm.asm line 39
-    [RuntimeExport("exception_handler")]
-    public static unsafe void ExceptionHandler(int code, void* stack)
-    {
-        Panic.Error($"CPU{SMP.ThisCPU} KERNEL PANIC!!!", true);
-        InterruptReturnStack* irs = (InterruptReturnStack*)stack;
-        switch (code) 
-        {
-            case 8:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 17:
-            case 21:
-            case 29:
-            case 30:
-                irs = (InterruptReturnStack*)((ulong)stack + sizeof(ulong));
-                break;
-        }
-        Console.WriteLine($"RIP: 0x{irs->rip.ToString("x2")}");
-        Console.WriteLine($"Code Segment: 0x{irs->cs.ToString("x2")}");
-        Console.WriteLine($"RFlags: 0x{irs->rflags.ToString("x2")}");
-        Console.WriteLine($"RSP: 0x{irs->rsp.ToString("x2")}");
-        Console.WriteLine($"Stack Segment: 0x{irs->ss.ToString("x2")}");
-        switch (code)
-        {
-            case 0: Console.WriteLine("DIVIDE BY ZERO"); break;
-            case 1: Console.WriteLine("SINGLE STEP"); break;
-            case 2: Console.WriteLine("NMI"); break;
-            case 3: Console.WriteLine("BREAKPOINT"); break;
-            case 4: Console.WriteLine("OVERFLOW"); break;
-            case 5: Console.WriteLine("BOUNDS CHECK"); break;
-            case 6: Console.WriteLine("INVALID OPCODE"); break;
-            case 7: Console.WriteLine("COPR UNAVAILABLE"); break;
-            case 8: Console.WriteLine("DOUBLE FAULT"); break;
-            case 9: Console.WriteLine("COPR SEGMENT OVERRUN"); break;
-            case 10: Console.WriteLine("INVALID TSS"); break;
-            case 11: Console.WriteLine("SEGMENT NOT FOUND"); break;
-            case 12: Console.WriteLine("STACK EXCEPTION"); break;
-            case 13: Console.WriteLine("GENERAL PROTECTION"); break;
-            case 14:
-                ulong CR2 = Native.ReadCR2();
-                if ((CR2 >> 5) < 0x1000)
-                {
-                    Console.WriteLine("NULL POINTER");
-                }
-                else
-                {
-                    Console.WriteLine("PAGE FAULT");
-                }
-                break;
-            case 16: Console.WriteLine("COPR ERROR"); break;
-            default: Console.WriteLine("UNKNOWN EXCEPTION"); break;
-        }
-        Framebuffer.Update();
-        //This method is unreturnable
-    }
-
-    public struct RegistersStack 
+    public struct RegistersStack
     {
         public ulong rax;
         public ulong rcx;
@@ -162,33 +102,106 @@ public static class IDT
         public InterruptReturnStack irs;
     }
 
-    [RuntimeExport("irq_handler")]
-    public static unsafe void IRQHandler(int irq, IDTStackGeneric* stack)
+    [RuntimeExport("intr_handler")]
+    public static unsafe void intr_handler(int irq, IDTStackGeneric* stack)
     {
-        if (SMP.ThisCPU == 0) Interrupts.HandleInterrupt(irq);
-        switch (irq)
+        if (irq < 0x20)
         {
-            //dead
-            case 0xFD:
-                Native.Cli();
-                Native.Hlt();
-                for (; ; ) Native.Hlt();
-            case 0x20:
-                ThreadPool.Schedule(stack);
-                if (SMP.ThisCPU == 0 && stack->rs.rdx != 0x61666E6166696E)
-                    Timer.OnInterrupt();
-                break;
-            //system call
-            case 0x80:
-                lock (null)
-                {
-                    var pCell = (MethodFixupCell*)stack->rs.rcx;
-                    string name = Encoding.ASCII.GetString((byte*)pCell->Module->ModuleName);
-                    stack->rs.rax = (ulong)API.HandleSystemCall(name);
-                    name.Dispose();
-                }
-                break;
+            Panic.Error($"CPU{SMP.ThisCPU} KERNEL PANIC!!!", true);
+            InterruptReturnStack* irs;
+            switch (irq)
+            {
+                case 8:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 17:
+                case 21:
+                case 29:
+                case 30:
+                    irs = (InterruptReturnStack*)(((byte*)stack) + sizeof(RegistersStack));
+                    break;
+
+                default:
+                    irs = (InterruptReturnStack*)(((byte*)stack) + sizeof(RegistersStack) + sizeof(ulong));
+                    break;
+            }
+            Console.WriteLine($"RIP: 0x{stack->irs.rip.ToString("x2")}");
+            Console.WriteLine($"Code Segment: 0x{stack->irs.cs.ToString("x2")}");
+            Console.WriteLine($"RFlags: 0x{stack->irs.rflags.ToString("x2")}");
+            Console.WriteLine($"RSP: 0x{stack->irs.rsp.ToString("x2")}");
+            Console.WriteLine($"Stack Segment: 0x{stack->irs.ss.ToString("x2")}");
+            switch (irq)
+            {
+                case 0: Console.WriteLine("DIVIDE BY ZERO"); break;
+                case 1: Console.WriteLine("SINGLE STEP"); break;
+                case 2: Console.WriteLine("NMI"); break;
+                case 3: Console.WriteLine("BREAKPOINT"); break;
+                case 4: Console.WriteLine("OVERFLOW"); break;
+                case 5: Console.WriteLine("BOUNDS CHECK"); break;
+                case 6: Console.WriteLine("INVALID OPCODE"); break;
+                case 7: Console.WriteLine("COPR UNAVAILABLE"); break;
+                case 8: Console.WriteLine("DOUBLE FAULT"); break;
+                case 9: Console.WriteLine("COPR SEGMENT OVERRUN"); break;
+                case 10: Console.WriteLine("INVALID TSS"); break;
+                case 11: Console.WriteLine("SEGMENT NOT FOUND"); break;
+                case 12: Console.WriteLine("STACK EXCEPTION"); break;
+                case 13: Console.WriteLine("GENERAL PROTECTION"); break;
+                case 14:
+                    ulong CR2 = Native.ReadCR2();
+                    if ((CR2 >> 5) < 0x1000)
+                    {
+                        Console.WriteLine("NULL POINTER");
+                    }
+                    else
+                    {
+                        Console.WriteLine("PAGE FAULT");
+                    }
+                    break;
+                case 16: Console.WriteLine("COPR ERROR"); break;
+                default: Console.WriteLine("UNKNOWN EXCEPTION"); break;
+            }
+            Framebuffer.Update();
+            for (; ; );
         }
+
+        //DEAD
+        if (irq == 0xFD)
+        {
+            Native.Cli();
+            Native.Hlt();
+            for (; ; ) Native.Hlt();
+        }
+
+        //For main processor
+        if (SMP.ThisCPU == 0)
+        {
+            //System calls
+            if (irq == 0x80)
+            {
+                var pCell = (MethodFixupCell*)stack->rs.rcx;
+                string name = string.FromASCII(pCell->Module->ModuleName, strings.strlen((byte*)pCell->Module->ModuleName));
+                stack->rs.rax = (ulong)API.HandleSystemCall(name);
+                name.Dispose();
+            }
+            switch (irq)
+            {
+                case 0x20:
+                    //misc.asm Schedule_Next
+                    if (stack->rs.rdx != 0x61666E6166696E)
+                        Timer.OnInterrupt();
+                    break;
+            }
+            Interrupts.HandleInterrupt(irq);
+        }
+
+        if (irq == 0x20)
+        {
+            ThreadPool.Schedule(stack);
+        }
+
         Interrupts.EndOfInterrupt((byte)irq);
     }
 }

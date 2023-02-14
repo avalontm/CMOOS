@@ -87,12 +87,20 @@ namespace System.Desktops
 
             DesktopBarItem wlan = new DesktopBarItem();
             wlan.HorizontalAlignment = Windows.HorizontalAlignment.Right;
-            wlan.X = 64;
+            wlan.X = 96;
             wlan.Y = 0;
             wlan.Icon = DesktopIcons.WLanIcon.ResizeImage(24,24);
             wlan.Command = new ICommand(onItemWlan);
             barMenu.Add(wlan);
-            
+
+            DesktopBarItem volume = new DesktopBarItem();
+            volume.HorizontalAlignment = Windows.HorizontalAlignment.Right;
+            volume.X = 64;
+            volume.Y = 0;
+            volume.Icon = DesktopIcons.Volume_OnIcon.ResizeImage(24, 24);
+            volume.Command = new ICommand(onItemVolume);
+            barMenu.Add(volume);
+
             DesktopBarClock clock = new DesktopBarClock();
             clock.HorizontalAlignment = Windows.HorizontalAlignment.Right;
             clock.X = 5;
@@ -163,22 +171,12 @@ namespace System.Desktops
 
             BuiltInAppNames.Clear();
 
-#if Chinese
-            BuiltInAppNames.Add(1, "计算器");
-            BuiltInAppNames.Add(2, " 时钟");
-            BuiltInAppNames.Add(3, " 画图");
-            BuiltInAppNames.Add(4, "贪吃蛇");
-            BuiltInAppNames.Add(5, "控制台");
-            BuiltInAppNames.Add(6, "监视器");
-
-#else
             BuiltInAppNames.Add(1, "Calculator");
             BuiltInAppNames.Add(2, "Clock");
             BuiltInAppNames.Add(3, "Paint");
             BuiltInAppNames.Add(4, "Snake");
             BuiltInAppNames.Add(5, "Console");
             BuiltInAppNames.Add(6, "Monitor");
-#endif
 
             IconClickCommand = new ICommand(onDesktopIconClick);
             IconNativeClickCommand = new ICommand(onDesktopNativeOSClick);
@@ -362,14 +360,25 @@ namespace System.Desktops
         static void onItemStart(object obj)
         {
             NotificationManager.Add(new Nofity($"Welcome to MOOS", NotificationLevel.None));
-
         }
 
         static void onItemWlan(object obj)
         {
             if (NetworkDevice.Devices.Count > 0)
             {
-               // NotificationManager.Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} ({NetworkConfiguration.CurrentAddress.ToString()})", NotificationLevel.None));
+                NotificationManager.Add(new Nofity($"Info: Network device {NetworkDevice.Devices[0].NameID} ({NetworkConfiguration.CurrentAddress.ToString()})", NotificationLevel.None));
+            }
+            else
+            {
+                NotificationManager.Add(new Nofity($"Warn: No Network device found on this PC", NotificationLevel.Error));
+            }
+        }
+
+        static void onItemVolume(object obj)
+        {
+            if (Audio.HasAudioDevice)
+            {
+                NotificationManager.Add(new Nofity(Audio.HasAudioDevice ? "Info: Audio controller available" : "Warn: No audio controller found on this PC", Audio.HasAudioDevice ? NotificationLevel.None : NotificationLevel.Error));
             }
         }
 

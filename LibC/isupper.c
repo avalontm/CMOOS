@@ -1,6 +1,4 @@
-#include "../Kernel/MOOS.h"
-
-int isupper_(int ch)
+int myisupper(int ch)
 {
     return (ch >= 'A' && ch <= 'Z');
 }

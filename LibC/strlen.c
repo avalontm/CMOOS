@@ -1,7 +1,5 @@
-#include "../Kernel/MOOS.h"
-
 long
-strlen_(str)
+mystrlen(str)
 const char* str;
 {
 	register const char* s;

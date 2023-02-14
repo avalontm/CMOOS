@@ -57,7 +57,7 @@
     <ClCompile Include="ffunicode.c">
       <Filter>源文件\fatfs</Filter>
     </ClCompile>
-    <ClCompile Include="dtoa.c">
+    <ClCompile Include="double_tostring.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

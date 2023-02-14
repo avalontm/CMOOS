@@ -1,6 +1,4 @@
-#include "../Kernel/MOOS.h"
-
-double fabs_(double x)
+double myfabs(double x)
 {
 	union { double f; unsigned long i; } u = { x };
 	u.i &= -1ULL / 2;

@@ -11,20 +11,21 @@ using System.Windows.Forms;
 
 namespace MOOS.GUI
 {
-    public class WAVPlayer : Window
+    internal unsafe class WAVPlayer : Window
     {
         static byte[] _pcm;
         static int _index;
         static WAV.Header _header;
-        public static WAVPlayer _player;
-        public static string _song_name;
+        static WAVPlayer _player;
+        static string _song_name;
 
         Image audiopause;
         Image audioplay;
 
-        public static bool playing;
+        static bool playing;
+        static bool isLoaded;
 
-        public unsafe WAVPlayer()
+        public WAVPlayer()
         {
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             audiopause = new PNG(File.ReadAllBytes("sys/media/audiopause.png"));
@@ -34,11 +35,17 @@ namespace MOOS.GUI
             this.Height= 200;
             _pcm = null;
             _index = 0;
-            Interrupts.EnableInterrupt(0x20, &DoPlay);
-            _player = this;
+       
             _song_name = null;
             playing = false;
             clickLock = false;
+            _player = this;
+
+            if (!isLoaded)
+            {
+                isLoaded = true;
+                Interrupts.EnableInterrupt(0x20, &DoPlay);
+            }
         }
 
         bool clickLock;
@@ -81,16 +88,15 @@ namespace MOOS.GUI
             byte[] buffer = File.ReadAllBytes(file);
             _index = 0;
             WAV.Decode(buffer, out var pcm, out var hdr);
-            buffer.Dispose();
+            //buffer.Dispose();
             _pcm = pcm;
             _header = hdr;
-            _song_name?.Dispose();
             _song_name = file;
 
             playing = true;
         }
 
-        public unsafe static void DoPlay()
+        static void DoPlay()
         {
             if (_pcm != null && _player.Visible && playing)
             {
@@ -109,9 +115,9 @@ namespace MOOS.GUI
         public override void OnClose()
         {
             base.OnClose();
-            _pcm = null;
-            _song_name?.Dispose();
             playing = false;
+            _pcm?.Dispose();
+            _player?.Dispose();
         }
     }
 }

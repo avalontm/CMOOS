@@ -1,5 +1,3 @@
-#include "../Kernel/MOOS.h"
-
 /*-
  * See the file LICENSE for redistribution information.
  *
@@ -16,7 +14,7 @@
   * PUBLIC: #endif
   */
 int
-isspace_(c)
+myisspace(c)
 int c;
 {
 	return (c == '\t' || c == '\n' ||

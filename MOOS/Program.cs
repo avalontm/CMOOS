@@ -33,6 +33,18 @@ unsafe class Program
     [DllImport("*")]
     public static extern void test();
 
+    static bool USBMouseTest()
+    {
+        HID.GetMouseThings(HID.Mouse, out sbyte AxisX, out sbyte AxisY, out var Buttons);
+        return Buttons != MouseButtons.None;
+    }
+
+    static bool USBKeyboardTest()
+    {
+        HID.GetKeyboardThings(HID.Keyboard, out var ScanCode, out var Key);
+        return ScanCode != 0;
+    }
+
     public static FPSMeter fpsMeter;
 
     /*
@@ -53,11 +65,58 @@ unsafe class Program
 
         Console.WriteLine("Use Native AOT (Core RT) Technology.");
 
+        Hub.Initialize();
+        HID.Initialize();
+        EHCI.Initialize();
+
+        if (HID.Mouse != null)
+        {
+            Console.Write("[Warning] Press please press Mouse any key to validate USB Mouse ");
+            bool res = Console.Wait(&USBMouseTest, 2000);
+            Console.WriteLine();
+            if (!res)
+            {
+                lock (null)
+                {
+                    USB.NumDevice--;
+                    HID.Mouse = null;
+                }
+            }
+        }
+
+        if (HID.Keyboard != null)
+        {
+            Console.Write("[Warning] Press please press any key to validate USB keyboard ");
+            bool res = Console.Wait(&USBKeyboardTest, 2000);
+            Console.WriteLine();
+            if (!res)
+            {
+                lock (null)
+                {
+                    USB.NumDevice--;
+                    HID.Keyboard = null;
+                }
+            }
+        }
+
+        USB.StartPolling();
+
+        //Use qemu for USB debug
+        //VMware won't connect virtual USB HIDs
+        if (HID.Mouse == null)
+        {
+            Console.WriteLine("USB Mouse not present");
+        }
+        if (HID.Keyboard == null)
+        {
+            Console.WriteLine("USB Keyboard not present");
+        }
+
         Audio.Initialize();
         AC97.Initialize();
         ES1371.Initialize();
 
- #region NETWORK
+        #region NETWORK
         /*
         //Network Config (AvalonTM)
         Network.Initialize();
@@ -79,7 +138,7 @@ unsafe class Program
 
         }
         */
-#endregion
+        #endregion
 
         SMain();
     }

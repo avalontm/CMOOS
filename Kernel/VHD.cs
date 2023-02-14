@@ -5,7 +5,7 @@ namespace MOOS
     /// <summary>
     /// How to get the size of multiboot module?
     /// </summary>
-    [StructLayout(LayoutKind.Sequential,Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct VHDFooter
     {
         public fixed byte cookie[8];

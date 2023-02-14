@@ -19,6 +19,7 @@ namespace System.Desktops
         public static PNG ImageIcon { get; set; }
         public static PNG GameIcon { get; set; }
         public static Image StartIcon { get; set; }
+        public static Image Volume_OnIcon { get; set; }
 
         public static void Initialize()
         {
@@ -33,6 +34,7 @@ namespace System.Desktops
             DoomIcon = new PNG(File.ReadAllBytes("sys/media/Doom1.png"));
             AppTerminal = new PNG(File.Instance.ReadAllBytes("sys/media/Terminal.png"));
             WLanIcon = new PNG(File.Instance.ReadAllBytes("sys/media/Wlan.png"));
+            Volume_OnIcon = new PNG(File.Instance.ReadAllBytes("sys/media/volume_on.png"));
         }
     }
 }

@@ -57,8 +57,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "../Kernel/MOOS.h"
-
   /*
    * Convert a string to an unsigned long integer.
    *
@@ -66,7 +64,7 @@
    * alphabets and digits are each contiguous.
    */
 unsigned long
-strtoul_(nptr, endptr, base)
+mystrtoul(nptr, endptr, base)
 const char* nptr;
 char** endptr;
 int base;
@@ -82,7 +80,7 @@ int base;
 	 */
 	do {
 		c = *s++;
-	} while (isspace(c));
+	} while (myisspace(c));
 	if (c == '-') {
 		neg = 1;
 		c = *s++;
@@ -100,10 +98,10 @@ int base;
 	cutoff = (unsigned long)ULONG_MAX / (unsigned long)base;
 	cutlim = (unsigned long)ULONG_MAX % (unsigned long)base;
 	for (acc = 0, any = 0;; c = *s++) {
-		if (isdigit(c))
+		if (myisdigit(c))
 			c -= '0';
-		else if (isalpha(c))
-			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
+		else if (myisalpha(c))
+			c -= myisupper(c) ? 'A' - 10 : 'a' - 10;
 		else
 			break;
 		if (c >= base)

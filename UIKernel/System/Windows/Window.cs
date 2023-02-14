@@ -19,7 +19,7 @@ namespace System.Windows
         CenterOwner = 2
     }
 
-    public class Window : Widget
+    public abstract class Window : Widget
     {
         public string Title { set; get; }
         public WindowStartupLocation WindowStartupLocation { get; set; }

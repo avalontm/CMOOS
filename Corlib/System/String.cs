@@ -50,7 +50,18 @@ namespace System
 		public extern unsafe String(char[] buf, int index, int length);
 #pragma warning restore CS0824 // Constructor is marked external
 
-		private static unsafe string Ctor(char* ptr)
+        public static unsafe string FromASCII(nint ptr, int length)
+        {
+            byte* p = (byte*)ptr;
+            char* newp = stackalloc char[length];
+            for (int i = 0; i < length; i++)
+            {
+                newp[i] = (char)p[i];
+            }
+            return new string(newp, 0, length);
+        }
+
+        private static unsafe string Ctor(char* ptr)
 		{
 			int len = (int)ptr->EEType->BaseSize;
             int i = 0;

@@ -30,7 +30,7 @@ namespace MOOS.FS
         };
 
         [DllImport("*")]
-        static extern ulong strtoul_(byte* nptr, byte** endptr, int @base);
+        static extern ulong mystrtoul(byte* nptr, byte** endptr, int @base);
 
         public override List<FileInfo> GetFiles(string Directory)
         {
@@ -41,11 +41,9 @@ namespace MOOS.FS
             List<FileInfo> list = new List<FileInfo>();
             while (Disk.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
             {
-                if (!Validate(ptr)) Panic.Error("This filesystem is not TAR");
                 sec++;
-                ulong size = strtoul_(hdr.size, null, 8);
-                string name = Encoding.UTF8.GetString(hdr.name);
-                name.Length -= (name[name.Length - 1] == '/' ? 1 : 0);
+                ulong size = mystrtoul(hdr.size, null, 8);
+                string name = string.FromASCII((nint)hdr.name, strings.strlen(hdr.name) - (hdr.name[strings.strlen(hdr.name) - 1] == '/' ? 1 : 0));
                 if (IsInDirectory(name, Directory))
                 {
                     FileInfo info = new FileInfo();
@@ -61,15 +59,12 @@ namespace MOOS.FS
             return list;
         }
 
-        public override void Delete(string Name)
-        {
-            Panic.Error("Delete is not implemented on TarFS");
-        }
+        public override void Delete(string Name) { }
 
         public override byte[] ReadAllBytes(string Name)
         {
             string dir = null;
-            if(Name.IndexOf('/') == -1)
+            if (Name.IndexOf('/') == -1)
             {
                 dir = "";
             }
@@ -80,12 +75,12 @@ namespace MOOS.FS
             string fname = Name.Substring(dir.Length);
             byte[] buffer = null;
             List<FileInfo> list = GetFiles(dir);
-            for(int i = 0; i < list.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].Name.Equals(fname))
                 {
                     buffer = new byte[(uint)SizeToSec(list[i].Param1) * 512];
-                    fixed(byte* ptr = buffer)
+                    fixed (byte* ptr = buffer)
                     {
                         Disk.Instance.Read(list[i].Param0, (uint)SizeToSec(list[i].Param1), ptr);
                     }
@@ -104,40 +99,8 @@ namespace MOOS.FS
             return buffer;
         }
 
-        private bool Validate(posix_tar_header* hdr) 
-        {
-            uint chksum = 0;
-            for (int i = 7; i >= 0; i--)
-            {
-                if (hdr->chksum[i] >= 0x30)
-                {
-                    uint s = hdr->chksum[i] - 0x30;
-                    int j = 7 - i;
-                    while (j > 2)
-                    {
-                        s *= 8;
-                        j--;
-                    }
-                    chksum += s;
-                }
-                hdr->chksum[i] = 0x20;
-            }
-            uint sum = 0;
-            for (int i = 0; i < 512; i++) 
-            {
-                sum += ((byte*)hdr)[i];
-            }
-            return chksum == sum;
-        }
+        public override void WriteAllBytes(string Name, byte[] Content) { }
 
-        public override void WriteAllBytes(string Name, byte[] Content) 
-        {
-            Panic.Error("WriteAllBytes is not implemented on TarFS");
-        }
-
-        public override void Format()
-        {
-            Panic.Error("Format is not implemented on TarFS");
-        }
+        public override void Format() { }
     }
 }

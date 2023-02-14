@@ -29,8 +29,8 @@
 	</Target>
 
 	<ItemGroup>
-		<NativeLibrary Include="..\x64\Debug\NativeLib.lib" />
-		<NativeLibrary Include="..\x64\Debug\LibC.lib" />
+		<NativeLibrary Include="$(MSBuildStartupDirectory)\x64\Debug\NativeLib.lib" />
+		<NativeLibrary Include="$(MSBuildStartupDirectory)\x64\Debug\LibC.lib" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Corlib\Corlib.csproj" />
+	  <ProjectReference Include="$(MSBuildStartupDirectory)\Corlib\Corlib.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\Kernel\Kernel.projitems" Label="Shared" />

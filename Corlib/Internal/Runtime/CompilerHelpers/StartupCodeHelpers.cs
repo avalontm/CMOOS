@@ -119,11 +119,18 @@ namespace Internal.Runtime.CompilerHelpers
         [RuntimeExport("RhpPInvokeReturn")]
         static void RhpPinvokeReturn(IntPtr frame) { }
 
-        [DllImport("*")]
-        static unsafe extern void memset(byte* ptr, byte c, ulong count);
+        [RuntimeExport("memset")]
+        static unsafe void MemSet(byte* ptr, int c, int count)
+        {
+            for (byte* p = ptr; p < ptr + count; p++)
+                *p = (byte)c;
+        }
 
-        [DllImport("*")]
-        static unsafe extern void memcpy(byte* dest, byte* src, ulong count);
+        [RuntimeExport("memcpy")]
+        static unsafe void MemCpy(byte* dest, byte* src, ulong count)
+        {
+            for (ulong i = 0; i < count; i++) dest[i] = src[i];
+        }
 
         [RuntimeExport("RhpNewFast")]
         static unsafe object RhpNewFast(EEType* pEEType)
@@ -136,7 +143,7 @@ namespace Internal.Runtime.CompilerHelpers
 
             var data = malloc(size);
             var obj = Unsafe.As<IntPtr, object>(ref data);
-            memset((byte*)data,0, (int)size);
+            MemSet((byte*)data,0, (int)size);
             *(IntPtr*)data = (IntPtr)pEEType;
 
             return obj;
@@ -156,12 +163,12 @@ namespace Internal.Runtime.CompilerHelpers
 
             var data = malloc(size);
             var obj = Unsafe.As<IntPtr, object>(ref data);
-            memset((byte*)data,0, (int)size);
+            MemSet((byte*)data,0, (int)size);
             *(IntPtr*)data = (IntPtr)pEEType;
 
             var b = (byte*)data;
             b += sizeof(IntPtr);
-            memcpy(b, (byte*)(&length), sizeof(int));
+            MemCpy(b, (byte*)(&length), sizeof(int));
 
             return obj;
         }
@@ -233,7 +240,7 @@ namespace Internal.Runtime.CompilerHelpers
 
                 if(header->Signature != ReadyToRunHeaderConstants.Signature) 
                 {
-                    break;
+                    FailFast();
                 }
 
                 for (int k = 0; k < header->NumberOfSections; k++)
@@ -284,7 +291,7 @@ namespace Internal.Runtime.CompilerHelpers
                         IntPtr pPreInitDataAddr = *(pBlock + 1);
                         fixed(byte* p = &obj.GetRawData())
                         {
-                            memcpy(p, (byte*)pPreInitDataAddr, obj.GetRawDataSize());
+                            MemCpy(p, (byte*)pPreInitDataAddr, obj.GetRawDataSize());
                         }
                     }
 
