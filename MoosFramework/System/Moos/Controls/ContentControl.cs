@@ -5,6 +5,7 @@ namespace System.Moos.Controls
 {
     public partial class ContentControl
     {
+        public IntPtr Handler { get; internal set; }
         public Window OwnerWindow { set; get; }
         public int X { get; set; }
         public int Y { get; set; }

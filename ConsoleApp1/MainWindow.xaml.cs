@@ -24,6 +24,7 @@ namespace AppDemo
             button.Command = new System.Moos.Input.ICommand(onButton_Click);
             button.CommandParameter = "parameters";
             button.Generate(this);
+
             this.Content = button;
 
             DataContext = this;

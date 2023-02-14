@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Moos\Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Moos\Controls\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Moos\Controls\ContentControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System\Moos\Controls\Grid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Moos\Input\ICommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Moos\NativeMethod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Moos\ResourceDictionary.cs" />

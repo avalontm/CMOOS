@@ -52,8 +52,13 @@ public static unsafe class NativeMethod
     [DllImport("BindOnKeyChangedHandler")]
     public static extern void BindOnKeyChangedHandler(IntPtr handler);
 
-    [DllImport("CreateButton")]
-    public static extern void CreateButton(IntPtr handle, int x, int y, int width, int height, string content, uint background, IntPtr command, IntPtr command_parameter);
     [DllImport("MessageBox")]
     public static extern void MessageBox(string title, string message);
+    
+    [DllImport("CreateGrid")]
+    public static extern IntPtr CreateGrid(IntPtr handle, int x, int y, int width, int height, string content, uint background);
+
+    [DllImport("CreateButton")]
+    public static extern IntPtr CreateButton(IntPtr handle, int x, int y, int width, int height, string content, uint background, IntPtr command, IntPtr command_parameter);
+   
 }

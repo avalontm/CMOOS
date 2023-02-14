@@ -18,7 +18,7 @@ namespace System.Moos.Controls
         public override void Generate(Window owner)
         {
             base.Generate(owner);
-            NativeMethod.CreateButton(owner.Handle, X, Y, Width, Height, Content, Background.ToArgb(), Command, CommandParameter);
+            this.Handler = NativeMethod.CreateButton(owner.Handle, X, Y, Width, Height, Content, Background.ToArgb(), Command, CommandParameter);
         }
     }
 }

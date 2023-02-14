@@ -77,8 +77,10 @@ namespace MOOS
 #if Kernel && HasGUI
                 case "CreateWindow":
                     return (delegate*<int, int, int, int, string, IntPtr>)&API_CreateWindow;
+                case "CreateGrid":
+                    return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr>)&API_CreateGrid;
                 case "CreateButton":
-                    return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr, IntPtr, void>)&API_CreateButton;
+                    return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr, IntPtr, IntPtr>)&API_CreateButton;
                 case "GetWindowScreenBuf":
                     return (delegate*<IntPtr, IntPtr>)&API_GetWindowScreenBuf;
                 case "BindOnKeyChangedHandler":
@@ -101,12 +103,29 @@ namespace MOOS
             return papp;
         }
 
-        public static void API_CreateButton(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background, IntPtr Command, IntPtr CommandParameter)
+        public static IntPtr API_CreateGrid(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background)
         {
-            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref Owner);
+            PortableApp owner = Unsafe.As<IntPtr, PortableApp>(ref Owner);
+
+            Grid grid = new Grid();
+            grid.Parent = owner;
+            grid.X = X;
+            grid.Y = Y;
+            grid.Width = Width;
+            grid.Height = Height;
+            grid.Background = new System.Windows.Media.Brush(Background);
+
+            owner.Content = grid;
+
+            return grid;
+        }
+
+        public static IntPtr API_CreateButton(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background, IntPtr Command, IntPtr CommandParameter)
+        {
+            PortableApp owner = Unsafe.As<IntPtr, PortableApp>(ref Owner);
             
-            Button button= new Button();
-            button.Parent = papp;
+            Button button = new Button();
+            button.Parent = owner;
             button.X = X;
             button.Y = Y;
             button.Width = Width;
@@ -117,7 +136,9 @@ namespace MOOS
             button.Command.Source = Unsafe.As<IntPtr, ICommand>(ref Command);
             button.CommandParameter = Unsafe.As<IntPtr, ICommand>(ref CommandParameter);
 
-            papp.Content = button;
+            owner.Content = button;
+
+            return button;
         }
         
         public static IntPtr API_GetWindowScreenBuf(IntPtr handle)
