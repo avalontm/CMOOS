@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MOOS
 {
-    public class Animation 
+    public class Animation
     {
         public int Value;
         public int MinimumValue;
@@ -27,31 +27,32 @@ namespace MOOS
     {
         static List<Animation> Animations;
 
-        public static unsafe void Initialize() 
+        public static unsafe void Initialize()
         {
             Animations = new List<Animation>();
-            Pollings.AddPoll(&OnInterrupt);
+            Interrupts.EnableInterrupt(0x20, &OnInterrupt);
         }
 
-        public static void AddAnimation(Animation ani) 
+        public static void AddAnimation(Animation ani)
         {
             Animations.Add(ani);
         }
 
-        public static void DisposeAnimation(Animation ani) 
+        public static void DisposeAnimation(Animation ani)
         {
             Animations.Remove(ani);
             ani.Dispose();
         }
 
-        public static void OnInterrupt() 
+        public static void OnInterrupt()
         {
-            for(int i = 0; i < Animations.Count; i++)
+            for (int i = 0; i < Animations.Count; i++)
             {
                 Animation v = Animations[i];
-                if(!v.Stopped)
+                if (!v.Stopped)
                 {
-                    if((Timer.Ticks % (ulong)v.PeriodInMS) == 0)
+                    if (v.PeriodInMS == 0) continue;
+                    if ((Timer.Ticks % (ulong)v.PeriodInMS) == 0)
                     {
                         v.Value = Math.Clamp(v.Value + v.ValueChangesInPeriod, v.MinimumValue, v.MaximumValue);
                     }

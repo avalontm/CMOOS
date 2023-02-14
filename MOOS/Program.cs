@@ -123,12 +123,15 @@ unsafe class Program
         }
         */
         #endregion
-
+        
         SMain();
     }
 
     public static void SMain()
     {
+        Console.WriteLine("Press any key to [ENTER] desktop...");
+        Console.ReadKey();
+
         Framebuffer.TripleBuffered = true;
 
         DesktopManager.Initialize();
