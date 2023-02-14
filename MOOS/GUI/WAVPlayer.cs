@@ -88,7 +88,7 @@ namespace MOOS.GUI
             byte[] buffer = File.ReadAllBytes(file);
             _index = 0;
             WAV.Decode(buffer, out var pcm, out var hdr);
-            //buffer.Dispose();
+            buffer.Dispose();
             _pcm = pcm;
             _header = hdr;
             _song_name = file;

@@ -16,7 +16,7 @@ namespace MOOS.Driver
 
         static USBRequest* req;
 
-        public static void Initialize() 
+        public static void Initialize()
         {
             req = (USBRequest*)Allocator.Allocate((ulong)sizeof(USBRequest));
         }
@@ -31,15 +31,15 @@ namespace MOOS.Driver
             req->Value = 0x2900;
             req->Index = 0;
             req->Length = (ushort)sizeof(Desc);
-            bool b= USB.SendAndReceive(device, req, desc, null);
-            if (!b) 
+            bool b = USB.SendAndReceive(device, req, desc, null);
+            if (!b)
             {
                 Console.WriteLine("[USB Hub] Can't get Hub descriptor");
             }
 
             Console.WriteLine($"[USB Hub] This hub has {desc->PortCount} ports");
 
-            for(int i = 0; i < desc->PortCount; i++) 
+            for (int i = 0; i < desc->PortCount; i++)
             {
                 (*req).Clean();
                 req->RequestType = 0x23;
@@ -57,11 +57,11 @@ namespace MOOS.Driver
                 req->Value = 4;
                 req->Index = ((ushort)(i + 1));
                 req->Length = 0;
-                b= USB.SendAndReceive(device, req, null, null);
+                b = USB.SendAndReceive(device, req, null, null);
                 ACPITimer.Sleep(100000);
 
                 uint status = 0;
-                for(int k = 0; k < 8; k++) 
+                for (int k = 0; k < 8; k++)
                 {
                     (*req).Clean();
                     req->RequestType = 0xA3;
@@ -80,9 +80,11 @@ namespace MOOS.Driver
                     ACPITimer.Sleep(100000);
                 }
 
-                if(status & 2) 
+                int speed = (int)((status & ((3 << 9))) >> 9);
+
+                if (status & 2)
                 {
-                    USB.InitPort(i, device, 2);
+                    USB.InitPort(i, device, 2, speed);
                 }
             }
         }

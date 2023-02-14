@@ -4,7 +4,10 @@ using MOOS;
 using MOOS.Driver;
 using MOOS.GUI;
 using MOOS.Misc;
+using MOOS.NET;
+using MOOS.NET.IPv4.UDP.DHCP;
 using System.Desktops;
+using System.Net.Http;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -101,7 +104,7 @@ unsafe class Program
         ES1371.Initialize();
 
         #region NETWORK
-        /*
+   /*     
         //Network Config (AvalonTM)
         Network.Initialize();
         NetworkStack.Initialize();
@@ -121,7 +124,7 @@ unsafe class Program
             Console.WriteLine($"[RESPONSE] {response.Status}");
 
         }
-        */
+      */  
         #endregion
         
         SMain();

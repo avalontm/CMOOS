@@ -320,6 +320,10 @@ namespace MOOS.Driver
             {
                 switch (device.VendorID)
                 {
+                    case 0x0033: return "Paradyne Corp";
+                    case 0x003D: return "master";
+                    case 0x0070: return "Hauppauge Computer Works Inc";
+                    case 0x0100: return "USBPDO-8";
                     case 0x1022: //AMD
                         switch (device.DeviceID)
                         {
@@ -368,6 +372,7 @@ namespace MOOS.Driver
                             default:
                                 return "VMware Unknown device";
                         }
+                    case 0x16E5: return "Intellon Corporation";
                     case 0x8086: //Intel
                         switch (device.DeviceID)
                         {
@@ -407,6 +412,7 @@ namespace MOOS.Driver
                             default:
                                 return "Intel Unknown device";
                         }
+                    case 0x8087: return "Intel";
                     case 0x80EE: //VirtualBox
                         switch (device.DeviceID)
                         {

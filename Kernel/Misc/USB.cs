@@ -11,6 +11,8 @@ namespace MOOS.Misc
     {
         public byte USBVersion;
 
+        public int Speed;
+
         public byte Address;
 
         public uint Ring;
@@ -40,7 +42,7 @@ namespace MOOS.Misc
         public ushort Index;
         public ushort Length;
 
-        public void Clean() 
+        public void Clean()
         {
             fixed (void* p = &this)
                 Native.Stosb(p, 0, (ulong)sizeof(USBRequest));
@@ -52,11 +54,11 @@ namespace MOOS.Misc
         public static byte NumDevice;
         public static byte DeviceAddr;
 
-        public static bool SendAndReceive(USBDevice device, USBRequest* cmd, void* buffer,USBDevice parent)
+        public static bool SendAndReceive(USBDevice device, USBRequest* cmd, void* buffer, USBDevice parent)
         {
             if (device.USBVersion == 2)
             {
-                return EHCI.SendAndReceive(device.Address, cmd, buffer, parent);
+                return EHCI.SendAndReceive(device.Address, cmd, buffer, parent, device.Speed);
             }
             else
             {
@@ -64,14 +66,14 @@ namespace MOOS.Misc
             }
         }
 
-        public static void OnInterrupt() 
+        public static void OnInterrupt()
         {
-            if(HID.Keyboard != null)
+            if (HID.Keyboard != null)
             {
                 HID.GetKeyboardThings(HID.Keyboard, out byte ScanCode, out ConsoleKey Key);
                 Keyboard.KeyInfo.KeyState = Key != ConsoleKey.None ? ConsoleKeyState.Pressed : ConsoleKeyState.Released;
 
-                if(Key != ConsoleKey.None)
+                if (Key != ConsoleKey.None)
                 {
                     Keyboard.KeyInfo.ScanCode = ScanCode;
                     Keyboard.KeyInfo.Key = Key;
@@ -80,7 +82,7 @@ namespace MOOS.Misc
                 Keyboard.InvokeOnKeyChanged(Keyboard.KeyInfo);
             }
 
-            if(HID.Mouse != null)
+            if (!VMwareTools.Available && HID.Mouse != null)
             {
                 HID.GetMouseThings(HID.Mouse, out sbyte AxisX, out sbyte AxisY, out MouseButtons buttons);
 
@@ -91,11 +93,11 @@ namespace MOOS.Misc
             }
         }
 
-        public static bool InitPort(int port, USBDevice parent,int version) 
+        public static bool InitPort(int port, USBDevice parent, int version, int speed)
         {
-            if(version == 2)
+            if (version == 2)
             {
-                return EHCI.InitPort(port, parent);
+                EHCI.InitPort(port, parent, speed);
             }
             return false;
         }
@@ -120,7 +122,7 @@ namespace MOOS.Misc
         public static void Reset()
         {
             USB.NumDevice = 0;
-            USB.DeviceAddr = 1;
+            USB.DeviceAddr = 0;
         }
 
         public static void StartPolling()
