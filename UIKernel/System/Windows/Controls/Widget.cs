@@ -43,13 +43,17 @@ namespace System.Windows.Controls
                 _background = value;
 
                 //Default
-                if (_old_background == null)
+                if (_background != null)
                 {
                     _old_background = new Brush(_background.Value);
                 }
+
                 if (_highlight_background == null)
                 {
-                    _highlight_background = new Brush(_old_background.Value - 0x242424);
+                    Color color = Color.FromArgb(_old_background.Value);
+                    color.A = 250;
+                    _highlight_background = new Brush(color.ToArgb());
+                    color.Dispose();
                 }
 
                 if (_background != null)
@@ -225,15 +229,15 @@ namespace System.Windows.Controls
                 {
                     if (MouseEnter)
                     {
-                        Background = _highlight_background;
-                        Foreground = _highlight_foreground;
-                        BorderBrush.Value = _highlight_background.Value - 0x242424;
+                        _background = _highlight_background;
+                        _foreground = _highlight_foreground;
+                        BorderBrush.Value = _highlight_background.Value - 0xFF242424;
                     }
                     else
                     {
                         Background = _old_background;
                         Foreground = _old_foreground;
-                        BorderBrush.Value = _old_background.Value - 0x242424;
+                        BorderBrush.Value = _old_background.Value - 0xFF242424;
                     }
                 }
             }
