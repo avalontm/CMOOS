@@ -23,7 +23,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UIKernel", "UIKernel\UIKern
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOOSTemplate", "MOOSTemplate\MOOSTemplate.csproj", "{9BC38BA7-F3EC-4619-888B-73A38E51DBA6}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MoosFramework", "MoosFramework\MoosFramework.shproj", "{457DA9D9-36AB-4C11-83F9-DCE6C2373762}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoosFramework", "MoosFramework\MoosFramework.csproj", "{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +133,22 @@ Global
 		{9BC38BA7-F3EC-4619-888B-73A38E51DBA6}.Release|x64.Build.0 = Release|Any CPU
 		{9BC38BA7-F3EC-4619-888B-73A38E51DBA6}.Release|x86.ActiveCfg = Release|x86
 		{9BC38BA7-F3EC-4619-888B-73A38E51DBA6}.Release|x86.Build.0 = Release|x86
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|arm64.Build.0 = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Debug|x86.Build.0 = Debug|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|arm64.ActiveCfg = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|arm64.Build.0 = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|x64.Build.0 = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|x86.ActiveCfg = Release|Any CPU
+		{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,8 +160,6 @@ Global
 		Kernel\Kernel.projitems*{066034bc-37fe-4605-8bdb-c525ec29dbe4}*SharedItemsImports = 13
 		Kernel\Kernel.projitems*{3880e378-077b-4f24-ad1e-9e157679c9ba}*SharedItemsImports = 5
 		UIKernel\UIKernel.projitems*{3880e378-077b-4f24-ad1e-9e157679c9ba}*SharedItemsImports = 5
-		MoosFramework\MoosFramework.projitems*{457da9d9-36ab-4c11-83f9-dce6c2373762}*SharedItemsImports = 13
-		MoosFramework\MoosFramework.projitems*{4937d3a9-2f20-43ba-a794-89067f060502}*SharedItemsImports = 5
 		UIKernel\UIKernel.projitems*{cbf8a3a1-5076-42ad-8189-a54052c8dab2}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

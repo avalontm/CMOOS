@@ -1,6 +1,6 @@
 ﻿using Internal.Runtime.CompilerServices;
-using System.Drawing;
 using System.Moos.Controls;
+using System.Drawing;
 using System.Moos.Input;
 
 namespace System.Moos.Controls
@@ -18,7 +18,7 @@ namespace System.Moos.Controls
         public override void Generate(Window owner)
         {
             base.Generate(owner);
-            this.Handler = NativeMethod.CreateButton(owner.Handle, X, Y, Width, Height, Content, Background.ToArgb(), Command, CommandParameter);
+            this.Handler = Program.CreateButton(owner.Handle, X, Y, Width, Height, Content, Background.ToArgb(), Command, CommandParameter);
         }
     }
 }

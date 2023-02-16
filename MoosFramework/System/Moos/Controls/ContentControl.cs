@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
-using System.Moos;
+using System.Moos.Controls;
 
 namespace System.Moos.Controls
 {
-    public partial class ContentControl
+    public class ContentControl
     {
         public IntPtr Handler { get; internal set; }
         public Window OwnerWindow { set; get; }

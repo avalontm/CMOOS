@@ -2,7 +2,7 @@
 using System.Runtime;
 using System.Runtime.InteropServices;
 
-public static unsafe class NativeMethod
+public unsafe class Program
 {
     [RuntimeExport("malloc")]
     public static nint malloc(ulong size) => Allocate(size);
@@ -60,5 +60,6 @@ public static unsafe class NativeMethod
 
     [DllImport("CreateButton")]
     public static extern IntPtr CreateButton(IntPtr handle, int x, int y, int width, int height, string content, uint background, IntPtr command, IntPtr command_parameter);
-   
+
+
 }

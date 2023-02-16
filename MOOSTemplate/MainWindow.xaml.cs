@@ -2,7 +2,7 @@
 using System.Moos;
 using System.Moos.Controls;
 
-namespace AppDemo
+namespace $safeprojectname$
 {
     public partial class MainWindow : Window
     {

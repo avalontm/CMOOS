@@ -1,10 +1,13 @@
 ﻿using Internal.Runtime.CompilerServices;
+using MoosFramework;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Moos;
 
-namespace System.Moos
+namespace System.Moos.Controls
 {
+    [ContentProperty(nameof(Content))]
     public class Window
     {
         bool _contentLoaded;
@@ -19,8 +22,8 @@ namespace System.Moos
 
         public Window()
         {
-            Handle = NativeMethod.CreateWindow(0, 0, Width, Height, Title);
-            var screenBufHandle = NativeMethod.GetWindowScreenBuf(Handle);
+            Handle = Program.CreateWindow(0, 0, Width, Height, Title);
+            var screenBufHandle = Program.GetWindowScreenBuf(Handle);
             ScreenBuf = Unsafe.As<IntPtr, Image>(ref screenBufHandle);
         }
 
@@ -35,13 +38,14 @@ namespace System.Moos
 
             string resourceLocater = "/AppDemo;component/mainwindow.xaml";
             Application.LoadComponent(this, resourceLocater);
-           
+
             Debug.WriteLine($"[InitializeComponent] {resourceLocater}");
+            resourceLocater.Dispose();
         }
 
         public virtual void OnLoaded()
-        { 
-        
+        {
+
         }
 
         public virtual void OnUnloaded()

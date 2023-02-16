@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="$(MSBuildStartupDirectory)\Corlib\Corlib.csproj" />
+	  <ProjectReference Include="..\Corlib\Corlib.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\Kernel\Kernel.projitems" Label="Shared" />

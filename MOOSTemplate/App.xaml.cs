@@ -1,7 +1,7 @@
 using System.Moos;
 using System.Text;
 
-namespace AppDemo
+namespace $safeprojectname$
 {
     public partial class App : Application
     {

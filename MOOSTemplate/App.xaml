@@ -1,7 +1,7 @@
-﻿<Application x:Class="AppDemo.App"
+﻿<Application x:Class="$safeprojectname$.App"
              xmlns="clr-namespace:System.Moos;assembly=MoosFramework"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:AppDemo"
+             xmlns:local="clr-namespace:$safeprojectname$"
              StartupUri="MainWindow.xaml">
     
 </Application>
