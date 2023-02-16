@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace AppDemo
 {
-    public unsafe class MoosProgram
+    public static unsafe class MoosProgram
     {
         #region NativeMethods
         [RuntimeExport("malloc")]
