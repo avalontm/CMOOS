@@ -107,4 +107,57 @@
         }
     }
 
+    public class AssemblyCopyrightAttribute : Attribute
+    {
+        private String m_copyright;
+
+        public AssemblyCopyrightAttribute(String copyright)
+        {
+            m_copyright = copyright;
+        }
+
+        public String Copyright
+        {
+            get { return m_copyright; }
+        }
+    }
+
+    public class AssemblyDescriptionAttribute : Attribute
+    {
+        private String m_description;
+
+        public AssemblyDescriptionAttribute(String description)
+        {
+            m_description = description;
+        }
+
+        public String Description
+        {
+            get { return m_description; }
+        }
+    }
+
+    public class AssemblyMetadataAttribute : Attribute
+    {
+        private String m_metadata;
+        public String m_value;
+
+        public AssemblyMetadataAttribute(String metadata, string value = "")
+        {
+            m_metadata = metadata;
+            m_value = value;
+        }
+
+        public String Metadata
+        {
+            get { return m_metadata; }
+        }
+
+
+        public String Value
+        {
+            get { return m_value; }
+        }
+    }
+
 }

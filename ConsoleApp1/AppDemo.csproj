@@ -11,7 +11,7 @@
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 
-		<IlcSystemModule>Corlib</IlcSystemModule>
+		<IlcSystemModule>Mooslib</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
 		<!--Make the code faster!-->
@@ -31,21 +31,14 @@
 	<!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
 	<Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
 		<ItemGroup>
-			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Corlib' and %(Filename) != 'MoosFramework'"/>
+			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Mooslib' and %(Filename) != 'MoosFramework'" />
 			<ReferencePath Remove="@(ReferencePath)" />
 		</ItemGroup>
 	</Target>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="Corlib">
-	    <HintPath>..\bin\Debug\net7.0\Corlib.dll</HintPath>
-	  </Reference>
-	  <Reference Include="MoosFramework">
-	    <HintPath>..\bin\Debug\net7.0\MoosFramework.dll</HintPath>
-	  </Reference>
+		<PackageReference Include="MoosFramework" Version="1.0.0" />
+		<PackageReference Include="Mooslib" Version="1.0.0" />
 	</ItemGroup>
 </Project>

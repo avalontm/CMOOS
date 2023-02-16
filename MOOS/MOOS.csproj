@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Corlib\Corlib.csproj" />
+	  <ProjectReference Include="..\Corlib\Mooslib.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\Kernel\Kernel.projitems" Label="Shared" />
