@@ -9,18 +9,6 @@ using System.Windows.Input;
 
 namespace System.Windows
 {
-    public enum CursorState
-    {
-        None,
-        Normal,
-        Grab,
-        Moving,
-        TextSelect,
-        Hand,
-        Cross,
-        Wait,
-    }
-
     public class CursorManager
     {
         static Image CursorNormal { set; get; }

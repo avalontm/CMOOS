@@ -29,7 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\CheckBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\ColumnDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\ColumnDefinitionCollection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\FontWeight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\GridCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Slider.cs" />
@@ -37,7 +36,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\CursorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\CursorManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\FontWeightConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Input\Cursor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Media\Brushes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Media\ColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Media\Draw.cs" />
