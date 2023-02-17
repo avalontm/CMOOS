@@ -2,6 +2,7 @@
 /*          MOOS API CONTROL WINDOW              */
 /************************************************/
 using Internal.Runtime.CompilerServices;
+using MOOS.Driver;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -27,6 +28,8 @@ namespace System.Apis
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_WindowContent;
                 case "WindowShowDialog":
                     return (delegate*<IntPtr, IntPtr>)&API_WindowShowDialog;
+                case "WindowClose":
+                    return (delegate*<IntPtr, void>)&API_WindowClose;
             }
 
             return null;
@@ -124,6 +127,16 @@ namespace System.Apis
             }
 
             return IntPtr.Zero;
+        }
+
+        public static void API_WindowClose(IntPtr handler)
+        {
+            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handler);
+
+            if (papp != null)
+            {
+                papp.OnClose();
+            }
         }
 
     }

@@ -21,6 +21,9 @@ namespace Moos.Framework.Controls
         [DllImport("WindowShowDialog")]
         public static extern IntPtr WindowShowDialog(IntPtr handler);
 
+        [DllImport("WindowClose")]
+        public static extern void WindowClose(IntPtr handler);
+
         [DllImport("WindowWidth")]
         public static extern int WindowWidth(IntPtr handler, int width);
 
@@ -112,9 +115,15 @@ namespace Moos.Framework.Controls
 
         }
 
-        public virtual void ShowDialog()
+        public void ShowDialog()
         {
             WindowShowDialog(Handler);
+        }
+
+
+        public void Close()
+        {
+            WindowClose(Handler);
         }
     }
 }
