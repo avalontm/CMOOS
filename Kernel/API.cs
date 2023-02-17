@@ -89,11 +89,20 @@ namespace MOOS
                     return (delegate*<byte*, int, int>)&API_SndWrite;
             }
 
+            #region API Controls
+            //Call To Controls
             void* _call_window = ApiWindow.HandleSystemCall(name);
 
             if (_call_window != null)
             {
                 return _call_window;
+            }
+
+            void* _grid_button = ApiGrid.HandleSystemCall(name);
+
+            if (_grid_button != null)
+            {
+                return _grid_button;
             }
 
             void* _call_button = ApiButton.HandleSystemCall(name);
@@ -102,6 +111,7 @@ namespace MOOS
             {
                 return _call_button;
             }
+            #endregion
 
             Panic.Error($"System call \"{name}\" is not found");
             return null;

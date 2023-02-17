@@ -1,6 +1,7 @@
 ﻿/*************************************************/
 /*          MOOS API CONTROL WINDOW              */
 /************************************************/
+
 using Internal.Runtime.CompilerServices;
 using MOOS.Driver;
 using System.Windows;

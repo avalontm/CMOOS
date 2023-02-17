@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Explorers\ExplorerManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Lockscreen.cs" />
@@ -27,8 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\BooleanConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\CheckBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\ColumnDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\ColumnDefinitionCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\GridCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Slider.cs" />
@@ -45,8 +44,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Media\BrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Grid.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\RowDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\RowDefinitionCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\UIElementCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Data\Binding.cs" />
