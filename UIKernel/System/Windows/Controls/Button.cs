@@ -24,7 +24,7 @@ namespace System.Windows.Controls
             Y = 0;
             Width = 300;
             Height = 42;
-            Background = new Brush(0xFF111111);
+            _background = new Brush(0xFF111111);
             UseHighlight = true;
             CommandParameter = string.Empty;
         }
@@ -68,15 +68,8 @@ namespace System.Windows.Controls
         {
             base.OnDraw();
 
-            if (UseCircle)
-            {
-                Framebuffer.Graphics.FillCircle(X, Y, Height, Background.Value);
-            }
-            else
-            {
-                Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
-            }
-         
+            Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+
             if (!string.IsNullOrEmpty(Text))
             {
                 WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Text)) / 2) - 1,(Y + (Height / 2) ) - (WindowManager.font.FontSize/2) + 2 , Text, Foreground.Value);
@@ -84,10 +77,7 @@ namespace System.Windows.Controls
 
             if (BorderBrush != null)
             {
-                if (!UseCircle)
-                {
-                    DrawBorder();
-                }
+                DrawBorder();
             }
         }
 

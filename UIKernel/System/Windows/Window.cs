@@ -206,7 +206,7 @@ namespace System.Windows
             if (this.Visible)
             {
                 //WindowBar
-                Framebuffer.Graphics.FillRectangle(X, Y - BarHeight, Width, BarHeight, 0xebebeb);
+                Framebuffer.Graphics.FillRectangle((X-1), (Y - BarHeight), (Width+1), BarHeight, 0xebebeb);
 
                 if(!string.IsNullOrEmpty(Title))
                 {

@@ -18,14 +18,14 @@ namespace System.Windows.Controls
 
     public abstract class Widget
     {
-        Cursor _cursor;
-        Brush _background;
-        Brush _foreground;
-        Brush _highlight_foreground;
-        Brush _old_foreground;
+        internal Cursor _cursor;
+        internal Brush _background;
+        internal Brush _foreground;
+        internal Brush _highlight_foreground;
+        internal Brush _old_foreground;
 
-        Brush _old_background;
-        Brush _highlight_background;
+        internal Brush _old_background;
+        internal Brush _highlight_background;
         public string Name { set; get; }
         public int X { set; get; }
         public int Y { set; get; }
@@ -43,34 +43,34 @@ namespace System.Windows.Controls
                 _background = value;
 
                 //Default
-                if (_background != null)
+                if (_old_background == null)
                 {
                     _old_background = new Brush(_background.Value);
                 }
 
-                if (_highlight_background == null)
+                Color color = Color.FromArgb(_old_background.Value);
+                
+                color.R = (byte)(color.R + 5);
+                color.G = (byte)(color.G + 5);
+                color.B = (byte)(color.B + 5);
+
+                if (color.R > 255)
                 {
-                    Color color = Color.FromArgb(_old_background.Value);
-                    color.A = 250;
-                    _highlight_background = new Brush(color.ToArgb());
-                    color.Dispose();
+                    color.R = 255;
                 }
 
-                if (_background != null)
+                if (color.G > 255)
                 {
-                    Color color = Color.FromArgb(_background.Value);
-                    double luminosity = (((0.2126 * color.R) + (0.7152 * color.G) + (0.0722 * color.B)) / 255);
-
-                    if (luminosity >= 0.5) //Light
-                    {
-                        _highlight_foreground = Brushes.Black;
-                    }
-                    else
-                    {
-                        _highlight_foreground = Brushes.White;
-                    }
-                    color.Dispose();
+                    color.G = 255;
                 }
+
+                if (color.B > 255)
+                {
+                    color.B = 255;
+                }
+
+                _highlight_background = new Brush(color);
+                color.Dispose();
             }
             get { return _background; }
         }
@@ -162,8 +162,12 @@ namespace System.Windows.Controls
         {
             Parent = this;
             UseHighlight = false;
-            Background = Brushes.White;
-            Foreground = Brushes.Black;
+
+            _background = Brushes.White;
+            _foreground = Brushes.Black;
+            _highlight_background = Brushes.Black;
+            _highlight_foreground = Brushes.Black;
+
             BorderBrush = new Brush(0xFFCDC7C2);
             ColorNormal = new Brush(0xFF111111);
             ColorFocus = new Brush(0xFF141414);
@@ -225,22 +229,42 @@ namespace System.Windows.Controls
 
             if (UseHighlight)
             {
-                if (Background != null)
+                if (MouseEnter)
                 {
-                    if (MouseEnter)
+                    if (Background != null)
                     {
-                        _background = _highlight_background;
-                        _foreground = _highlight_foreground;
-                        BorderBrush.Value = _highlight_background.Value - 0xFF242424;
+                        _background.Value = HighlightBackground.Value;
                     }
-                    else
+
+                    if (HighlightBackground != null)
                     {
-                        Background = _old_background;
-                        Foreground = _old_foreground;
-                        BorderBrush.Value = _old_background.Value - 0xFF242424;
+                        Color color = Color.FromArgb(HighlightBackground.Value);
+                        double luminosity = (((0.2126 * color.R) + (0.7152 * color.G) + (0.0722 * color.B)) / 255);
+
+                        if (luminosity >= 0.5) //Light
+                        {
+                            BorderBrush = Brushes.Black;
+                        }
+                        else
+                        {
+                            BorderBrush = Brushes.White;
+                        }
+                        color.Dispose();
+                    }
+                }
+                else
+                {
+                    if (Background != null)
+                    {
+                        _background.Value = _old_background.Value;
+                    }
+                    if (HighlightBackground != null)
+                    {
+                        BorderBrush.Value = _old_background.Value;
                     }
                 }
             }
+
         }
 
         public void onSetParent(Widget parent)

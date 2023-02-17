@@ -108,18 +108,12 @@ namespace MOOS.NET
 
         public static bool operator ==(MACAddress a, MACAddress b)
         {
-            return
-                a.bytes[0] == b.bytes[0] &&
-                a.bytes[1] == b.bytes[1] &&
-                a.bytes[2] == b.bytes[2] &&
-                a.bytes[3] == b.bytes[3] &&
-                a.bytes[4] == b.bytes[4] &&
-                a.bytes[5] == b.bytes[5];
+            return a.CompareTo(b);
         }
 
         public static bool operator !=(MACAddress a, MACAddress b)
         {
-            return !(a == b);
+            return !a.CompareTo(b);
         }
 
         public override int GetHashCode()

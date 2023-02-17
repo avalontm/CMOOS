@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MOOS
 {
-    internal unsafe class strings
+    internal unsafe class Strings
     {
         public static int strlen(byte* c)
         {

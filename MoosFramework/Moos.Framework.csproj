@@ -16,7 +16,7 @@
 	<RepositoryType>git</RepositoryType>
 	<PackageTags>Moos.Core</PackageTags>
 	<Title>Moos.Framework</Title>
-	<Authors>Ninfanfa, AvalonTM</Authors>
+	<Authors>AvalonTM</Authors>
   </PropertyGroup>
 
   <!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
@@ -40,5 +40,5 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-	
+
 </Project>

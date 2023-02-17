@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Drawing;
 
 namespace System.Windows.Media
 {
@@ -15,6 +15,11 @@ namespace System.Windows.Media
         public Brush(uint value)
         {
             Value = value;
+        }
+
+        public Brush(Color color)
+        {
+            Value = color.ToArgb();
         }
     }
 }

@@ -182,7 +182,7 @@ public static class IDT
             if (irq == 0x80)
             {
                 var pCell = (MethodFixupCell*)stack->rs.rcx;
-                string name = string.FromASCII(pCell->Module->ModuleName, strings.strlen((byte*)pCell->Module->ModuleName));
+                string name = string.FromASCII(pCell->Module->ModuleName, Strings.strlen((byte*)pCell->Module->ModuleName));
                 stack->rs.rax = (ulong)API.HandleSystemCall(name);
                 name.Dispose();
             }

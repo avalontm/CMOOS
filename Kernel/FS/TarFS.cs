@@ -43,7 +43,7 @@ namespace MOOS.FS
             {
                 sec++;
                 ulong size = mystrtoul(hdr.size, null, 8);
-                string name = string.FromASCII((nint)hdr.name, strings.strlen(hdr.name) - (hdr.name[strings.strlen(hdr.name) - 1] == '/' ? 1 : 0));
+                string name = string.FromASCII((nint)hdr.name, Strings.strlen(hdr.name) - (hdr.name[Strings.strlen(hdr.name) - 1] == '/' ? 1 : 0));
                 if (IsInDirectory(name, Directory))
                 {
                     FileInfo info = new FileInfo();

@@ -10,9 +10,9 @@ namespace System.Desktops.Controls
 {
     public class DockerItem : DesktopControl
     {
-        public string Name { set; get; }
+        public new string Name { set; get; }
         Image _icon;
-        public Image Icon
+        public new Image Icon
         {
             set
             {
