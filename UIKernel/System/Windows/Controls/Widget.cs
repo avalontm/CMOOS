@@ -238,17 +238,28 @@ namespace System.Windows.Controls
 
                     if (HighlightBackground != null)
                     {
-                        Color color = Color.FromArgb(HighlightBackground.Value);
-                        double luminosity = (((0.2126 * color.R) + (0.7152 * color.G) + (0.0722 * color.B)) / 255);
+                        Color color = Color.FromArgb(_highlight_background.Value);
 
-                        if (luminosity >= 0.5) //Light
+                        color.R = (byte)(color.R - 5);
+                        color.G = (byte)(color.G - 5);
+                        color.B = (byte)(color.B - 5);
+
+                        if (color.R < 0)
                         {
-                            BorderBrush = Brushes.Black;
+                            color.R = 0;
                         }
-                        else
+
+                        if (color.G < 0)
                         {
-                            BorderBrush = Brushes.White;
+                            color.G = 0;
                         }
+
+                        if (color.B < 0)
+                        {
+                            color.B = 0;
+                        }
+
+                        BorderBrush = new Brush(color);
                         color.Dispose();
                     }
                 }
@@ -277,7 +288,7 @@ namespace System.Windows.Controls
 
         public void DrawBorder()
         {
-            Framebuffer.Graphics.DrawRectangle(X - BorderThickness.Left, Y - BorderThickness.Top , Width  + (int)(BorderThickness.Right), Height+ (int)(BorderThickness.Bottom), BorderBrush.Value);
+            Framebuffer.Graphics.DrawRectangle((X - BorderThickness.Left), (Y - BorderThickness.Top), (Width  + BorderThickness.Right), (Height + BorderThickness.Bottom), BorderBrush.Value);
         }
 
         public void onMouseFocus()

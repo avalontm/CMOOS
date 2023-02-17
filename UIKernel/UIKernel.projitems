@@ -59,7 +59,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\MessageBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\PortableApp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\TextWrapping.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Thickness.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\ThicknessConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\VerticalAlignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Window.cs" />

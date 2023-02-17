@@ -34,6 +34,8 @@ namespace System.Apis
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_ButtonCommandParameter;
                 case "ButtonBackground":
                     return (delegate*<IntPtr, int, int>)&API_ButtonBackground;
+                case "ButtonMargin":
+                    return (delegate*<IntPtr, int,int, int, int, void>)&API_ButtonMargin;
             }
 
             return null;
@@ -132,7 +134,15 @@ namespace System.Apis
 
             return 0;
         }
-        
 
+        public static void API_ButtonMargin(IntPtr handler, int left, int top, int right, int bottom)
+        {
+            Button control = Unsafe.As<IntPtr, Button>(ref handler);
+
+            if (control != null)
+            {
+                control.Margin = new Thickness(left, top, right, bottom);
+            }
+        }
     }
 }

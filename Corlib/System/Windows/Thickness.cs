@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace System.Windows
+﻿namespace System.Windows
 {
-    public class Thickness
+    public struct Thickness
     {
         public int Top { get; set; }
         public int Left { get; set; }
@@ -26,7 +23,7 @@ namespace System.Windows
             Right = margin;
         }
 
-        public Thickness(int top = 0, int left = 0, int bottom = 0, int right = 0)
+        public Thickness(int left = 0, int top = 0, int right = 0, int bottom = 0)
         {
             Top = top;
             Left = left;

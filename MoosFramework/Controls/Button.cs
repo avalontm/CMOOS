@@ -29,6 +29,9 @@ namespace Moos.Framework.Controls
         [DllImport("ButtonBackground")]
         public static extern int ButtonBackground(IntPtr handler, int color);
 
+        [DllImport("ButtonMargin")]
+        public static extern void ButtonMargin(IntPtr handler, int left, int top, int right, int bottom);
+
         string _text;
         public string Text
         {
@@ -93,6 +96,18 @@ namespace Moos.Framework.Controls
             {
                 _background = value;
                 ButtonBackground(Handler, (int)_background.ToArgb());
+            }
+        }
+
+        Thickness _margin;
+
+        public new Thickness Margin 
+        {
+            get { return _margin; }
+            set
+            {
+                _margin = value;
+                ButtonMargin(Handler, _margin.Left, _margin.Top, _margin.Right, _margin.Bottom);
             }
         }
 
