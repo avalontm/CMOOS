@@ -2,7 +2,8 @@
 using Moos.Framework.Controls;
 using Moos.Framework.Input;
 using System.Drawing;
-
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MoosApplication
 {
@@ -30,7 +31,8 @@ namespace MoosApplication
             button.Background = Color.FromArgb(0x549dc4);
             button.Command = new ICommand(OnCounterClicked);
             button.CommandParameter = button;
-
+            button.HorizontalOptions = LayoutOptions.Center;
+            button.VerticalOptions= LayoutOptions.Center;
             DataContext = this;
         }
 

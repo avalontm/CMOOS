@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace System.Windows
 {
-
     public enum HorizontalAlignment
     {
         Left = 0,

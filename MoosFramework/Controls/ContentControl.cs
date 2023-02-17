@@ -2,6 +2,8 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Moos.Framework.Controls
 {
@@ -16,7 +18,8 @@ namespace Moos.Framework.Controls
         public int Width { get; set; }
         public int Height { get; set; }
         public Thickness Margin { get; set; }
-
+        public LayoutOptions HorizontalOptions { set; get; }
+        public LayoutOptions VerticalOptions { set; get; }
         public Color Background { get; set; }
 
         public ContentControl()
