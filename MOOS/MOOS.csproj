@@ -13,7 +13,7 @@
 
 		<DefineConstants>Kernel;UseAPIC;HasGUI</DefineConstants>
 
-		<IlcSystemModule>Mooslib</IlcSystemModule>
+		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Entry</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
 		<!--Make the code faster!-->
@@ -23,7 +23,7 @@
 	<!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
 	<Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
 		<ItemGroup>
-			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Mooslib'" />
+			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Moos.Core'" />
 			<ReferencePath Remove="@(ReferencePath)" />
 		</ItemGroup>
 	</Target>
@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Corlib\Mooslib.csproj" />
+	  <ProjectReference Include="..\Corlib\Moos.Core.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\Kernel\Kernel.projitems" Label="Shared" />

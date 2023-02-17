@@ -11,11 +11,12 @@
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 
-		<IlcSystemModule>Mooslib</IlcSystemModule>
+		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
 		<!--Make the code faster!-->
 		<IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+		<PackageIcon></PackageIcon>
 	</PropertyGroup>
 
 	<Target Name="RenameExt" AfterTargets="CopyNativeBinary">
@@ -31,14 +32,22 @@
 	<!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
 	<Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
 		<ItemGroup>
-			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Mooslib' and %(Filename) != 'MoosFramework'" />
+			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Moos.Core' and %(Filename) != 'Moos.Framework'" />
 			<ReferencePath Remove="@(ReferencePath)" />
 		</ItemGroup>
 	</Target>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
-		<PackageReference Include="MoosFramework" Version="1.0.0" />
-		<PackageReference Include="Mooslib" Version="1.0.0" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Reference Include="Moos.Core">
+	    <HintPath>..\bin\Debug\net7.0\Moos.Core.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Moos.Framework">
+	    <HintPath>..\bin\Debug\net7.0\Moos.Framework.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 </Project>

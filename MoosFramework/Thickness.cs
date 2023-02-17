@@ -1,4 +1,4 @@
-﻿namespace System.Moos
+﻿namespace Moos.Framework
 {
     public class Thickness
     {
@@ -9,18 +9,18 @@
 
         public Thickness(int margin)
         {
-            this.Top = margin;
-            this.Right = margin;
-            this.Bottom = margin;
-            this.Left += margin;
+            Top = margin;
+            Right = margin;
+            Bottom = margin;
+            Left += margin;
         }
 
         public Thickness(int right, int top, int left, int bottom)
         {
-            this.Top = top;
-            this.Right = right;
-            this.Bottom = bottom;
-            this.Left += left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
+            Left += left;
         }
     }
 }

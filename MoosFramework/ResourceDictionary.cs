@@ -1,4 +1,4 @@
-﻿namespace System.Moos
+﻿namespace Moos.Framework
 {
     public class ResourceDictionary
     {

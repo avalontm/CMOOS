@@ -11,6 +11,7 @@ using static Internal.Runtime.CompilerHelpers.InteropHelpers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Apis;
 
 #if HasGUI
 using MOOS.GUI;
@@ -22,6 +23,8 @@ namespace MOOS
     {
         public static unsafe void* HandleSystemCall(string name)
         {
+            void* _call_void = null;
+
             switch (name)
             {
                 case "MessageBox":
@@ -75,8 +78,7 @@ namespace MOOS
                 case "StartThread":
                     return (delegate*<delegate*<void>, void>)&API_StartThread;
 #if Kernel && HasGUI
-                case "CreateWindow":
-                    return (delegate*<int, int, int, int, string, IntPtr>)&API_CreateWindow;
+               
                 case "CreateGrid":
                     return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr>)&API_CreateGrid;
                 case "CreateButton":
@@ -91,17 +93,15 @@ namespace MOOS
                 case "SndWrite":
                     return (delegate*<byte*, int, int>)&API_SndWrite;
             }
+
+            _call_void = ApiWindow.HandleSystemCall(name);
+
             Panic.Error($"System call \"{name}\" is not found");
-            return null;
+            return _call_void;
         }
 
 #if Kernel && HasGUI
-        public static IntPtr API_CreateWindow(int X, int Y, int Width, int Height, string Title)
-        {
-            PortableApp papp = new PortableApp(X, Y, Width, Height, Title);
-            papp.ShowDialog();
-            return papp;
-        }
+
 
         public static IntPtr API_CreateGrid(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background)
         {

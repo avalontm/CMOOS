@@ -8,15 +8,33 @@
 	<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+	<Title>Moos.Core</Title>
+	<Description>Moos Core</Description>
+	<Copyright>AvalonTM</Copyright>
+	<PackageProjectUrl>https://github.com/avalontm/CMOOS</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/avalontm/CMOOS</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageTags>Moos.Framwork</PackageTags>
+	<PackageIcon>icon.png</PackageIcon>
+	<Authors>Ninfanfa, AvalonTM</Authors>
   </PropertyGroup>
 
 
   <!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
   <Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
 	  <ItemGroup>
-		 <ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Mooslib'" />
+		 <ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Moos.Core'" />
 		  <ReferencePath Remove="@(ReferencePath)" />
 	</ItemGroup>
   </Target>
+  <ItemGroup>
+    <Content Include="icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

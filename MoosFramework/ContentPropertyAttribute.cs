@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MoosFramework
+namespace Moos.Framework
 {
     internal class ContentPropertyAttribute : Attribute
     {
@@ -8,7 +8,7 @@ namespace MoosFramework
 
         public ContentPropertyAttribute(string content)
         {
-            this.Content = content;
+            Content = content;
         }
     }
 }

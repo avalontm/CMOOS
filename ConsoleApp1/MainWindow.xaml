@@ -1,13 +1,13 @@
-﻿<Window x:Class="AppDemo.MainWindow"
-        xmlns="clr-namespace:System.Moos.Controls;assembly=MoosFramework"
+﻿<Window x:Class="MoosApplication.MainWindow"
+        xmlns="clr-namespace:Moos.Framework.Controls;assembly=Moos.Framework"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AppDemo"
+        xmlns:local="clr-namespace:MoosApplication"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
-        <Button Content="Click me!" Command="{Binding onClick}" />
+        <Button Text="Click me!" Command="{Binding onClick}" CommandParameter="{Binding }" />
     </Grid>
 </Window>

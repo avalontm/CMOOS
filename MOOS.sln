@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeLib", "NativeLib\NativeLib.vcxproj", "{4C81C206-F900-4CEC-B646-828A840817A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppDemo", "ConsoleApp1\AppDemo.csproj", "{4937D3A9-2F20-43BA-A794-89067F060502}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoosApplication", "ConsoleApp1\MoosApplication.csproj", "{4937D3A9-2F20-43BA-A794-89067F060502}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MOOS", "MOOS\MOOS.csproj", "{3880E378-077B-4F24-AD1E-9E157679C9BA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,13 +17,13 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Kernel", "Kernel\Kernel.shp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibC", "LibC\LibC.vcxproj", "{19D564FF-D5CE-4566-9EF6-088112A4F08F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mooslib", "Corlib\Mooslib.csproj", "{05B0CB63-093D-445D-BE05-C2146D57D419}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moos.Core", "Corlib\Moos.Core.csproj", "{05B0CB63-093D-445D-BE05-C2146D57D419}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UIKernel", "UIKernel\UIKernel.shproj", "{CBF8A3A1-5076-42AD-8189-A54052C8DAB2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOOSTemplate", "MOOSTemplate\MOOSTemplate.csproj", "{9BC38BA7-F3EC-4619-888B-73A38E51DBA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoosFramework", "MoosFramework\MoosFramework.csproj", "{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moos.Framework", "MoosFramework\Moos.Framework.csproj", "{3C7ED3AE-D7A9-4487-9B37-B7F8A7A58838}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

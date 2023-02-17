@@ -9,31 +9,36 @@
 	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 	<Copyright>AvalonTM</Copyright>
-	<PackageIcon>moos_logo.png</PackageIcon>
+	<PackageIcon>icon.png</PackageIcon>
 	<Description>Moos Framework</Description>
 	<PackageProjectUrl>https://github.com/avalontm/CMOOS</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/avalontm/CMOOS</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
-	<PackageTags>MOOS</PackageTags>
+	<PackageTags>Moos.Core</PackageTags>
+	<Title>Moos.Framework</Title>
+	<Authors>Ninfanfa, AvalonTM</Authors>
   </PropertyGroup>
 
   <!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
   <Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
 	  <ItemGroup>
-		  <ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Mooslib'" />
+		  <ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Moos.Core'" />
 		  <ReferencePath Remove="@(ReferencePath)" />
 	  </ItemGroup>
   </Target>
   <ItemGroup>
-    <None Include="..\..\..\..\Desktop\moos_logo.png">
+    <Content Include="icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Moos.Core">
+      <HintPath>..\bin\Debug\net7.0\Moos.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Mooslib">
-      <HintPath>..\bin\Debug\net7.0\Mooslib.dll</HintPath>
-    </Reference>
   </ItemGroup>
 	
 </Project>

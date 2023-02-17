@@ -1,7 +1,6 @@
-using System.Moos;
-using System.Text;
+using Moos.Framework;
 
-namespace AppDemo
+namespace MoosApplication
 {
     public partial class App : Application
     {

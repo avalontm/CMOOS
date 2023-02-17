@@ -1,11 +1,9 @@
 ﻿using Internal.Runtime.CompilerServices;
-using MoosFramework;
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Moos;
 
-namespace System.Moos.Controls
+namespace Moos.Framework.Controls
 {
     [ContentProperty(nameof(Content))]
     public class Window

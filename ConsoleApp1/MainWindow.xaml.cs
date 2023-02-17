@@ -1,9 +1,10 @@
-﻿using System.Drawing;
-using System.Moos;
-using System.Moos.Controls;
-using System.Moos.Input;
+﻿using Moos.Framework;
+using Moos.Framework.Controls;
+using Moos.Framework.Input;
+using System.Drawing;
 
-namespace AppDemo
+
+namespace MoosApplication
 {
     public partial class MainWindow : Window
     {
@@ -13,7 +14,7 @@ namespace AppDemo
             
             // Create the Button 
             Button button = new Button();
-            button.Content = "Click Me";
+            button.Text = "Click Me";
             button.Margin = new Thickness(5);
             button.X = 10;
             button.Y = 10;

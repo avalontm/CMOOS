@@ -1,10 +1,14 @@
-﻿using System.Drawing;
-using System.Moos.Controls;
+﻿using Moos.Framework.Input;
+using System;
+using System.Drawing;
 
-namespace System.Moos.Controls
+namespace Moos.Framework.Controls
 {
-    public class ContentControl
+    public partial class ContentControl : IView
     {
+        public ICommand Command { get; set; }
+        public object CommandParameter { get; set; }
+
         public IntPtr Handler { get; internal set; }
         public Window OwnerWindow { set; get; }
         public int X { get; set; }
@@ -12,11 +16,11 @@ namespace System.Moos.Controls
         public int Width { get; set; }
         public int Height { get; set; }
         public Thickness Margin { get; set; }
-        public string Content { get; set; }
+        public string Text { get; set; }
         public Color Background { get; set; }
 
         public ContentControl()
-        { 
+        {
 
         }
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace System.Moos.Input
+namespace Moos.Framework.Input
 {
     public class ICommand
     {

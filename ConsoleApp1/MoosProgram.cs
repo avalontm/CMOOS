@@ -2,7 +2,7 @@
 using System.Runtime;
 using System.Runtime.InteropServices;
 
-namespace AppDemo
+namespace MoosApplication
 {
     public static unsafe class MoosProgram
     {

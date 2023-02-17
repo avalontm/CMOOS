@@ -1,17 +1,14 @@
-﻿using MoosFramework;
-using System;
-using System.Collections.Generic;
-using System.Moos.Controls;
+﻿using System.Collections.Generic;
 using System.Text;
 
-namespace System.Moos.Controls
+namespace Moos.Framework.Controls
 {
     [ContentProperty(nameof(Children))]
     public class Grid : ContentControl
     {
         public List<ContentControl> Children { set; get; }
 
-        public Grid() 
+        public Grid()
         {
             Children = new List<ContentControl>();
         }
@@ -19,7 +16,7 @@ namespace System.Moos.Controls
         public override void Generate(Window owner)
         {
             base.Generate(owner);
-            this.Handler = Program.CreateGrid(owner.Handle, X, Y, Width, Height, Content, Background.ToArgb());
+            Handler = Program.CreateGrid(owner.Handle, X, Y, Width, Height, Text, Background.ToArgb());
         }
 
     }
