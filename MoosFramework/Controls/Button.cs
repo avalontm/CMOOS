@@ -30,6 +30,9 @@ namespace Moos.Framework.Controls
         [DllImport("ButtonBackground")]
         public static extern int ButtonBackground(IntPtr handler, int color);
 
+        [DllImport("ButtonForeground")]
+        public static extern int ButtonForeground(IntPtr handler, int color);
+
         [DllImport("ButtonMargin")]
         public static extern void ButtonMargin(IntPtr handler, int left, int top, int right, int bottom);
 
@@ -97,6 +100,17 @@ namespace Moos.Framework.Controls
             {
                 _background = value;
                 ButtonBackground(Handler, (int)_background.ToArgb());
+            }
+        }
+
+        Color _foreground;
+        public Color Foreground
+        {
+            get { return _foreground; }
+            set
+            {
+                _foreground = value;
+                ButtonForeground(Handler, (int)_foreground.ToArgb());
             }
         }
 

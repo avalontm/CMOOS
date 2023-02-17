@@ -28,7 +28,8 @@ namespace MoosApplication
             button.Y = 10;
             button.Width = 120;
             button.Height = 48;
-            button.Background = Color.FromArgb(0x549dc4);
+            button.Background = Color.FromArgb(0xFF549dc4);
+            button.Foreground = Color.FromArgb(0xFFf5f5f5);
             button.Command = new ICommand(OnCounterClicked);
             button.CommandParameter = button;
             button.HorizontalOptions = LayoutOptions.Center;
