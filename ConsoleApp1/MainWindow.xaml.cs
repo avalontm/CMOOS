@@ -32,8 +32,6 @@ namespace MoosApplication
             button.Foreground = Color.FromArgb(0xFFf5f5f5);
             button.Command = new ICommand(OnCounterClicked);
             button.CommandParameter = button;
-            button.HorizontalOptions = LayoutOptions.Center;
-            button.VerticalOptions= LayoutOptions.Center;
             DataContext = this;
         }
 

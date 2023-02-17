@@ -126,14 +126,16 @@ namespace Moos.Framework.Controls
             }
         }
 
-        public Button()
+        public Button(Window owner = null)
         {
-            Handler = ButtonCreate(IntPtr.Zero);
-        }
-
-        public Button(Window owner)
-        {
-            Handler = ButtonCreate(owner.Handler);
+            if (owner == null)
+            {
+                Handler = ButtonCreate(IntPtr.Zero);
+            }
+            else
+            {
+                Handler = ButtonCreate(owner.Handler);
+            }
         }
     }
 }
