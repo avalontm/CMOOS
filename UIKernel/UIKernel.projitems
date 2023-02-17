@@ -10,6 +10,7 @@
     </Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Explorers\ExplorerManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Lockscreen.cs" />

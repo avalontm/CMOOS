@@ -8,12 +8,19 @@ namespace MoosApplication
 {
     public partial class MainWindow : Window
     {
+        int count = 0;
+
         public MainWindow()
         {
-            InitializeComponent();
-            
-            // Create the Button 
-            Button button = new Button();
+            InitializeComponent(); 
+
+            //Window
+            this.Title = "Moos Application";
+            this.Width = 300;
+            this.Height = 200;
+
+            //Button 
+            Button button = new Button(this);
             button.Text = "Click Me";
             button.Margin = new Thickness(5);
             button.X = 10;
@@ -21,29 +28,26 @@ namespace MoosApplication
             button.Width = 120;
             button.Height = 48;
             button.Background = Color.FromArgb(0x549dc4);
-            button.Command = new ICommand(onButton_Click);
-            button.CommandParameter = "parameters";
-            button.Generate(this);
-
-            this.Content = button;
+            button.Command = new ICommand(OnCounterClicked);
+            button.CommandParameter = button;
 
             DataContext = this;
         }
 
-        void onButton_Click(object obj)
+        void OnCounterClicked(object obj)
         {
-           Program.MessageBox("API", $"Mesage from api with parameter: {obj}");
+            Button button = (Button)obj;
+
+            if (button != null)
+            {
+                count++;
+
+                if (count == 1)
+                    button.Text = $"Clicked {count} time";
+                else
+                    button.Text = $"Clicked {count} times";
+            }
         }
 
-        public override void OnLoaded()
-        {
-            base.OnLoaded();
-
-        }
-
-        public override void OnUnloaded()
-        {
-            base.OnUnloaded();
-        }
     }
 }

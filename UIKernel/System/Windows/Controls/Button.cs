@@ -10,7 +10,7 @@ namespace System.Windows.Controls
 {
     public class Button : Widget
     {
-        public string Content { set; get; }
+        public string Text { set; get; }
         public Binding Command { set; get; }
         public static object CommandProperty { get;  set; }
         public object CommandParameter { get; set; }
@@ -77,9 +77,9 @@ namespace System.Windows.Controls
                 Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
             }
          
-            if (!string.IsNullOrEmpty(Content))
+            if (!string.IsNullOrEmpty(Text))
             {
-                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Content)) / 2) - 1,(Y + (Height / 2) ) - (WindowManager.font.FontSize/2) + 2 , Content, Foreground.Value);
+                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Text)) / 2) - 1,(Y + (Height / 2) ) - (WindowManager.font.FontSize/2) + 2 , Text, Foreground.Value);
             }
 
             if (BorderBrush != null)

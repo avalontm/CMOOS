@@ -2,27 +2,88 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Moos.Framework.Controls
 {
     [ContentProperty(nameof(Content))]
     public class Window
     {
+        [DllImport("WindowGetScreenBuf")]
+        public static extern IntPtr WindowGetScreenBuf(IntPtr handler);
+
+        [DllImport("WindowCreate")]
+        public static extern IntPtr WindowCreate();
+
+        [DllImport("WindowTitle")]
+        public static extern IntPtr WindowTitle(IntPtr handler, string title);
+
+        [DllImport("WindowShowDialog")]
+        public static extern IntPtr WindowShowDialog(IntPtr handler);
+
+        [DllImport("WindowWidth")]
+        public static extern int WindowWidth(IntPtr handler, int width);
+
+        [DllImport("WindowHeight")]
+        public static extern int WindowHeight(IntPtr handler, int height);
+
+        [DllImport("WindowContent")]
+        public static extern IntPtr WindowContent(IntPtr handler, IntPtr content);
+
         bool _contentLoaded;
-        Image ScreenBuf;
-        public IntPtr Handle { get; private set; }
-        public string Title { get; set; } = "Title";
-        public int Height { set; get; } = 400;
-        public int Width { set; get; } = 600;
+
+        public Image ScreenBuf { get; private set; }
+        public IntPtr Handler { get; private set; }
+
+        string _title = "Title";
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                _title = value;
+                WindowTitle(Handler, _title);
+            }
+        }
+
+        int _height = 150;
+        public int Height
+        {
+            get { return _height; }
+            set
+            {
+                _height = WindowHeight(Handler, value);
+            }
+        }
+
+        int _width = 300;
+        public int Width
+        {
+            get { return _width; }
+            set
+            {
+                _width = WindowWidth(Handler, value);
+            }
+        }
 
         public object DataContext { get; set; }
-        public object Content { get; set; }
+
+        object _content;
+        public object Content
+        {
+            get { return _content; }
+            set
+            {
+                _content = value;
+                WindowContent(Handler, _content);
+            }
+        }
 
         public Window()
         {
-            Handle = Program.CreateWindow(0, 0, Width, Height, Title);
-            var screenBufHandle = Program.GetWindowScreenBuf(Handle);
-            ScreenBuf = Unsafe.As<IntPtr, Image>(ref screenBufHandle);
+            Handler = WindowCreate();
+            var screenBufHandler = WindowGetScreenBuf(Handler);
+            ScreenBuf = Unsafe.As<IntPtr, Image>(ref screenBufHandler);
         }
 
         public void InitializeComponent()
@@ -49,6 +110,11 @@ namespace Moos.Framework.Controls
         public virtual void OnUnloaded()
         {
 
+        }
+
+        public virtual void ShowDialog()
+        {
+            WindowShowDialog(Handler);
         }
     }
 }

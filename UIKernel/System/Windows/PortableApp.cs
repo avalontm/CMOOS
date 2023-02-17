@@ -10,6 +10,13 @@ namespace System.Windows
     {
         public Image ScreenBuf;
 
+        public PortableApp()
+        {
+            this.Width = Width + 1;
+            this.Height = Height + 1;
+            ScreenBuf = new Image(Width, Height);
+        }
+
         public PortableApp(int X, int Y, int Width, int Height, string Title)
         {
             this.Title = Title; 

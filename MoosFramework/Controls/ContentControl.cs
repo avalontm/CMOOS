@@ -1,13 +1,13 @@
 ﻿using Moos.Framework.Input;
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Moos.Framework.Controls
 {
     public partial class ContentControl : IView
     {
-        public ICommand Command { get; set; }
-        public object CommandParameter { get; set; }
+        public string Name { get; set; }
 
         public IntPtr Handler { get; internal set; }
         public Window OwnerWindow { set; get; }
@@ -16,17 +16,12 @@ namespace Moos.Framework.Controls
         public int Width { get; set; }
         public int Height { get; set; }
         public Thickness Margin { get; set; }
-        public string Text { get; set; }
+
         public Color Background { get; set; }
 
         public ContentControl()
         {
 
-        }
-
-        public virtual void Generate(Window owner)
-        {
-            OwnerWindow = owner;
         }
     }
 }

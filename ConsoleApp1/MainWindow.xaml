@@ -8,6 +8,6 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
-        <Button Text="Click me!" Command="{Binding onClick}" CommandParameter="{Binding }" />
+        <Button Text="Click me" Command="{Binding OnCounterClicked}" CommandParameter="{Binding }" />
     </Grid>
 </Window>

@@ -23,7 +23,8 @@ namespace Moos.Framework
 
         public void Run(Window main)
         {
-            Windows.Add(main);
+            MainWindow = main;
+            MainWindow.ShowDialog();
 
             //wait while is running
             for (; ; )

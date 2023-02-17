@@ -23,7 +23,6 @@ namespace MOOS
     {
         public static unsafe void* HandleSystemCall(string name)
         {
-            void* _call_void = null;
 
             switch (name)
             {
@@ -81,10 +80,6 @@ namespace MOOS
                
                 case "CreateGrid":
                     return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr>)&API_CreateGrid;
-                case "CreateButton":
-                    return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr, IntPtr, IntPtr>)&API_CreateButton;
-                case "GetWindowScreenBuf":
-                    return (delegate*<IntPtr, IntPtr>)&API_GetWindowScreenBuf;
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
 #endif
@@ -94,10 +89,22 @@ namespace MOOS
                     return (delegate*<byte*, int, int>)&API_SndWrite;
             }
 
-            _call_void = ApiWindow.HandleSystemCall(name);
+            void* _call_window = ApiWindow.HandleSystemCall(name);
+
+            if (_call_window != null)
+            {
+                return _call_window;
+            }
+
+            void* _call_button = ApiButton.HandleSystemCall(name);
+
+            if (_call_button != null)
+            {
+                return _call_button;
+            }
 
             Panic.Error($"System call \"{name}\" is not found");
-            return _call_void;
+            return null;
         }
 
 #if Kernel && HasGUI
@@ -107,45 +114,25 @@ namespace MOOS
         {
             PortableApp owner = Unsafe.As<IntPtr, PortableApp>(ref Owner);
 
-            Grid grid = new Grid();
-            grid.Parent = owner;
-            grid.X = X;
-            grid.Y = Y;
-            grid.Width = Width;
-            grid.Height = Height;
-            grid.Background = new System.Windows.Media.Brush(Background);
+            if (owner != null)
+            {
+                Grid grid = new Grid();
+                grid.Parent = owner;
+                grid.X = X;
+                grid.Y = Y;
+                grid.Width = Width;
+                grid.Height = Height;
+                grid.Background = new System.Windows.Media.Brush(Background);
 
-            owner.Content = grid;
+                owner.Content = grid;
 
-            return grid;
-        }
 
-        public static IntPtr API_CreateButton(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background, IntPtr Command, IntPtr CommandParameter)
-        {
-            PortableApp owner = Unsafe.As<IntPtr, PortableApp>(ref Owner);
-            
-            Button button = new Button();
-            button.Parent = owner;
-            button.X = X;
-            button.Y = Y;
-            button.Width = Width;
-            button.Height = Height;
-            button.Content = Content;
-            button.Background = new System.Windows.Media.Brush(Background);
-            button.Command = new System.Windows.Data.Binding();
-            button.Command.Source = Unsafe.As<IntPtr, ICommand>(ref Command);
-            button.CommandParameter = Unsafe.As<IntPtr, ICommand>(ref CommandParameter);
+                return grid;
+            }
 
-            owner.Content = button;
-
-            return button;
+            return IntPtr.Zero;
         }
         
-        public static IntPtr API_GetWindowScreenBuf(IntPtr handle)
-        {
-            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handle);
-            return papp.ScreenBuf;
-        }
 #endif
 
         public static void API_MessageBox(string title, string message)

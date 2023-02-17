@@ -82,7 +82,7 @@ namespace System.Windows
             CloseButton.Height = 28;
             CloseButton.Command = new Data.Binding();
             CloseButton.Command.Source = new ICommand(onClose);
-            CloseButton.Content = "X";
+            CloseButton.Text = "X";
             CloseButton.Background = new Brush(0xd9d9d9);
             CloseButton.HighlightBackground = new Brush(0xde4343);
 
