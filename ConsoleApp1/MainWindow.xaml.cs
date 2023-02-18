@@ -30,15 +30,15 @@ namespace MoosApplication
             RowDefinition _rowDefinition2 = new RowDefinition();
             _rowDefinitionCollection1.Add(_rowDefinition2);
             GridLengthConverter _gridLengthConverter = new GridLengthConverter();
-            _rowDefinition2.Height = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "Auto")));
+            _rowDefinition2.Height = new GridLength(48, GridUnitType.Auto);
             // ---------------------------
             RowDefinition _rowDefinition3 = new RowDefinition();
             _rowDefinitionCollection1.Add(_rowDefinition3);
-            _rowDefinition3.Height = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "*")));
+            _rowDefinition3.Height = new GridLength(1, GridUnitType.Star);
             // ---------------------------
             RowDefinition _rowDefinition4 = new RowDefinition();
             _rowDefinitionCollection1.Add(_rowDefinition4);
-            _rowDefinition4.Height = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "40")));
+            _rowDefinition4.Height = new GridLength(40, GridUnitType.Pixel);
 
             _grid0.RowDefinitions = _rowDefinitionCollection1;
 
