@@ -15,19 +15,59 @@ namespace Moos.Framework.Controls
         public static extern IntPtr GridRowDefinitions(IntPtr handler, IntPtr rows);
         [DllImport("GridColumnDefinitions")]
         public static extern IntPtr GridColumnDefinitions(IntPtr handler, IntPtr cols);
+        [DllImport("GridChildrenAdd")]
+        public static extern IntPtr GridChildrenAdd(IntPtr handler, IntPtr control);
+        [DllImport("GridSetRow")]
+        public static extern int GridSetRow(IntPtr handler, IntPtr control, int row);
+        [DllImport("GridSetColumn")]
+        public static extern int GridSetColumn(IntPtr handler, IntPtr control, int column);
+
+        List<ContentControl> _children;
+        public List<ContentControl> Children
+        {
+            set
+            {
+                _children = value;
+            }
+            get { return _children; }
+        }
 
 
-        public RowDefinitionCollection RowDefinitions { set; get; }
-        public ColumnDefinitionCollection ColumnDefinitions { set; get; }
-        public List<ContentControl> Children { set; get; }
+        RowDefinitionCollection _rowDefinitions;
+        public RowDefinitionCollection RowDefinitions
+        {
+            set
+            {
+                _rowDefinitions = value;
+                GridRowDefinitions(Handler, _rowDefinitions);
+            }
+            get { return _rowDefinitions; }
+        }
+
+        ColumnDefinitionCollection _columnDefinitions;
+        public ColumnDefinitionCollection ColumnDefinitions
+        {
+            set
+            {
+                _columnDefinitions = value;
+                GridColumnDefinitions(Handler, _columnDefinitions);
+            }
+            get { return _columnDefinitions; }
+        }
 
         public Grid(Window owner)
         {
             RowDefinitions = new RowDefinitionCollection();
             ColumnDefinitions = new ColumnDefinitionCollection();
             Children = new List<ContentControl>();
-            GridCreate(owner);
+            Handler = GridCreate(owner.Handler);
         }
 
+        public void SetRow(ContentControl control, int row)
+        {
+            Children.Add(control);
+            control.GridRow = GridSetRow(Handler, control.Handler, row);
+            GridChildrenAdd(Handler, control.Handler);
+        }
     }
 }

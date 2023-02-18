@@ -28,7 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\BooleanConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\CheckBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\GridCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\TextBox.cs" />

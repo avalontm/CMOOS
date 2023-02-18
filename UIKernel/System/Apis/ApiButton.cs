@@ -4,6 +4,7 @@
 
 using Internal.Runtime.CompilerServices;
 using MOOS.Driver;
+using MOOS.NET.IPv4.TCP;
 using System;
 using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
@@ -21,7 +22,7 @@ namespace System.Apis
             switch (name)
             {
                 case "ButtonCreate":
-                    return (delegate*<IntPtr, IntPtr>)&API_ButtonCreate;
+                    return (delegate*<IntPtr>)&API_ButtonCreate;
                 case "ButtonText":
                     return (delegate*<IntPtr, string, IntPtr>)&API_ButtonText;
                 case "ButtonWidth":
@@ -43,18 +44,9 @@ namespace System.Apis
             return null;
         }
 
-        public static IntPtr API_ButtonCreate(IntPtr owner)
+        public static IntPtr API_ButtonCreate()
         {
             Button button = new Button();
-
-            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref owner);
-
-            if (papp != null)
-            {
-                button.Parent = papp;
-                papp.Content = button;
-            }
-
             return button;
         }
 

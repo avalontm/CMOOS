@@ -20,6 +20,11 @@ namespace System.Apis
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_GridRowDefinitions;
                 case "GridColumnDefinitions":
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_GridColumnDefinitions;
+                case "GridChildrenAdd":
+                    return (delegate*<IntPtr, IntPtr, IntPtr>)&API_GridChildrenAdd;
+                case "GridSetRow":
+                    return (delegate*<IntPtr, IntPtr, int, int>)&API_GridSetRow;
+                    
             }
 
             return null;
@@ -64,6 +69,38 @@ namespace System.Apis
             }
 
             return grid;
+        }
+
+        public static IntPtr API_GridChildrenAdd(IntPtr handler, IntPtr control)
+        {
+            Grid grid = Unsafe.As<IntPtr, Grid>(ref handler);
+
+            if (grid != null)
+            {
+                Widget widget = Unsafe.As<IntPtr, Widget>(ref control);
+                widget.Parent = grid;
+                grid.Children.Add(widget);
+            }
+
+            return grid;
+        }
+
+        public static int API_GridSetRow(IntPtr handler, IntPtr control, int row)
+        {
+            Grid grid = Unsafe.As<IntPtr, Grid>(ref handler);
+
+            if (grid != null)
+            {
+                Widget widget = Unsafe.As<IntPtr, Widget>(ref control);
+
+                if (widget != null)
+                {
+                    Grid.SetRow(widget, row);
+                    return widget.GridRow;
+                }
+            }
+
+            return 0;
         }
     }
 }
