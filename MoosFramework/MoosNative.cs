@@ -50,6 +50,7 @@ namespace Moos.Framework
 
         [DllImport("MessageBox")]
         public static extern void MessageBox(string title, string message);
-
+        [DllImport("GetAppContent")]
+        public static extern string GetAppContent(string path);
     }
 }

@@ -12,8 +12,10 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiGrid.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Explorers\ExplorerManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Controls\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Windows\Lockscreen.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Desktops\Controls\DesktopBar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Desktops\Controls\DesktopBarClock.cs" />

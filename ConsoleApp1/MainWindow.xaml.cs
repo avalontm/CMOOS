@@ -4,6 +4,7 @@ using Moos.Framework.Input;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
+using Image = Moos.Framework.Controls.Image;
 
 namespace MoosApplication
 {
@@ -57,6 +58,12 @@ namespace MoosApplication
 
             _grid0.SetRow(button, 2);
 
+            //Image
+            Image image = new Image();
+            image.Source = ImageSource.FromFile("MOOS-Logo.png");
+            image.Width = 200;
+            image.Height = 100;
+            _grid0.SetRow(image, 1);
             DataContext = this;
         }
 

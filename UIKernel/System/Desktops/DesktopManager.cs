@@ -261,13 +261,18 @@ namespace System.Desktops
         {
             IconFile file = obj as IconFile;
 
+            if (file.isPkg)
+            {
+                byte[] buffer = File.ReadAllBytes(file.FilePath + "/Content/" + "app.mue");
+                Process.Start(buffer);
+                return;
+            }
+
             ExplorerManager explorer = new ExplorerManager();
             explorer.Title = file.Content;
             explorer.Dir = file.FilePath;
             explorer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             explorer.ShowDialog();
-
-
         }
 
         static void onDesktopNativeOSClick(object obj)
@@ -340,8 +345,8 @@ namespace System.Desktops
                         if (Audio.HasAudioDevice)
                         {
                             WAVPlayer wavplayer = new WAVPlayer();
-                            wavplayer.Play(file.FilePath);
                             wavplayer.ShowDialog();
+                            wavplayer.Play(file.FilePath);
                         }
                         else
                         {

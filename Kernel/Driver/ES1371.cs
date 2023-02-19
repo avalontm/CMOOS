@@ -15,7 +15,9 @@ namespace MOOS
         {
             var dev = PCI.GetDevice(0x1274, 0x1371);
             if (!dev) return;
+
             dev.WriteRegister(0x04, 0x04 | 0x02 | 0x01);
+
             BAR0 = dev.Bar0 & ~0x3;
             Buffer = (byte*)Allocator.Allocate(CacheSize);
             Console.WriteLine($"[ES1371] BAR0:{BAR0}");

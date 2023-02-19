@@ -1,6 +1,7 @@
 ﻿using MOOS;
 using MOOS.Driver;
 using MOOS.FS;
+using MOOS.Misc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace System.Desktops.Controls
     {
         public int Key { set; get; }
         public bool isDirectory { set; get; }
+        public bool isPkg { set; get; }
         public Image icon { set; get; }
         public string Path { set; get; }
         public string FilePath { set; get; }
@@ -24,6 +26,7 @@ namespace System.Desktops.Controls
         public FileInfo FileInfo { get; set; }
         public ExplorerManager OwnerWindow { get; set; }
         public string Extention { private set; get; }
+        bool _isUnknown;
         bool _isFocus;
         int offsetX, offsetY;
         int _clickCount;
@@ -57,6 +60,13 @@ namespace System.Desktops.Controls
                     icon = DesktopIcons.AppIcon;
                     Extention = "mue";
                 }
+                else if (ext.EndsWith(".muepkg"))
+                {
+                    isPkg = true;
+
+                    icon = DesktopIcons.AppPkg;
+                    Extention = "muepkg";
+                }
                 else if (ext.EndsWith(".wav"))
                 {
                     icon = DesktopIcons.AudioIcon;
@@ -82,9 +92,31 @@ namespace System.Desktops.Controls
                     else
                     {
                         Extention = "unk";
+                        _isUnknown = true;
                     }
                 }
                 ext.Dispose();
+                OnPackage();
+            }
+        }
+
+        void OnPackage()
+        {
+            if (isPkg)
+            {
+                //changeIcon from PKG
+                string _icon = File.Instance.GetDirectory(FilePath) + Content + "/Content/" + "icon.png";
+                icon = new PNG(File.Instance.ReadAllBytes(_icon));
+                icon = icon.ResizeImage(48, 48);
+
+                //remove Extention
+                Content = Content.Substring(0, 7);
+            }
+
+            if (!isDirectory & !_isUnknown)
+            {
+                //remove the known extension
+                Content = Content.Substring(0, (Content.Length - (Extention.Length + 1)));
             }
         }
 

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Apis;
+using Image = System.Drawing.Image;
 
 #if HasGUI
 using MOOS.GUI;
@@ -26,6 +27,10 @@ namespace MOOS
 
             switch (name)
             {
+                case "GetPathApplication":
+                    return (delegate*<IntPtr, IntPtr>)&GetPathApplication;
+                case "LoadPNG":
+                    return (delegate*<string, IntPtr>)&API_LoadPNG;
                 case "MessageBox":
                     return (delegate*<string, string, void>)&API_MessageBox;
                 case "SayHello":
@@ -77,9 +82,6 @@ namespace MOOS
                 case "StartThread":
                     return (delegate*<delegate*<void>, void>)&API_StartThread;
 #if Kernel && HasGUI
-               
-                case "CreateGrid":
-                    return (delegate*<IntPtr, int, int, int, int, string, uint, IntPtr>)&API_CreateGrid;
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
 #endif
@@ -111,39 +113,36 @@ namespace MOOS
             {
                 return _call_button;
             }
+
+            void* _call_image = ApiImage.HandleSystemCall(name);
+
+            if (_call_image != null)
+            {
+                return _call_image;
+            }
             #endregion
 
             Panic.Error($"System call \"{name}\" is not found");
             return null;
         }
 
-#if Kernel && HasGUI
-
-
-        public static IntPtr API_CreateGrid(IntPtr Owner, int X, int Y, int Width, int Height, string Content, uint Background)
+        public static IntPtr API_LoadPNG(string file)
         {
-            PortableApp owner = Unsafe.As<IntPtr, PortableApp>(ref Owner);
+            return new PNG(file);
+        }
 
-            if (owner != null)
-            {
-                Grid grid = new Grid();
-                grid.Parent = owner;
-                grid.X = X;
-                grid.Y = Y;
-                grid.Width = Width;
-                grid.Height = Height;
-                grid.Background = new System.Windows.Media.Brush(Background);
+        public static IntPtr GetPathApplication(IntPtr handler)
+        {
+            PortableApp app = Unsafe.As<IntPtr, PortableApp>(ref handler);
+            string path = "";
 
-                owner.Content = grid;
-
-
-                return grid;
+            if (app != null)
+            { 
+            
             }
 
-            return IntPtr.Zero;
+            return path;
         }
-        
-#endif
 
         public static void API_MessageBox(string title, string message)
         {

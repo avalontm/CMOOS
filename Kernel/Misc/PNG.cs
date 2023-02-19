@@ -1,3 +1,4 @@
+using MOOS.FS;
 using MOOS.NET;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -15,7 +16,17 @@ namespace MOOS.Misc
             LCT_RGBA = 6 /*RGB with alpha: 8,16 bit*/
         }
 
+        public PNG(string file)
+        {
+            onLoad(File.Instance.ReadAllBytes(file), LodePNGColorType.LCT_RGBA, 8);
+        }
+
         public PNG(byte[] file,LodePNGColorType type = LodePNGColorType.LCT_RGBA ,uint bitDepth = 8)
+        {
+            onLoad(file, type, bitDepth);
+        }
+
+        void onLoad(byte[] file, LodePNGColorType type = LodePNGColorType.LCT_RGBA, uint bitDepth = 8)
         {
             lock (this)
             {

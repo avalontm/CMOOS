@@ -21,8 +21,9 @@ namespace MOOS
             if (device == null) return;
 
             Console.WriteLine("[AC97] Intel 82801AA AC97 Audio Controller Found");
+            
             device.WriteRegister(0x04, 0x04 | 0x02 | 0x01);
-
+            
             NumDescriptors = 31;
 
             NAM = device.Bar0 & ~(0xFU);
@@ -46,7 +47,6 @@ namespace MOOS
                 BufferDescriptors[i].Arribute = 1 << 15;
             }
 
-            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
             Index = 0;
 
             Out16((ushort)(NAM + 0x2C), Audio.SampleRate);
@@ -57,6 +57,7 @@ namespace MOOS
             Out8((ushort)(NABM + 0x15), Index);
             Out8((ushort)(NABM + 0x1B), 0x19);
 
+            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
             Audio.HasAudioDevice = true;
         }
 

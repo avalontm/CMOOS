@@ -35,6 +35,7 @@ namespace MOOS.FS
 
         public static List<FileInfo> GetFiles(string Directory) => Instance.GetFiles(Directory);
         public static byte[] ReadAllBytes(string name) => Instance.ReadAllBytes(name);
+
     }
 
     public abstract class FileSystem
@@ -66,6 +67,22 @@ namespace MOOS.FS
                 }
             }
             return true;
+        }
+
+        public string GetDirectory(string file)
+        {
+            string result = "";
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                string[] str = file.Split('/');
+
+                for(int i=0; i< (str.Length-1);i++)
+                {
+                    result += str[i] + "/";
+                }
+            }
+            return result;
         }
 
         public abstract List<FileInfo> GetFiles(string Directory);

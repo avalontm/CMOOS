@@ -4,6 +4,7 @@ using MOOS.IOGroup;
 using MOOS.Misc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows;
@@ -36,7 +37,6 @@ namespace MOOS.GUI
             _pcm = null;
             _index = 0;
        
-            _song_name = null;
             playing = false;
             clickLock = false;
             _player = this;
@@ -85,10 +85,10 @@ namespace MOOS.GUI
 
         public void Play(string file)
         {
-            byte[] buffer = File.ReadAllBytes(file);
+            byte[] wav = File.ReadAllBytes(file);
             _index = 0;
-            WAV.Decode(buffer, out var pcm, out var hdr);
-            buffer.Dispose();
+            WAV.Decode(wav, out var pcm, out var hdr);
+            wav.Dispose();
             _pcm = pcm;
             _header = hdr;
             _song_name = file;
@@ -101,8 +101,9 @@ namespace MOOS.GUI
             if (_pcm != null && _player.Visible && playing)
             {
                 if (Audio.bytesWritten != 0) return;
-
                 if (_index + Audio.CacheSize > _pcm.Length) _index = 0;
+
+                MessageBox.Show($"Audio.bytesWritten: {Audio.bytesWritten}", "DoPlay");
 
                 fixed (byte* buffer = _pcm)
                 {

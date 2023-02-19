@@ -1,5 +1,6 @@
 ﻿using Internal.Runtime.CompilerServices;
 using Moos.Framework.Controls;
+using System;
 using System.Drawing;
 using System.Runtime;
 using System.Runtime.InteropServices;
@@ -8,6 +9,9 @@ namespace Moos.Framework
 {
     public unsafe class Application
     {
+        [DllImport("GetPathApplication")]
+        public static extern IntPtr GetPathApplication(IntPtr handler);
+
         public static Application Current { get; internal set; }
 
         public string StartupUri { set; get; }
