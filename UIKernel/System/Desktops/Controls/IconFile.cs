@@ -133,7 +133,7 @@ namespace System.Desktops.Controls
                 _y = OwnerWindow.Y + this.Y;
             }
 
-            if (!WindowManager.HasWindowMoving && Control.MousePosition.X > (_x - offsetX) && Control.MousePosition.X < ((_x - offsetX) + Width) && Control.MousePosition.Y > _y && Control.MousePosition.Y < (_y + Height))
+            if (Control.MousePosition.X > (_x - offsetX) && Control.MousePosition.X < ((_x - offsetX) + Width) && Control.MousePosition.Y > _y && Control.MousePosition.Y < (_y + Height))
             {
                 _isFocus = true;
 
@@ -141,13 +141,14 @@ namespace System.Desktops.Controls
                 {
                     if (Command != null)
                     {
-                        if (_clickCount >= 1) //Double Click
+                        if (_clickCount == 1) //Double Click
                         {
                             _clickCount = 0;
 
                             if (isDirectory)
                             {
                                 Command.Execute.Invoke(this);
+                                return;
                             }
                             else
                             {
@@ -159,6 +160,7 @@ namespace System.Desktops.Controls
                                 {
                                     Command.Execute.Invoke(this);
                                 }
+                                return;
                             }
                         }
                     }

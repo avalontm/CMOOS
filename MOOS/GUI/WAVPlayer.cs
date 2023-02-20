@@ -103,8 +103,6 @@ namespace MOOS.GUI
                 if (Audio.bytesWritten != 0) return;
                 if (_index + Audio.CacheSize > _pcm.Length) _index = 0;
 
-                MessageBox.Show($"Audio.bytesWritten: {Audio.bytesWritten}", "DoPlay");
-
                 fixed (byte* buffer = _pcm)
                 {
                     _index += Audio.CacheSize;
