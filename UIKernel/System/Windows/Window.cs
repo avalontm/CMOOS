@@ -150,7 +150,7 @@ namespace System.Windows
 
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
-                    if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
+                    if (!onOtherWindowFocus() && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
                     {
                         WindowManager.MovetoTop(this);
 
@@ -175,6 +175,25 @@ namespace System.Windows
                     Y = Control.MousePosition.Y - OffsetY;
                 }
             }
+        }
+
+        bool onOtherWindowFocus()
+        {
+            if (!WindowManager.HasWindowMoving)
+            {
+                for (int i = Index + 1; i < WindowManager.Childrens.Count; i++)
+                {
+                    Window widget = WindowManager.Childrens[i];
+
+                    if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height)
+                    {
+                        return true;
+                    }
+
+                }
+            }
+
+            return false;
         }
 
         private int CloseButtonX => X + Width + 2 - (BarHeight / 2) - (CloseButton.Width / 2);
