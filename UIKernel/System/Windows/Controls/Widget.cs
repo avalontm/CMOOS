@@ -27,6 +27,9 @@ namespace System.Windows.Controls
         public Thickness Margin { set; get; }
         public Thickness Padding { set; get; }
         public bool UseHighlight { set; get; }
+        public HorizontalAlignment HorizontalOptions { set; get; }
+        public VerticalAlignment VerticalOptions { set; get; }
+        public bool IsVisible { set; get; }
 
         public Brush Background
         {
@@ -170,104 +173,122 @@ namespace System.Windows.Controls
             Cursor = new Cursor(CursorState.None);
         }
 
+        public virtual void OnLoaded()
+        {
+            IsVisible = true;
+        }
+
+        public virtual void OnUnloaded()
+        { 
+            IsVisible = false;
+            CursorManager.FocusControl = null;
+            WindowManager.HasWindowMoving = false;
+            MouseEnter = false;
+        }
+
         public virtual void OnDraw()
         {
-            if (this.Parent == null)
+            if (IsVisible)
             {
-                return;
-            }
+                if (this.Parent == null)
+                {
+                    return;
+                }
 
-            // Position & margin
-            if (Pos == null)
-            {
-                X = this.Parent.X + this.Margin.Left;
-                Y = this.Parent.Y + this.Margin.Top;
-                Width = this.Parent.Width - (this.Margin.Right * 2);
-                Height = this.Parent.Height - (this.Margin.Bottom * 2);
-            }
-            else
-            {
-                X = this.Pos.Position.X + this.Margin.Left;
-                Y = this.Pos.Position.Y + this.Margin.Top;
-                Width = this.Pos.Position.Width - (this.Margin.Right * 2);
-                Height = this.Pos.Position.Height - (this.Margin.Bottom * 2);
+                // Position & margin
+                if (Pos == null)
+                {
+                    X = this.Parent.X + this.Margin.Left;
+                    Y = this.Parent.Y + this.Margin.Top;
+                    Width = this.Parent.Width - (this.Margin.Right * 2);
+                    Height = this.Parent.Height - (this.Margin.Bottom * 2);
+                }
+                else
+                {
+                    X = this.Pos.Position.X + this.Margin.Left;
+                    Y = this.Pos.Position.Y + this.Margin.Top;
+                    Width = this.Pos.Position.Width - (this.Margin.Right * 2);
+                    Height = this.Pos.Position.Height - (this.Margin.Bottom * 2);
+                }
             }
         }
 
         public virtual void OnUpdate()
         {
-            if (Control.MouseButtons == MouseButtons.Left)
+            if (IsVisible)
             {
-                if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
-                {
-                    WindowManager.FocusControl = this;
-                    _isFocus = true;
-                }
-            }
-
-            if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
-            {
-                CursorManager.FocusControl = this;
-                MouseEnter = true;
-            }
-            else
-            {
-                MouseEnter = false;
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
-                    _isFocus = false;
+                    if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+                    {
+                        WindowManager.FocusControl = this;
+                        _isFocus = true;
+                    }
                 }
-            }
 
-            if (UseHighlight)
-            {
-                if (MouseEnter)
+                if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
                 {
-                    if (Background != null)
-                    {
-                        _background.Value = HighlightBackground.Value;
-                    }
-
-                    if (HighlightBackground != null)
-                    {
-                        Color color = Color.FromArgb(_highlight_background.Value);
-
-                        color.R = (byte)(color.R - 5);
-                        color.G = (byte)(color.G - 5);
-                        color.B = (byte)(color.B - 5);
-
-                        if (color.R < 0)
-                        {
-                            color.R = 0;
-                        }
-
-                        if (color.G < 0)
-                        {
-                            color.G = 0;
-                        }
-
-                        if (color.B < 0)
-                        {
-                            color.B = 0;
-                        }
-
-                        BorderBrush = new Brush(color);
-                        color.Dispose();
-                    }
+                    CursorManager.FocusControl = this;
+                    MouseEnter = true;
                 }
                 else
                 {
-                    if (Background != null)
+                    MouseEnter = false;
+                    if (Control.MouseButtons == MouseButtons.Left)
                     {
-                        _background.Value = _old_background.Value;
+                        _isFocus = false;
                     }
-                    if (HighlightBackground != null)
+                }
+
+                if (UseHighlight)
+                {
+                    if (MouseEnter)
                     {
-                        BorderBrush.Value = _old_background.Value;
+                        if (Background != null)
+                        {
+                            _background.Value = HighlightBackground.Value;
+                        }
+
+                        if (HighlightBackground != null)
+                        {
+                            Color color = Color.FromArgb(_highlight_background.Value);
+
+                            color.R = (byte)(color.R - 5);
+                            color.G = (byte)(color.G - 5);
+                            color.B = (byte)(color.B - 5);
+
+                            if (color.R < 0)
+                            {
+                                color.R = 0;
+                            }
+
+                            if (color.G < 0)
+                            {
+                                color.G = 0;
+                            }
+
+                            if (color.B < 0)
+                            {
+                                color.B = 0;
+                            }
+
+                            BorderBrush = new Brush(color);
+                            color.Dispose();
+                        }
+                    }
+                    else
+                    {
+                        if (Background != null)
+                        {
+                            _background.Value = _old_background.Value;
+                        }
+                        if (HighlightBackground != null)
+                        {
+                            BorderBrush.Value = _old_background.Value;
+                        }
                     }
                 }
             }
-
         }
 
         public void onSetParent(Widget parent)
@@ -280,12 +301,7 @@ namespace System.Windows.Controls
 
         public void DrawBorder()
         {
-            Framebuffer.Graphics.DrawRectangle((X - BorderThickness.Left), (Y - BorderThickness.Top), (Width  + BorderThickness.Right), (Height + BorderThickness.Bottom), BorderBrush.Value);
-        }
-
-        public void onMouseFocus()
-        {
-            // Background.Value = ColorFocus.Value;
+            Framebuffer.Graphics.DrawRectangle((X - BorderThickness.Left), (Y - BorderThickness.Top), (Width + BorderThickness.Right), (Height + BorderThickness.Bottom), BorderBrush.Value);
         }
 
         public void onMouseLostFocus()
@@ -295,11 +311,14 @@ namespace System.Windows.Controls
 
         bool isFocus()
         {
-            if (WindowManager.FocusWindow != null && WindowManager.FocusControl != null)
+            if (IsVisible)
             {
-                if (WindowManager.FocusControl == this && _isFocus)
+                if (WindowManager.FocusWindow != null && WindowManager.FocusControl != null)
                 {
-                    return true;
+                    if (WindowManager.FocusControl == this && _isFocus)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

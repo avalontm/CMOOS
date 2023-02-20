@@ -41,6 +41,11 @@ namespace System.Windows.Controls
             Keyboard.OnKeyChanged += Keyboard_OnKeyChanged;
         }
 
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+        }
+
         void Keyboard_OnKeyChanged(object sender, ConsoleKeyInfo key)
         {
             if (IsReadOnly)

@@ -57,7 +57,7 @@ namespace System.Apis
             if (control != null)
             {
                 control.Width = width;
-                control.OnReSize(control.Width, control.Height);
+                control.OnResize(control.Width, control.Height);
                 return control.Width;
             }
 
@@ -71,7 +71,7 @@ namespace System.Apis
             if (control != null)
             {
                 control.Height = height;
-                control.OnReSize(control.Width, control.Height);
+                control.OnResize(control.Width, control.Height);
                 return control.Height;
             }
 

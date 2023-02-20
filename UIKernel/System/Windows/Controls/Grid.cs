@@ -21,6 +21,26 @@ namespace System.Windows.Controls
             Grids = new List<GridCollection>();
         }
 
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                Children[i].OnLoaded();
+            }
+        }
+
+        public override void OnUnloaded()
+        {
+            base.OnUnloaded();
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                Children[i].OnUnloaded();
+            }
+        }
+
         public override void OnUpdate()
         {
             base.OnUpdate();

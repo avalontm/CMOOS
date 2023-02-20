@@ -27,8 +27,6 @@ namespace MOOS
 
             switch (name)
             {
-                case "GetPathApplication":
-                    return (delegate*<IntPtr, IntPtr>)&GetPathApplication;
                 case "LoadPNG":
                     return (delegate*<string, IntPtr>)&API_LoadPNG;
                 case "MessageBox":
@@ -129,19 +127,6 @@ namespace MOOS
         public static IntPtr API_LoadPNG(string file)
         {
             return new PNG(file);
-        }
-
-        public static IntPtr GetPathApplication(IntPtr handler)
-        {
-            PortableApp app = Unsafe.As<IntPtr, PortableApp>(ref handler);
-            string path = "";
-
-            if (app != null)
-            { 
-            
-            }
-
-            return path;
         }
 
         public static void API_MessageBox(string title, string message)

@@ -24,6 +24,12 @@ namespace System.Windows.Controls
             VerticalContentAlignment = VerticalAlignment.Stretch;
         }
 
+
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+        }
+
         public override void OnUpdate()
         {
             base.OnUpdate();

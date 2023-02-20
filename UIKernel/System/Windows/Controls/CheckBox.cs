@@ -32,6 +32,11 @@ namespace System.Windows.Controls
            
         }
 
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+        }
+
         public override void OnUpdate()
         {
             base.OnUpdate();

@@ -18,7 +18,7 @@ namespace Moos.Framework.Controls
         [DllImport("GridChildrenAdd")]
         public static extern IntPtr GridChildrenAdd(IntPtr handler, IntPtr control);
         [DllImport("GridSetRow")]
-        public static extern int GridSetRow(IntPtr handler, IntPtr control, int row);
+        public static extern int GridSetRow(IntPtr control, int row);
         [DllImport("GridSetColumn")]
         public static extern int GridSetColumn(IntPtr handler, IntPtr control, int column);
 
@@ -66,7 +66,7 @@ namespace Moos.Framework.Controls
         public void SetRow(ContentControl control, int row)
         {
             Children.Add(control);
-            control.GridRow = GridSetRow(Handler, control.Handler, row);
+            control.GridRow = GridSetRow(control.Handler, row);
             GridChildrenAdd(Handler, control.Handler);
         }
     }

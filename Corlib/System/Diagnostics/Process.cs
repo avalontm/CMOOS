@@ -1,4 +1,5 @@
 using Internal.Runtime.CompilerHelpers;
+using System.IO;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 

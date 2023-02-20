@@ -18,6 +18,7 @@ namespace System.Windows.Controls
         int _slideH = 20;
         int _slideW = 10;
         Brush _border;
+
         public Slider()
         {
             X = 0;
@@ -33,6 +34,11 @@ namespace System.Windows.Controls
             Value = 0;
             Maximum = 10;
             Keyboard.OnKeyChanged += Keyboard_OnKeyChanged1;
+        }
+
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
         }
 
         void Keyboard_OnKeyChanged1(object sender, ConsoleKeyInfo key)

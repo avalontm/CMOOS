@@ -155,7 +155,7 @@ namespace MOOS.Graph
 
         public virtual void DrawImage(int X, int Y, Image image, bool AlphaBlending = true)
         {
-            if (AlphaBlending) 
+            if (AlphaBlending)
             {
                 for (int h = 0; h < image.Height; h++)
                     for (int w = 0; w < image.Width; w++)
@@ -169,7 +169,7 @@ namespace MOOS.Graph
                         }
                     }
             }
-            else 
+            else
             {
                 int _x = 0;
                 int _y = 0;
@@ -180,18 +180,72 @@ namespace MOOS.Graph
                 if (Y < 0) _y = Y;
                 if (X + image.Width >= Width) clip_x = X - (Width - image.Width - 1);
                 if (Y + image.Height >= Height) clip_y = Y - (Height - image.Height - 1);
-                if(
-                    _x !>= -image.Width &&
-                    _y !>= -image.Height &&
+                if (
+                    _x! >= -image.Width &&
+                    _y! >= -image.Height &&
 
                     clip_x < image.Width &&
                     clip_y < image.Height
                     )
-                fixed(int* ptr = image.RawData)
-                for(int h = 1; h < image.Height + _y - clip_y + 1; h++) 
-                {
-                    Native.Movsd(VideoMemory + (Width * ((Y-_y) + h) + (X-_x)) + 1, (uint*)(ptr + ((h-_y) * image.Width) + 1 - _x), (ulong)(image.Width + _x - clip_x));
-                }
+                    fixed (int* ptr = image.RawData)
+                        for (int h = 1; h < image.Height + _y - clip_y + 1; h++)
+                        {
+                            Native.Movsd(VideoMemory + (Width * ((Y - _y) + h) + (X - _x)) + 1, (uint*)(ptr + ((h - _y) * image.Width) + 1 - _x), (ulong)(image.Width + _x - clip_x));
+                        }
+            }
+        }
+
+
+        public virtual void DrawImage(int X, int Y, int W, int H, Image image, bool AlphaBlending = true)
+        {
+            if (W > image.Width)
+            {
+                W = image.Width;
+            }
+
+            if (H > image.Height)
+            {
+                H = image.Height;
+            }
+
+
+            if (AlphaBlending)
+            {
+                for (int h = 0; h < H; h++)
+                    for (int w = 0; w < W; w++)
+                    {
+                        uint foreground = (uint)image.RawData[W * h + w];
+                        int fA = (byte)((foreground >> 24) & 0xFF);
+
+                        if (fA != 0)
+                        {
+                            DrawPoint(X + w, Y + h, foreground, true);
+                        }
+                    }
+            }
+            else
+            {
+                int _x = 0;
+                int _y = 0;
+                int clip_x = 0;
+                int clip_y = 0;
+
+                if (X < 0) _x = X;
+                if (Y < 0) _y = Y;
+                if (X + W >= Width) clip_x = X - (Width - W - 1);
+                if (Y + H >= Height) clip_y = Y - (Height - H - 1);
+                if (
+                    _x! >= -W &&
+                    _y! >= -H &&
+
+                    clip_x < W &&
+                    clip_y < H
+                    )
+                    fixed (int* ptr = image.RawData)
+                        for (int h = 1; h < H + _y - clip_y + 1; h++)
+                        {
+                            Native.Movsd(VideoMemory + (Width * ((Y - _y) + h) + (X - _x)) + 1, (uint*)(ptr + ((h - _y) * W) + 1 - _x), (ulong)(W + _x - clip_x));
+                        }
             }
         }
 

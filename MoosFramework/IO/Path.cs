@@ -1,6 +1,9 @@
-﻿namespace Moos.Framework.IO
+﻿using System.Drawing;
+using System.Text;
+
+namespace Moos.Framework.IO
 {
-    public class Path
+    public unsafe class Path
     {
         public static string GetDirectoryName(string filePath)
         {

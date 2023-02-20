@@ -60,10 +60,10 @@ namespace MoosApplication
 
             //Image
             Image image = new Image();
+            image.Margin = new Thickness(5);
             image.Source = ImageSource.FromFile("MOOS-Logo.png");
-            image.Width = 200;
-            image.Height = 100;
             _grid0.SetRow(image, 1);
+
             DataContext = this;
         }
 

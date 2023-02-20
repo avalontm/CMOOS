@@ -98,7 +98,7 @@ namespace MOOS.GUI
 
         static void DoPlay()
         {
-            if (_pcm != null && _player.Visible && playing)
+            if (_pcm != null && _player.IsVisible && playing)
             {
                 if (Audio.bytesWritten != 0) return;
                 if (_index + Audio.CacheSize > _pcm.Length) _index = 0;

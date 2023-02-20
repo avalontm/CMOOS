@@ -21,12 +21,18 @@ namespace Moos.Framework.Controls
         public LayoutOptions HorizontalOptions { set; get; }
         public LayoutOptions VerticalOptions { set; get; }
         public Color Background { get; set; }
+        public bool IsVisisble { get; set; }
         internal int GridRow { get; set; }
         internal int GridColumn { get; set; }
 
         public ContentControl()
         {
+            IsVisisble = true;
+        }
 
+        public virtual void OnLoaded()
+        {
+            
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System;
+using Internal.Runtime.CompilerHelpers;
+using System.Windows;
 
 namespace Moos.Framework.Controls
 {
@@ -16,7 +18,9 @@ namespace Moos.Framework.Controls
 
         [DllImport("ImageHeight")]
         public static extern int ImageHeight(IntPtr handler, int height);
-
+        [DllImport("ImageMargin")]
+        public static extern void ImageMargin(IntPtr handler, int left, int top, int right, int bottom);
+        
 
         System.Drawing.Image _source;
         public System.Drawing.Image Source 
@@ -46,6 +50,17 @@ namespace Moos.Framework.Controls
             set
             {
                 _width = ImageWidth(Handler, value);
+            }
+        }
+
+        Thickness _margin;
+        public new Thickness Margin
+        {
+            get { return _margin; }
+            set
+            {
+                _margin = value;
+                ImageMargin(Handler, _margin.Left, _margin.Top, _margin.Right, _margin.Bottom);
             }
         }
 

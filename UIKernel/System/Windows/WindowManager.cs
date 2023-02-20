@@ -35,7 +35,7 @@ namespace System.Windows
         {
             for (int i = Childrens.Count - 1; i >= 0; i--)
             {
-                if (Childrens[i].Visible)
+                if (Childrens[i].IsVisible)
                     Childrens[i].OnDraw();
             }
         }
@@ -44,13 +44,13 @@ namespace System.Windows
         {
             for (int i = 0; i < Childrens.Count; i++)
             {
-                if (Childrens[i].Visible)
+                if (Childrens[i].IsVisible)
                     Childrens[i].OnInput();
             }
 
             for (int i = 0; i < Childrens.Count; i++)
             {
-                if (Childrens[i].Visible)
+                if (Childrens[i].IsVisible)
                     Childrens[i].OnUpdate();
             }
         }

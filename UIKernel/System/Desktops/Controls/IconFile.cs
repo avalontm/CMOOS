@@ -106,11 +106,12 @@ namespace System.Desktops.Controls
             {
                 //changeIcon from PKG
                 string _icon = File.Instance.GetDirectory(FilePath) + Content + "/Content/" + "icon.png";
-                icon = new PNG(File.Instance.ReadAllBytes(_icon));
-                icon = icon.ResizeImage(48, 48);
+                PNG tmp = new PNG(File.Instance.ReadAllBytes(_icon));
+                icon = tmp.ResizeImage(48, 48);
+                tmp.Dispose();
 
                 //remove Extention
-                Content = Content.Substring(0, 7);
+                Content = Content.Substring(0, (Content.Length - (Extention.Length + 1)));
             }
 
             if (!isDirectory & !_isUnknown)

@@ -1,4 +1,5 @@
 ﻿using MOOS;
+using MOOS.Driver;
 using MOOS.GUI;
 using System;
 using System.Collections.Generic;
@@ -40,22 +41,9 @@ namespace System.Windows
             }
         }
 
-        public bool Visible
-        {
-            set
-            {
-                _visible = value;
-                OnSetVisible(value);
-            }
-            get
-            {
-                return _visible;
-            }
-        }
-
         public Window() : base()
         {
-            this.Visible = false;
+            this.IsVisible = false;
             X= 0;
             Y= 0;
             Width = 300;
@@ -65,7 +53,7 @@ namespace System.Windows
 
         public Window(int x, int y, int width, int height)
         {
-            this.Visible = false;
+            this.IsVisible = false;
             X = x;
             Y = y;
             Width = width;
@@ -85,7 +73,7 @@ namespace System.Windows
             CloseButton.Text = "X";
             CloseButton.Background = new Brush(0xd9d9d9);
             CloseButton.HighlightBackground = new Brush(0xde4343);
-
+           
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Focus = this;
             WindowManager.Childrens.Add(this);
@@ -93,15 +81,32 @@ namespace System.Windows
 
         public void ShowDialog()
         {
-            OnLoaded();
             onWindowStartupLocation();
             WindowManager.MovetoTop(this);
-            this.Visible = true;
+            OnLoaded();
         }
 
-        public virtual void OnLoaded()
-        { 
-        
+        public override void OnLoaded()
+        {
+            CloseButton.OnLoaded();
+            if (Content != null)
+            {
+                Content.OnLoaded();
+            }
+            base.OnLoaded();
+        }
+
+        public override void OnUnloaded()
+        {
+            CloseButton.OnUnloaded();
+
+            if (Content != null)
+            {
+                Content.OnUnloaded();
+                Content.Dispose();
+            }
+
+            base.OnUnloaded();
         }
 
         void onWindowStartupLocation()
@@ -127,10 +132,6 @@ namespace System.Windows
             return false;
         }
 
-        public bool _visible;
-
-        public virtual void OnSetVisible(bool value) { }
-
         public int BarHeight = 40;
 
         bool Move;
@@ -140,41 +141,39 @@ namespace System.Windows
 
         public virtual void OnInput()
         {
-
-            if (Control.MouseButtons == MouseButtons.Left)
+            if (IsVisible)
             {
-                if (
-                    !WindowManager.HasWindowMoving &&
-                    Control.MousePosition.X > CloseButtonX && Control.MousePosition.X < CloseButtonX + WindowManager.CloseButton.Width &&
-                    Control.MousePosition.Y > CloseButtonY && Control.MousePosition.Y < CloseButtonY + WindowManager.CloseButton.Height
-                )
+                if (CloseButton.IsFocus)
                 {
-                    this.OnClose();
                     return;
                 }
-                if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
-                {
-                    WindowManager.MovetoTop(this);
 
-                    if (WindowManager.FocusWindow == this)
+                if (Control.MouseButtons == MouseButtons.Left)
+                {
+                    if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
                     {
-                        Move = true;
-                        WindowManager.HasWindowMoving = true;
-                        OffsetX = Control.MousePosition.X - X;
-                        OffsetY = Control.MousePosition.Y - Y;
+                        WindowManager.MovetoTop(this);
+
+                        if (WindowManager.FocusWindow == this)
+                        {
+                            Move = true;
+                            WindowManager.HasWindowMoving = true;
+                            OffsetX = Control.MousePosition.X - X;
+                            OffsetY = Control.MousePosition.Y - Y;
+                        }
                     }
                 }
-            }
-            else
-            {
-                Move = false;
-                WindowManager.HasWindowMoving = false;
-            }
+                else
+                {
+                    Move = false;
+                    WindowManager.HasWindowMoving = false;
+                }
 
-            if (Move)
-            {
-                X = Control.MousePosition.X - OffsetX;
-                Y = Control.MousePosition.Y - OffsetY;
+                if (Move)
+                {
+                    X = Control.MousePosition.X - OffsetX;
+                    Y = Control.MousePosition.Y - OffsetY;
+                }
             }
         }
 
@@ -185,7 +184,7 @@ namespace System.Windows
         {
             base.OnUpdate();
 
-            if (this.Visible)
+            if (this.IsVisible)
             {
                 if (Content != null)
                 {
@@ -194,7 +193,6 @@ namespace System.Windows
 
                 CloseButton.X = CloseButtonX; 
                 CloseButton.Y = CloseButtonY;
-
                 CloseButton.OnUpdate();
             }
         }
@@ -203,7 +201,7 @@ namespace System.Windows
         {
             base.OnDraw();
 
-            if (this.Visible)
+            if (this.IsVisible)
             {
                 //WindowBar
                 Framebuffer.Graphics.FillRectangle((X-1), (Y - BarHeight), (Width+1), BarHeight, 0xebebeb);
@@ -238,16 +236,9 @@ namespace System.Windows
 
         public virtual void OnClose()
         {
-            this.Visible = false;
-
-            if (Content != null)
-            {
-                Content.Dispose();
-            }
-
             if (WindowManager.Childrens.Remove(this))
             {
-               // this.Dispose();
+                OnUnloaded();
             }
         }
 

@@ -29,38 +29,44 @@ namespace System.Windows.Controls
             CommandParameter = string.Empty;
         }
 
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+        }
+
         public override void OnUpdate()
         {
             base.OnUpdate();
 
-            if (MouseEnter)
+            if (IsVisible)
             {
-                this.onMouseFocus();
-
-                if (IsFocus)
+                if (MouseEnter)
                 {
-                    if (Control.MouseButtons == MouseButtons.Left)
+                    if (IsFocus)
                     {
-                        if (Command != null && Command.Source != null)
+                        if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            if (!clicked)
+                            if (Command != null && Command.Source != null)
                             {
-                                clicked = true;
+                                if (!clicked)
+                                {
+                                    clicked = true;
 
-                                Command.Source.Execute.Invoke(CommandParameter);
+                                    Command.Source.Execute.Invoke(CommandParameter);
+                                }
                             }
                         }
                     }
                 }
-            }
-            else
-            {
-                this.onMouseLostFocus();
-            }
+                else
+                {
+                    this.onMouseLostFocus();
+                }
 
-            if (Control.MouseButtons == MouseButtons.None)
-            {
-                clicked = false;
+                if (Control.MouseButtons == MouseButtons.None)
+                {
+                    clicked = false;
+                }
             }
         }
 
@@ -68,16 +74,19 @@ namespace System.Windows.Controls
         {
             base.OnDraw();
 
-            Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
-
-            if (!string.IsNullOrEmpty(Text))
+            if (IsVisible)
             {
-                WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Text)) / 2) - 1,(Y + (Height / 2) ) - (WindowManager.font.FontSize/2) + 2 , Text, Foreground.Value);
-            }
+                Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
 
-            if (BorderBrush != null)
-            {
-                DrawBorder();
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Text)) / 2) - 1, (Y + (Height / 2)) - (WindowManager.font.FontSize / 2) + 2, Text, Foreground.Value);
+                }
+
+                if (BorderBrush != null)
+                {
+                    DrawBorder();
+                }
             }
         }
 
