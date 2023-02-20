@@ -101,21 +101,10 @@ namespace System.Explorers
 
         public override void OnClose()
         {
-            base.OnClose();
             Files.Clear();
             Files.Dispose();
-            this.Dispose();
+
+            base.OnClose();
         }
-
-        void onDirectoryClick(object obj)
-        {
-
-        }
-
-        void onFileClick(object obj)
-        {
-
-        }
-
     }
 }

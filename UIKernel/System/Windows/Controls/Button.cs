@@ -53,6 +53,7 @@ namespace System.Windows.Controls
                                     clicked = true;
 
                                     Command.Source.Execute.Invoke(CommandParameter);
+                                    return;
                                 }
                             }
                         }
@@ -76,7 +77,10 @@ namespace System.Windows.Controls
 
             if (IsVisible)
             {
-                Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+                if (Background != null)
+                {
+                    Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+                }
 
                 if (!string.IsNullOrEmpty(Text))
                 {
@@ -93,6 +97,7 @@ namespace System.Windows.Controls
         public void SetBinding(object commandProperty, Binding binding)
         {
             Command = binding;
+            CommandParameter = commandProperty;
         }
     }
 }

@@ -171,11 +171,12 @@ namespace System.Windows.Controls
             Padding = new Thickness();
             FontFamily = new FontFamily();
             Cursor = new Cursor(CursorState.None);
+            IsVisible = true;
         }
 
         public virtual void OnLoaded()
         {
-            IsVisible = true;
+     
         }
 
         public virtual void OnUnloaded()
@@ -184,6 +185,7 @@ namespace System.Windows.Controls
             CursorManager.FocusControl = null;
             WindowManager.HasWindowMoving = false;
             MouseEnter = false;
+            //this.Dispose();
         }
 
         public virtual void OnDraw()

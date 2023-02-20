@@ -84,27 +84,29 @@ namespace System.Windows
             onWindowStartupLocation();
             WindowManager.MovetoTop(this);
             OnLoaded();
+            this.IsVisible = true;
         }
 
         public override void OnLoaded()
         {
             CloseButton.OnLoaded();
+
             if (Content != null)
             {
                 Content.OnLoaded();
             }
+
             base.OnLoaded();
         }
 
         public override void OnUnloaded()
         {
-            CloseButton.OnUnloaded();
-
             if (Content != null)
             {
                 Content.OnUnloaded();
-                Content.Dispose();
             }
+
+            CloseButton.OnUnloaded();
 
             base.OnUnloaded();
         }
@@ -143,15 +145,18 @@ namespace System.Windows
         {
             if (IsVisible)
             {
-                if (CloseButton.IsFocus)
+                if (CloseButton != null)
                 {
-                    return;
+                    if (CloseButton.IsFocus)
+                    {
+                        return;
+                    }
                 }
 
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
                     Debug.WriteLine($"[INDEX] {Index}");
-                    if (!onOtherWindowFocus() && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
+                    if (!onOtherWindowFocus() && !WindowManager.HasWindowMoving && !Move &&Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
                     {
                         WindowManager.MovetoTop(this);
 
@@ -231,8 +236,11 @@ namespace System.Windows
                     WindowManager.font.DrawString(X + (Width / 2) - ((WindowManager.font.MeasureString(Title)) / 2), Y - (BarHeight / 2) - (WindowManager.font.FontSize / 4), Title, 0xFF000000);
                 }
 
-                //Window Content
-                Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+                if (Background != null)
+                {
+                    //Window Content
+                    Framebuffer.Graphics.FillRectangle(X, Y, Width, Height, Background.Value);
+                }
 
                 if (Content != null)
                 {
@@ -244,8 +252,10 @@ namespace System.Windows
                     DrawBorder();
                 }
 
-                CloseButton.OnDraw();
-
+                if (CloseButton != null)
+                {
+                    CloseButton.OnDraw();
+                }
             }
         }
 
