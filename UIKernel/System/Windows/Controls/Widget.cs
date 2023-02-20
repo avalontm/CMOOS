@@ -1,5 +1,6 @@
 
 using MOOS;
+using MOOS.Driver;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -185,7 +186,6 @@ namespace System.Windows.Controls
             CursorManager.FocusControl = null;
             WindowManager.HasWindowMoving = false;
             MouseEnter = false;
-            //this.Dispose();
         }
 
         public virtual void OnDraw()
@@ -215,10 +215,31 @@ namespace System.Windows.Controls
             }
         }
 
+        bool onGetWindowTop()
+        {
+            for (int i = WindowManager.Childrens.Count; i <  1; i--)
+            {
+                Window widget = WindowManager.Childrens[i];
+
+                if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height && !widget.Move)
+                {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
         public virtual void OnUpdate()
         {
             if (IsVisible)
             {
+                if (onGetWindowTop())
+                {
+                    return;
+                }
+
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
                     if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
@@ -304,11 +325,6 @@ namespace System.Windows.Controls
         public void DrawBorder()
         {
             Framebuffer.Graphics.DrawRectangle((X - BorderThickness.Left), (Y - BorderThickness.Top), (Width + BorderThickness.Right), (Height + BorderThickness.Bottom), BorderBrush.Value);
-        }
-
-        public void onMouseLostFocus()
-        {
-
         }
 
         bool isFocus()

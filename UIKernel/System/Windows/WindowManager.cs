@@ -27,6 +27,10 @@ namespace System.Windows
 
         public static void MovetoTop(Window window)
         {
+            if (Childrens[0] == window)
+            {
+                return;
+            }
             Childrens.Insert(0, window, true);
             FocusWindow = window;
         }
@@ -36,7 +40,9 @@ namespace System.Windows
             for (int i = Childrens.Count - 1; i >= 0; i--)
             {
                 if (Childrens[i].IsVisible)
+                {
                     Childrens[i].OnDraw();
+                }
             }
         }
 
@@ -45,13 +51,10 @@ namespace System.Windows
             for (int i = 0; i < Childrens.Count; i++)
             {
                 if (Childrens[i].IsVisible)
-                    Childrens[i].OnInput();
-            }
-
-            for (int i = 0; i < Childrens.Count; i++)
-            {
-                if (Childrens[i].IsVisible)
+                {
                     Childrens[i].OnUpdate();
+                    Childrens[i].OnInput();
+                }
             }
         }
 

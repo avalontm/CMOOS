@@ -136,7 +136,7 @@ namespace System.Windows
 
         public int BarHeight = 40;
 
-        bool Move;
+        internal bool Move;
         int OffsetX;
         int OffsetY;
         public int Index { get => WindowManager.Childrens.IndexOf(this); }
@@ -145,29 +145,24 @@ namespace System.Windows
         {
             if (IsVisible)
             {
-                if (CloseButton != null)
+                if (Control.MouseButtons == MouseButtons.Left)
                 {
-                    if (CloseButton.IsFocus)
+                    if (CloseButton != null)
+                    {
+                        if (CloseButton.IsFocus)
+                        {
+                            return;
+                        }
+                    }
+
+                    if (onGetOthersWindowsOnTop())
                     {
                         return;
                     }
-                }
 
-                if (Control.MouseButtons == MouseButtons.Left)
-                {
-                    Debug.WriteLine($"[INDEX] {Index}");
-                    if (!onOtherWindowFocus() && !WindowManager.HasWindowMoving && !Move &&Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
-                    {
-                        WindowManager.MovetoTop(this);
-
-                        if (WindowManager.FocusWindow == this)
-                        {
-                            Move = true;
-                            WindowManager.HasWindowMoving = true;
-                            OffsetX = Control.MousePosition.X - X;
-                            OffsetY = Control.MousePosition.Y - Y;
-                        }
-                    }
+                    onRegion();
+                    onMove();
+          
                 }
                 else
                 {
@@ -183,15 +178,44 @@ namespace System.Windows
             }
         }
 
-        bool onOtherWindowFocus()
+        //Window Bar
+        void onMove()
+        {
+            if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
+            {
+                WindowManager.MovetoTop(this);
+
+                if (WindowManager.FocusWindow == this)
+                {
+                    Move = true;
+                    WindowManager.HasWindowMoving = true;
+                    OffsetX = Control.MousePosition.X - X;
+                    OffsetY = Control.MousePosition.Y - Y;
+                }
+            }
+        }
+
+        //Window Content
+        void onRegion()
+        {
+            if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > (Y + BarHeight) && Control.MousePosition.Y < (Y + Height))
+            {
+                WindowManager.MovetoTop(this);
+                Move = false;
+                WindowManager.HasWindowMoving = false;
+            }
+        }
+
+        //We check if there are windows above this window
+        bool onGetOthersWindowsOnTop()
         {
             if (!WindowManager.HasWindowMoving)
             {
-                for (int i = Index + 1; i < WindowManager.Childrens.Count; i++)
+                for (int i = WindowManager.Childrens.Count; i < (Index + 1); i--)
                 {
                     Window widget = WindowManager.Childrens[i];
 
-                    if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height && !widget.Move)
+                    if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height)
                     {
                         return true;
                     }

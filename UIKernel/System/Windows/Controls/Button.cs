@@ -44,7 +44,7 @@ namespace System.Windows.Controls
                 {
                     if (IsFocus)
                     {
-                        if (Control.MouseButtons == MouseButtons.Left)
+                        if (IsUnderMouse())
                         {
                             if (Command != null && Command.Source != null)
                             {
@@ -59,16 +59,19 @@ namespace System.Windows.Controls
                         }
                     }
                 }
-                else
-                {
-                    this.onMouseLostFocus();
-                }
+
 
                 if (Control.MouseButtons == MouseButtons.None)
                 {
                     clicked = false;
                 }
             }
+        }
+
+        public bool IsUnderMouse()
+        {
+            if (Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y && Control.MousePosition.Y < Y + Height) return true;
+            return false;
         }
 
         public override void OnDraw()
