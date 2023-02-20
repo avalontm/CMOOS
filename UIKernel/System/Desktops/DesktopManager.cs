@@ -33,7 +33,6 @@ namespace System.Desktops
         public static string User;
 
         public static bool IsAtRoot => Dir.Length < 1;
-        static Dictionary<int, string> BuiltInAppNames;
         public static ICommand IconClickCommand { get; set; }
         public static ICommand IconNativeClickCommand { get; set; }
         public static ICommand IconDirectoryClickCommand { get; set; }
@@ -75,8 +74,7 @@ namespace System.Desktops
             docker = new DesktopDocker();
             barMenu = new List<DesktopControl>();
             icons = new List<IconFile>();
-            BuiltInAppNames = new Dictionary<int, string>();
-            
+
             //Bar Elements
             DesktopBarItem item = new DesktopBarItem();
             item.Icon = DesktopIcons.StartIcon.ResizeImage(24, 24);
@@ -169,52 +167,12 @@ namespace System.Desktops
             int _y = _barHeight;
             string _devider = "/";
 
-            BuiltInAppNames.Clear();
-
-            BuiltInAppNames.Add(1, "Calculator");
-            BuiltInAppNames.Add(2, "Clock");
-            BuiltInAppNames.Add(3, "Paint");
-            BuiltInAppNames.Add(4, "Snake");
-            BuiltInAppNames.Add(5, "Console");
-            BuiltInAppNames.Add(6, "Monitor");
-
             IconClickCommand = new ICommand(onDesktopIconClick);
-            IconNativeClickCommand = new ICommand(onDesktopNativeOSClick);
             IconDirectoryClickCommand = new ICommand(onDesktopDirectoryClick);
 
             string dirDesktop = $"home/{User}/Desktop";
 
             List<FileInfo> files = File.GetFiles(dirDesktop + _devider);
-
-            if (IsAtRoot)
-            {
-                for (int i = 0; i < BuiltInAppNames.Count; i++)
-                {
-                    if ((_y + (DesktopIcons.FileIcon.Height + _separator)) > Framebuffer.Graphics.Height - _separator)
-                    {
-                        _y =  _barHeight;
-                        _x += (DesktopIcons.FileIcon.Width + (_separator / 2));
-                    }
-
-                    if (BuiltInAppNames.ContainsKey((i + 1)))
-                    {
-                        IconFile icon = new IconFile();
-                        icon.Key = (i + 1);
-                        icon.Content = BuiltInAppNames[icon.Key];
-                        icon.Path = dirDesktop + _devider;
-                        icon.FilePath = dirDesktop + _devider + icon.Content;
-                        icon.FileInfo = null;
-                        icon.X = _x + 15;
-                        icon.Y = _y;
-                        icon.Command = IconNativeClickCommand;
-                        icon.icon = DesktopIcons.BuiltInAppIcon;
-
-                        icons.Add(icon);
-
-                        _y+= (DesktopIcons.FileIcon.Height + _separator);
-                    }
-                }
-            }
 
             for (int i = 0; i < files.Count; i++)
             {
@@ -273,43 +231,6 @@ namespace System.Desktops
             explorer.Dir = file.FilePath;
             explorer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             explorer.ShowDialog();
-        }
-
-        static void onDesktopNativeOSClick(object obj)
-        {
-            IconFile file = obj as IconFile;
-
-            Window frm = null;
-
-            switch (file.Key)
-            {
-                case 1:
-                    //frm = new Calculator(300, 500);
-                   // frm.ShowDialog();
-                    break;
-                case 2:
-                    //frm = new Clock(650, 500);
-                    //frm.ShowDialog();
-                    break;
-                case 3:
-                    frm = new Paint(500, 200);
-                    frm.ShowDialog();
-                    break;
-                case 4:
-                    //frm = new Snake(600, 100);
-                    //frm.ShowDialog();
-                    break;
-                case 5:
-                    //Program.FConsole.Visible = true;
-                    break;
-                case 6:
-                    //frm = new Monitor(200, 450);
-                    //frm.ShowDialog();
-                    break;
-                default:
-                    MessageBox.Show("Can't open application.", "Not Found");
-                    break;
-            }
         }
 
         static unsafe void onDesktopIconClick(object obj)

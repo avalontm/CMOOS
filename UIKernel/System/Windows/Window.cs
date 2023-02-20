@@ -150,7 +150,8 @@ namespace System.Windows
 
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
-                    if (!onOtherWindowFocus() && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
+                    Debug.WriteLine($"[INDEX] {Index}");
+                    if (!onOtherWindowFocus() && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y - BarHeight && Control.MousePosition.Y < Y)
                     {
                         WindowManager.MovetoTop(this);
 
@@ -185,7 +186,7 @@ namespace System.Windows
                 {
                     Window widget = WindowManager.Childrens[i];
 
-                    if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height)
+                    if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height && !widget.Move)
                     {
                         return true;
                     }
