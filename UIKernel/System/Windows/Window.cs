@@ -186,18 +186,21 @@ namespace System.Windows
                 return;
             }
 
-            if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
+            if (Control.Clicked)
             {
-                WindowManager.MovetoTop(this);
-
-                if (!WindowManager.HasWindowMoving)
+                if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
                 {
-                    if (WindowManager.FocusWindow == this)
+                    WindowManager.MovetoTop(this);
+
+                    if (!WindowManager.HasWindowMoving)
                     {
-                        Move = true;
-                        WindowManager.HasWindowMoving = true;
-                        OffsetX = Control.MousePosition.X - X;
-                        OffsetY = Control.MousePosition.Y - Y;
+                        if (WindowManager.FocusWindow == this)
+                        {
+                            Move = true;
+                            WindowManager.HasWindowMoving = true;
+                            OffsetX = Control.MousePosition.X - X;
+                            OffsetY = Control.MousePosition.Y - Y;
+                        }
                     }
                 }
             }
@@ -206,10 +209,13 @@ namespace System.Windows
         //Window Content
         void onRegion()
         {
-            if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+            if (Control.Clicked)
             {
-                WindowManager.HasWindowsRegion = true;
-                WindowManager.MovetoTop(this);
+                if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+                {
+                    WindowManager.HasWindowsRegion = true;
+                    WindowManager.MovetoTop(this);
+                }
             }
         }
 
@@ -252,6 +258,11 @@ namespace System.Windows
         {
             if (WindowState == WindowState.Normal)
             {
+                if (WindowManager.FocusWindow != this)
+                {
+                    return;
+                }
+
                 if (WindowManager.HasWindowResizing)
                 {
                     return;
@@ -263,64 +274,86 @@ namespace System.Windows
                 //LEFT
                 if (Control.MousePosition.X > (X - 2) && Control.MousePosition.X < (X + 2) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
                 {
-                    if (!WindowManager.HasWindowResizing)
-                    {
-                        prevMouseX = Control.MousePosition.X;
-                        prevWidth = this.Width;
-                    }
-
-                    isRightEdge = false;
-                    WindowManager.HasWindowResizing = true;
+                    WindowManager.HasWindowFocusResizing = true;
                     CursorManager.State.Value = CursorState.Horizontal;
+
+                    if (Control.Clicked)
+                    {
+                        if (!WindowManager.HasWindowResizing)
+                        {
+                            prevMouseX = Control.MousePosition.X;
+                            prevWidth = this.Width;
+                        }
+
+                        isRightEdge = false;
+                        WindowManager.HasWindowResizing = true;
+                    }
                     return;
                 }
 
                 //RIGHT
                 if (Control.MousePosition.X > ((X + Width) - 2) && Control.MousePosition.X < ((X + Width) + 2) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
                 {
-                    if (!WindowManager.HasWindowResizing)
+                    WindowManager.HasWindowFocusResizing = true;
+                    CursorManager.State.Value = CursorState.Horizontal;
+
+                    if (Control.Clicked)
                     {
-                        prevMouseX = Control.MousePosition.X;
-                        prevWidth = this.Width;
+                        if (!WindowManager.HasWindowResizing)
+                        {
+                            prevMouseX = Control.MousePosition.X;
+                            prevWidth = this.Width;
+                        }
+
+                        isRightEdge = true;
+                        WindowManager.HasWindowResizing = true;
                     }
 
-                    isRightEdge = true;
-                    WindowManager.HasWindowResizing = true;
-                    CursorManager.State.Value = CursorState.Horizontal;
                     return;
                 }
 
                 //TOP
                 if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > ((Y - BarHeight) - 2) && Control.MousePosition.Y < ((Y - BarHeight) + 2))
                 {
-                    if (!WindowManager.HasWindowResizing)
-                    {
-                        prevMouseY = Control.MousePosition.Y;
-                        prevHeight = this.Height;
+                    WindowManager.HasWindowFocusResizing = true;
+                    CursorManager.State.Value = CursorState.Vertical;
 
+                    if (Control.Clicked)
+                    {
+                        if (!WindowManager.HasWindowResizing)
+                        {
+                            prevMouseY = Control.MousePosition.Y;
+                            prevHeight = this.Height;
+                        }
+
+                        isBottomEdge = false;
+                        WindowManager.HasWindowResizing = true;
                     }
 
-                    isBottomEdge = false;
-                    WindowManager.HasWindowResizing = true;
-                    CursorManager.State.Value = CursorState.Vertical;
                     return;
                 }
 
                 //BOTTOM
-                if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > ((Y + Height)-2) && Control.MousePosition.Y < ((Y + Height) +2))
+                if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > ((Y + Height) - 2) && Control.MousePosition.Y < ((Y + Height) + 2))
                 {
-                    if (!WindowManager.HasWindowResizing)
-                    {
-                        prevMouseY = Control.MousePosition.Y;
-                        prevHeight = this.Height;
+                    CursorManager.State.Value = CursorState.Vertical;
 
+                    if (Control.Clicked)
+                    {
+                        if (!WindowManager.HasWindowResizing)
+                        {
+                            prevMouseY = Control.MousePosition.Y;
+                            prevHeight = this.Height;
+                        }
+
+                        isBottomEdge = true;
+                        WindowManager.HasWindowResizing = true;
                     }
 
-                    isBottomEdge = true;
-                    WindowManager.HasWindowResizing = true;
-                    CursorManager.State.Value = CursorState.Vertical;
                     return;
                 }
+
+                WindowManager.HasWindowFocusResizing = false;
             }
         }
 

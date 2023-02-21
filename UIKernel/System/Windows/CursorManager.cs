@@ -61,7 +61,7 @@ namespace System.Windows
 
         public static void Update()
         {
-            if (WindowManager.HasWindowResizing)
+            if (WindowManager.HasWindowFocusResizing)
             {
                 Control.MouseOffSet.X = - (CursorHorizontal.Width / 2);
                 Control.MouseOffSet.Y = - (CursorHorizontal.Height / 2);
