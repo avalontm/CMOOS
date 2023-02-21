@@ -167,7 +167,7 @@ namespace System.Windows
                     Move = false;
                     WindowManager.HasWindowMoving = false;
                     WindowManager.HasWindowsRegion = false;
-                    WindowManager.HasWindowResizing= false;
+                    WindowManager.HasWindowResizing = false;
                 }
 
                 if (Move)
@@ -181,16 +181,24 @@ namespace System.Windows
         //Window Bar
         void onMove()
         {
+            if (WindowManager.HasWindowControl)
+            {
+                return;
+            }
+
             if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
             {
                 WindowManager.MovetoTop(this);
 
-                if (WindowManager.FocusWindow == this)
+                if (!WindowManager.HasWindowMoving)
                 {
-                    Move = true;
-                    WindowManager.HasWindowMoving = true;
-                    OffsetX = Control.MousePosition.X - X;
-                    OffsetY = Control.MousePosition.Y - Y;
+                    if (WindowManager.FocusWindow == this)
+                    {
+                        Move = true;
+                        WindowManager.HasWindowMoving = true;
+                        OffsetX = Control.MousePosition.X - X;
+                        OffsetY = Control.MousePosition.Y - Y;
+                    }
                 }
             }
         }
@@ -408,6 +416,10 @@ namespace System.Windows
         {
             if (WindowManager.Childrens.Remove(this))
             {
+                if (WindowManager.FocusWindow == this)
+                {
+                    WindowManager.FocusWindow = null;
+                }
                 OnUnloaded();
             }
         }

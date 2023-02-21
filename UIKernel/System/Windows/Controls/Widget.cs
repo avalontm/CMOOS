@@ -232,6 +232,7 @@ namespace System.Windows.Controls
                 {
                     CursorManager.FocusControl = this;
                     MouseEnter = true;
+                    WindowManager.HasWindowControl = false;
                 }
                 else
                 {
@@ -240,6 +241,7 @@ namespace System.Windows.Controls
                     {
                         _isFocus = false;
                     }
+                    WindowManager.HasWindowControl = false;
                 }
 
                 if (UseHighlight)

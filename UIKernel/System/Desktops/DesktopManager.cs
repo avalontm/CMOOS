@@ -335,7 +335,7 @@ namespace System.Desktops
                 icons[i].Draw();
             }
 
-            if (Control.MouseButtons.HasFlag(MouseButtons.Left) && !WindowManager.HasWindowMoving && !WindowManager.MouseHandled)
+            if (Control.MouseButtons.HasFlag(MouseButtons.Left) && WindowManager.FocusWindow == null)
             {
                 if (LastPoint.X == -1 && LastPoint.Y == -1)
                 {

@@ -26,12 +26,14 @@ namespace System.Windows
 
         public static void MovetoTop(Window window)
         {
+            FocusWindow = window;
+
             if (Childrens[0] == window)
             {
                 return;
             }
+
             Childrens.Insert(0, window, true);
-            FocusWindow = window;
         }
 
         public static void Draw()
@@ -67,6 +69,7 @@ namespace System.Windows
 
         public static bool HasWindowsRegion = false;
         public static bool HasWindowMoving = false;
+        public static bool HasWindowControl = false;
         public static Window FocusWindow;
         public static Widget FocusControl;
         public static bool MouseHandled
