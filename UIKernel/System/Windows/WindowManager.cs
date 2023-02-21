@@ -52,12 +52,20 @@ namespace System.Windows
             {
                 if (Childrens[i].IsVisible)
                 {
-                    Childrens[i].OnUpdate();
                     Childrens[i].OnInput();
+                }
+            }
+
+            for (int i = 0; i < Childrens.Count; i++)
+            {
+                if (Childrens[i].IsVisible)
+                {
+                    Childrens[i].OnUpdate();
                 }
             }
         }
 
+        public static bool HasWindowsRegion = false;
         public static bool HasWindowMoving = false;
         public static Window FocusWindow;
         public static Widget FocusControl;

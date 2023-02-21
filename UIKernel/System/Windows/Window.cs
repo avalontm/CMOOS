@@ -160,14 +160,13 @@ namespace System.Windows
                         return;
                     }
 
-                    onRegion();
                     onMove();
-          
                 }
                 else
                 {
                     Move = false;
                     WindowManager.HasWindowMoving = false;
+                    WindowManager.HasWindowsRegion = false;
                 }
 
                 if (Move)
@@ -181,7 +180,7 @@ namespace System.Windows
         //Window Bar
         void onMove()
         {
-            if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
+            if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
             {
                 WindowManager.MovetoTop(this);
 
@@ -198,28 +197,26 @@ namespace System.Windows
         //Window Content
         void onRegion()
         {
-            if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > (Y + BarHeight) && Control.MousePosition.Y < (Y + Height))
+            if (!WindowManager.HasWindowsRegion && !WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
             {
+                WindowManager.HasWindowsRegion = true;
                 WindowManager.MovetoTop(this);
-                Move = false;
-                WindowManager.HasWindowMoving = false;
             }
         }
 
         //We check if there are windows above this window
         bool onGetOthersWindowsOnTop()
         {
-            if (!WindowManager.HasWindowMoving)
+            if (!WindowManager.HasWindowsRegion)
             {
-                for (int i = WindowManager.Childrens.Count; i < (Index + 1); i--)
+                for (int i = WindowManager.Childrens.Count; i < (Index+1) ; i--)
                 {
-                    Window widget = WindowManager.Childrens[i];
+                    Window win = WindowManager.Childrens[i];
 
-                    if (Control.MousePosition.X > widget.X && Control.MousePosition.X < widget.X + widget.Width && Control.MousePosition.Y > widget.Y && Control.MousePosition.Y < widget.Y + widget.Height)
+                    if (Control.MousePosition.X > win.X && Control.MousePosition.X < (win.X + win.Width) && Control.MousePosition.Y > (win.Y- BarHeight) && Control.MousePosition.Y < (win.Y + win.Height))
                     {
                         return true;
                     }
-
                 }
             }
 
@@ -235,6 +232,16 @@ namespace System.Windows
 
             if (this.IsVisible)
             {
+                if (Control.MouseButtons == MouseButtons.Left)
+                {
+                    if (onGetOthersWindowsOnTop())
+                    {
+                        return;
+                    }
+
+                    onRegion();
+                }
+
                 if (Content != null)
                 {
                     Content.OnUpdate();
