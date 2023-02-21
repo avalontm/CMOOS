@@ -190,8 +190,6 @@ namespace System.Windows
             {
                 if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
                 {
-                    WindowManager.MovetoTop(this);
-
                     if (!WindowManager.HasWindowMoving)
                     {
                         if (WindowManager.FocusWindow == this)
@@ -211,7 +209,7 @@ namespace System.Windows
         {
             if (Control.Clicked)
             {
-                if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+                if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < (Y + Height))
                 {
                     WindowManager.HasWindowsRegion = true;
                     WindowManager.MovetoTop(this);
