@@ -7,7 +7,12 @@ namespace System.Diagnostics
 {
     public static unsafe class Process
     {
-        public static void Start(byte[] exe)
+        public static void Start(string file)
+        {
+            Start(File.ReadAllBytes(file));
+        }
+
+        static void Start(byte[] exe)
         {
             fixed (byte* ptr = exe)
             {

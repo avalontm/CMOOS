@@ -44,7 +44,7 @@ namespace System.Windows.Controls
                 {
                     if (IsFocus)
                     {
-                        if (IsUnderMouse())
+                        if (IsUnderMouse() && Control.MouseButtons == MouseButtons.Left)
                         {
                             if (Command != null && Command.Source != null)
                             {

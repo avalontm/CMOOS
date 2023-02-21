@@ -18,7 +18,20 @@ namespace Moos.Framework
         public WindowCollection Windows { get; private set; }
         public Window MainWindow { get; internal set; }
         public IntPtr Handler {private set; get; }
-        public static string ExecutablePath { get; private set; } = "";
+
+        static string _executablePath;
+        public static string ExecutablePath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_executablePath))
+                {
+                    _executablePath = "home/moos/Desktop/appdemo.app";
+                }
+
+                return _executablePath;
+            }
+        }
 
         public Application()
         {

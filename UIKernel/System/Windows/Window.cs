@@ -125,7 +125,6 @@ namespace System.Windows
                     Y = (Framebuffer.Height / 2) - (this.Height / 2);
                     break;
             }
-
         }
 
         public bool IsUnderMouse()
@@ -156,6 +155,8 @@ namespace System.Windows
                     }
 
                     onMove();
+                    onRegion();
+                   
                 }
                 else
                 {
@@ -175,7 +176,7 @@ namespace System.Windows
         //Window Bar
         void onMove()
         {
-            if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
+            if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
             {
                 WindowManager.MovetoTop(this);
 
@@ -192,7 +193,7 @@ namespace System.Windows
         //Window Content
         void onRegion()
         {
-            if (!WindowManager.HasWindowsRegion && !WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+            if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
             {
                 WindowManager.HasWindowsRegion = true;
                 WindowManager.MovetoTop(this);
@@ -208,19 +209,17 @@ namespace System.Windows
 
             if (this.IsVisible)
             {
-                if (Control.MouseButtons == MouseButtons.Left)
-                {
-                    onRegion();
-                }
-
                 if (Content != null)
                 {
                     Content.OnUpdate();
                 }
 
-                CloseButton.X = CloseButtonX; 
-                CloseButton.Y = CloseButtonY;
-                CloseButton.OnUpdate();
+                if (CloseButton != null)
+                {
+                    CloseButton.X = CloseButtonX;
+                    CloseButton.Y = CloseButtonY;
+                    CloseButton.OnUpdate();
+                }
             }
         }
 

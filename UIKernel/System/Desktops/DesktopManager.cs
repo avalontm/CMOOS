@@ -221,8 +221,7 @@ namespace System.Desktops
 
             if (file.isPkg)
             {
-                byte[] buffer = File.ReadAllBytes(file.FilePath + "/Content/" + "app.mue");
-                Process.Start(buffer);
+                Process.Start(file.FilePath + "/Content/" + "app.mue");
                 return;
             }
 
@@ -257,8 +256,7 @@ namespace System.Desktops
                     break;
                 case "mue":
                     {
-                        byte[] buffer = File.ReadAllBytes(file.FilePath);
-                        Process.Start(buffer);
+                        Process.Start(file.FilePath);
                     }
                     break;
                 case "wav":

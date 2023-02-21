@@ -31,8 +31,6 @@ namespace MOOS
                     return (delegate*<string, IntPtr>)&API_LoadPNG;
                 case "MessageBox":
                     return (delegate*<string, string, void>)&API_MessageBox;
-                case "SayHello":
-                    return (delegate*<void>)&SayHello;
                 case "WriteLine":
                     return (delegate*<void>)&API_WriteLine;
                 case "DebugWriteLine":
@@ -302,9 +300,5 @@ namespace MOOS
             return Allocator.Reallocate(intPtr, size);
         }
 
-        public static void SayHello()
-        {
-            Console.WriteLine("Hello from exe!");
-        }
     }
 }

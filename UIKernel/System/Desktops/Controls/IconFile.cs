@@ -60,12 +60,12 @@ namespace System.Desktops.Controls
                     icon = DesktopIcons.AppIcon;
                     Extention = "mue";
                 }
-                else if (ext.EndsWith(".muepkg"))
+                else if (ext.EndsWith(".app"))
                 {
                     isPkg = true;
 
                     icon = DesktopIcons.AppPkg;
-                    Extention = "muepkg";
+                    Extention = "app";
                 }
                 else if (ext.EndsWith(".wav"))
                 {
@@ -132,7 +132,6 @@ namespace System.Desktops.Controls
                 _x = OwnerWindow.X + this.X;
                 _y = OwnerWindow.Y + this.Y;
             }
-
 
             if (Control.MousePosition.X > (_x - offsetX) && Control.MousePosition.X < ((_x - offsetX) + Width) && Control.MousePosition.Y > _y && Control.MousePosition.Y < (_y + Height))
             {
