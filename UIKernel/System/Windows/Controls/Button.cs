@@ -40,29 +40,25 @@ namespace System.Windows.Controls
 
             if (IsVisible)
             {
-                if (!WindowManager.HasWindowMoving)
+                if (MouseEnter)
                 {
-                    if (MouseEnter)
+                    if (IsFocus)
                     {
-                        if (IsFocus)
+                        if (IsUnderMouse())
                         {
-                            if (IsUnderMouse())
+                            if (Command != null && Command.Source != null)
                             {
-                                if (Command != null && Command.Source != null)
+                                if (!clicked)
                                 {
-                                    if (!clicked)
-                                    {
-                                        clicked = true;
+                                    clicked = true;
 
-                                        Command.Source.Execute.Invoke(CommandParameter);
-                                        return;
-                                    }
+                                    Command.Source.Execute.Invoke(CommandParameter);
+                                    return;
                                 }
                             }
                         }
                     }
                 }
-
 
                 if (Control.MouseButtons == MouseButtons.None)
                 {

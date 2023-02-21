@@ -130,7 +130,7 @@ namespace System.Windows
 
         public bool IsUnderMouse()
         {
-            if (Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y && Control.MousePosition.Y < Y + Height) return true;
+            if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height)) return true;
             return false;
         }
 
@@ -155,11 +155,6 @@ namespace System.Windows
                         }
                     }
 
-                    if (onGetOthersWindowsOnTop())
-                    {
-                        return;
-                    }
-
                     onMove();
                 }
                 else
@@ -180,7 +175,7 @@ namespace System.Windows
         //Window Bar
         void onMove()
         {
-            if (!WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
+            if (!WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < Y)
             {
                 WindowManager.MovetoTop(this);
 
@@ -197,30 +192,11 @@ namespace System.Windows
         //Window Content
         void onRegion()
         {
-            if (!WindowManager.HasWindowsRegion && !WindowManager.HasWindowMoving && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+            if (!WindowManager.HasWindowsRegion && !WindowManager.HasWindowMoving && !Move && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
             {
                 WindowManager.HasWindowsRegion = true;
                 WindowManager.MovetoTop(this);
             }
-        }
-
-        //We check if there are windows above this window
-        bool onGetOthersWindowsOnTop()
-        {
-            if (!WindowManager.HasWindowsRegion)
-            {
-                for (int i = WindowManager.Childrens.Count; i < (Index+1) ; i--)
-                {
-                    Window win = WindowManager.Childrens[i];
-
-                    if (Control.MousePosition.X > win.X && Control.MousePosition.X < (win.X + win.Width) && Control.MousePosition.Y > (win.Y- BarHeight) && Control.MousePosition.Y < (win.Y + win.Height))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         private int CloseButtonX => X + Width + 2 - (BarHeight / 2) - (CloseButton.Width / 2);
@@ -234,11 +210,6 @@ namespace System.Windows
             {
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
-                    if (onGetOthersWindowsOnTop())
-                    {
-                        return;
-                    }
-
                     onRegion();
                 }
 

@@ -133,6 +133,7 @@ namespace System.Desktops.Controls
                 _y = OwnerWindow.Y + this.Y;
             }
 
+
             if (Control.MousePosition.X > (_x - offsetX) && Control.MousePosition.X < ((_x - offsetX) + Width) && Control.MousePosition.Y > _y && Control.MousePosition.Y < (_y + Height))
             {
                 _isFocus = true;

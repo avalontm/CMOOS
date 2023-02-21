@@ -63,6 +63,7 @@ namespace System.Windows
                     Childrens[i].OnUpdate();
                 }
             }
+
         }
 
         public static bool HasWindowsRegion = false;
