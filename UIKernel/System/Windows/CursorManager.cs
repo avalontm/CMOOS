@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace System.Windows
@@ -14,7 +15,9 @@ namespace System.Windows
         static Image CursorNormal { set; get; }
         static Image CursorMoving { set; get; }
         static Image CursorTextSelect { set; get; }
-        static Image CursorHand{ set; get; }
+        static Image CursorHand { set; get; }
+        static Image CursorHorizontal { set; get; }
+        static Image CursorVertical { set; get; }
         public static Cursor State { set; get; }
         public static Widget FocusControl { set; get; }
 
@@ -26,6 +29,9 @@ namespace System.Windows
             CursorMoving = new PNG(File.Instance.ReadAllBytes("sys/media/Grab.png"));
             CursorTextSelect = new PNG(File.Instance.ReadAllBytes("sys/media/CursorTextSelect.png"));
             CursorHand = new PNG(File.Instance.ReadAllBytes("sys/media/CursorHand.png"));
+            CursorHorizontal = new PNG("sys/media/CursorHorizontalArrow.png");
+            CursorVertical = new PNG("sys/media/CursorVerticalArrow.png");
+
             State = new Cursor(CursorState.Normal); 
         }
 
@@ -43,6 +49,10 @@ namespace System.Windows
                         return CursorTextSelect;
                     case CursorState.Hand:
                         return CursorHand;
+                    case CursorState.Horizontal:
+                        return CursorHorizontal;
+                    case CursorState.Vertical:
+                        return CursorVertical;
                     default:
                         return CursorNormal;
                 }
@@ -51,8 +61,17 @@ namespace System.Windows
 
         public static void Update()
         {
+            if (WindowManager.HasWindowResizing)
+            {
+                Control.MouseOffSet.X = - (CursorHorizontal.Width / 2);
+                Control.MouseOffSet.Y = - (CursorHorizontal.Height / 2);
+                return;
+            }
+
             if (WindowManager.HasWindowMoving)
             {
+                Control.MouseOffSet.X = 0;
+                Control.MouseOffSet.Y = 0;
                 State.Value = CursorState.Grab;
                 return;
             }
@@ -63,12 +82,16 @@ namespace System.Windows
                 {
                     if (FocusControl.Cursor.Value != CursorState.None)
                     {
+                        Control.MouseOffSet.X = 0;
+                        Control.MouseOffSet.Y = 0;
                         State.Value = FocusControl.Cursor.Value;
                         return;
                     }
                 }
             }
 
+            Control.MouseOffSet.X = 0;
+            Control.MouseOffSet.Y = 0;
             State.Value = CursorState.Normal;
         }
     }

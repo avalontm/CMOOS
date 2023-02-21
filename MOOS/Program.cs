@@ -155,7 +155,7 @@ unsafe class Program
             NotificationManager.Draw();
 
             //Mouse
-            Framebuffer.Graphics.DrawImage(Control.MousePosition.X, Control.MousePosition.Y, CursorManager.GetCursor, true);
+            Framebuffer.Graphics.DrawImage(Control.MousePosition.X + Control.MouseOffSet.X, Control.MousePosition.Y + Control.MouseOffSet.Y, CursorManager.GetCursor, true);
             Framebuffer.Update();
 
             fpsMeter.Update();

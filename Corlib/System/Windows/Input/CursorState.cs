@@ -12,6 +12,8 @@ namespace System.Windows.Input
         Hand,
         Cross,
         Wait,
+        Horizontal,
+        Vertical,
     }
 }
 

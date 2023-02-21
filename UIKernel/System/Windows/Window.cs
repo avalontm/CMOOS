@@ -1,10 +1,12 @@
-﻿using MOOS;
+﻿using Moos.Core.System.Windows;
+using MOOS;
 using MOOS.Driver;
 using MOOS.GUI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -24,6 +26,7 @@ namespace System.Windows
     {
         public string Title { set; get; }
         public WindowStartupLocation WindowStartupLocation { get; set; }
+        public WindowState WindowState { get; set; }
         public Widget Focus { set; get; }
         Button CloseButton;
 
@@ -63,6 +66,7 @@ namespace System.Windows
 
         void onInitWindow()
         {
+            WindowState = WindowState.Normal;
             Background = Brushes.White;
 
             CloseButton = new Button();
@@ -209,6 +213,8 @@ namespace System.Windows
 
             if (this.IsVisible)
             {
+                OnBorders();
+
                 if (Content != null)
                 {
                     Content.OnUpdate();
@@ -220,6 +226,92 @@ namespace System.Windows
                     CloseButton.Y = CloseButtonY;
                     CloseButton.OnUpdate();
                 }
+
+                OnReSize();
+            }
+        }
+
+
+        int prevMouseX;
+        int prevMouseY;
+
+        int prevWidth;
+        int prevHeight;
+        bool isRightEdge;
+        bool isLeftEdge;
+        void OnBorders()
+        {
+            if (WindowState == WindowState.Normal)
+            {
+                //LEFT
+                if (Control.MousePosition.X > (X - 2) && Control.MousePosition.X < (X + 2) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+                {
+                    if (!WindowManager.HasWindowResizing)
+                    {
+                        prevMouseX = Control.MousePosition.X;
+                        prevMouseY = Control.MousePosition.Y;
+
+                        prevWidth = this.Width;
+                        prevHeight = this.Height;
+                    }
+
+                    isLeftEdge = true;
+                    WindowManager.HasWindowResizing = true;
+                    CursorManager.State.Value = CursorState.Horizontal;
+                    return;
+                }
+
+                //RIGHT
+                if (Control.MousePosition.X > ((X + Width) - 2) && Control.MousePosition.X < ((X + Width) + 2) && Control.MousePosition.Y > Y && Control.MousePosition.Y < (Y + Height))
+                {
+                    if (!WindowManager.HasWindowResizing)
+                    {
+                        prevMouseX = Control.MousePosition.X;
+                        prevMouseY = Control.MousePosition.Y;
+
+                        prevWidth = this.Width;
+                        prevHeight = this.Height;
+                    }
+
+                    isRightEdge = true;
+                    WindowManager.HasWindowResizing = true;
+                    CursorManager.State.Value = CursorState.Horizontal;
+                    return;
+                }
+            }
+
+            isLeftEdge = false;
+            isRightEdge = false;
+            WindowManager.HasWindowResizing = false;
+        }
+
+        public virtual void OnReSize()
+        {
+            if (Control.MouseButtons == MouseButtons.Left)
+            {
+                if (!WindowManager.HasWindowResizing)
+                {
+                    return;
+                }
+
+                if (WindowManager.FocusWindow == this)
+                {
+                    if (CursorManager.State.Value == CursorState.Horizontal)
+                    {
+                        int diffX = Control.MousePosition.X - prevMouseX;
+
+                        int diffWidth = ((!isRightEdge) ? diffX : 0);
+
+                        int newWidth = prevWidth + diffWidth;
+
+                        this.Width = newWidth;
+                    }
+                    else if (CursorManager.State.Value == CursorState.Vertical)
+                    {
+                        OffsetY = Control.MousePosition.Y - Y;
+                    }
+                }
+
             }
         }
 

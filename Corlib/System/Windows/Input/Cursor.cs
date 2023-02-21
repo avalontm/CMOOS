@@ -25,6 +25,10 @@ namespace System.Windows.Input
                     return "Hand";
                 case CursorState.TextSelect:
                     return "TextSelect";
+                case CursorState.Horizontal:
+                    return "Horizontal";
+                    case CursorState.Vertical:
+                    return "Vertical";
                 default:
                     return "Desconocido";
             }

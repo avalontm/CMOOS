@@ -24,8 +24,7 @@ namespace System.Desktops
         static DesktopDocker docker { set; get; }
         static List<DesktopControl> barMenu { set; get; }
         static List<IconFile> icons { set; get; }
-        public static Image Cursor;
-        static Image CursorMoving;
+
         public static Image Wallpaper;
 
         public static string Prefix;
@@ -50,10 +49,6 @@ namespace System.Desktops
             Prefix = $" root@{User}: ";
 #endif
 
-            //Sized width to 512
-            //https://gitlab.com/Enthymeme/hackneyed-x11-cursors/-/blob/master/theme/right-handed-white.svg
-            Cursor = new PNG(File.ReadAllBytes("sys/media/Cursor.png"));
-            CursorMoving = new PNG(File.ReadAllBytes("sys/media/Grab.png"));
             //Image from unsplash
             Wallpaper = new PNG(File.ReadAllBytes("sys/media/Wallpaper2.png"));
 
