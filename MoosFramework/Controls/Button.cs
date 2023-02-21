@@ -10,7 +10,7 @@ namespace Moos.Framework.Controls
     public class Button : ContentControl
     {
         [DllImport("ButtonCreate")]
-        public static extern IntPtr ButtonCreate();
+        public static extern IntPtr ButtonCreate(IntPtr handler);
 
         [DllImport("ButtonText")]
         public static extern IntPtr ButtonText(IntPtr handler, string text);
@@ -136,9 +136,9 @@ namespace Moos.Framework.Controls
             }
         }
 
-        public Button()
+        public Button(Window owner)
         {
-            Handler = ButtonCreate();
+            Handler = ButtonCreate(owner.Handler);
         }
     }
 }

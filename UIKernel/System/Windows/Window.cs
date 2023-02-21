@@ -70,6 +70,7 @@ namespace System.Windows
             Background = Brushes.White;
 
             CloseButton = new Button();
+            CloseButton.Window = this;
             CloseButton.Width = 28;
             CloseButton.Height = 28;
             CloseButton.Command = new Data.Binding();
@@ -207,13 +208,14 @@ namespace System.Windows
         //Window Content
         void onRegion()
         {
-            if (Control.Clicked)
+            if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < (Y + Height))
             {
-                if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < (Y + Height))
+                if (Control.Clicked)
                 {
                     WindowManager.HasWindowsRegion = true;
                     WindowManager.MovetoTop(this);
                 }
+
             }
         }
 

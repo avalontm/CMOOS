@@ -121,8 +121,21 @@ namespace System.Windows.Controls
         public int GridColumn { get; set; }
         public FontFamily FontFamily { get; set; }
 
+        Window _window;
+        internal Window Window
+        {
+            set
+            {
+                _window = value;
+            }
+            get
+            {
+                return _window;
+            }
+        }
+
         Widget _parent;
-        public Widget Parent
+        internal Widget Parent
         {
             set
             {
@@ -136,7 +149,7 @@ namespace System.Windows.Controls
         }
 
         GridCollection _pos;
-        public GridCollection Pos
+        internal GridCollection Pos
         {
             set
             {
@@ -244,51 +257,54 @@ namespace System.Windows.Controls
                     WindowManager.HasWindowControl = false;
                 }
 
-                if (UseHighlight)
+                if (WindowManager.FocusWindow == this.Window)
                 {
-                    if (MouseEnter)
+                    if (UseHighlight)
                     {
-                        if (Background != null)
+                        if (MouseEnter)
                         {
-                            _background.Value = HighlightBackground.Value;
-                        }
-
-                        if (HighlightBackground != null)
-                        {
-                            Color color = Color.FromArgb(_highlight_background.Value);
-
-                            color.R = (byte)(color.R - 5);
-                            color.G = (byte)(color.G - 5);
-                            color.B = (byte)(color.B - 5);
-
-                            if (color.R < 0)
+                            if (Background != null)
                             {
-                                color.R = 0;
+                                _background.Value = HighlightBackground.Value;
                             }
 
-                            if (color.G < 0)
+                            if (HighlightBackground != null)
                             {
-                                color.G = 0;
-                            }
+                                Color color = Color.FromArgb(_highlight_background.Value);
 
-                            if (color.B < 0)
+                                color.R = (byte)(color.R - 5);
+                                color.G = (byte)(color.G - 5);
+                                color.B = (byte)(color.B - 5);
+
+                                if (color.R < 0)
+                                {
+                                    color.R = 0;
+                                }
+
+                                if (color.G < 0)
+                                {
+                                    color.G = 0;
+                                }
+
+                                if (color.B < 0)
+                                {
+                                    color.B = 0;
+                                }
+
+                                BorderBrush = new Brush(color);
+                                color.Dispose();
+                            }
+                        }
+                        else
+                        {
+                            if (Background != null)
                             {
-                                color.B = 0;
+                                _background.Value = _old_background.Value;
                             }
-
-                            BorderBrush = new Brush(color);
-                            color.Dispose();
-                        }
-                    }
-                    else
-                    {
-                        if (Background != null)
-                        {
-                            _background.Value = _old_background.Value;
-                        }
-                        if (HighlightBackground != null)
-                        {
-                            BorderBrush.Value = _old_background.Value;
+                            if (HighlightBackground != null)
+                            {
+                                BorderBrush.Value = _old_background.Value;
+                            }
                         }
                     }
                 }

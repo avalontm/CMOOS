@@ -16,8 +16,6 @@ namespace System.Windows.Controls
         public object CommandParameter { get; set; }
         public bool UseCircle;
 
-        bool clicked;
-
         public Button()
         {
             X = 0;
@@ -40,29 +38,22 @@ namespace System.Windows.Controls
 
             if (IsVisible)
             {
-                if (MouseEnter)
+                if (WindowManager.FocusWindow == this.Window)
                 {
-                    if (IsFocus)
+                    if (MouseEnter)
                     {
-                        if (Control.MouseButtons == MouseButtons.Left)
+                        if (IsFocus)
                         {
-                            if (Command != null && Command.Source != null)
+                            if (Control.Clicked)
                             {
-                                if (!clicked)
+                                if (Command != null && Command.Source != null)
                                 {
-                                    clicked = true;
-
                                     Command.Source.Execute.Invoke(CommandParameter);
                                     return;
                                 }
                             }
                         }
                     }
-                }
-
-                if (Control.MouseButtons == MouseButtons.None)
-                {
-                    clicked = false;
                 }
             }
         }

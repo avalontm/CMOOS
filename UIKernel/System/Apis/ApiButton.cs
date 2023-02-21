@@ -22,7 +22,7 @@ namespace System.Apis
             switch (name)
             {
                 case "ButtonCreate":
-                    return (delegate*<IntPtr>)&API_ButtonCreate;
+                    return (delegate*<IntPtr, IntPtr>)&API_ButtonCreate;
                 case "ButtonText":
                     return (delegate*<IntPtr, string, IntPtr>)&API_ButtonText;
                 case "ButtonWidth":
@@ -44,9 +44,15 @@ namespace System.Apis
             return null;
         }
 
-        public static IntPtr API_ButtonCreate()
+        public static IntPtr API_ButtonCreate(IntPtr handler)
         {
             Button button = new Button();
+            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handler);
+
+            if (papp != null)
+            {
+                button.Window = papp;
+            }
             return button;
         }
 

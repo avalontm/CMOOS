@@ -44,7 +44,7 @@ namespace MoosApplication
             _grid0.RowDefinitions = _rowDefinitionCollection1;
 
             //Button 
-            Button button = new Button();
+            Button button = new Button(this);
             button.Text = "Click Me";
             button.Margin = new Thickness(5);
             button.X = 10;
