@@ -217,7 +217,7 @@ namespace MOOS.NET.IPv4.TCP
         /// <exception cref="Exception">Thrown if TCP Status is not ESTABLISHED.</exception>
         public byte[] Receive(ref EndPoint source)
         {
-            while (StateMachine.rxBuffer.Count == 0)
+            while (StateMachine.rxBuffer.Count < 1)
             {
                 if (StateMachine.Status != Status.ESTABLISHED)
                 {
@@ -276,12 +276,10 @@ namespace MOOS.NET.IPv4.TCP
             return StateMachine.Status == Status.ESTABLISHED;
         }
 
-        /// <summary>
-        /// Close Client
-        /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             Close();
+            base.Dispose();
         }
     }
 }

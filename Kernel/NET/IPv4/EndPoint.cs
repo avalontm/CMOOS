@@ -45,25 +45,14 @@ namespace MOOS.NET.IPv4
         /// <param name="obj">Other end point to compare to.</param>
         /// <returns>-1 if end points are diffrent, 0 if equal.</returns>
         /// <exception cref="ArgumentException">Thrown if obj is not a EndPoint.</exception>
-        public int CompareTo(object obj)
+        public int CompareTo(EndPoint other)
         {
-            if (obj is EndPoint)
+            if ((other.Address.CompareTo(Address) != 0) || (other.Port != Port))
             {
-                EndPoint other = (EndPoint)obj;
-
-                if ((other.Address.CompareTo(Address) != 0) || (other.Port != Port))
-                {
-                    return -1;
-                }
-
-                return 0;
-            }
-            else
-            {
-                //throw new ArgumentException("obj is not a IPv4EndPoint", "obj");
-                Console.WriteLine("obj is not a IPv4EndPoint");
                 return -1;
             }
+
+            return 0;
         }
     }
 }

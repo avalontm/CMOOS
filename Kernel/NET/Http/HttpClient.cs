@@ -54,12 +54,9 @@ namespace System.Net.Http
             {
                 if (!client.Connect(_address, this.port, timeout * 1000))
                 {
-                    Console.WriteLine($"[HttpClient] Not Connected!");
                     return http;
                 }
             }
-
-            Console.WriteLine($"[HttpClient] Connected! :)");
 
             string header = $"GET /{path} HTTP/1.1\r\n";
             header += $"Host: {host}\r\n";
