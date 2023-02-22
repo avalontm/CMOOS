@@ -44,6 +44,7 @@ namespace System.Windows
             }
         }
 
+        bool isResizing;
         public Window() : base()
         {
             this.IsVisible = false;
@@ -168,7 +169,7 @@ namespace System.Windows
                     Move = false;
                     WindowManager.HasWindowMoving = false;
                     WindowManager.HasWindowsRegion = false;
-                    WindowManager.HasWindowResizing = false;
+                    isResizing = false;
                 }
 
                 if (Move)
@@ -263,7 +264,7 @@ namespace System.Windows
                     return;
                 }
 
-                if (WindowManager.HasWindowResizing)
+                if (isResizing)
                 {
                     return;
                 }
@@ -279,14 +280,14 @@ namespace System.Windows
 
                     if (Control.Clicked)
                     {
-                        if (!WindowManager.HasWindowResizing)
+                        if (!isResizing)
                         {
                             prevMouseX = Control.MousePosition.X;
                             prevWidth = this.Width;
                         }
 
                         isRightEdge = false;
-                        WindowManager.HasWindowResizing = true;
+                        isResizing = true;
                     }
                     return;
                 }
@@ -299,14 +300,14 @@ namespace System.Windows
 
                     if (Control.Clicked)
                     {
-                        if (!WindowManager.HasWindowResizing)
+                        if (!isResizing)
                         {
                             prevMouseX = Control.MousePosition.X;
                             prevWidth = this.Width;
                         }
 
                         isRightEdge = true;
-                        WindowManager.HasWindowResizing = true;
+                        isResizing = true;
                     }
 
                     return;
@@ -320,14 +321,14 @@ namespace System.Windows
 
                     if (Control.Clicked)
                     {
-                        if (!WindowManager.HasWindowResizing)
+                        if (!isResizing)
                         {
                             prevMouseY = Control.MousePosition.Y;
                             prevHeight = this.Height;
                         }
 
                         isBottomEdge = false;
-                        WindowManager.HasWindowResizing = true;
+                        isResizing = true;
                     }
 
                     return;
@@ -340,14 +341,14 @@ namespace System.Windows
 
                     if (Control.Clicked)
                     {
-                        if (!WindowManager.HasWindowResizing)
+                        if (!isResizing)
                         {
                             prevMouseY = Control.MousePosition.Y;
                             prevHeight = this.Height;
                         }
 
                         isBottomEdge = true;
-                        WindowManager.HasWindowResizing = true;
+                        isResizing = true;
                     }
 
                     return;
@@ -361,7 +362,7 @@ namespace System.Windows
         {
             if (Control.MouseButtons == MouseButtons.Left)
             {
-                if (WindowManager.HasWindowResizing)
+                if (isResizing)
                 {
                     if (CursorManager.State.Value == CursorState.Horizontal)
                     {
