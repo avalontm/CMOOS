@@ -36,7 +36,7 @@ namespace System.Windows.Controls
         {
             base.OnUpdate();
 
-            if (IsVisible)
+            if (IsLoaded && IsVisible)
             {
                 if (WindowManager.FocusWindow == this.Window)
                 {
@@ -68,7 +68,7 @@ namespace System.Windows.Controls
         {
             base.OnDraw();
 
-            if (IsVisible)
+            if (IsLoaded && IsVisible)
             {
                 if (Background != null)
                 {

@@ -2,6 +2,7 @@
 using MOOS;
 using MOOS.Driver;
 using MOOS.GUI;
+using MOOS.Misc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -90,18 +91,21 @@ namespace System.Windows
             onWindowStartupLocation();
             WindowManager.MovetoTop(this);
             OnLoaded();
-            this.IsVisible = true;
         }
 
         public override void OnLoaded()
         {
-            CloseButton.OnLoaded();
+            if (CloseButton != null)
+            {
+                CloseButton.OnLoaded();
+            }
 
             if (Content != null)
             {
                 Content.OnLoaded();
             }
 
+            this.IsVisible = true;
             base.OnLoaded();
         }
 
@@ -148,7 +152,7 @@ namespace System.Windows
 
         public virtual void OnInput()
         {
-            if (IsVisible)
+            if (IsLoaded && IsVisible)
             {
                 if (Control.MouseButtons == MouseButtons.Left)
                 {
@@ -227,12 +231,17 @@ namespace System.Windows
         {
             base.OnUpdate();
 
-            if (this.IsVisible)
+            if (IsLoaded && this.IsVisible)
             {
 
                 if (Content != null)
                 {
                     Content.OnUpdate();
+
+                    if (isResizing)
+                    {
+                        Content.OnResize();
+                    }
                 }
 
                 if (CloseButton != null)
@@ -269,6 +278,7 @@ namespace System.Windows
                     return;
                 }
 
+                WindowManager.HasWindowFocusResizing = false;
                 isRightEdge = false;
                 isBottomEdge = false;
 
@@ -337,6 +347,7 @@ namespace System.Windows
                 //BOTTOM
                 if (Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > ((Y + Height) - 2) && Control.MousePosition.Y < ((Y + Height) + 2))
                 {
+                    WindowManager.HasWindowFocusResizing = true;
                     CursorManager.State.Value = CursorState.Vertical;
 
                     if (Control.Clicked)
@@ -354,7 +365,6 @@ namespace System.Windows
                     return;
                 }
 
-                WindowManager.HasWindowFocusResizing = false;
             }
         }
 
@@ -411,7 +421,7 @@ namespace System.Windows
         {
             base.OnDraw();
 
-            if (this.IsVisible)
+            if (IsLoaded && this.IsVisible)
             {
                 //WindowBar
                 Framebuffer.Graphics.FillRectangle((X-1), (Y - BarHeight), (Width+1), BarHeight, 0xebebeb);

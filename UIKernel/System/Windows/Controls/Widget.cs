@@ -30,7 +30,9 @@ namespace System.Windows.Controls
         public bool UseHighlight { set; get; }
         public HorizontalAlignment HorizontalOptions { set; get; }
         public VerticalAlignment VerticalOptions { set; get; }
-        public bool IsVisible { set; get; }
+        
+        internal bool IsVisible { set; get; }
+        internal bool IsLoaded {set;get;}
 
         public Brush Background
         {
@@ -190,7 +192,7 @@ namespace System.Windows.Controls
 
         public virtual void OnLoaded()
         {
-     
+            IsLoaded = true;
         }
 
         public virtual void OnUnloaded()
@@ -199,6 +201,11 @@ namespace System.Windows.Controls
             CursorManager.FocusControl = null;
             WindowManager.HasWindowMoving = false;
             MouseEnter = false;
+        }
+
+        public virtual void OnResize()
+        {
+
         }
 
         public virtual void OnDraw()

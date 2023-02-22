@@ -35,8 +35,8 @@ namespace System.Windows.Controls
 
         public override void OnLoaded()
         {
-            base.OnLoaded();
             OnParentResize();
+            base.OnLoaded();
         }
 
         public override void OnUpdate()
@@ -48,42 +48,57 @@ namespace System.Windows.Controls
         {
             base.OnDraw();
 
-            if (IsVisible)
+            if (IsLoaded && IsVisible)
             {
                 if (ImageSource != null)
                 {
-                    Framebuffer.Graphics.DrawImage(X, Y, Width, Height, ImageSource);
+                    Framebuffer.Graphics.DrawImage(X, Y, ImageSource);
                 }
             }
         }
 
         void OnParentResize()
         {
-            if (Parent != null)
+            if (ImageSource != null)
             {
-                // Position & margin
-                if (Pos == null )
+                if (Parent != null)
                 {
-                    X = this.Parent.X + this.Margin.Left;
-                    Y = this.Parent.Y + this.Margin.Top;
-                    Width = this.Parent.Width - (this.Margin.Right * 2);
-                    Height = this.Parent.Height - (this.Margin.Bottom * 2);
-                }
-                else
-                {
-                    X = this.Pos.Position.X + this.Margin.Left;
-                    Y = this.Pos.Position.Y + this.Margin.Top;
-                    Width = this.Pos.Position.Width - (this.Margin.Right * 2);
-                    Height = this.Pos.Position.Height - (this.Margin.Bottom * 2);
-                }
+                    int prevWidth = Width;
+                    int prevHeight = Height;
 
-                OnResize(Width, Height);
+                    // Position & margin
+                    if (Pos == null)
+                    {
+                        X = this.Parent.X + this.Margin.Left;
+                        Y = this.Parent.Y + this.Margin.Top;
+                        Width = this.Parent.Width - (this.Margin.Right * 2);
+                        Height = this.Parent.Height - (this.Margin.Bottom * 2);
+                    }
+                    else
+                    {
+                        X = this.Pos.Position.X + this.Margin.Left;
+                        Y = this.Pos.Position.Y + this.Margin.Top;
+                        Width = this.Pos.Position.Width - (this.Margin.Right * 2);
+                        Height = this.Pos.Position.Height - (this.Margin.Bottom * 2);
+                    }
+
+                    int newWidth = (Height / prevHeight) * Width;
+                    int newHeight = (Width / prevWidth) * Height;
+
+                    OnResize(newWidth, newHeight);
+                }
             }
         }
 
         internal void OnResize(int w, int h)
         {
             ImageSource = _originalSource.ResizeImage(w, h);
+        }
+
+        public override void OnResize()
+        {
+            base.OnResize();
+            OnParentResize();
         }
     }
 }

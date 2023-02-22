@@ -17,7 +17,7 @@ namespace Moos.Framework
         public ResourceDictionary Resources { set; get; }
         public WindowCollection Windows { get; private set; }
         public Window MainWindow { get; internal set; }
-        public IntPtr Handler {private set; get; }
+        internal IntPtr Handler {private set; get; }
 
         static string _executablePath;
         public static string ExecutablePath

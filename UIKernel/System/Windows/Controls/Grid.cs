@@ -25,6 +25,8 @@ namespace System.Windows.Controls
         {
             base.OnLoaded();
 
+            onGrids();
+
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].OnLoaded();
@@ -51,10 +53,24 @@ namespace System.Windows.Controls
             }
         }
 
+        public override void OnResize()
+        {
+            base.OnResize();
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                Children[i].OnResize();
+            }
+        }
+
         public override void OnDraw()
         {
             base.OnDraw();
+            onGrids();
+        }
 
+        void onGrids()
+        {
             if (RowDefinitions.Count == 0)
             {
                 RowDefinitions.Add(new RowDefinition());
