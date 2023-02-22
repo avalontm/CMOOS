@@ -33,12 +33,10 @@ namespace System.IO
 
         public static void Delete(string path)
         {
-            if (string.IsNullOrEmpty(path))
-            { 
-
+            if (Exists(path))
+            {
+                //FileSystem.DeleteFile(Path.GetFullPath(path));
             }
-
-            //FileSystem.DeleteFile(Path.GetFullPath(path));
         }
     }
 }
