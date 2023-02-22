@@ -119,13 +119,14 @@ namespace MOOS.Driver
                 Console.WriteLine("[Intel8254X] EEPROM on this controller");
             }
 
-
             Linkup();
-            for (int i = 0; i < 0x80; i++)
-                WriteRegister((ushort)(0x5200 + i * 4), 0);
 
-            Console.Write("[Intel8254X] IRQ: ");
-            Console.WriteLine(((ulong)device.IRQ).ToString("x2"));
+            for (int i = 0; i < 0x80; i++)
+            {
+                WriteRegister((ushort)(0x5200 + i * 4), 0);
+            }
+
+            Console.WriteLine($"[Intel8254X] IRQ: {((ulong)device.IRQ).ToStringHex()}");
 
             RXInitialize();
             TXInitialize();

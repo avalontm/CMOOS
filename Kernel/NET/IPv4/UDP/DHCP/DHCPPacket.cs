@@ -7,7 +7,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
     /// <summary>
     /// DHCP Option
     /// </summary>
-    public class DHCPOption
+    internal class DHCPOption
     {
         /// <summary>
         /// DHCP Option Type
@@ -28,7 +28,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
     /// <summary>
     /// DHCPPacket class.
     /// </summary>
-    public class DHCPPacket : UDPPacket
+    internal class DHCPPacket : UDPPacket
     {
         int xID;
 
@@ -60,7 +60,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// Create new instance of the <see cref="DHCPPacket"/> class.
         /// </summary>
         /// <param name="rawData">Raw data.</param>
-        public DHCPPacket(byte[] rawData) : base(rawData)
+        internal DHCPPacket(byte[] rawData) : base(rawData)
         { }
 
         /// <summary>
@@ -69,7 +69,9 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// <param name="mac_src">Source MAC Address.</param>
         /// <param name="dhcpDataSize">DHCP Data size</param>
         internal DHCPPacket(MACAddress mac_src, ushort dhcpDataSize) : this(Address.Zero, Address.Broadcast, mac_src, dhcpDataSize)
-        { }
+        {
+
+        }
 
         /// <summary>
         /// Create new instance of the <see cref="DHCPPacket"/> class.

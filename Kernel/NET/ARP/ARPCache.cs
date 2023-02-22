@@ -74,7 +74,7 @@ namespace MOOS.NET.ARP
             ensureCacheExists();
             if (cache.ContainsKey(ipAddress.Hash) == false)
             {
-                return null;
+                return MACAddress.None;
             }
 
             return cache[ipAddress.Hash];

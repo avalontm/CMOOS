@@ -39,16 +39,16 @@ namespace System.Net.Http
             HttpContent http = new HttpContent();
             http.Status = 404;
 
-            Console.WriteLine($"[DNS Host] {host}");
             DnsClient dns = new DnsClient();
 
             Timer.Sleep(100);
-            dns.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address
 
-            dns.SendAsk($"{host}");
+            dns.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address
+           
+            dns.SendAsk(host);
+         
             Address _address = dns.Receive();
             Timer.Sleep(100);
-            // Console.WriteLine($"[DNS Address] {_address}");
 
             if (!client.IsConnected())
             {
@@ -69,7 +69,7 @@ namespace System.Net.Http
             header += "Accept-Encoding: gzip, deflate, br\r\n";
             header += "\r\n\r\n";
 
-            byte[] data = UTF8Encoding.UTF8.GetBytes(header);
+            byte[] data = Encoding.UTF8.GetBytes(header);
           
             client.Send(data);
             Console.WriteLine($"[Send] {data.Length}");
@@ -85,15 +85,15 @@ namespace System.Net.Http
 
             http.Status = 200;
             Console.WriteLine($"[STATUS ] {http.Status}");
-            string response = UTF8Encoding.UTF8.GetString(receive);
+            string response = Encoding.UTF8.GetString(receive);
             Console.WriteLine($"[RESPONSE] {response}");
             if (!string.IsNullOrEmpty(response))
             {
-                var index = BinaryMatch(receive, Encoding.ASCII.GetBytes("\r\n\r\n")) + 4;
+                var index = BinaryMatch(receive, Encoding.UTF8.GetBytes("\r\n\r\n")) + 4;
 
                 string result = response.Substring(index, response.Length - 1);
 
-                index = BinaryMatch(Encoding.ASCII.GetBytes(result), Encoding.ASCII.GetBytes("\r\n"));
+                index = BinaryMatch(Encoding.UTF8.GetBytes(result), Encoding.UTF8.GetBytes("\r\n"));
                 string lenght = result.Substring(0, index).Trim();
                 http.Lenght = Convert.HexToDec(lenght);
                 http.Content = result.Substring((lenght.Length + 2), http.Lenght + (lenght.Length + 2));

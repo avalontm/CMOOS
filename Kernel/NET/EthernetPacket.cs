@@ -63,6 +63,7 @@ namespace MOOS.NET
         /// <param name="packet_size">Size.</param>
         protected EthernetPacket(MACAddress dest, MACAddress src, ushort type, int packet_size)
         {
+        
             RawData = new byte[packet_size];
             for (int i = 0; i < 6; i++)
             {
@@ -72,6 +73,7 @@ namespace MOOS.NET
 
             RawData[12] = (byte)(type >> 8);
             RawData[13] = (byte)(type >> 0);
+   
             InitFields();
         }
 

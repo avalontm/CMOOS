@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Common.Extentions;
 using System.Diagnostics;
+using System.Helpers;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -8,30 +10,47 @@ namespace MOOS.NET
 {
     public class MACAddress //: IComparable
     {
-        public static MACAddress Broadcast;
-        public static MACAddress None;
+        internal byte[] bytes { get; private set; }
 
-        static MACAddress()
+        static MACAddress _broadcast;
+        internal static MACAddress Broadcast
         {
-            var xBroadcastArray = new byte[6];
-            xBroadcastArray[0] = 0xFF;
-            xBroadcastArray[1] = 0xFF;
-            xBroadcastArray[2] = 0xFF;
-            xBroadcastArray[3] = 0xFF;
-            xBroadcastArray[4] = 0xFF;
-            xBroadcastArray[5] = 0xFF;
-            Broadcast = new MACAddress(xBroadcastArray);
-            var xNoneArray = new byte[6];
-            xNoneArray[0] = 0x00;
-            xNoneArray[1] = 0x00;
-            xNoneArray[2] = 0x00;
-            xNoneArray[3] = 0x00;
-            xNoneArray[4] = 0x00;
-            xNoneArray[5] = 0x00;
-            None = new MACAddress(xNoneArray);
+            get {
+
+                if (_broadcast == null)
+                {
+                    var xBroadcastArray = new byte[6];
+                    xBroadcastArray[0] = 0xFF;
+                    xBroadcastArray[1] = 0xFF;
+                    xBroadcastArray[2] = 0xFF;
+                    xBroadcastArray[3] = 0xFF;
+                    xBroadcastArray[4] = 0xFF;
+                    xBroadcastArray[5] = 0xFF;
+                    _broadcast = new MACAddress(xBroadcastArray);
+                }
+                return _broadcast; 
+            }
         }
 
-        public byte[] bytes = new byte[6];
+        static MACAddress _none;
+        internal static MACAddress None {
+            get
+            {
+
+                if (_none == null)
+                {
+                    var xNoneArray = new byte[6];
+                    xNoneArray[0] = 0x00;
+                    xNoneArray[1] = 0x00;
+                    xNoneArray[2] = 0x00;
+                    xNoneArray[3] = 0x00;
+                    xNoneArray[4] = 0x00;
+                    xNoneArray[5] = 0x00;
+                    _none = new MACAddress(xNoneArray);
+                }
+                return _none;
+            }
+        }
 
         public MACAddress(byte[] address)
         {
@@ -41,13 +60,7 @@ namespace MOOS.NET
                 return;
             }
 
-            bytes[0] = address[0];
-            bytes[1] = address[1];
-            bytes[2] = address[2];
-            bytes[3] = address[3];
-            bytes[4] = address[4];
-            bytes[5] = address[5];
-
+            bytes = new byte[] { address[0], address[1], address[2], address[3], address[4], address[5] };
         }
 
         /// <summary>
@@ -63,12 +76,7 @@ namespace MOOS.NET
                 return;
             }
 
-            bytes[0] = buffer[offset];
-            bytes[1] = buffer[offset + 1];
-            bytes[2] = buffer[offset + 2];
-            bytes[3] = buffer[offset + 3];
-            bytes[4] = buffer[offset + 4];
-            bytes[5] = buffer[offset + 5];
+            bytes = new byte[] { buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3], buffer[offset + 4], buffer[offset + 5] };
         }
 
 
@@ -106,38 +114,28 @@ namespace MOOS.NET
                 bytes[5] == other.bytes[5];
         }
 
-        public static bool operator ==(MACAddress a, MACAddress b)
-        {
-            return a.CompareTo(b);
-        }
-
-        public static bool operator !=(MACAddress a, MACAddress b)
-        {
-            return !a.CompareTo(b);
-        }
-
         public override int GetHashCode()
         {
-            return 0;// (GetType().AssemblyQualifiedName + "|" + ToString()).GetHashCode();
+            return (int)Hash;
         }
 
         public ulong ToNumber()
         {
             return (ulong)((bytes[0] << 40) | (bytes[1] << 32) | (bytes[2] << 24) | (bytes[3] << 16) |
-                (bytes[4] << 8) | (bytes[5] << 0));
+                (bytes[4] << 8) | bytes[5]);
         }
 
         public uint To32BitNumber()
         {
             return (uint)((bytes[0] << 40) | (bytes[1] << 32) | (bytes[2] << 24) | (bytes[3] << 16) |
-                (bytes[4] << 8) | (bytes[5] << 0));
+                (bytes[4] << 8) | bytes[5]);
         }
 
-        private uint hash;
+        uint hash;
         /// <summary>
         /// Hash value for this mac. Used to uniquely identify each mac
         /// </summary>
-        public uint Hash
+        internal uint Hash
         {
             get
             {
@@ -150,29 +148,21 @@ namespace MOOS.NET
             }
         }
 
-        static void PutByte(char[] aChars, int aIndex, byte aByte)
-        {
-            string xChars = "0123456789ABCDEF";
-            aChars[aIndex + 0] = xChars[(aByte >> 4) & 0xF];
-            aChars[aIndex + 1] = xChars[aByte & 0xF];
-        }
-
         public override string ToString()
         {
-            // mac address consists of 6 2chars pairs, delimited by :
-            var xChars = new char[17];
-            PutByte(xChars, 0, bytes[0]);
-            xChars[2] = ':';
-            PutByte(xChars, 3, bytes[1]);
-            xChars[5] = ':';
-            PutByte(xChars, 6, bytes[2]);
-            xChars[8] = ':';
-            PutByte(xChars, 9, bytes[3]);
-            xChars[11] = ':';
-            PutByte(xChars, 12, bytes[4]);
-            xChars[14] = ':';
-            PutByte(xChars, 15, bytes[5]);
-            return new string(xChars);
+            string str = "";
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                str += $"{bytes[i].ToHex()}:";
+            }
+
+            if (!string.IsNullOrEmpty(str))
+            {
+                return str.Substring(0, str.Length - 1);
+            }
+
+            return str;
         }
     }
 }

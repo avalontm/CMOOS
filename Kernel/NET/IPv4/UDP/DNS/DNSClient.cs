@@ -42,9 +42,8 @@ namespace MOOS.NET.IPv4.UDP.DNS
             Address source = IPConfig.FindNetwork(destination);
 
             queryurl = url;
-
+           
             var askpacket = new DNSPacketAsk(source, destination, url);
-
             OutgoingBuffer.AddPacket(askpacket);
 
             NetworkStack.Update();

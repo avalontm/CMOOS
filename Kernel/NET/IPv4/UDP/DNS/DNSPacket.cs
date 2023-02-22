@@ -235,8 +235,7 @@ namespace MOOS.NET.IPv4.UDP.DNS
             string[] items = url.Split('.');
             for (int i = 0; i < items.Length; i++)
             {
-                byte[] word = Encoding.ASCII.GetBytes(items[i]);
-
+                byte[] word = Encoding.UTF8.GetBytes(items[i]);
                 RawData[this.DataOffset + 20 + b] = (byte)word.Length; //set word length
 
                 b++;

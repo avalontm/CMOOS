@@ -29,5 +29,11 @@
 
             return response;
         }*/
+
+        static Encoding()
+        {
+            UTF8 = new UTF8Encoding();
+            ASCII= new ASCIIEncoding();
+        }
     }
 }

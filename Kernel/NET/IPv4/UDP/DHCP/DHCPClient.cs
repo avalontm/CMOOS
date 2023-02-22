@@ -9,7 +9,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
     /// <summary>
     /// DHCPClient class. Used to manage the DHCP connection to a server.
     /// </summary>
-    public class DHCPClient : UdpClient
+    internal class DHCPClient : UdpClient
     {
         /// <summary>
         /// Is DHCP ascked check variable
@@ -20,7 +20,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// Get the IP address of the DHCP server
         /// </summary>
         /// <returns></returns>
-        public static Address DHCPServerAddress(NetworkDevice networkDevice)
+        internal static Address DHCPServerAddress(NetworkDevice networkDevice)
         {
             return NetworkConfiguration.Get(networkDevice).DefaultGateway;
         }
@@ -30,7 +30,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown on fatal error (contact support).</exception>
         /// <exception cref="ArgumentException">Thrown if UdpClient with localPort 53 exists.</exception>
-        public DHCPClient() : base(68)
+        internal DHCPClient() : base(68)
         {
             
         }
@@ -41,7 +41,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// <param name="timeout">timeout value, default 5000ms</param>
         /// <returns>time value (-1 = timeout)</returns>
         /// <exception cref="InvalidOperationException">Thrown on fatal error (contact support).</exception>
-        private int Receive(int timeout = 5000)
+        internal int Receive(int timeout = 5000)
         {
             int second = 0;
             int _deltaT = 0;
@@ -87,7 +87,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// <summary>
         /// Send a packet to the DHCP server to make the address available again
         /// </summary>
-        public void SendReleasePacket()
+        internal void SendReleasePacket()
         {
             for (int i = 0; i < NetworkDevice.Devices.Count; i++)
             {
@@ -108,7 +108,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
         /// Send a packet to find the DHCP server and tell that we want a new IP address
         /// </summary>
         /// <returns>time value (-1 = timeout)</returns>
-        public int SendDiscoverPacket()
+        internal int SendDiscoverPacket()
         {
             NetworkStack.RemoveAllConfigIP();
 
@@ -116,7 +116,6 @@ namespace MOOS.NET.IPv4.UDP.DHCP
             {
                 IPConfig.Enable(NetworkDevice.Devices[i], new Address(0, 0, 0, 0), new Address(0, 0, 0, 0), new Address(0, 0, 0, 0));
                 DHCPDiscover dhcp_discover = new DHCPDiscover(NetworkDevice.Devices[i].MACAddress);
-
                 OutgoingBuffer.AddPacket(dhcp_discover);
                 NetworkStack.Update();
           
