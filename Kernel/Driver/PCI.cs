@@ -167,8 +167,9 @@ namespace MOOS
         {
             for (int i = 0; i < Devices.Count; i++)
             {
-                if ((VendorID)Devices[i].VendorID == aVendorID &&
-                    (DeviceID)Devices[i].DeviceID == aDeviceID)
+                if (Devices[i] != null && 
+                    Devices[i].VendorID == aVendorID &&
+                    Devices[i].DeviceID == aDeviceID)
                 {
                     return Devices[i];
                 }
@@ -179,8 +180,9 @@ namespace MOOS
         {
             for (int i = 0; i < Devices.Count; i++)
             {
-                if ((VendorID)Devices[i].VendorID == aVendorID &&
-                    (DeviceID)Devices[i].DeviceID == aDeviceID)
+                if (Devices[i] != null && 
+                    Devices[i].VendorID == aVendorID &&
+                    Devices[i].DeviceID == aDeviceID)
                 {
                     return Devices[i];
                 }
@@ -212,8 +214,8 @@ namespace MOOS
         {
             for (int i = 0; i < Devices.Count; i++)
             {
-                if ((ClassID)Devices[i].ClassCode == Class &&
-                    (SubclassID)Devices[i].Subclass == SubClass)
+                if (Devices[i].ClassCode == Class &&
+                    Devices[i].Subclass == SubClass)
                 {
                     return Devices[i];
                 }
@@ -225,9 +227,9 @@ namespace MOOS
         {
             for (int i = 0; i < Devices.Count; i++)
             {
-                if ((ClassID)Devices[i].ClassCode == aClass &&
-                    (SubclassID)Devices[i].Subclass == aSubClass &&
-                    (ProgramIF)Devices[i].ProgIF == aProgIF)
+                if (Devices[i].ClassCode == aClass &&
+                    Devices[i].Subclass == aSubClass &&
+                    Devices[i].ProgIF == aProgIF)
                 {
                     return Devices[i];
                 }

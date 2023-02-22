@@ -118,6 +118,7 @@ namespace MOOS.Driver
             this.Bus = Bus;
             this.Slot = Slot;
             this.Function = Function;
+            this.IsPCIEDevice = false;
 
             VendorID = ReadRegister16((byte)Config.VendorID);
 
@@ -142,7 +143,7 @@ namespace MOOS.Driver
             HeaderType = (PCIHeaderType)ReadRegister8((byte)Config.HeaderType);
             BIST = (PCIBist)ReadRegister8((byte)Config.BIST);
             InterruptPIN = (PCIInterruptPIN)ReadRegister8((byte)Config.InterruptPIN);
-            IRQ = ReadRegister8((byte)Config.IRQ);
+            IRQ = (byte)(0x20 + ReadRegister8((byte)Config.IRQ));
 
             if ((uint)VendorID == 0xFF && (uint)DeviceID == 0xFFFF)
             {
@@ -234,7 +235,7 @@ namespace MOOS.Driver
         /// </summary>
         /// <param name="aRegister">A register.</param>
         /// <param name="value">A value.</param>
-        public void WriteRegister16(byte aRegister, ushort value)
+        public void WriteRegister16(ushort aRegister, ushort value)
         {
             uint xAddr = GetAddressBase(Bus, Slot, Function) | ((uint)(aRegister & 0xFC));
             Native.Out32(0xCF8, xAddr);
@@ -261,7 +262,14 @@ namespace MOOS.Driver
             Native.Out32(0xCFC, value);
         }
 
-        public void WriteRegister(byte aRegister, uint value)
+        public void WriteRegister(ushort aRegister, uint value)
+        {
+            uint xAddr = GetAddressBase(Bus, Slot, Function) | ((uint)(aRegister & 0xFC));
+            Native.Out32(0xCF8, xAddr);
+            Native.Out32(0xCFC, value);
+        }
+
+        public void WriteRegister(uint aRegister, uint value)
         {
             uint xAddr = GetAddressBase(Bus, Slot, Function) | ((uint)(aRegister & 0xFC));
             Native.Out32(0xCF8, xAddr);
@@ -275,9 +283,9 @@ namespace MOOS.Driver
         /// <param name="aSlot">A slot.</param>
         /// <param name="aFunction">A function.</param>
         /// <returns>UInt32 value.</returns>
-        protected static uint GetAddressBase(ushort aBus, ushort aSlot, ushort aFunction)
+        protected static uint GetAddressBase(ushort Bus, uint Slot, uint Function)
         {
-            return (uint)(0x80000000 | (aBus << 16) | ((aSlot & 0x1F) << 11) | ((aFunction & 0x07) << 8));
+            return (uint)(0x80000000 | (Bus << 16) | ((Slot & 0x1F) << 11) | ((Function & 0x07) << 8));
         }
         #endregion
 

@@ -32,7 +32,7 @@ abstract unsafe class Allocator
     internal static ulong Free(IntPtr intPtr)
     {
         //You can use lock(null) in Moos
-        lock (null) 
+        lock (null)
         {
             long p = GetPageIndexStart(intPtr);
             if (p == -1) return 0;
@@ -44,15 +44,9 @@ abstract unsafe class Allocator
                 for (ulong i = 0; i < pages; i++)
                 {
                     _Info.Pages[(ulong)p + i] = 0;
-#if HasGC
-                    _Info.GCInfos[(ulong)p + i] = 0;
-#endif
                 }
 
                 _Info.Pages[p] = 0;
-#if HasGC
-                _Info.GCInfos[p] = 0;
-#endif
                 return pages * PageSize;
             }
             return 0;
@@ -89,9 +83,6 @@ abstract unsafe class Allocator
         public IntPtr Start;
         public UInt64 PageInUse;
         public fixed ulong Pages[NumPages]; //Max 512MiB
-#if HasGC
-        public fixed byte GCInfos[NumPages]; //Max 512MiB
-#endif
     }
 
     public static Info _Info;
@@ -112,7 +103,7 @@ abstract unsafe class Allocator
     internal static unsafe IntPtr Allocate(ulong size)
     {
         //You can use lock(null) in Moos
-        lock (null) 
+        lock (null)
         {
             ulong pages = 1;
 
@@ -153,14 +144,8 @@ abstract unsafe class Allocator
             for (ulong k = 0; k < pages; k++)
             {
                 _Info.Pages[i + k] = PageSignature;
-#if HasGC
-                _Info.GCInfos[i + k] = GC.AllowCollect ? (byte)0 : (byte)GC.Flags.Fixed;
-#endif
             }
             _Info.Pages[i] = pages;
-#if HasGC
-            _Info.GCInfos[i] = GC.AllowCollect ? (byte)0 : (byte)GC.Flags.Fixed;
-#endif
             _Info.PageInUse += pages;
 
             IntPtr ptr = _Info.Start + (i * PageSize);
