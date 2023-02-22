@@ -209,7 +209,7 @@ namespace System.Windows
         //Window Content
         void onRegion()
         {
-            if (!WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < (Y + Height))
+            if (!WindowManager.HasWindowFocusResizing && !WindowManager.HasWindowsRegion && Control.MousePosition.X > X && Control.MousePosition.X < (X + Width) && Control.MousePosition.Y > (Y - BarHeight) && Control.MousePosition.Y < (Y + Height))
             {
                 if (Control.Clicked)
                 {
@@ -360,44 +360,47 @@ namespace System.Windows
 
         public virtual void OnReSize()
         {
-            if (Control.MouseButtons == MouseButtons.Left)
+            if (WindowManager.FocusWindow == this)
             {
-                if (isResizing)
+                if (Control.MouseButtons == MouseButtons.Left)
                 {
-                    if (CursorManager.State.Value == CursorState.Horizontal)
+                    if (isResizing)
                     {
-                        int diffX = Control.MousePosition.X - prevMouseX;
-
-                        int diffWidth = ((isRightEdge) ? diffX : 0);
-
-                        int newWidth = prevWidth + diffWidth;
-
-                        if (!isRightEdge)
+                        if (CursorManager.State.Value == CursorState.Horizontal)
                         {
-                            this.X = Control.MousePosition.X;
-                            this.Width = newWidth - diffX ;
+                            int diffX = Control.MousePosition.X - prevMouseX;
+
+                            int diffWidth = ((isRightEdge) ? diffX : 0);
+
+                            int newWidth = prevWidth + diffWidth;
+
+                            if (!isRightEdge)
+                            {
+                                this.X = Control.MousePosition.X;
+                                this.Width = newWidth - diffX;
+                            }
+                            else
+                            {
+                                this.Width = newWidth;
+                            }
                         }
-                        else
+                        else if (CursorManager.State.Value == CursorState.Vertical)
                         {
-                            this.Width = newWidth;
-                        }
-                    }
-                    else if (CursorManager.State.Value == CursorState.Vertical)
-                    {
-                        int diffY = Control.MousePosition.Y - prevMouseY;
+                            int diffY = Control.MousePosition.Y - prevMouseY;
 
-                        int diffHeight = ((isBottomEdge) ? diffY : 0);
+                            int diffHeight = ((isBottomEdge) ? diffY : 0);
 
-                        int newHeight = prevHeight + diffHeight;
+                            int newHeight = prevHeight + diffHeight;
 
-                        if (!isBottomEdge)
-                        {
-                            this.Y = (Control.MousePosition.Y + this.BarHeight);
-                            this.Height = newHeight - diffY;
-                        }
-                        else
-                        {
-                            this.Height = newHeight;
+                            if (!isBottomEdge)
+                            {
+                                this.Y = (Control.MousePosition.Y + this.BarHeight);
+                                this.Height = newHeight - diffY;
+                            }
+                            else
+                            {
+                                this.Height = newHeight;
+                            }
                         }
                     }
                 }

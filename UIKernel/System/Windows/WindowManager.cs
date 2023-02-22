@@ -78,7 +78,6 @@ namespace System.Windows
             set => HasWindowMoving = value;
         }
         public static bool HasWindowFocusResizing { get; internal set; }
-        public static bool HasWindowResizing { get; internal set; }
     }
 }
 #endif
