@@ -204,17 +204,17 @@ namespace System
 			return -1;
 		}
 
-        public int IndexOf(string cadena, string subcadena)
+        public int IndexOf(string subcadena)
         {
             int _indice = -1;
 
-            for (int i = 0; i <= cadena.Length - subcadena.Length; i++)
+            for (int i = 0; i <= this.Length - subcadena.Length; i++)
             {
                 bool encontrado = true;
 
                 for (int j = 0; j < subcadena.Length; j++)
                 {
-                    if (cadena[i + j] != subcadena[j])
+                    if (this[i + j] != subcadena[j])
                     {
                         encontrado = false;
                         break;

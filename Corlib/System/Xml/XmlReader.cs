@@ -1,86 +1,120 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 
 namespace System.Xml
 {
     
-    public abstract partial class XmlReader
+    public partial class XmlReader
     {
+        string content { set; get; }
+        public XmlNodeType NodeType { get; private set; }
+        public string Name { get; private set; }
+        public string Value { get; private set; }
+
+        public XmlReader()
+        {
+            NodeType = XmlNodeType.Element;
+        }
+
+        public bool Read()
+        {
+            if (!string.IsNullOrEmpty(content))
+            {
+                if (content.Length > 0)
+                {
+                    switch (content[0])
+                    { 
+                        case '<':
+                            NodeType = XmlNodeType.Element;
+                            onElement("<");
+                            break;
+                        case '\n':
+                            NodeType = XmlNodeType.Whitespace;
+                            onWhitespace();
+                            break;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void onElement(string value)
+        {
+            int start = content.IndexOf("<");
+            int end = content.IndexOf(">");
+
+            Name = content.Substring(start + 1, end - 1);
+            content = content.Substring(end + 1);
+
+            end = content.IndexOf($"</{Name}>");
+
+            Value = content.Substring(0, end);
+            content = content.Substring(end + Name.Length + 3);
+        }
+
+        void onWhitespace()
+        {
+            content = content.Substring(1);
+        }
+
+        public bool MoveToNextAttribute()
+        {
+            return true;
+        }
+
         public static XmlReader Create(string file)
         {
+            XmlReader reader = new XmlReader();
+
             // Abrir el archivo XML en modo lectura
             byte[] archivo = File.ReadAllBytes(file);
           
-            // Crear un lector de texto y leer todo el contenido del archivo
+            // Crear un lector de texto y leer todo el content del archivo
             StreamReader lector = new StreamReader(archivo);
-            string contenido = lector.ReadToEnd();
-
+            reader.content = lector.ReadToEnd();
+          
             // Cerrar el archivo y el lector
             archivo.Dispose();
             lector.Close();
 
-            // Eliminar los espacios en blanco innecesarios del contenido XML
-            contenido = Regex.Replace(contenido, @">\s+<", "><");
-
-            // Crear un objeto StringBuilder para almacenar el contenido procesado
-            string xml = new string(contenido);
-
-            // Recorrer los elementos del archivo XML
-            int indice = 0;
-            while (indice < xml.Length)
+            // Analizar el contenido del archivo XML
+            while (reader.Read())
             {
-                // Buscar el inicio de un elemento XML
-                int inicio = xml.IndexOf("<", indice);
-
-                if (inicio >= 0 && inicio < xml.Length - 1)
+                switch (reader.NodeType)
                 {
-                    // Buscar el final del elemento XML
-                    int final = xml.IndexOf(">", inicio);
-
-                    if (final >= 0)
-                    {
-                        // Obtener el nombre del elemento XML
-                        string nombre = xml.Substring(inicio + 1, final - inicio - 1);
-
-                        // Buscar el cierre del elemento XML
-                        int cierre = xml.IndexOf("</" + nombre + ">", final);
-
-                        if (cierre >= 0)
+                    // Si es un elemento de apertura, imprimir el nombre de la etiqueta y sus atributos
+                    case XmlNodeType.Element:
+                        Debug.Write("<" + reader.Name);
+                        while (reader.MoveToNextAttribute())
                         {
-                            // Obtener el contenido del elemento XML
-                            string contenidoElemento = xml.Substring(final + 1, cierre - final - 1);
-
-                            // Procesar el contenido del elemento XML
-
-                            // ...
-
-                            // Actualizar el índice de búsqueda
-                            indice = cierre + nombre.Length + 3;
+                            Debug.Write(" " + reader.Name + " ");
                         }
-                        else
-                        {
-                            // El elemento XML no está cerrado correctamente
-                            // throw new Exception("Elemento XML no cerrado correctamente: " + nombre);
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        // El elemento XML no está formateado correctamente
-                        //throw new Exception("Elemento XML no formateado correctamente");
-                        return null;
-                    }
-                }
-                else
-                {
-                    // No se encontró ningún elemento XML
-                    break;
+                        Debug.Write(">");
+                        break;
+                    // Si es un elemento de cierre, imprimir el nombre de la etiqueta de cierre
+                    case XmlNodeType.EndElement:
+                        Debug.Write("</" + reader.Name + ">");
+                        break;
+                    // Si es texto, imprimir el valor del texto
+                    case XmlNodeType.Text:
+                        Debug.Write(reader.Value);
+                        break;
+                    // Si es un salto de línea, imprimir una nueva línea
+                    case XmlNodeType.Whitespace:
+                        Debug.Write(Environment.NewLine);
+                        break;
                 }
             }
 
-            return null;
+            reader.content.Dispose();
+
+            return reader;
         }
+
+
     }
     
 }
