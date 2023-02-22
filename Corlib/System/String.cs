@@ -204,7 +204,61 @@ namespace System
 			return -1;
 		}
 
-		public static string Concat(string a, string b, string c)
+        public int IndexOf(string cadena, string subcadena)
+        {
+            int _indice = -1;
+
+            for (int i = 0; i <= cadena.Length - subcadena.Length; i++)
+            {
+                bool encontrado = true;
+
+                for (int j = 0; j < subcadena.Length; j++)
+                {
+                    if (cadena[i + j] != subcadena[j])
+                    {
+                        encontrado = false;
+                        break;
+                    }
+                }
+
+                if (encontrado)
+                {
+                    _indice = i;
+                    break;
+                }
+            }
+
+            return _indice;
+        }
+
+        public int IndexOf(string subcadena, int indiceInicial)
+        {
+            int _indice = -1;
+
+            while (indiceInicial < this.Length)
+            {
+                int i = indiceInicial;
+                int j = 0;
+
+                while (i < this.Length && j < subcadena.Length && this[i] == subcadena[j])
+                {
+                    i++;
+                    j++;
+                }
+
+                if (j == subcadena.Length)
+                {
+                    _indice = indiceInicial;
+                    break;
+                }
+
+                indiceInicial++;
+            }
+
+            return _indice;
+        }
+
+        public static string Concat(string a, string b, string c)
 		{
 			string p1 = a + b;
 			string p2 = p1 + c;
@@ -514,5 +568,7 @@ namespace System
 
             return result;
         }
-	}
+
+
+    }
 }

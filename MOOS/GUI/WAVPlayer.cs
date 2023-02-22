@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Sounds;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
@@ -14,17 +15,12 @@ namespace MOOS.GUI
 {
     internal unsafe class WAVPlayer : Window
     {
-        static byte[] _pcm;
-        static int _index;
-        static WAV.Header _header;
-        static WAVPlayer _player;
-        static string _song_name;
+        string _song_name;
 
         Image audiopause;
         Image audioplay;
 
-        static bool playing;
-        static bool isLoaded;
+        bool playing;
 
         public WAVPlayer()
         {
@@ -34,18 +30,9 @@ namespace MOOS.GUI
             Title = "WAV Player";
             this.Width = 450;
             this.Height= 200;
-            _pcm = null;
-            _index = 0;
-       
+
             playing = false;
             clickLock = false;
-            _player = this;
-
-            if (!isLoaded)
-            {
-                isLoaded = true;
-                Interrupts.EnableInterrupt(0x20, &DoPlay);
-            }
         }
 
         bool clickLock;
@@ -85,38 +72,14 @@ namespace MOOS.GUI
 
         public void Play(string file)
         {
-            byte[] wav = File.ReadAllBytes(file);
-            _index = 0;
-            WAV.Decode(wav, out var pcm, out var hdr);
-            wav.Dispose();
-            _pcm = pcm;
-            _header = hdr;
             _song_name = file;
-
-            playing = true;
-        }
-
-        static void DoPlay()
-        {
-            if (_pcm != null && _player.IsVisible && playing)
-            {
-                if (Audio.bytesWritten != 0) return;
-                if (_index + Audio.CacheSize > _pcm.Length) _index = 0;
-
-                fixed (byte* buffer = _pcm)
-                {
-                    _index += Audio.CacheSize;
-                    Audio.snd_write(buffer + _index, Audio.CacheSize);
-                }
-            }
+            playing = AudioManager.Load(file);
         }
 
         public override void OnClose()
         {
             base.OnClose();
-            playing = false;
-            _pcm?.Dispose();
-            _player?.Dispose();
+            AudioManager.Stop();
         }
     }
 }

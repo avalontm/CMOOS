@@ -10,6 +10,7 @@ using System.Desktops.Controls;
 using System.Diagnostics;
 using System.Drawing;
 using System.Explorers;
+using System.Sounds;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Forms;
@@ -64,6 +65,7 @@ namespace System.Desktops
             DesktopIcons.Initialize();
             WindowManager.Initialize();
             CursorManager.Initialize();
+            AudioManager.Initialize();
 
             bar = new DesktopBar();
             docker = new DesktopDocker();
