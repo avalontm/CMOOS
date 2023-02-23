@@ -2,54 +2,60 @@
 using System.Runtime;
 using System.Runtime.InteropServices;
 
-namespace Moos.Framework
+public static unsafe class MoosNative
 {
-    public static unsafe class MoosNative
-    {
-        [RuntimeExport("malloc")]
-        public static nint malloc(ulong size) => Allocate(size);
+    #region NativeMethods
+    [RuntimeExport("malloc")]
+    public static nint malloc(ulong size) => Allocate(size);
 
-        [DllImport("Allocate")]
-        public static extern nint Allocate(ulong size);
+    [DllImport("Allocate")]
+    public static extern nint Allocate(ulong size);
 
-        [DllImport("ReadAllBytes")]
-        public static extern void ReadAllBytes(string name, out ulong size, out byte* data);
+    [DllImport("ReadAllBytes")]
+    public static extern void ReadAllBytes(string name, out ulong size, out byte* data);
 
-        [DllImport("Lock")]
-        public static extern void ALock();
+    [DllImport("Lock")]
+    public static extern void ALock();
 
-        [DllImport("Unlock")]
-        public static extern void AUnlock();
+    [DllImport("Unlock")]
+    public static extern void AUnlock();
 
-        [RuntimeExport("Lock")]
-        public static void Lock() => ALock();
+    [RuntimeExport("Lock")]
+    public static void Lock() => ALock();
 
-        [RuntimeExport("Unlock")]
-        public static void Unlock() => AUnlock();
+    [RuntimeExport("Unlock")]
+    public static void Unlock() => AUnlock();
 
-        [DllImport("DebugWrite")]
-        public static extern void ADebugWrite(char c);
+    [DllImport("DebugWrite")]
+    public static extern void ADebugWrite(char c);
 
-        [DllImport("DebugWriteLine")]
-        public static extern void ADebugWriteLine();
+    [DllImport("DebugWriteLine")]
+    public static extern void ADebugWriteLine();
 
-        [RuntimeExport("DebugWrite")]
-        public static void DebugWrite(char c) => ADebugWrite(c);
+    [RuntimeExport("DebugWrite")]
+    public static void DebugWrite(char c) => ADebugWrite(c);
 
-        [RuntimeExport("DebugWriteLine")]
-        public static void DebugWriteLine() => ADebugWriteLine();
+    [RuntimeExport("DebugWriteLine")]
+    public static void DebugWriteLine() => ADebugWriteLine();
 
-        [DllImport("Free")]
-        public static extern ulong AFree(nint ptr);
+    [DllImport("ConsoleWrite")]
+    public static extern void AConsoleWrite(char c);
 
-        [RuntimeExport("free")]
-        public static ulong free(nint ptr) => AFree(ptr);
+    [DllImport("ConsoleWriteLine")]
+    public static extern void AConsoleWriteLine();
 
-        [DllImport("BindOnKeyChangedHandler")]
-        public static extern void BindOnKeyChangedHandler(IntPtr handler);
+    [RuntimeExport("ConsoleWrite")]
+    public static void ConsoleWrite(char c) => AConsoleWrite(c);
 
-        [DllImport("MessageBox")]
-        public static extern void MessageBox(string title, string message);
+    [RuntimeExport("ConsoleWriteLine")]
+    public static void ConsoleWriteLine() => AConsoleWriteLine();
 
-    }
+    [DllImport("Free")]
+    public static extern ulong AFree(nint ptr);
+
+    [RuntimeExport("free")]
+    public static ulong free(nint ptr) => AFree(ptr);
+    #endregion
+
 }
+

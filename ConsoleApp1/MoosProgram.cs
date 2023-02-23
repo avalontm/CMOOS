@@ -40,6 +40,18 @@ namespace MoosApplication
         [RuntimeExport("DebugWriteLine")]
         public static void DebugWriteLine() => ADebugWriteLine();
 
+        [DllImport("ConsoleWrite")]
+        public static extern void AConsoleWrite(char c);
+
+        [DllImport("ConsoleWriteLine")]
+        public static extern void AConsoleWriteLine();
+
+        [RuntimeExport("ConsoleWrite")]
+        public static void ConsoleWrite(char c) => AConsoleWrite(c);
+
+        [RuntimeExport("ConsoleWriteLine")]
+        public static void ConsoleWriteLine() => AConsoleWriteLine();
+
         [DllImport("Free")]
         public static extern ulong AFree(nint ptr);
 

@@ -13,7 +13,7 @@ namespace Moos.Framework.Controls
 
         public static System.Drawing.Image FromFile(string file)
         {
-            string filePath = Application.ExecutablePath + "/Content/Resources/" + file;
+            string filePath = Application.Current.ExecutablePath + "Resources/" + file;
             IntPtr handler = LoadPNG(filePath);
             return Unsafe.As<IntPtr, System.Drawing.Image>(ref handler);
         }

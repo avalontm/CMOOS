@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Moos.Core.System
+namespace System
 {
     public static class Console
     {

@@ -38,5 +38,21 @@ namespace System.IO
                 //FileSystem.DeleteFile(Path.GetFullPath(path));
             }
         }
+
+        public static string GetDirectory(string file)
+        {
+            string result = "";
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                string[] str = file.Split('/');
+
+                for (int i = 0; i < (str.Length - 1); i++)
+                {
+                    result += str[i] + "/";
+                }
+            }
+            return result;
+        }
     }
 }

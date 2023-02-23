@@ -6,9 +6,12 @@ using System.Text;
 
 namespace System.Windows
 {
-    public class PortableApp : Window
+    public class PortableApp : Window 
     {
         public Image ScreenBuf;
+
+        string _root;
+        public string Root { get { return _root; } set { _root = value; } }
 
         public PortableApp()
         {

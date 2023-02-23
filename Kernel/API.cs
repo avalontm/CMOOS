@@ -27,6 +27,8 @@ namespace MOOS
 
             switch (name)
             {
+                case "ApplicationCreate":
+                    return (delegate*<IntPtr, void>)&API_ApplicationCreate;
                 case "LoadPNG":
                     return (delegate*<string, IntPtr>)&API_LoadPNG;
                 case "MessageBox":
@@ -124,6 +126,16 @@ namespace MOOS
 
             Panic.Error($"System call \"{name}\" is not found");
             return null;
+        }
+
+        public static void API_ApplicationCreate(IntPtr handler)
+        {
+            IApplicationBase papp = Unsafe.As<IntPtr, IApplicationBase>(ref handler);
+
+            if (papp != null)
+            {         
+                papp.SetExecutablePath(Process.process.startInfo.WorkingDirectory);
+            }
         }
 
         public static IntPtr API_LoadPNG(string file)

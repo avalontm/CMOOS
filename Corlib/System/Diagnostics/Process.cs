@@ -1,26 +1,40 @@
 using Internal.Runtime.CompilerHelpers;
+using Internal.Runtime.CompilerServices;
 using System.IO;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace System.Diagnostics
 {
-    public static unsafe class Process
+    public unsafe class Process
     {
-        public static void Start(string file)
+        public static Process process { private set; get; } 
+        public ProcessStartInfo? startInfo { set; get; }
+
+        public static Process? Start(ProcessStartInfo startInfo)
         {
-            Start(File.ReadAllBytes(file));
+            return Start(startInfo.FileName, startInfo.Arguments);
         }
 
-        static void Start(byte[] exe)
+        public static Process? Start(string file, string arguments = "")
         {
+            byte[] exe = File.ReadAllBytes(file);
+
+            if(exe == null)
+            {
+                return null;
+            }
+
+            Process process = new Process();
+
             fixed (byte* ptr = exe)
             {
                 DOSHeader* doshdr = (DOSHeader*)ptr;
                 NtHeaders64* nthdr = (NtHeaders64*)(ptr + doshdr->e_lfanew);
 
-                if (!nthdr->OptionalHeader.BaseRelocationTable.VirtualAddress) return;
-                if (nthdr->OptionalHeader.ImageBase != 0x140000000) return;
+                if (!nthdr->OptionalHeader.BaseRelocationTable.VirtualAddress) return null;
+                if (nthdr->OptionalHeader.ImageBase != 0x140000000) return null;
 
                 byte* newPtr = (byte*)malloc(nthdr->OptionalHeader.SizeOfImage);
                 memset(newPtr, 0, nthdr->OptionalHeader.SizeOfImage);
@@ -41,9 +55,16 @@ namespace System.Diagnostics
                 delegate*<void> p = (delegate*<void>)((ulong)newPtr + newnthdr->OptionalHeader.AddressOfEntryPoint);
                 //TO-DO disposing
                 StartupCodeHelpers.InitializeModules(moduleSeg);
+
+                process.startInfo = new ProcessStartInfo();
+                process.startInfo.FileName = file;
+                process.startInfo.WorkingDirectory = File.GetDirectory(file);
+                process.startInfo.Arguments = arguments;
+
                 StartThread(p);
-                //free((IntPtr)ptr);
             }
+
+            return process;
         }
 
         [DllImport("*")]
