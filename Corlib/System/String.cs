@@ -204,6 +204,19 @@ namespace System
 			return -1;
 		}
 
+        public int IndexOf(char j, int start)
+        {
+            for (int i = start; i < Length; i++)
+            {
+                if (this[i] == j)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         public int IndexOf(string subcadena)
         {
             int _indice = -1;
@@ -257,6 +270,7 @@ namespace System
 
             return _indice;
         }
+
 
         public static string Concat(string a, string b, string c)
 		{

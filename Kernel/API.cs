@@ -35,6 +35,8 @@ namespace MOOS
                     return (delegate*<void>)&API_WriteLine;
                 case "DebugWriteLine":
                     return (delegate*<void>)&API_DebugWriteLine;
+                case "ConsoleWriteLine":
+                    return (delegate*<void>)&API_ConsoleWriteLine;
                 case "Allocate":
                     return (delegate*<ulong, nint>)&API_Allocate;
                 case "Reallocate":
@@ -51,6 +53,8 @@ namespace MOOS
                     return (delegate*<char, void>)&API_Write;
                 case "DebugWrite":
                     return (delegate*<char, void>)&API_DebugWrite;
+                case "ConsoleWrite":
+                    return (delegate*<char, void>)&API_ConsoleWrite;
                 case "SwitchToConsoleMode":
                     return (delegate*<void>)&API_SwitchToConsoleMode;
                 case "DrawPoint":
@@ -209,12 +213,24 @@ namespace MOOS
             Serial.Write(c);
         }
 
+        [RuntimeExport("ConsoleWrite")]
+        public static void API_ConsoleWrite(char c)
+        {
+            Console.Write(c);
+        }
+        
         [RuntimeExport("DebugWriteLine")]
         public static void API_DebugWriteLine()
         {
             Serial.WriteLine();
         }
 
+        [RuntimeExport("ConsoleWriteLine")]
+        public static void API_ConsoleWriteLine()
+        {
+            Console.WriteLine();
+        }
+        
         [RuntimeExport("Lock")]
         public static void API_Lock()
         {
