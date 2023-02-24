@@ -16,5 +16,5 @@
 	  </Reference>
 	</ItemGroup>
 
-	<Import Project="$(MSBuildExtensionsPath)\Moos\Moos.CSharp.targets" />
+	<Import Project="..\Tools\Moos.CSharp.targets" />
 </Project>
