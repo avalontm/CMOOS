@@ -128,6 +128,7 @@ namespace System
 			}
 		}
 
+
 		public override string ToString()
 		{
 			return this;
@@ -135,9 +136,7 @@ namespace System
 
 		public override bool Equals(object obj)
 		{
-#pragma warning disable IDE0038 // Use pattern matching
 			return obj is string && Equals((string)obj);
-#pragma warning restore IDE0038 // Use pattern matching
 		}
 
 		public bool Equals(string val)
@@ -496,6 +495,7 @@ namespace System
 				return output;
 			}
 		}
+
 		public string ToLower()
 		{
 			fixed(char* pthis = this)

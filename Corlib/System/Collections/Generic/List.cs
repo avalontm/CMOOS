@@ -78,7 +78,9 @@ namespace System.Collections.Generic
                 T second = item;
 
                 if (first.Equals(second))
+                {
                     return i;
+                }
             }
 
             return -1;

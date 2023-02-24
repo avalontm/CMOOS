@@ -7,15 +7,19 @@ using System.Text.RegularExpressions;
 
 namespace System.Xml
 {
-
     public partial class XmlReader
     {
-        public Dictionary<string, string> Elements = new Dictionary<string, string>();
+        public Dictionary<string, Dictionary<string, string>> Nodes { private set; get; } = new Dictionary<string, Dictionary<string, string>>();
+        Dictionary<string, string> node = new Dictionary<string, string>();
+
         string content { set; get; }
         string attributes { set; get; }
         public XmlNodeType NodeType { get; private set; }
         public string Name { get; private set; }
         public string Value { get; private set; }
+
+        public string aName { get; private set; }
+        public string aValue { get; private set; }
 
         public XmlReader()
         {
@@ -28,15 +32,7 @@ namespace System.Xml
             {
                 if (content.Length > 0)
                 {
-                    switch (content[0])
-                    {
-                        case '\n':
-                            onWhitespace();
-                            break;
-                        default:
-                            onElement();
-                            break;
-                    }
+                    onElement();
                     return true;
                 }
             }
@@ -47,7 +43,13 @@ namespace System.Xml
         {
             attributes = string.Empty;
 
-            if (!string.IsNullOrEmpty(Name))
+            if ((int)content[0] == 10 || (int)content[0] == 13)
+            {
+                onNewLine();
+                return;
+            }
+
+            if (count > 1 && !string.IsNullOrEmpty(Name))
             {
                 onElementValue();
                 return;
@@ -63,7 +65,7 @@ namespace System.Xml
 
             int end = content.IndexOf('>');
 
-            if (content.Substring(start +1, end).IndexOf('=') > 0)
+            if (content.Substring(start + 1, end).IndexOf('=') > 0)
             {
                 int _start = content.IndexOf(' ');
                 attributes = content.Substring(_start + 1, end);
@@ -73,10 +75,25 @@ namespace System.Xml
             NodeType = XmlNodeType.Element;
 
             Name = content.Substring(start + 1, end);
-    
+            prevElement = Name;
+
             start = content.IndexOf('>');
             content = content.Substring(start + 1);
- 
+        }
+
+        void onNewLine()
+        {
+            if ((int)content[0] == 10)
+            {
+                NodeType = XmlNodeType.Whitespace;
+            }
+            else if ((int)content[0] == 13)
+            {
+                NodeType = XmlNodeType.None;
+            }
+            Name = string.Empty;
+            Value = string.Empty;
+            content = content.Substring(1);
         }
 
         void onElementValue()
@@ -84,15 +101,22 @@ namespace System.Xml
             int start = 0;
             int end = content.IndexOf("</");
 
-            if (end < 0)
+            if (content.Substring(0, 1) == "<")
+            {
+                start = content.IndexOf(">") + 1;
+            }
+
+            if (start < 0 || end < 0)
             {
                 return;
             }
 
             NodeType = XmlNodeType.Text;
-
+            prevElement = Name;
             Name = string.Empty;
+
             Value = content.Substring(start, end);
+            
             content = content.Substring(end);
         }
 
@@ -104,21 +128,18 @@ namespace System.Xml
             int end = content.IndexOf('>', start);
 
             Name = content.Substring(start + 1, end);
+            prevElement = Name;
+
             Value = string.Empty;
             content = content.Substring(end + 1);
         }
 
-        void onWhitespace()
-        {
-            NodeType = XmlNodeType.Whitespace;
-            content = content.Substring(1);
-        }
 
         public bool MoveToNextAttribute()
         {
             if (string.IsNullOrEmpty(attributes))
             {
-                Value = string.Empty;
+                aValue = string.Empty;
                 return false;
             }
 
@@ -129,22 +150,26 @@ namespace System.Xml
 
             if (end < 0)
             {
-                Value = string.Empty;
+                aValue = string.Empty;
                 return false;
             }
 
-            Name = attributes.Substring(start, end);
+            aName = attributes.Substring(start, end);
             attributes = attributes.Substring(end + 1);
     
             start = attributes.IndexOf('"');
             attributes = attributes.Substring(start + 1);
             end = attributes.IndexOf('"');
 
-            Value = attributes.Substring(start, end);
+            aValue = attributes.Substring(start, end);
             attributes = attributes.Substring(end + 1);
 
             return true;
         }
+
+        static string root = "";
+        static string prevElement = "";
+        static int count = 0;
 
         public static XmlReader Create(string file)
         {
@@ -168,24 +193,42 @@ namespace System.Xml
                 {
                     // Si es un elemento de apertura, imprimir el nombre de la etiqueta y sus atributos
                     case XmlNodeType.Element:
-                        Console.Write("<" + reader.Name);
 
+                        Console.Write($"<{prevElement}");
                         while (reader.MoveToNextAttribute())
                         {
-                            Console.Write(" " + reader.Name + "=\"" + reader.Value + "\"");
+                           // Console.Write(" " + reader.Name + "=\"" + reader.Value + "\"");
                         }
 
-                        Console.Write(">");
+                        if (string.IsNullOrEmpty(root))
+                        {
+                            root = reader.Name;
+
+                        }
+
+                        Console.Write($">");
+                        count++;
+
+                        if (!string.IsNullOrEmpty(root))
+                        {
+                            reader.node.Add(root, prevElement);
+                        }
+
                         break;
                     // Si es un elemento de cierre, imprimir el nombre de la etiqueta de cierre
                     case XmlNodeType.EndElement:
-                        Console.Write("</" + reader.Name + ">");
+
+                            Console.Write($"</{prevElement}>");
+                            reader.Nodes.Add(prevElement, reader.node);
+                            reader.node = new Dictionary<string, string>();
+                        
                         break;
                     // Si es texto, imprimir el valor del texto
                     case XmlNodeType.Text:
-                        Console.Write(reader.Value);
+                        reader.node.Add(prevElement, reader.Value);
+                        Console.Write($" {reader.Value} ");
+                           
                         break;
-                    // Si es un salto de línea, imprimir una nueva línea
                     case XmlNodeType.Whitespace:
                         Console.Write(Environment.NewLine);
                         break;
@@ -194,8 +237,9 @@ namespace System.Xml
 
             reader.content.Dispose();
             reader.attributes.Dispose();
-
-            Console.Write(Environment.NewLine);
+            reader.node.Dispose();
+            root.Dispose();
+            prevElement.Dispose();
 
             return reader;
         }

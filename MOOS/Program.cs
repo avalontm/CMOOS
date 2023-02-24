@@ -128,8 +128,21 @@ unsafe class Program
              */
         #endregion
 
-        XmlReader reader = XmlReader.Create("note.xml");
 
+        XmlReader reader = XmlReader.Create("info.xml");
+
+        Console.WriteLine();
+
+        Console.WriteLine($"[RADER] KEY = {reader.Nodes.Keys[0]} | Value = {reader.Nodes.Values[1].Values[0]}");
+        /*
+        for (int i = 0; i < reader.Nodes["appmoos"].Count; i++)
+        {
+            var name = reader.Nodes["appmoos"].Keys[i];
+            var value = reader.Nodes["appmoos"].Values[i];
+
+            Console.WriteLine($"[node] {name} = {value}");
+        }
+        */
         SMain();
     }
 

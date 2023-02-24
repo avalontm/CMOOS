@@ -1,6 +1,6 @@
 <appmoos>
 <name>Mue Demo</name>
-<mue>app.mue</mue>
+<main>app.mue</main>
 <icon>icon.png</icon>
 <version>1.0.0</version>
 <author>AvalonTM</author>
