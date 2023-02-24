@@ -12,9 +12,6 @@ namespace Moos.Framework
 {
     public unsafe class Application : IApplicationBase
     {
-        [DllImport("ApplicationCreate")]
-        public static extern void ApplicationCreate(IntPtr handler);
-
         public static Application Current { get; internal set; }
 
         public string StartupUri { set; get; }
@@ -24,7 +21,6 @@ namespace Moos.Framework
 
         public Application()
         {
-            ApplicationCreate(this.Handler);
             Windows = new WindowCollection();
             Current = this;
         }

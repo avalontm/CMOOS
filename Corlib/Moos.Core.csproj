@@ -7,7 +7,8 @@
 
 	<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-
+	<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+	  
 	<Title>Moos.Core</Title>
 	<Description>Moos Core</Description>
 	<Copyright>AvalonTM</Copyright>

@@ -1,8 +1,11 @@
-﻿namespace System.Windows
+﻿using System.Runtime.InteropServices;
+
+namespace System.Windows
 {
     public class IApplicationBase
     {
-        public IntPtr Handler { private set; get; }
+        [DllImport("ApplicationCreate")]
+        public static extern void ApplicationCreate(IntPtr handler);
 
         string _executablePath;
         public string ExecutablePath
@@ -15,7 +18,7 @@
 
         public IApplicationBase()
         {
-            Handler = this.GetHandle(); 
+            ApplicationCreate(this.GetHandle());
         }
 
         public void SetExecutablePath(string path)
