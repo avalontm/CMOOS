@@ -12,6 +12,11 @@ namespace System.Diagnostics
         public static Process process { private set; get; } 
         public ProcessStartInfo? startInfo { set; get; }
 
+        public Process()
+        {
+            startInfo = new ProcessStartInfo();
+        }
+
         public static Process? Start(ProcessStartInfo startInfo)
         {
             return Start(startInfo.FileName, startInfo.Arguments);
@@ -21,7 +26,7 @@ namespace System.Diagnostics
         {
             byte[] exe = File.ReadAllBytes(file);
 
-            if(exe == null)
+            if(exe == null || exe.Length == 0)
             {
                 return null;
             }
@@ -56,11 +61,11 @@ namespace System.Diagnostics
                 //TO-DO disposing
                 StartupCodeHelpers.InitializeModules(moduleSeg);
 
-                process.startInfo = new ProcessStartInfo();
                 process.startInfo.FileName = file;
                 process.startInfo.WorkingDirectory = File.GetDirectory(file);
                 process.startInfo.Arguments = arguments;
 
+                //Start Process
                 StartThread(p);
             }
 

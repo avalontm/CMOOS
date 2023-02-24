@@ -52,6 +52,7 @@ namespace System.IO
                     result += str[i] + "/";
                 }
             }
+
             return result;
         }
     }

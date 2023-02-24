@@ -9,7 +9,7 @@ namespace System.Xml
 {
     public partial class XmlReader
     {
-        public Dictionary<string, Dictionary<string, string>> Nodes { private set; get; } = new Dictionary<string, Dictionary<string, string>>();
+        Dictionary<string, Dictionary<string, string>> Nodes { set; get; } = new Dictionary<string, Dictionary<string, string>>();
         Dictionary<string, string> node = new Dictionary<string, string>();
 
         string content { set; get; }
@@ -116,7 +116,6 @@ namespace System.Xml
             Name = string.Empty;
 
             Value = content.Substring(start, end);
-            
             content = content.Substring(end);
         }
 
@@ -194,10 +193,10 @@ namespace System.Xml
                     // Si es un elemento de apertura, imprimir el nombre de la etiqueta y sus atributos
                     case XmlNodeType.Element:
 
-                        Console.Write($"<{prevElement}");
+                       // Console.Write($"<{prevElement}");
                         while (reader.MoveToNextAttribute())
                         {
-                           // Console.Write(" " + reader.Name + "=\"" + reader.Value + "\"");
+                            // Console.Write(" " + reader.Name + "=\"" + reader.Value + "\"");
                         }
 
                         if (string.IsNullOrEmpty(root))
@@ -206,7 +205,7 @@ namespace System.Xml
 
                         }
 
-                        Console.Write($">");
+                       // Console.Write($">");
                         count++;
 
                         if (!string.IsNullOrEmpty(root))
@@ -218,19 +217,19 @@ namespace System.Xml
                     // Si es un elemento de cierre, imprimir el nombre de la etiqueta de cierre
                     case XmlNodeType.EndElement:
 
-                            Console.Write($"</{prevElement}>");
-                            reader.Nodes.Add(prevElement, reader.node);
-                            reader.node = new Dictionary<string, string>();
-                        
+                        //Console.Write($"</{prevElement}>");
+                        reader.Nodes.Add(prevElement, reader.node);
+                        reader.node = new Dictionary<string, string>();
+
                         break;
                     // Si es texto, imprimir el valor del texto
                     case XmlNodeType.Text:
                         reader.node.Add(prevElement, reader.Value);
-                        Console.Write($" {reader.Value} ");
-                           
+                       // Console.Write($" {reader.Value} ");
+
                         break;
                     case XmlNodeType.Whitespace:
-                        Console.Write(Environment.NewLine);
+                       // Console.Write(Environment.NewLine);
                         break;
                 }
             }
@@ -244,6 +243,10 @@ namespace System.Xml
             return reader;
         }
 
+        public Dictionary<string, string> GetNode(string node)
+        {
+            return Nodes[node];
+        }
 
     }
     

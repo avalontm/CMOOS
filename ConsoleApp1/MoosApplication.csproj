@@ -31,7 +31,7 @@
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.3" />
 	</ItemGroup>
 
 

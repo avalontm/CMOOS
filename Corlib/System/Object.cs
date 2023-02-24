@@ -37,7 +37,7 @@ namespace System
         {
             object a = this;
 
-            if (a== null || b == null)
+            if (a == null || b == null)
             {
                 Console.WriteLine($"[Equals] NULL");
                 return false;
@@ -66,11 +66,13 @@ namespace System
                 case EETypeElementType.UIntPtr:
                     return ((UIntPtr)a == (UIntPtr)b);
                 case EETypeElementType.Char:
-                    return ((Char)a == (Char)b);      
-                    
+                    return ((Char)a == (Char)b);
+                case EETypeElementType.Class:
+                    return (a == b);
+
             }
 
-            return (a == b);
+            return false;
         }
         
         
