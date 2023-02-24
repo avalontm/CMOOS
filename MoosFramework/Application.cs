@@ -24,15 +24,18 @@ namespace Moos.Framework
 
         public Application()
         {
-            ApplicationCreate(this.GetHandle());
+            ApplicationCreate(this.Handler);
             Windows = new WindowCollection();
             Current = this;
         }
 
         public void Run(Window main)
         {
-            MainWindow = main;
-            MainWindow.ShowDialog();
+            if (main != null)
+            {
+                MainWindow = main;
+                MainWindow.ShowDialog();
+            }
 
             //wait while is running
             for (; ; )

@@ -1,7 +1,9 @@
 ﻿namespace System.Windows
 {
-    public partial class IApplicationBase
+    public class IApplicationBase
     {
+        public IntPtr Handler { private set; get; }
+
         string _executablePath;
         public string ExecutablePath
         {
@@ -9,6 +11,11 @@
             {
                 return _executablePath;
             }
+        }
+
+        public IApplicationBase()
+        {
+            Handler = this.GetHandle(); 
         }
 
         public void SetExecutablePath(string path)

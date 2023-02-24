@@ -77,15 +77,12 @@ namespace System.Collections.Generic
                 T first = this[i];
                 T second = item;
 
-                if (first.Equals(second))
-                {
+                if (this[i] == item)
                     return i;
-                }
             }
 
             return -1;
         }
-
         public bool Remove(T item)
         {
             int at = IndexOf(item);

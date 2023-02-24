@@ -1,6 +1,7 @@
 ﻿using Moos.Framework;
 using Moos.Framework.Controls;
 using Moos.Framework.Input;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ namespace MoosApplication
             this.Width = 300;
             this.Height = 200;
 
+            
             //Grid
             Grid _grid0 = new Grid(this);
             // ---------------------------
@@ -57,14 +59,15 @@ namespace MoosApplication
             button.CommandParameter = button;
 
             _grid0.SetRow(button, 2);
-
+        
             //Image
             Image image = new Image();
             image.Margin = new Thickness(5);
             image.Source = ImageSource.FromFile("MOOS-Logo.png");
             _grid0.SetRow(image, 1);
-
+        
             DataContext = this;
+            
         }
 
         void OnCounterClicked(object obj)

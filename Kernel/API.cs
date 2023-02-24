@@ -166,7 +166,6 @@ namespace MOOS
 
         public static void API_StartThread(delegate*<void> func)
         {
-            Console.WriteLine($"[StartThread]");
             new Thread(func).Start();
         }
 

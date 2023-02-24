@@ -55,6 +55,11 @@ public static unsafe class MoosNative
 
     [RuntimeExport("free")]
     public static ulong free(nint ptr) => AFree(ptr);
+
+    [RuntimeExport("__security_cookie")]
+    public static void SecurityCookie()
+    { 
+    }
     #endregion
 
 }
