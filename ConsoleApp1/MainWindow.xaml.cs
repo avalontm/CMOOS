@@ -60,15 +60,13 @@ namespace MoosApplication
 
             _grid0.SetRow(button, 2);
         
-            /*
             //Image
             Image image = new Image();
             image.Margin = new Thickness(5);
             image.Source = ImageSource.FromFile("MOOS-Logo.png");
             _grid0.SetRow(image, 1);
-            */
-            DataContext = this;
             
+            DataContext = this;
         }
 
         void OnCounterClicked(object obj)

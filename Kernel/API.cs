@@ -22,6 +22,8 @@ namespace MOOS
 {
     public static unsafe class API
     {
+        internal static Process process { set; get; }
+
         public static unsafe void* HandleSystemCall(string name)
         {
 
@@ -83,6 +85,8 @@ namespace MOOS
                     return (delegate*<string, bool, void>)&API_Error;
                 case "StartThread":
                     return (delegate*<delegate*<void>, void>)&API_StartThread;
+                case "StartThreadWithParameters":
+                    return (delegate*<delegate*<void>, IntPtr, void>)&API_StartThreadWithParameters;
 #if Kernel && HasGUI
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
@@ -130,13 +134,12 @@ namespace MOOS
 
         public static void API_ApplicationCreate(IntPtr handler)
         {
-            /*
-            IApplicationBase papp = Unsafe.As<IntPtr, IApplicationBase>(ref handler);
+            IApplicationBase _base = Unsafe.As<IntPtr, IApplicationBase>(ref handler);
 
-            if (papp != null)
-            {         
-                papp.SetExecutablePath(Process.process.startInfo.WorkingDirectory);
-            }*/
+            if (_base != null)
+            {
+               _base.SetExecutablePath(process.startInfo.WorkingDirectory);
+            }
         }
 
         public static IntPtr API_LoadPNG(string file)
@@ -167,6 +170,14 @@ namespace MOOS
 
         public static void API_StartThread(delegate*<void> func)
         {
+            new Thread(func).Start();
+        }
+
+        public static void API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
+        {
+            process = new Process();
+            process.startInfo = Unsafe.As<IntPtr, ProcessStartInfo>(ref handler);
+
             new Thread(func).Start();
         }
 

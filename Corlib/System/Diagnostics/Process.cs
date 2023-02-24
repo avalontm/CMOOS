@@ -9,7 +9,6 @@ namespace System.Diagnostics
 {
     public unsafe class Process
     {
-        public static Process process { private set; get; } 
         public ProcessStartInfo? startInfo { set; get; }
 
         public Process()
@@ -64,9 +63,9 @@ namespace System.Diagnostics
                 process.startInfo.FileName = file;
                 process.startInfo.WorkingDirectory = File.GetDirectory(file);
                 process.startInfo.Arguments = arguments;
-                Console.WriteLine($"[Process Start]");
+
                 //Start Process
-                StartThread(p);
+                StartThreadWithParameters(p, process.startInfo);
             }
 
             return process;
@@ -80,6 +79,9 @@ namespace System.Diagnostics
 
         [DllImport("StartThread")]
         static extern void StartThread(delegate*<void> func);
+
+        [DllImport("StartThreadWithParameters")]
+        static extern void StartThreadWithParameters(delegate*<void> func, IntPtr handler);
 
         [DllImport("*")]
         static unsafe extern void memset(byte* ptr, byte c, ulong count);
