@@ -11,7 +11,7 @@
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-
+		
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
@@ -25,15 +25,14 @@
 		<Copy SourceFiles="$(NativeOutputPath)$(TargetName)$(NativeBinaryExt)" DestinationFiles="$(NativeOutputPath)$(TargetName).mue"></Copy>
 		<Delete Files="$(NativeOutputPath)$(TargetName)$(NativeBinaryExt)"></Delete>
 	</Target>
-
+	
 	<Target Name="HandleBuild" AfterTargets="AfterBuild" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
 		<Exec Command="dotnet publish -r win-x64"></Exec>
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.3" />
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
 	</ItemGroup>
-
 
 	<ItemGroup>
 	  <Reference Include="Moos.Core">

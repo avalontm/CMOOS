@@ -61,12 +61,12 @@ namespace System.Diagnostics
                 //TO-DO disposing
                 StartupCodeHelpers.InitializeModules(moduleSeg);
 
-                process.startInfo.FileName = file;
-                process.startInfo.WorkingDirectory = File.GetDirectory(file);
-                process.startInfo.Arguments = arguments;
-
+                //process.startInfo.FileName = file;
+                //process.startInfo.WorkingDirectory = File.GetDirectory(file);
+                //process.startInfo.Arguments = arguments;
+                Console.WriteLine($"[Process Start]");
                 //Start Process
-                StartThread(p);
+               // StartThread(p);
             }
 
             return process;
