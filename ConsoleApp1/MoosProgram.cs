@@ -59,6 +59,10 @@ namespace MoosApplication
         [RuntimeExport("free")]
         public static ulong free(nint ptr) => AFree(ptr);
 
+        [RuntimeExport("__security_cookie")]
+        public static void SecurityCookie()
+        {
+        }
         #endregion
 
         [RuntimeExport("Main")]
