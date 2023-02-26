@@ -1,4 +1,5 @@
 ﻿using MOOS;
+using MOOS.Driver;
 using MOOS.FS;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace System.Explorers
     {
         public string Dir { set; get; }
         public List<IconFile> Files { private set; get; }
+        bool isRoot;
 
         public ExplorerManager()
         {
@@ -44,6 +46,37 @@ namespace System.Explorers
                 }
             }
 
+            if (string.IsNullOrEmpty(Dir))
+            {
+                isRoot = true;
+            }
+
+            if (isRoot)
+            {
+                for (int i = 0; i < IDE.Ports.Count; i++)
+                {
+                    var port = IDE.Ports[i];
+
+                    IconFile icon = new IconFile();
+                    icon.OwnerWindow = this;
+                    icon.Content = $"drv{port.Drive}";
+                    icon.Foreground = Brushes.Black;
+                    icon.Path = Dir + _devider;
+                    icon.FilePath = Dir + icon.Content;
+                    icon.FileInfo = new FileInfo();
+                    icon.FileInfo.Name = icon.Content;
+                    icon.isDrive = true;
+                    icon.FileInfo.Attribute = FileAttribute.System;
+                    icon.X = _x;
+                    icon.Y = _y + 15;
+
+                    icon.onLoadIconExtention();
+
+                    Files.Add(icon);
+
+                    _y += DesktopIcons.FileIcon.Height + _separate;
+                }
+            }
 
             List<FileInfo> files = File.GetFiles(Dir);
 

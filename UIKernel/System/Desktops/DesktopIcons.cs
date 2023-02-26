@@ -21,6 +21,8 @@ namespace System.Desktops
         public static Image StartIcon { get; set; }
         public static Image Volume_OnIcon { get; set; }
         public static Image AppPkg { get; set; }
+        public static Image Drive { get; set; }
+
         public static void Initialize()
         {
             StartIcon = new PNG(File.Instance.ReadAllBytes("sys/media/Start.png"));
@@ -36,6 +38,7 @@ namespace System.Desktops
             WLanIcon = new PNG(File.Instance.ReadAllBytes("sys/media/Wlan.png"));
             Volume_OnIcon = new PNG(File.Instance.ReadAllBytes("sys/media/volume_on.png"));
             AppPkg = new PNG(File.Instance.ReadAllBytes("sys/media/pkg.png"));
+            Drive = new PNG(File.Instance.ReadAllBytes("sys/media/drive.png"));
         }
     }
 }

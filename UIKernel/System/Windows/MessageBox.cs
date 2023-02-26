@@ -4,22 +4,10 @@ namespace System.Windows
 {
     public class MessageBox : Window
     {
-        public static MessageBox Instance { private set; get; }
-
         string _message;
 
         public MessageBox()
         {
-            if (Instance != null)
-            {
-                Instance = this;
-            }
-            this._message = null;
-#if Chinese
-            this.Title = "信息框";
-#else
-            this.Title = "MessageBox";
-#endif
             X = 0;
             Y = 0;
             Width = 400;
@@ -47,10 +35,9 @@ namespace System.Windows
             }
         }
 
-        void SetText(string text, string title  = "MessageBox") 
+        void SetText(string text, string title) 
         {
             this.Title = title;
-            if (this._message != null) this._message.Dispose();
             this._message = text;
         }
 
@@ -61,5 +48,10 @@ namespace System.Windows
             frm.ShowDialog();
         }
 
+        public override void OnClose()
+        {
+            this._message.Dispose();
+            base.OnClose();
+        }
     }
 }

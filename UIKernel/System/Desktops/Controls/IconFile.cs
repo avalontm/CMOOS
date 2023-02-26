@@ -17,8 +17,9 @@ namespace System.Desktops.Controls
     public class IconFile : DesktopControl
     {
         public int Key { set; get; }
-        public bool isDirectory { set; get; }
-        public bool isPkg { set; get; }
+        internal bool isDirectory { set; get; }
+        internal bool isPkg { set; get; }
+        internal bool isDrive { set; get; }
         public Image icon { set; get; }
         public string Path { set; get; }
         public string FilePath { set; get; }
@@ -31,6 +32,7 @@ namespace System.Desktops.Controls
         int offsetX, offsetY;
         int _clickCount;
         ulong _timer;
+        
 
         public IconFile()
         {
@@ -50,7 +52,17 @@ namespace System.Desktops.Controls
             {
                 string ext = Content.ToLower();
 
-                if (ext.EndsWith(".png"))
+                if(isDirectory)
+                {
+                    icon = DesktopIcons.FolderIcon;
+                    return;
+                }
+                else if (isDrive)
+                {
+                    icon = DesktopIcons.Drive;
+                    return;
+                }
+                else if (ext.EndsWith(".png"))
                 {
                     icon = DesktopIcons.ImageIcon;
                     Extention = "png";
@@ -76,10 +88,6 @@ namespace System.Desktops.Controls
                 {
                     icon = DesktopIcons.GameIcon;
                     Extention = "nes";
-                }
-                else if (isDirectory)
-                {
-                    icon = DesktopIcons.FolderIcon;
                 }
                 else
                 {
