@@ -2,6 +2,7 @@
 
 using MOOS;
 using MOOS.Driver;
+using MOOS.FS;
 using MOOS.GUI;
 using MOOS.Misc;
 using MOOS.NET;
@@ -18,9 +19,6 @@ using System.Xml;
 unsafe class Program
 {
     static void Main() { }
-
-    [DllImport("*")]
-    public static extern void test();
 
     static bool USBMouseTest()
     {
@@ -139,6 +137,7 @@ unsafe class Program
         Console.WriteLine($"[RADER] Version = {reader.GetNode("version").Values[1]}");
         Console.WriteLine();
         */
+
         SMain();
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MOOS.FS
@@ -7,7 +8,7 @@ namespace MOOS.FS
     /*
   //TO-DO may reimplement FAT32?
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
-  struct FAT32_DBR
+  unsafe struct FAT32_DBR
   {
       public fixed byte BS_jmpBoot[3];
       public fixed byte BS_OEMName[8];
@@ -37,6 +38,7 @@ namespace MOOS.FS
       public fixed byte BS_FilSysType[11];
       public fixed byte BS_FilSysType1[8];    //"FAT32 " offset:82
   };
+
   RootDirectorySector = (uint)(lba + DBR->BPB_RsvdSecCnt + DBR->BPB_FATSz32 * DBR->BPB_NumFATs + (DBR->BPB_RootClus - 2u) * DBR->BPB_SecPerClus);
   DBR->BPB_SecPerClus
 

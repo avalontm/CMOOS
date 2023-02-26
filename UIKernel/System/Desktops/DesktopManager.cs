@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Explorers;
 using System.Sounds;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Forms;
@@ -224,7 +225,7 @@ namespace System.Desktops
 
             ExplorerManager explorer = new ExplorerManager();
             explorer.Title = file.Content;
-            explorer.Dir = file.FilePath;
+            explorer.Dir = file.FilePath + "/";
             explorer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             explorer.ShowDialog();
         }
@@ -270,6 +271,11 @@ namespace System.Desktops
                         }
                     }
                     break;
+                case "txt":
+                    byte[] content = File.ReadAllBytes(file.FilePath);
+
+                    MessageBox.Show($"{Encoding.ASCII.GetString(content)}", "File Text");
+                    break;
                 default:
                     {
                         MessageBox.Show("The system did not find a suitable program to execute this file.", "Can not be executed");
@@ -280,7 +286,11 @@ namespace System.Desktops
 
         static void onItemStart(object obj)
         {
-            NotificationManager.Add(new Nofity($"Welcome to MOOS", NotificationLevel.None));
+            ExplorerManager explorer = new ExplorerManager();
+            explorer.Title = "Root";
+            explorer.Dir = "/";
+            explorer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            explorer.ShowDialog();
         }
 
         static void onItemWlan(object obj)

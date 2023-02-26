@@ -33,8 +33,19 @@ namespace System.Explorers
             int _y = 0;
             string _devider = "/";
 
+            for (int i = 0; i < 2;i++)
+            {
+                if (!string.IsNullOrEmpty(Dir))
+                {
+                    if (Dir[0] == '/')
+                    {
+                        Dir = Dir.Substring(1);
+                    }
+                }
+            }
 
-            List<FileInfo> files = File.GetFiles(Dir + _devider);
+
+            List<FileInfo> files = File.GetFiles(Dir);
 
             for (int i = 0; i < files.Count; i++)
             {
@@ -54,7 +65,7 @@ namespace System.Explorers
                 icon.Content = files[i].Name;
                 icon.Foreground = Brushes.Black;
                 icon.Path = Dir + _devider;
-                icon.FilePath = Dir + _devider + icon.Content;
+                icon.FilePath = Dir + icon.Content;
                 icon.FileInfo = files[i];
                 icon.X = _x;
                 icon.Y = _y + 15;

@@ -53,6 +53,8 @@ namespace MOOS
                     return (delegate*<ulong>)&API_GetTick;
                 case "ReadAllBytes":
                     return (delegate*<string, ulong*, byte**, void>)&API_ReadAllBytes;
+                case "WriteAllBytes":
+                    return (delegate*<string, ulong, byte*, void>)&API_WriteAllBytes;
                 case "Write":
                     return (delegate*<char, void>)&API_Write;
                 case "DebugWrite":
@@ -302,6 +304,20 @@ namespace MOOS
 
             buffer.Dispose();
         }
+
+        public static void API_WriteAllBytes(string name, ulong length, byte* data)
+        {
+            byte[] buffer = new byte[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = data[i];
+            }
+
+            File.Instance.WriteAllBytes(name, buffer);
+            buffer.Dispose();
+        }
+        
 
         public static void API_Sleep(ulong ms)
         {

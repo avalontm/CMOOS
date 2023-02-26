@@ -5,7 +5,6 @@
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 
-		<PublishAot>true</PublishAot>
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
@@ -25,7 +24,7 @@
 	</Target>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.3" />
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
 	</ItemGroup>
 		
 <!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->

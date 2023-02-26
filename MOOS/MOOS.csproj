@@ -5,13 +5,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BaseOutputPath>..\bin</BaseOutputPath>
-
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
-		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-		
 		<DefineConstants>Kernel;UseAPIC;HasGUI</DefineConstants>
 
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
@@ -20,6 +16,7 @@
 		<!--Make the code faster!-->
 		<IlcOptimizationPreference>Size</IlcOptimizationPreference>
 	</PropertyGroup>
+	
 
 	<ItemGroup>
 		<NativeLibrary Include="$(MSBuildStartupDirectory)\x64\Debug\NativeLib.lib" />
@@ -30,10 +27,19 @@
 		<LinkerArg Include="/fixed /base:0x10000000 /map:Kernel.map" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.3" />
-	</ItemGroup>
 
+	<!-- The project file pretends this is .NET, but it's not .NET. Remove all assembly references the .NET SDK added. -->
+	<Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
+		<ItemGroup>
+			<ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" Condition="%(Filename) != 'Moos.Core'" />
+			<ReferencePath Remove="@(ReferencePath)" />
+		</ItemGroup>
+	</Target>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
+	</ItemGroup>
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\Corlib\Moos.Core.csproj" />
 	</ItemGroup>
@@ -41,6 +47,7 @@
 	<Import Project="..\Kernel\Kernel.projitems" Label="Shared" />
 
 	<Import Project="..\UIKernel\UIKernel.projitems" Label="Shared" />
+
 
 	<Target Name="BuildISO" AfterTargets="Publish">
 		<Delete Files="$(MSBuildStartupDirectory)\Tools\grub2\boot\ramdisk.tar"></Delete>

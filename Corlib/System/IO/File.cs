@@ -11,6 +11,9 @@ namespace System.IO
         [DllImport("ReadAllBytes")]
         public static extern void ReadAllBytes(string file, out ulong size, out byte* data);
 
+        [DllImport("WriteAllBytes")]
+        public static extern void WriteAllBytes(string file, ulong size, byte* data);
+
         public static byte[] ReadAllBytes(string file)
         {
             ReadAllBytes(file, out var size, out var data);
@@ -23,6 +26,14 @@ namespace System.IO
             }
             
             return buffer;
+        }
+
+        public static void WriteAllBytes(string file, byte[] data)
+        {
+            fixed (byte* buffer = data)
+            {
+                WriteAllBytes(file, data.Length, buffer);
+            }
         }
 
         public static bool Exists([NotNullWhen(true)] string? path)
