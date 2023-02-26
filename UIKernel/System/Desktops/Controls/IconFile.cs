@@ -52,12 +52,7 @@ namespace System.Desktops.Controls
             {
                 string ext = Content.ToLower();
 
-                if(isDirectory)
-                {
-                    icon = DesktopIcons.FolderIcon;
-                    return;
-                }
-                else if (isDrive)
+                if (isDrive)
                 {
                     icon = DesktopIcons.Drive;
                     return;
@@ -88,6 +83,10 @@ namespace System.Desktops.Controls
                 {
                     icon = DesktopIcons.GameIcon;
                     Extention = "nes";
+                }
+                else if (isDirectory)
+                {
+                    icon = DesktopIcons.FolderIcon;
                 }
                 else
                 {
@@ -215,7 +214,8 @@ namespace System.Desktops.Controls
 
             if (!string.IsNullOrEmpty(Content))
             {
-                WindowManager.font.DrawString(_x, (_y + icon.Height), Content, Foreground.Value, (icon.Width + 8), (WindowManager.font.FontSize * 3));
+                int fontW = WindowManager.font.MeasureString(Content);
+                WindowManager.font.DrawString(_x + ((icon.Width/ 2) - (fontW /2))-2, (_y + icon.Height) + 2, Content, Foreground.Value, (icon.Width + 10), (WindowManager.font.FontSize * 3));
             }
         }
     }
