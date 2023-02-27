@@ -8,40 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="App.xaml" />
 	  <None Remove="MainWindow.xaml" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<ProjectSchemaDefinitions>
-			<!-- Associate DXCShader item type with .hlsl files -->
-			<ItemType Name="MoosUI" DisplayName="DXC Shader" />
-			<ContentType Name="MoosUI" ItemType="MoosUI" DisplayName="DXC Shader" />
-			<FileExtension Name=".xaml" ContentType="MoosUI" />
-		</ProjectSchemaDefinitions>
-	</PropertyGroup>
-	
 	<ItemGroup>
-
-		<AvailableItemName Include="MoosUI">
-			<Targets>MoosXaml</Targets>
-		</AvailableItemName>
-	</ItemGroup>
-
-	<Target Name="MoosXaml" Condition="'@(MoosUI)' != ''" BeforeTargets="BeforeCompile">
-		<Message Importance="High" Text="Building Moos Xaml @(MoosUI)..." />
-
-		<!-- Compile by forwarding to the Custom Build Tool infrastructure,
-         so it will take care of .tlogs and error/warning parsing -->
-		<CustomBuild Sources="@(MoosUI)" />
-
-	</Target>
-
-	<UsingTask TaskName="CustomBuild"  AssemblyFile="MoosBuild.dll" />
-	
-	<ItemGroup>
-	  <MoosUI Include="App.xaml">
-	  </MoosUI>
 	  <MoosUI Include="MainWindow.xaml">
 	  </MoosUI>
 	</ItemGroup>

@@ -12,6 +12,16 @@
 		<IlcOptimizationPreference>Speed</IlcOptimizationPreference>
 	</PropertyGroup>
 	
+	<ItemGroup>
+		<AvailableItemName Include="MoosUI">
+			<Targets>MoosXaml</Targets>
+		</AvailableItemName>
+	</ItemGroup>
+	
+	<Target Name="MoosXaml" Condition="'@(MoosUI)' != '' and '$(BuildingInsideVisualStudio)' == 'true'" BeforeTargets="BeforeCompile">
+		<Exec Command="&quot;$(MSBuildStartupDirectory)\Tools\Build\MoosBuild.exe&quot; &quot;-path=$(MSBuildProjectDirectory)&quot; -xaml=@(MoosUI)"></Exec>
+	</Target>
+
 
 	<Target Name="HandleBuild" AfterTargets="AfterBuild" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
 		<Exec Command="dotnet publish -r win-x64"></Exec>
