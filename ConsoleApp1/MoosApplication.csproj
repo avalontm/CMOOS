@@ -28,43 +28,17 @@
 		</AvailableItemName>
 	</ItemGroup>
 
-	<Target Name="MoosXaml" Condition="'@(MoosUI)' != ''" BeforeTargets="Build">
+	<Target Name="MoosXaml" Condition="'@(MoosUI)' != ''" BeforeTargets="BeforeCompile">
 		<Message Importance="High" Text="Building Moos Xaml @(MoosUI)..." />
 
-		<!-- Find all xaml files (.xaml files) -->
-		<ItemGroup>
-			<MoosCompiler Include="*.xaml" />
-		</ItemGroup>
-		<PropertyGroup>
-			<MoosCompiler>@(MoosCompiler)</MoosCompiler>
-		</PropertyGroup>
-
-		<!-- Setup metadata for custom build tool -->
-		<ItemGroup>
-			<MoosUI>
-				<Message>%(Filename)%(Extension)</Message>
-				<Command>
-					"$(WDKBinRoot)\x86\rte.exe" -T vs_6_0 -E vs_main %(Identity) -Fh %(Filename).vs.h -Vn %(Filename)_vs
-				</Command>
-				<AdditionalInputs>$(MoosCompiler)</AdditionalInputs>
-				<Outputs>%(Filename).xaml.cs.g;%(Filename).xaml.cs.g</Outputs>
-			</MoosUI>
-		</ItemGroup>
-
-
 		<!-- Compile by forwarding to the Custom Build Tool infrastructure,
-         so it will take care of .tlogs and error/warning parsing 
-		<CustomBuild Sources="@(MoosUI)" />-->
+         so it will take care of .tlogs and error/warning parsing -->
+		<CustomBuild Sources="@(MoosUI)" />
+
 	</Target>
 
-	<UsingTask TaskName="CustomBuild" AssemblyFile="MoosBuild.dll" />
-
-	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)bin\Debug\net462\Project1.dll" TaskName="MyTask" />
+	<UsingTask TaskName="CustomBuild"  AssemblyFile="MoosBuild.dll" />
 	
-	<Target Name="MoosEnd" Condition="'@(MoosUI)' != ''" AfterTargets="Build">
-		<Message Importance="High" Text="Building Moos Done!" />
-	</Target>
-
 	<ItemGroup>
 	  <MoosUI Include="App.xaml">
 	  </MoosUI>
