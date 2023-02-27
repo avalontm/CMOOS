@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XamlConversion;
+using XamlToCode;
 
 namespace MoosBuild
 {
@@ -62,9 +62,9 @@ namespace MoosBuild
 
                     if (xaml != null)
                     {
-                        XamlConvertor convert = new XamlConvertor();
-                        string output = convert.ConvertToString(xaml);
-                        File.WriteAllText(fileName + ".cs.build.cs", output );
+                        XamlToCodeConverter convert = new XamlToCodeConverter();
+                        string output = convert.Convert(xaml);
+                        File.WriteAllText(fileName + ".generate.cs", output );
                         Console.WriteLine($" Result -> {output}");
                     }
                 }

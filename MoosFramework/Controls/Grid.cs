@@ -22,6 +22,7 @@ namespace Moos.Framework.Controls
         [DllImport("GridSetColumn")]
         public static extern int GridSetColumn(IntPtr handler, IntPtr control, int column);
 
+
         List<ContentControl> _children;
         public List<ContentControl> Children
         {
@@ -31,7 +32,7 @@ namespace Moos.Framework.Controls
             }
             get { return _children; }
         }
-
+        
 
         RowDefinitionCollection _rowDefinitions;
         public RowDefinitionCollection RowDefinitions

@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,18 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Convert\Parsers\BindingParser.cs" />
-    <Compile Include="Convert\Parsers\ObjectParser.cs" />
-    <Compile Include="Convert\Parsers\ParserBase.cs" />
-    <Compile Include="Convert\Parsers\PropertyCollectionParser.cs" />
-    <Compile Include="Convert\Parsers\PropertyObjectParser.cs" />
-    <Compile Include="Convert\Parsers\PropertyParser.cs" />
-    <Compile Include="Convert\Parsers\RootObjectParser.cs" />
-    <Compile Include="Convert\Parsers\XamlParser.cs" />
-    <Compile Include="Convert\XamlConvertor.cs" />
-    <Compile Include="Convert\XamlSchemaContextWithDefault.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XamlToCode\CodeDomDomWriter.cs" />
+    <Compile Include="XamlToCode\CodeDomObjectNode.cs" />
+    <Compile Include="XamlToCode\DOM\DomNode.cs" />
+    <Compile Include="XamlToCode\DOM\ItemNode.cs" />
+    <Compile Include="XamlToCode\DOM\MemberNode.cs" />
+    <Compile Include="XamlToCode\DOM\NodeCollection.cs" />
+    <Compile Include="XamlToCode\DOM\ObjectNode.cs" />
+    <Compile Include="XamlToCode\DOM\ValueNode.cs" />
+    <Compile Include="XamlToCode\XamlToCodeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
