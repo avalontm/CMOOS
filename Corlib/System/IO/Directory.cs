@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Moos.Core.System.IO
+namespace System.IO
 {
     public static class Directory
     {

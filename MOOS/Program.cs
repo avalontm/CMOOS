@@ -138,22 +138,6 @@ unsafe class Program
         Console.WriteLine($"[RADER] Version = {reader.GetNode("version").Values[1]}");
         Console.WriteLine();
         */
-
-        Directory.CreateDirectory("myFolder");
-
-        var files = File.Instance.GetFiles("");
-
-        for (var i = 0; i < files.Count; i++)
-        {
-            if (files[i].Attribute == FileAttribute.Directory)
-            {
-                Console.WriteLine($"[Dir] {files[i].Name}");
-            } 
-            else
-            {
-                Console.WriteLine($"[File] {files[i].Name}");
-            }
-        }
        
         SMain();
     }
