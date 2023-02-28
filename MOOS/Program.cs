@@ -1,6 +1,6 @@
 //#define NETWORK
 
-using Moos.Core.System.IO;
+using System.IO;
 using MOOS;
 using MOOS.Driver;
 using MOOS.FS;
