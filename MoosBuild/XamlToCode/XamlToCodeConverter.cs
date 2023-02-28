@@ -217,13 +217,12 @@ namespace XamlToCode
             }
         }
 
-        private void GenerateMemberValue(CodeMemberMethod initComponentMethod,
-            MemberNode member, CodeExpression targetExpression)
+        private void GenerateMemberValue(CodeMemberMethod initComponentMethod, MemberNode member, CodeExpression targetExpression)
         {
             if (member.Member.IsUnknown)
             {
-                //throw new Exception("Unknown member " + member.Member.Name);
-                return;
+                throw new Exception("Unknown member " + member.Member.Name);
+                //return;
             }
             if (member.Member == XamlLanguage.Class ||
                 member.Member == XamlLanguage.Initialization ||

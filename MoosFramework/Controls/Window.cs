@@ -69,6 +69,7 @@ namespace Moos.Framework.Controls
             }
         }
 
+        public bool Implementation { get; set; }
         public object DataContext { get; set; }
 
         object _content;
