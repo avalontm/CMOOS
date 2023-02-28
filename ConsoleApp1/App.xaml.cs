@@ -6,7 +6,6 @@ namespace MoosApplication
     {
         public App()
         {
-
         }
     }
 }

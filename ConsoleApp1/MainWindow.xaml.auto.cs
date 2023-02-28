@@ -10,14 +10,20 @@
 
 using Moos.Framework.Controls;
 using System;
-using System.Windows.Input;
+using System.Windows.Controls;
 
 
 
-public partial class MainWindow : Window {
+public partial class UIMainWindow : System.Windows.Window {
     
     private System.Globalization.CultureInfo EnglishCultureInfo = new System.Globalization.CultureInfo("en-us", false);
     
-    public MainWindow() {
+    public UIMainWindow() {
+        this.Title = "Moos Xaml";
+        this.Height = 200D;
+        this.Width = 200D;
+        // ---------------------------
+        Grid _grid0 = new Grid();
+        this.Content = _grid0;
     }
 }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Moos.Framework.Controls
 {
     [ContentProperty(nameof(Children))]
-    public class Grid : ContentControl
+    public partial class IGrid : ContentControl
     {
         [DllImport("GridCreate")]
         public static extern IntPtr GridCreate(IntPtr owner);
@@ -21,9 +22,6 @@ namespace Moos.Framework.Controls
         public static extern int GridSetRow(IntPtr control, int row);
         [DllImport("GridSetColumn")]
         public static extern int GridSetColumn(IntPtr handler, IntPtr control, int column);
-
-
-        public static readonly BindableProperty TitleProperty = BindableProperty.Create("Title");
 
         RowDefinitionCollection _rowDefinitions;
         public RowDefinitionCollection RowDefinitions
@@ -47,19 +45,28 @@ namespace Moos.Framework.Controls
             get { return _columnDefinitions; }
         }
 
-        public Grid(Window owner)
+        public IGrid()
         {
             RowDefinitions = new RowDefinitionCollection();
             ColumnDefinitions = new ColumnDefinitionCollection();
-          
-            Handler = GridCreate(owner.Handler);
         }
 
-        public void SetRow(ContentControl control, int row)
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+            Handler = GridCreate(Application.Current.MainWindow.Handler);
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                Children[i].OnLoaded();
+            }
+        }
+
+        public static void SetRow(ContentControl control, int row)
         {
            // this.Add(control);
             control.GridRow = GridSetRow(control.Handler, row);
-            GridChildrenAdd(Handler, control.Handler);
+           // GridChildrenAdd(Handler, control.Handler);
         }
     }
 }

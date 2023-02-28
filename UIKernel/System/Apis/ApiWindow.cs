@@ -126,7 +126,6 @@ namespace System.Apis
 
                 return papp;
             }
-
             return IntPtr.Zero;
         }
 

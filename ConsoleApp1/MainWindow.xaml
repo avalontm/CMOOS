@@ -1,7 +1,9 @@
-<Window x:Class="MainWindow"
-        xmlns="clr-namespace:Moos.Framework.Controls;assembly=Moos.Framework"
+<Window x:Class="UIMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-        Title="MainWindow" Height="450" Width="800">
+        Title="Moos Xaml" Height="200" Width="200" >
 
+    <Grid>
 
+    </Grid>
 </Window>

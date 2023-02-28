@@ -15,8 +15,6 @@ using x2006 = System.Windows.Markup;
 using System.Xml;
 using System.Diagnostics;
 using XamlToCode.DOM;
-using System.Windows.Input;
-using System.Windows;
 
 namespace XamlToCode
 {
@@ -32,7 +30,7 @@ namespace XamlToCode
         private CodeCompileUnit ccu;
         private Dictionary<string, CodeDomObjectNode> PublicObjects { get; set; }
 
-        public string MainCodeClassName { get; private set; }
+        public string MainCodeClassName { get; set; }
 
         public string Convert(string Xaml)
         {
@@ -51,7 +49,6 @@ namespace XamlToCode
         public string Convert(XamlReader reader)
         {
             cscProvider = new CSharpCodeProvider();
-
             return Convert(reader, cscProvider);
         }
 
@@ -65,16 +62,16 @@ namespace XamlToCode
             // TODO: XamlXmlReader can sometimes be null, if there is misformed XML in the first sections of XML
             _schemaContext = reader != null ? reader.SchemaContext : new XamlSchemaContext();
             CodeDomDomWriter codeDomDomWriter = new CodeDomDomWriter(_schemaContext);
-            
+
             // Load XAML into a specialized XAML DOM, for analysis and processing
-            Console.WriteLine("Building codeDOM from XAML...");
+            Debug.WriteLine("Building codeDOM from XAML...");
             while (reader.Read())
             {
                 codeDomDomWriter.WriteNode(reader);
             }
-            Console.WriteLine("codeDOM complete.");
+            Debug.WriteLine("codeDOM complete.");
             CodeDomObjectNode objectNode = (CodeDomObjectNode)codeDomDomWriter.Result;
-           
+
             //DumpNodeTree(objectNode);
 
             // Initialize CodeDom constructs
@@ -96,30 +93,9 @@ namespace XamlToCode
             return returnText;
         }
 
-        /// <summary>
-        /// Compiles the assembly from the last code compile unit generated using the language compiler provided
-        /// </summary>
-        public CompilerResults CompileAssemblyFromLastCodeCompileUnit()
-        {
-            // Compile the code
-            CompilerParameters comparam = new CompilerParameters(new string[] { "mscorlib.dll", "System.Runtime.dll", "System.dll", "System.Core.dll"});
-            comparam.GenerateInMemory = true;
-
-            // Add all the required referenced assemblies
-            // TODO: Should look these up dynamically
-            comparam.ReferencedAssemblies.Add(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationCore.dll");
-            comparam.ReferencedAssemblies.Add(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationFramework.dll");
-            comparam.ReferencedAssemblies.Add(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\WindowsBase.dll");
-
-            CompilerResults compres = cscProvider.CompileAssemblyFromDom(comparam, ccu);
-            
-            return compres;
-        }
-
         private void GenerateUsings(CodeNamespace cns, CodeDomObjectNode objectNode)
         {
             cns.Imports.Add(new CodeNamespaceImport("System"));
-            cns.Imports.Add(new CodeNamespaceImport("System.Windows.Input"));
             cns.Imports.Add(new CodeNamespaceImport("Moos.Framework.Controls"));
 
             foreach (string namespaceName in NamespacesToUse.Keys)
@@ -130,24 +106,19 @@ namespace XamlToCode
 
         private void CreateClass(CodeNamespace cns, CodeDomObjectNode objectNode, CodeMemberMethod initComponentMethod)
         {
-            CodeTypeDeclaration rootType = null;
- 
+            CodeTypeDeclaration rootType;
             if (objectNode.XClassNode == null)
             {
-                rootType = new CodeTypeDeclaration(objectNode.Type.Name);
+                rootType = new CodeTypeDeclaration("My" + objectNode.Type.Name);
             }
             else
             {
                 rootType = new CodeTypeDeclaration((String)((ValueNode)objectNode.XClassNode.ItemNodes[0]).Value);
             }
-
             // Keep a copy
             MainCodeClassName = rootType.Name;
-            Console.WriteLine($"[ROOT] {MainCodeClassName}");
-            Console.WriteLine($"[UnderlyingType] {objectNode.Type.UnderlyingType}");
 
-            rootType.BaseTypes.Add(new CodeTypeReference("Window"));
-           
+            rootType.BaseTypes.Add(new CodeTypeReference(objectNode.Type.UnderlyingType));
             rootType.IsPartial = true;
             rootType.Attributes = MemberAttributes.Public;
             cns.Types.Add(rootType);
@@ -159,7 +130,6 @@ namespace XamlToCode
             rootType.Members.Add(cmf);
 
             RootObject = rootType;
-
         }
 
         private void AddPublicObjectMembers()
@@ -217,12 +187,13 @@ namespace XamlToCode
             }
         }
 
-        private void GenerateMemberValue(CodeMemberMethod initComponentMethod, MemberNode member, CodeExpression targetExpression)
+        private void GenerateMemberValue(CodeMemberMethod initComponentMethod,
+            MemberNode member, CodeExpression targetExpression)
         {
             if (member.Member.IsUnknown)
             {
-                throw new Exception("Unknown member " + member.Member.Name);
-                //return;
+                //throw new Exception("Unknown member " + member.Member.Name);
+                return;
             }
             if (member.Member == XamlLanguage.Class ||
                 member.Member == XamlLanguage.Initialization ||
@@ -372,7 +343,6 @@ namespace XamlToCode
 
             // Grab all the attributes of the binding
             NodeCollection<MemberNode> members = targetObjectNode.MemberNodes;
-        
             foreach (MemberNode member in members)
             {
                 switch (member.Member.Name)
@@ -385,7 +355,7 @@ namespace XamlToCode
                         break;
                 }
             }
-  
+
             // Create a constructor for the binding adding the Path, if it exists
             CodeExpression ctor = new CodeObjectCreateExpression(targetObjectNode.Type.UnderlyingType.Name, new CodePrimitiveExpression(path));
             CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement(targetObjectNode.Type.UnderlyingType.Name, targetName, ctor);
@@ -444,7 +414,7 @@ namespace XamlToCode
             if (targetObjectNode.XInitNode != null)
             {
                 string tcName = GenerateTypeConverter(initComponentMethod, targetObjectNode.Type);   // TextSyntax
-           
+
                 ctor = GetTypeConverteredValue(targetObjectNode.Type, ((ValueNode)targetObjectNode.XInitNode.ItemNodes[0]).Value, targetObjectNode.Type.UnderlyingType, tcName);
             }
             else if (targetObjectNode.XFactoryMethodNode != null)
@@ -458,7 +428,7 @@ namespace XamlToCode
                 for (int i = 0; i < types.Count; i++)
                 {
                     string tcName = GenerateTypeConverter(initComponentMethod, types[i]);
-                
+
                     constructor.Parameters.Add(GetTypeConverteredValue(types[i], ((ValueNode)targetObjectNode.XPosParamsNode.ItemNodes[i]).Value, types[i].UnderlyingType, tcName));
                 }
                 ctor = constructor;
@@ -531,7 +501,6 @@ namespace XamlToCode
         private void GenerateMemberAssignment(CodeMemberMethod initComponentMethod, MemberNode member, CodeExpression targetExpression, CodeExpression valueExpression, CodeDomObjectNode targetObjectNode)
         {
             CodeStatement cs = null;
-
             //if (member.Member.IsUnknown)
             //{
             //    throw new Exception("Unknown member " + member.Member.Name);
@@ -582,8 +551,7 @@ namespace XamlToCode
             }
             else if (member.Member.IsEvent)
             {
-                 throw new NotImplementedException();
-               //cs = new CodeAssignStatement(new CodePropertyReferenceExpression(targetExpression, member.Member.Name), valueExpression);
+                throw new NotImplementedException();
             }
             else
             {
@@ -595,7 +563,8 @@ namespace XamlToCode
                 }
                 else //normal property
                 {
-                    cs = new CodeAssignStatement( new CodePropertyReferenceExpression(targetExpression, member.Member.Name), valueExpression);
+                    cs = new CodeAssignStatement(
+                        new CodePropertyReferenceExpression(targetExpression, member.Member.Name), valueExpression);
                 }
             }
             initComponentMethod.Statements.Add(cs);
@@ -704,7 +673,6 @@ namespace XamlToCode
                     {
                         //Avoid LengthConverter if it appears that it would be a valid double
                         bool shouldConvert = ShouldUseTypeConverter((string)value, type);
-                    
                         if (shouldConvert)
                         {
                             CodeVariableReferenceExpression cvrf = new CodeVariableReferenceExpression(tcName);
@@ -713,7 +681,6 @@ namespace XamlToCode
                                     new CodePrimitiveExpression(null),
                                     new CodeFieldReferenceExpression(null, CultureInfoString),
                                     new CodeSnippetExpression("\"" + value + "\""));
-
                             return new CodeCastExpression(type.Name, cmie);
                         }
                         else
@@ -735,8 +702,8 @@ namespace XamlToCode
             }
             else if (type == typeof(Double))
             {
-                int doubleValue;
-                bool isDouble = int.TryParse((string)value, out doubleValue);
+                double doubleValue;
+                bool isDouble = Double.TryParse((string)value, out doubleValue);
                 if (isDouble)
                 {
                     return new CodePrimitiveExpression(doubleValue);
@@ -801,8 +768,7 @@ namespace XamlToCode
                     return new CodeFieldReferenceExpression(ctre, fieldInfo.Name);
                 }
             }
-
-                throw new Exception("Type " + type.Name + " isn't supported by GenerateExpressionForString");
+            throw new Exception("Type " + type.Name + " isn't supported by GenerateExpressionForString");
         }
 
         private bool GetIsUsableDuringInitialization(XamlType xamlType)
@@ -852,17 +818,13 @@ namespace XamlToCode
         {
             if (rootNode.Type != null)
             {
-                Console.WriteLine(rootNode.Type.Name);
+                Debug.WriteLine(rootNode.Type.Name);
             }
 
-            if (rootNode.Type != null)
-            {
-                Console.WriteLine(rootNode.Type.UnderlyingType);
-            }
             NodeCollection<MemberNode> members = rootNode.MemberNodes;
             foreach (MemberNode member in members)
             {
-                Console.WriteLine("Member={0}, Type={1}", new object[] { member.Member.Name, member.Member.Type.Name });
+                Debug.WriteLine("Member={0}, Type={1}", new object[] { member.Member.Name, member.Member.Type.Name });
 
                 foreach (ItemNode itemNode in member.ItemNodes)
                 {
@@ -871,7 +833,7 @@ namespace XamlToCode
                     if (valueNode != null)
                     {
                         string value = valueNode.Value as String;
-                        Console.WriteLine("Underlying Type={0}, Value={1}", new object[] { member.Member.Type.UnderlyingType, value });
+                        Debug.WriteLine("Underlying Type={0}, Value={1}", new object[] { member.Member.Type.UnderlyingType, value });
                     }
                     else
                     {
@@ -894,11 +856,11 @@ namespace XamlToCode
                             //TODO: don't forget to make sure a using happens for the referencedXamlType
                             string typeName2 = resolvedType != null ? resolvedType.Name : xamlTypeReference;
 
-                           Console.WriteLine("TypeName={0}, MemberName={1}", new object[] { typeName2, memberName });
+                            Debug.WriteLine("TypeName={0}, MemberName={1}", new object[] { typeName2, memberName });
                         }
                         else if (xamlType == XamlLanguage.Null)
                         {
-                           Console.WriteLine("NULL Expression");
+                            Debug.WriteLine("NULL Expression");
                         }
                         else if (xamlType == XamlLanguage.Type)
                         {
@@ -908,7 +870,7 @@ namespace XamlToCode
                             //TODO: don't forget to make sure a using happens for the referencedXamlType
                             string typeName = resolvedType != null ? resolvedType.Name : xamlTypeReference;
 
-                           Console.WriteLine("Type Ref={0}", new object[] { typeName });
+                            Debug.WriteLine("Type Ref={0}", new object[] { typeName });
                         }
                         else if (xamlType == XamlLanguage.Reference)
                         {

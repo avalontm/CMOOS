@@ -1,13 +1,11 @@
-﻿using Moos.Framework.Input;
-using System;
+﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Moos.Framework.Controls
 {
-    public abstract partial class ContentControl : Layout
+    public abstract partial class ContentControl : Layout, IView
     {
         public string Name { get; set; }
 
@@ -32,7 +30,7 @@ namespace Moos.Framework.Controls
 
         public virtual void OnLoaded()
         {
-            
+
         }
     }
 }

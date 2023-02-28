@@ -1,23 +1,17 @@
-﻿using Moos.Framework;
-using Moos.Framework.Controls;
-using Moos.Framework.Input;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using Moos.Framework.Controls;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using Image = Moos.Framework.Controls.Image;
 
 namespace MoosApplication
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : UIMainWindow
     {
         int count = 0;
 
-        public MainWindow()
+        public MainWindow() : base()
         {
-            InitializeComponent(); 
+          
         }
 
         void OnCounterClicked(object obj)
@@ -29,14 +23,11 @@ namespace MoosApplication
                 count++;
 
                 if (count == 1)
-                    button.Text = $"Clicked {count} time";
+                    button.Content = $"Clicked {count} time";
                 else
-                    button.Text = $"Clicked {count} times";
+                    button.Content = $"Clicked {count} times";
             }
 
-            byte[] data = Encoding.UTF8.GetBytes("Hola mundo!");
-            File.WriteAllBytes("home/moos/Desktop/files/file.txt", data);
-            data.Dispose();
         }
 
     }

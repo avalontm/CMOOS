@@ -39,7 +39,7 @@ namespace System.Apis
             if (papp != null)
             {
                 control.Parent = papp;
-                papp.Content = control;
+                papp.Content= control;
             }
 
             return control;

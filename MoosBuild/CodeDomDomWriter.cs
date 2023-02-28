@@ -56,7 +56,6 @@ namespace XamlToCode
                 writerStack.Push(objectNode);
             }
             objectNode.Type = xamlType;
-
             objectNode.IsGetObject = isGetObject;
 
             if (RootNode != null)

@@ -47,11 +47,15 @@ namespace System.Apis
         public static IntPtr API_ButtonCreate(IntPtr handler)
         {
             Button button = new Button();
-            PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handler);
 
-            if (papp != null)
+            if (handler != IntPtr.Zero)
             {
-                button.Window = papp;
+                PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handler);
+
+                if (papp != null)
+                {
+                    button.Window = papp;
+                }
             }
             return button;
         }

@@ -1,5 +1,4 @@
-﻿using Internal.Runtime.CompilerServices;
-using Moos.Framework.Input;
+﻿using Moos.Framework.Input;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -20,7 +19,7 @@ namespace Moos.Framework.Controls
 
         [DllImport("ButtonHeight")]
         public static extern int ButtonHeight(IntPtr handler, int height);
-       
+
         [DllImport("ButtonCommand")]
         public static extern IntPtr ButtonCommand(IntPtr handler, IntPtr command);
 
@@ -36,17 +35,17 @@ namespace Moos.Framework.Controls
         [DllImport("ButtonMargin")]
         public static extern void ButtonMargin(IntPtr handler, int left, int top, int right, int bottom);
 
-        string _text;
-        public string Text
+        string _content;
+        public string Content
         {
             get
             {
-                return _text;
+                return _content;
             }
             set
             {
-                _text = value;
-                ButtonText(Handler, _text);
+                _content = value;
+                ButtonText(Handler, _content);
             }
         }
 
@@ -116,7 +115,7 @@ namespace Moos.Framework.Controls
 
         Thickness _margin;
 
-        public new Thickness Margin 
+        public new Thickness Margin
         {
             get { return _margin; }
             set
@@ -136,9 +135,15 @@ namespace Moos.Framework.Controls
             }
         }
 
-        public Button(Window owner)
+        public Button()
         {
-            Handler = ButtonCreate(owner.Handler);
+           
+        }
+
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+            Handler = ButtonCreate(Application.Current.MainWindow.Handler);
         }
     }
 }

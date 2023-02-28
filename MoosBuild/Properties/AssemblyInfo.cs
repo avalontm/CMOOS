@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 // La información general de un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
@@ -14,23 +15,40 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Si establece ComVisible en false, los tipos de este ensamblado no estarán visibles 
-// para los componentes COM.  Si es necesario obtener acceso a un tipo en este ensamblado desde 
-// COM, establezca el atributo ComVisible en true en este tipo.
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-// El siguiente GUID sirve como id. de typelib si este proyecto se expone a COM.
-[assembly: Guid("a6df4b92-c01f-4c76-b232-fdaf930bc2e1")]
+//In order to begin building localizable applications, set 
+//<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file
+//inside a <PropertyGroup>.  For example, if you are using US english
+//in your source files, set the <UICulture> to en-US.  Then uncomment
+//the NeutralResourceLanguage attribute below.  Update the "en-US" in
+//the line below to match the UICulture setting in the project file.
 
-// La información de versión de un ensamblado consta de los cuatro valores siguientes:
+//[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
+
+
+[assembly: ThemeInfo(
+    ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
+                                     //(used if a resource is not found in the page, 
+                                     // or application resource dictionaries)
+    ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
+                                              //(used if a resource is not found in the page, 
+                                              // app, or any theme specific resource dictionaries)
+)]
+
+
+// Version information for an assembly consists of the following four values:
 //
-//      Versión principal
-//      Versión secundaria
-//      Número de compilación
-//      Revisión
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
 //
-// Puede especificar todos los valores o usar los valores predeterminados de número de compilación y de revisión
-// utilizando el carácter "*", como se muestra a continuación:
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

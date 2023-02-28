@@ -65,7 +65,7 @@ namespace MoosBuild
                         XamlToCodeConverter convert = new XamlToCodeConverter();
                        
                         string output = convert.Convert(xaml);
-                        File.WriteAllText(fileName + ".generate.cs", output );
+                        File.WriteAllText(fileName + ".auto.cs", output );
                         Console.WriteLine($" Result -> {output}");
                     }
                 }
