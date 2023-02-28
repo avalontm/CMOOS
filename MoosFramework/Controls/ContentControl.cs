@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Moos.Framework.Controls
 {
-    public partial class ContentControl : IView
+    public abstract partial class ContentControl : Layout
     {
         public string Name { get; set; }
 

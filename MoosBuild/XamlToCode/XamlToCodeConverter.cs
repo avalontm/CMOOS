@@ -32,7 +32,7 @@ namespace XamlToCode
         private CodeCompileUnit ccu;
         private Dictionary<string, CodeDomObjectNode> PublicObjects { get; set; }
 
-        public string MainCodeClassName { get; set; }
+        public string MainCodeClassName { get; private set; }
 
         public string Convert(string Xaml)
         {
@@ -65,7 +65,7 @@ namespace XamlToCode
             // TODO: XamlXmlReader can sometimes be null, if there is misformed XML in the first sections of XML
             _schemaContext = reader != null ? reader.SchemaContext : new XamlSchemaContext();
             CodeDomDomWriter codeDomDomWriter = new CodeDomDomWriter(_schemaContext);
-
+            
             // Load XAML into a specialized XAML DOM, for analysis and processing
             Console.WriteLine("Building codeDOM from XAML...");
             while (reader.Read())
@@ -74,8 +74,8 @@ namespace XamlToCode
             }
             Console.WriteLine("codeDOM complete.");
             CodeDomObjectNode objectNode = (CodeDomObjectNode)codeDomDomWriter.Result;
-
-            DumpNodeTree(objectNode);
+           
+            //DumpNodeTree(objectNode);
 
             // Initialize CodeDom constructs
             ICodeGenerator cscg = cscProvider.CreateGenerator(stringWriter);
@@ -102,7 +102,7 @@ namespace XamlToCode
         public CompilerResults CompileAssemblyFromLastCodeCompileUnit()
         {
             // Compile the code
-            CompilerParameters comparam = new CompilerParameters(new string[] { "mscorlib.dll", "System.dll", "System.Core.dll"});
+            CompilerParameters comparam = new CompilerParameters(new string[] { "mscorlib.dll", "System.Runtime.dll", "System.dll", "System.Core.dll"});
             comparam.GenerateInMemory = true;
 
             // Add all the required referenced assemblies
@@ -112,7 +112,7 @@ namespace XamlToCode
             comparam.ReferencedAssemblies.Add(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\WindowsBase.dll");
 
             CompilerResults compres = cscProvider.CompileAssemblyFromDom(comparam, ccu);
-
+            
             return compres;
         }
 
@@ -130,7 +130,8 @@ namespace XamlToCode
 
         private void CreateClass(CodeNamespace cns, CodeDomObjectNode objectNode, CodeMemberMethod initComponentMethod)
         {
-            CodeTypeDeclaration rootType;
+            CodeTypeDeclaration rootType = null;
+ 
             if (objectNode.XClassNode == null)
             {
                 rootType = new CodeTypeDeclaration(objectNode.Type.Name);
@@ -145,7 +146,7 @@ namespace XamlToCode
             Console.WriteLine($"[ROOT] {MainCodeClassName}");
             Console.WriteLine($"[UnderlyingType] {objectNode.Type.UnderlyingType}");
 
-            rootType.BaseTypes.Add(new CodeTypeReference(objectNode.Type.UnderlyingType));
+            rootType.BaseTypes.Add(new CodeTypeReference("Window"));
            
             rootType.IsPartial = true;
             rootType.Attributes = MemberAttributes.Public;
@@ -855,6 +856,10 @@ namespace XamlToCode
                 Console.WriteLine(rootNode.Type.Name);
             }
 
+            if (rootNode.Type != null)
+            {
+                Console.WriteLine(rootNode.Type.UnderlyingType);
+            }
             NodeCollection<MemberNode> members = rootNode.MemberNodes;
             foreach (MemberNode member in members)
             {

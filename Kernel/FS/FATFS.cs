@@ -139,5 +139,10 @@ namespace MOOS.FS
                 }
             }
         }
+
+        public override void CreateDirectory(string Name)
+        {
+            
+        }
     }
 }

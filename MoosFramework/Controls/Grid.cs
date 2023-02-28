@@ -23,16 +23,7 @@ namespace Moos.Framework.Controls
         public static extern int GridSetColumn(IntPtr handler, IntPtr control, int column);
 
 
-        List<ContentControl> _children;
-        public List<ContentControl> Children
-        {
-            set
-            {
-                _children = value;
-            }
-            get { return _children; }
-        }
-        
+        public static readonly BindableProperty TitleProperty = BindableProperty.Create("Title");
 
         RowDefinitionCollection _rowDefinitions;
         public RowDefinitionCollection RowDefinitions
@@ -60,13 +51,13 @@ namespace Moos.Framework.Controls
         {
             RowDefinitions = new RowDefinitionCollection();
             ColumnDefinitions = new ColumnDefinitionCollection();
-            Children = new List<ContentControl>();
+          
             Handler = GridCreate(owner.Handler);
         }
 
         public void SetRow(ContentControl control, int row)
         {
-            Children.Add(control);
+           // this.Add(control);
             control.GridRow = GridSetRow(control.Handler, row);
             GridChildrenAdd(Handler, control.Handler);
         }

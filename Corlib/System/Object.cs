@@ -32,7 +32,8 @@ namespace System
         // Allow an object to free resources before the object is reclaimed by the GC.
         // This method's virtual slot number is hardcoded in runtimes. Do not add any virtual methods ahead of this.
         ~Object() { }
-        
+
+
         public unsafe virtual bool Equals(object b)
         {
             object a = this;

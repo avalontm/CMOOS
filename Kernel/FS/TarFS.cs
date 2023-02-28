@@ -42,7 +42,7 @@ namespace MOOS.FS
             public ulong size { set; get; } 
             public int mtime { set; get; }
             public int chksum { set; get; } 
-            public byte typeflag { set; get; }
+            public char typeflag { set; get; }
             public int linkname { set; get; } 
             public int magic { set; get; } 
             public int version { set; get; } 
@@ -62,7 +62,7 @@ namespace MOOS.FS
                 //ConvertTo(uid, data, 108); // USERID
                 //ConvertTo(gid, data, 116); //GROUPID
                 ConvertTo(ConvertToOctal(size, 11), data, 124);
-                data[156] = typeflag;
+                data[156] = (byte)typeflag;
 
                 //Content
                 ConvertTo(content, data, 512);
@@ -73,6 +73,11 @@ namespace MOOS.FS
 
         static void ConvertTo(string value, byte[] data, int start)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
             byte[] buffer = Encoding.ASCII.GetBytes(value);
 
             for (int i = 0; i < buffer.Length; i++)
@@ -85,6 +90,11 @@ namespace MOOS.FS
 
         static void ConvertTo(byte[] buffer, byte[] data, int start)
         {
+            if (buffer == null || buffer.Length == 0)
+            {
+                return;
+            }
+
             for (int i = 0; i < buffer.Length; i++)
             {
                 data[start + i] = buffer[i];
@@ -228,7 +238,7 @@ namespace MOOS.FS
 
             hdr.name = name;
             hdr.mode = "00100664";
-            hdr.typeflag = 0; // NORMAL
+            hdr.typeflag = '0'; // NORMAL
             hdr.size = content.Length;
             hdr.content = content;
 
@@ -238,6 +248,38 @@ namespace MOOS.FS
             }
 
             dir.Dispose();
+        }
+
+        public override void CreateDirectory(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
+            if (name[0] == '/')
+            {
+                name = name.Substring(1);
+            }
+
+            if (name[name.Length-1] == '/')
+            {
+                name = name.Substring(0, name.Length - 1);
+            }
+
+            ulong sec = GetSec();
+
+            TarHeader hdr = new TarHeader();
+
+            hdr.name = name;
+            hdr.mode = "0000000";
+            hdr.typeflag = '5'; // DIRECTORY
+            hdr.size = 0;
+
+            fixed (byte* ptr = hdr.Build())
+            {
+                Disk.Instance.Write(sec, (uint)(hdr.size + 512), ptr);
+            }
         }
 
         public override void Format() 

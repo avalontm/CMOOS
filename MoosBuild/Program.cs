@@ -63,6 +63,7 @@ namespace MoosBuild
                     if (xaml != null)
                     {
                         XamlToCodeConverter convert = new XamlToCodeConverter();
+                       
                         string output = convert.Convert(xaml);
                         File.WriteAllText(fileName + ".generate.cs", output );
                         Console.WriteLine($" Result -> {output}");

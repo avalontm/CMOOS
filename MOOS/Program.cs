@@ -1,5 +1,6 @@
 //#define NETWORK
 
+using Moos.Core.System.IO;
 using MOOS;
 using MOOS.Driver;
 using MOOS.FS;
@@ -138,6 +139,22 @@ unsafe class Program
         Console.WriteLine();
         */
 
+        Directory.CreateDirectory("myFolder");
+
+        var files = File.Instance.GetFiles("");
+
+        for (var i = 0; i < files.Count; i++)
+        {
+            if (files[i].Attribute == FileAttribute.Directory)
+            {
+                Console.WriteLine($"[Dir] {files[i].Name}");
+            } 
+            else
+            {
+                Console.WriteLine($"[File] {files[i].Name}");
+            }
+        }
+       
         SMain();
     }
 

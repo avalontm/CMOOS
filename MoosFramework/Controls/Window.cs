@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Moos.Framework.Controls
 {
     [ContentProperty(nameof(Content))]
-    public class Window
+    public class Window : Layout
     {
         [DllImport("WindowGetScreenBuf")]
         public static extern IntPtr WindowGetScreenBuf(IntPtr handler);
@@ -81,6 +81,8 @@ namespace Moos.Framework.Controls
                 WindowContent(Handler, _content);
             }
         }
+
+        public static readonly BindableProperty TitleProperty = BindableProperty.Create("Title");
 
         public Window()
         {

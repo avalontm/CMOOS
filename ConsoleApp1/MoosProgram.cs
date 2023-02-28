@@ -70,7 +70,6 @@ namespace MoosApplication
         {
             App app = new App();
             app.Run(new MainWindow());
-
         }
     }
 }

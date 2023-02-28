@@ -51,6 +51,8 @@ namespace MOOS
                     return (delegate*<ulong, void>)&API_Sleep;
                 case "GetTick":
                     return (delegate*<ulong>)&API_GetTick;
+                case "CreateDirectory":
+                    return (delegate*<string, void>)&API_CreateDirectory;
                 case "ReadAllBytes":
                     return (delegate*<string, ulong*, byte**, void>)&API_ReadAllBytes;
                 case "WriteAllBytes":
@@ -292,6 +294,11 @@ namespace MOOS
         public static void API_SwitchToConsoleMode()
         {
             Framebuffer.TripleBuffered = false;
+        }
+
+        public static void API_CreateDirectory(string name)
+        {
+            File.Instance.CreateDirectory(name);
         }
 
         public static void API_ReadAllBytes(string name, ulong* length, byte** data)
