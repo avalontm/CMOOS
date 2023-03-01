@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace System.Windows.Controls
+namespace Moos.Framework.Controls
 {
-    public class RowDefinition 
+    public class RowDefinition
     {
         public Position Position { set; get; }
         public int ActualHeight { get; }
