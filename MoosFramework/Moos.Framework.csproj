@@ -8,7 +8,8 @@
 	<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-	  
+
+	<RootNamespace>Moos.Framework</RootNamespace>
 	<Copyright>AvalonTM</Copyright>
 	<PackageIcon>icon.png</PackageIcon>
 	<Description>Moos Framework</Description>

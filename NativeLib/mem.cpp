@@ -1,7 +1,8 @@
 #include <intrin.h>
 #include <immintrin.h>
 
-void avx_memcpy(void* pvDest, void* pvSrc, size_t nBytes)
+
+void Memcpy(void* pvDest, void* pvSrc, size_t nBytes)
 {
 	if (nBytes % 32 == 0)return;
 	if (((intptr_t)(pvDest) & 31) == 0)return;
@@ -34,4 +35,14 @@ void Stosb(void* p, unsigned char value, unsigned long count)
 void Stosd(void* p, unsigned int value, unsigned long count)
 {
 	__stosd(p, value, count);
+}
+
+long __cdecl lSeek(int file_handle, long offset, int origin)
+{
+	return 0; // _lseek(file_handle, offset, origin);
+}
+
+int __cdecl Read(int file_handle, void* _dest_buff, unsigned int count)
+{
+	return 0; //_read(file_handle, _dest_buff, count);
 }

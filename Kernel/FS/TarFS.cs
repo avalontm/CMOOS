@@ -71,6 +71,11 @@ namespace MOOS.FS
             }
         }
 
+        public TarFS()
+        {
+            Console.WriteLine("[Initrd] Initializing Ramdisk");
+        }
+
         static void ConvertTo(string value, byte[] data, int start)
         {
             if (string.IsNullOrEmpty(value))

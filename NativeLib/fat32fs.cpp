@@ -1,59 +1,51 @@
-#include <cstring>
-#include <iostream>
-#include <stdio.h>
-#include <cstdlib>
-#include <fstream>
-#include <math.h>
-#include <unistd.h>
-#include <inttypes.h>
-#include <fcntl.h> 
+#include <string.h> /*for size_t*/
+#include "..\LibC\printf.h"
+#include "integer.h"
 
-using namespace std;
+typedef struct {
 
-typedef struct __attribute__((packed)) {
-
-    uint8_t bs_jmpBoot[3];          // jmp instr to boot code
-    uint8_t bs_oemName[8];          // indicates what system formatted this field, default=MSWIN4.1
-    uint16_t bpb_bytesPerSec;       // Count of bytes per sector
-    uint8_t bpb_secPerClus;         // no.of sectors per allocation unit
-    uint16_t bpb_rsvdSecCnt;        // no.of reserved sectors in the resercved region of the volume starting at 1st sector
-    uint8_t bpb_numFATs;            // The count of FAT datastructures on the volume
-    uint16_t bpb_rootEntCnt;        // Count of 32-byte entries in root dir, for FAT32 set to 0
-    uint16_t bpb_totSec16;          // total sectors on the volume
-    uint8_t bpb_media;              // value of fixed media
-    uint16_t bpb_FATSz16;           // count of sectors occupied by one FAT
-    uint16_t bpb_secPerTrk;         // sectors per track for interrupt 0x13, only for special devices
-    uint16_t bpb_numHeads;          // no.of heads for intettupr 0x13
-    uint32_t bpb_hiddSec;           // count of hidden sectors
-    uint32_t bpb_totSec32;          // count of sectors on volume
-    uint32_t bpb_FATSz32;           // define for FAT32 only
-    uint16_t bpb_extFlags;          // Reserved for FAT32
-    uint16_t bpb_FSVer;             // Major/Minor version num
-    uint32_t bpb_RootClus;          // Clus num of 1st clus of root dir
-    uint16_t bpb_FSInfo;            // sec num of FSINFO struct
-    uint16_t bpb_bkBootSec;         // copy of boot record
-    uint8_t bpb_reserved[12];       // reserved for future expansion
-    uint8_t bs_drvNum;              // drive num
-    uint8_t bs_reserved1;           // for ue by NT
-    uint8_t bs_bootSig;             // extended boot signature
-    uint32_t bs_volID;              // volume serial number
-    uint8_t bs_volLab[11];          // volume label
-    uint8_t bs_fileSysTye[8];       // FAT12, FAT16 etc
+    BYTE bs_jmpBoot[3];          // jmp instr to boot code
+    BYTE bs_oemName[8];          // indicates what system formatted this field, default=MSWIN4.1
+    INT bpb_bytesPerSec;       // Count of bytes per sector
+    BYTE bpb_secPerClus;         // no.of sectors per allocation unit
+    INT bpb_rsvdSecCnt;        // no.of reserved sectors in the resercved region of the volume starting at 1st sector
+    BYTE bpb_numFATs;            // The count of FAT datastructures on the volume
+    INT bpb_rootEntCnt;        // Count of 32-byte entries in root dir, for FAT32 set to 0
+    INT bpb_totSec16;          // total sectors on the volume
+    BYTE bpb_media;              // value of fixed media
+    INT bpb_FATSz16;           // count of sectors occupied by one FAT
+    INT bpb_secPerTrk;         // sectors per track for interrupt 0x13, only for special devices
+    INT bpb_numHeads;          // no.of heads for intettupr 0x13
+    LONG bpb_hiddSec;           // count of hidden sectors
+    LONG bpb_totSec32;          // count of sectors on volume
+    LONG bpb_FATSz32;           // define for FAT32 only
+    INT bpb_extFlags;          // Reserved for FAT32
+    INT bpb_FSVer;             // Major/Minor version num
+    LONG bpb_RootClus;          // Clus num of 1st clus of root dir
+    INT bpb_FSInfo;            // sec num of FSINFO struct
+    INT bpb_bkBootSec;         // copy of boot record
+    BYTE bpb_reserved[12];       // reserved for future expansion
+    BYTE bs_drvNum;              // drive num
+    BYTE bs_reserved1;           // for ue by NT
+    BYTE bs_bootSig;             // extended boot signature
+    LONG bs_volID;              // volume serial number
+    BYTE bs_volLab[11];          // volume label
+    BYTE bs_fileSysTye[8];       // FAT12, FAT16 etc
 } bpbFat32;
 
-typedef struct __attribute__((packed)) {
-    uint8_t dir_name[11];           // short name
-    uint8_t dir_attr;               // File sttribute
-    uint8_t dir_NTRes;              // Set value to 0, never chnage this
-    uint8_t dir_crtTimeTenth;       // millisecond timestamp for file creation time
-    uint16_t dir_crtTime;           // time file was created
-    uint16_t dir_crtDate;           // date file was created
-    uint16_t dir_lstAccDate;        // last access date
-    uint16_t dir_fstClusHI;         // high word fo this entry's first cluster number
-    uint16_t dir_wrtTime;           // time of last write
-    uint16_t dir_wrtDate;           // dat eof last write
-    uint16_t dir_fstClusLO;         // low word of this entry's first cluster number
-    uint32_t dir_fileSize;          // 32-bit DWORD hoding this file's size in bytes
+typedef struct  {
+    BYTE dir_name[11];           // INT name
+    BYTE dir_attr;               // File sttribute
+    BYTE dir_NTRes;              // Set value to 0, never chnage this
+    BYTE dir_crtTimeTenth;       // millisecond timestamp for file creation time
+    INT dir_crtTime;           // time file was created
+    INT dir_crtDate;           // date file was created
+    INT dir_lstAccDate;        // last access date
+    INT dir_fstClusHI;         // high word fo this entry's first cluster number
+    INT dir_wrtTime;           // time of last write
+    INT dir_wrtDate;           // dat eof last write
+    INT dir_fstClusLO;         // low word of this entry's first cluster number
+    LONG dir_fileSize;          // 32-bit DWORD hoding this file's size in bytes
 } dirEnt;
 
 
@@ -62,11 +54,11 @@ int printFat32(bpbFat32* bpbfat32);
 int printDirEnt(dirEnt* dirInfo);
 
 //Helper functions
-void safe_read(int descriptor, uint8_t* buffer, size_t size, long long offset);
+void safe_read(int descriptor, BYTE* buffer, size_t size, long long offset);
 char* tokenize(char* string, char* path[], int* depth);
 
 //FAT related helper functions
-int initFAT();
+int initFAT32();
 int initializeMBR(bpbFat32* bpbcomm, int inFile);
 dirEnt initializeRootDir(bpbFat32* bpbcomm, int inFile);
 int getFirstDataSec(bpbFat32* bpbfat32, int N);
@@ -176,11 +168,11 @@ char* tokenize(char* string, char* path[], int* depth) {
 }
 
 // general read function to seek to a offset and read data into buffer
-void safe_read(int descriptor, uint8_t* buffer, size_t size, long long offset) {
+void safe_read(int descriptor, BYTE* buffer, BYTE size, long long offset) {
     lseek(descriptor, offset, SEEK_SET);
     int remaining = size;
     int read_size;
-    uint8_t* pos = buffer;
+    BYTE* pos = buffer;
     do {
         read_size = read(descriptor, pos, remaining);
         pos += read_size;
@@ -194,15 +186,15 @@ dirEnt initializeRootDir(bpbFat32* bpbcomm, int inFile) {
     dirEnt dirInfo;
     memset(&dirInfo, 0, sizeof(dirEnt));
     int first_data_sec = getFirstDataSec(bpbcomm, bpbcomm->bpb_RootClus);
-    safe_read(inFile, (uint8_t*)&dirInfo, sizeof(dirEnt), first_data_sec * bpbcomm->bpb_bytesPerSec);
+    safe_read(inFile, (BYTE*)&dirInfo, sizeof(dirEnt), first_data_sec * bpbcomm->bpb_bytesPerSec);
     return dirInfo;
 }
 
 // function to initilaize FAT, read MBR and Root Directory entries
-int initFAT() {
+int initFAT32() {
 
     //get env for FAT dir
-    char* rawDisk = getenv("FAT_FS_PATH");
+    char* rawDisk = "";
 
     if (rawDisk == NULL) {
         printf("Please export FAT_FS_PATH env\n");
@@ -211,7 +203,7 @@ int initFAT() {
     }
 
     //open FAT disk file
-    inFile = open(rawDisk, O_RDWR);
+    open(rawDisk, "");
 
     //initialize cwd
     cwdPath = (char*)"/";
@@ -219,14 +211,14 @@ int initFAT() {
 
     //get MBR
     memset(&bpbcomm, 0, sizeof(bpbFat32));
-    safe_read(inFile, (uint8_t*)&bpbcomm, sizeof(bpbFat32), 0x00);
+    safe_read(inFile, (BYTE*)&bpbcomm, sizeof(bpbFat32), 0x00);
 
     //get root directory info
     memset(&rootDir, 0, sizeof(dirEnt));
     rootDir = initializeRootDir(&bpbcomm, inFile);
 
     //initialize fdTable
-    fdTable[MAX_OPEN] = { {0} };
+    //fdTable[MAX_OPEN] = { {0} };
 
     init = 1;
 
@@ -252,7 +244,7 @@ dirEnt* getDirEs(dirEnt dirInfo, bpbFat32* bpbcomm, int inFile, int cluster, int
     int next = sizeof(dirEnt);
     while (dirInfo.dir_name[0] != 0) {
         next += sizeof(dirEnt);
-        safe_read(inFile, (uint8_t*)&dirInfo, sizeof(dirEnt), root_offset + next);
+        safe_read(inFile, (BYTE*)&dirInfo, sizeof(dirEnt), root_offset + next);
         if ((dirInfo.dir_fileSize != -1) && (dirInfo.dir_fstClusLO != 0)) {
             //printDirEnt(&dirInfo);
             dirs = (dirEnt*)realloc(dirs, sizeof * dirs * next);
@@ -293,7 +285,7 @@ int OS_cd(const char* dirpath) {
     int depth = 0;
     int cluster = 0;
     char* path;
-    bool found = false;
+    BOOL found;
     dirEnt lookupDir = rootDir;
     dirEnt* dirs = NULL;
     dirEnt prevCwd;
@@ -323,7 +315,7 @@ int OS_cd(const char* dirpath) {
 
     for (int i = 0; i < depth; i++) {
         int count = 0;
-        found = false;
+        found = FALSE;
 
         dirs = getDirEs(lookupDir, &bpbcomm, inFile, cluster, &count);
 
@@ -341,12 +333,12 @@ int OS_cd(const char* dirpath) {
                 }
                 else {
                     cwd = lookupDir;
-                    found = true;
+                    found = TRUE;
                     break;
                 }
             }
             else { // directory name compare didnt match
-                found = false;
+                found = FALSE;
             } //end of else
         } //end of inner for
         free(dirs);
@@ -381,7 +373,7 @@ dirEnt* OS_readDir(const char* dirpath) {
     int cluster = 0;
     int fd = -1;
     char* path;
-    bool found = false;
+    BOOL found = FALSE;
     dirEnt lookupDir = rootDir;
     dirEnt* dirs = NULL;
     dirEnt prevCwd;
@@ -414,7 +406,7 @@ dirEnt* OS_readDir(const char* dirpath) {
 
     for (int i = 0; i < depth; i++) {
         int count = 0;
-        found = false;
+        found = FALSE;
 
         dirs = getDirEs(lookupDir, &bpbcomm, inFile, cluster, &count);
 
@@ -432,13 +424,13 @@ dirEnt* OS_readDir(const char* dirpath) {
                     return NULL;
                 }
                 else {
-                    found = true;
+                    found = TRUE;
                     dirs = getDirEs(lookupDir, &bpbcomm, inFile, cluster, &count);
                     break;
                 }
             }
             else { // directory name compare didnt match
-                found = false;
+                found = FALSE;
             } //end of else
         } //end of inner for
     } //end of outer for
@@ -477,7 +469,7 @@ int OS_open(const char* dirpath) {
     int depth = 0;
     int cluster = 0;
     int fd = -1;
-    bool found = false;
+    BOOL found = FALSE;
     dirEnt lookupDir = rootDir;
     dirEnt* dirs = NULL;
     dirEnt prevCwd;
@@ -499,7 +491,7 @@ int OS_open(const char* dirpath) {
 
     for (int i = 0; i < depth; i++) {
         int count = 0;
-        found = false;
+        found = FALSE;
 
         dirs = getDirEs(lookupDir, &bpbcomm, inFile, cluster, &count);
 
@@ -519,16 +511,16 @@ int OS_open(const char* dirpath) {
                 }
                 else if ((i == depth - 1) && dirs[j].dir_attr == 0x20) {
                     fd = getFileDesc(&lookupDir);
-                    found = true;
+                    found = TRUE;
                     break;
                 }
                 else {
-                    found = false;
+                    found = FALSE;
                     continue;
                 }
             }
             else { // directory name compare didnt match
-                found = false;
+                found = FALSE;
             } //end of else
         } //end of inner for
         free(dirs);
@@ -556,7 +548,7 @@ int OS_close(int fd) {
 
     if (fd > -1 && fd <= MAX_OPEN) {
         if (fdTable[fd].dir_attr != 0) {
-            fdTable[fd] = { { 0 } };
+            //fdTable[fd] = { { 0 } };
             fdCount = fdCount - 1;
             return SUCCESS;
         }
@@ -590,14 +582,15 @@ int OS_read(int fd, void* readbuf, int nbytes, int offset) {
         }
     }
 
+
     if (fd > -1 && fd <= MAX_OPEN) {
         dirEnt fileInfo = fdTable[fd];
         if (fileInfo.dir_attr != 0x00) {
             int first_sec_of_cluster = getFirstDataSec(&bpbcomm, fileInfo.dir_fstClusLO);
 
-            uint8_t buf[nbytes];
-            safe_read(inFile, (uint8_t*)&buf, nbytes, first_sec_of_cluster * bpbcomm.bpb_bytesPerSec + offset);
-            strcpy((char*)readbuf, (char*)buf);
+           // BYTE buf[nbytes];
+           // safe_read(inFile, (BYTE*)&buf, nbytes, first_sec_of_cluster * bpbcomm.bpb_bytesPerSec + offset);
+           // strcpy((char*)readbuf, (char*)buf);
             return nbytes;
         }
         else {

@@ -1,6 +1,6 @@
 ﻿namespace System.Runtime.InteropServices
 {
-    internal class ComVisibleAttribute : Attribute
+    public class ComVisibleAttribute : Attribute
     {
         private bool m_visible;
 

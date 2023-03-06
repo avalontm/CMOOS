@@ -1,5 +1,6 @@
 using MOOS.Misc;
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 static unsafe class Native
@@ -96,4 +97,13 @@ static unsafe class Native
 
     [DllImport("*")]
     public static extern void Wrmsr(ulong index, ulong value);
+
+    [DllImport("*")]
+    public static extern void Memcpy(void* dest, void* source, ulong count);
+
+    [DllImport("*")]
+    public static extern long lSeek(int handle, long offset, int origin);
+
+    [DllImport("*")]
+    public static extern int Read(int handle, void* source, int count);
 }

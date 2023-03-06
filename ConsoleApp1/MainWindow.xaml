@@ -1,5 +1,5 @@
 <Window x:Class="UIMainWindow"
-        xmlns="clr-namespace:Moos.Framework.Controls;assembly=Moos.Framework"
+        xmlns="http://schemas.moos.com/2023/xaml"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         Title="Moos Xaml" Height="200" Width="200" >
 

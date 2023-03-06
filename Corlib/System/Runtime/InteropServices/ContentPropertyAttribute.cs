@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Moos.Framework
+namespace System.Runtime.InteropServices
 {
-    internal class ContentPropertyAttribute : Attribute
+    public class ContentPropertyAttribute : Attribute
     {
         public string Content { set; get; }
 
