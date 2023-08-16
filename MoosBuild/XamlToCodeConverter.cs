@@ -96,7 +96,8 @@ namespace XamlToCode
         private void GenerateUsings(CodeNamespace cns, CodeDomObjectNode objectNode)
         {
             cns.Imports.Add(new CodeNamespaceImport("System"));
-            cns.Imports.Add(new CodeNamespaceImport("Moos.Framework.Controls"));
+            cns.Imports.Add(new CodeNamespaceImport("System.Windows"));
+            cns.Imports.Add(new CodeNamespaceImport("System.Windows.Controls"));
 
             foreach (string namespaceName in NamespacesToUse.Keys)
             {
@@ -106,6 +107,7 @@ namespace XamlToCode
 
         private void CreateClass(CodeNamespace cns, CodeDomObjectNode objectNode, CodeMemberMethod initComponentMethod)
         {
+            //InitializeComponent
             CodeTypeDeclaration rootType;
             if (objectNode.XClassNode == null)
             {

@@ -10,20 +10,26 @@
 
 using Moos.Framework.Controls;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 
 
-public partial class UIMainWindow : System.Windows.Window {
+public partial class UIMainWindow : Moos.Framework.Controls.Window {
     
     private System.Globalization.CultureInfo EnglishCultureInfo = new System.Globalization.CultureInfo("en-us", false);
     
     public UIMainWindow() {
         this.Title = "Moos Xaml";
-        this.Height = 200D;
-        this.Width = 200D;
+        this.Height = 200;
+        this.Width = 200;
         // ---------------------------
         Grid _grid0 = new Grid();
+        // ---------------------------
+        UIElementCollection _uIElementCollection1 = _grid0.Children;
+        // ---------------------------
+        Button _button2 = new Button();
+        _uIElementCollection1.Add(_button2);
         this.Content = _grid0;
     }
 }

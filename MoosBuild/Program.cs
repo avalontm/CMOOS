@@ -19,13 +19,13 @@ namespace MoosBuild
             Console.WriteLine($"============= MOOS Mue Build V.1.0.0 (By AvalonTM) ==============");
             Console.WriteLine($"=================================================================");
 
-            string xaml = "<Window x:Class=\"demo\"\r\n        xmlns=\"clr-namespace:Moos.Framework.Controls;assembly=MoosBuild\"\r\n        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \r\n        Title=\"Moos Xaml\" Height=\"200\" Width=\"200\" >\r\n\r\n    <Grid>\r\n        <Grid.RowDefinitions>\r\n            <RowDefinition Height=\"auto\"/>\r\n        </Grid.RowDefinitions>\r\n        <Button Text=\"Click me!\" Command=\"{Binding ElementName=onButton}\"/>\r\n    </Grid>\r\n</Window>\r\n";
-            XamlToCodeConverter convert = new XamlToCodeConverter();
+            //string xaml = "<Window x:Class=\"demo\"\r\n        xmlns=\"clr-namespace:Moos.Framework.Controls;assembly=MoosBuild\"\r\n        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \r\n        Title=\"Moos Xaml\" Height=\"200\" Width=\"200\" >\r\n\r\n    <Grid>\r\n        <Grid.RowDefinitions>\r\n            <RowDefinition Height=\"auto\"/>\r\n        </Grid.RowDefinitions>\r\n        <Button Text=\"Click me!\" Command=\"{Binding ElementName=onButton}\"/>\r\n    </Grid>\r\n</Window>\r\n";
+            //XamlToCodeConverter convert = new XamlToCodeConverter();
 
-            string output = convert.Convert(xaml);
-            Console.WriteLine(output);
-            Console.ReadLine();
-            /*
+            ////string output = convert.Convert(xaml);
+           // Console.WriteLine(output);
+           // Console.ReadLine();
+            
             Files = new List<string>();
 
             foreach (string arg in System.Environment.GetCommandLineArgs())
@@ -72,12 +72,12 @@ namespace MoosBuild
                         XamlToCodeConverter convert = new XamlToCodeConverter();
                        
                         string output = convert.Convert(xaml);
-                        File.WriteAllText(fileName + ".auto.cs", output );
+                        File.WriteAllText(fileName + ".g.cs", output );
                         Console.WriteLine($" Result -> {output}");
                     }
                 }
             }
-            */
+            
         }
     }
 }

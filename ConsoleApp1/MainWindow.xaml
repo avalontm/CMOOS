@@ -4,6 +4,6 @@
         Title="Moos Xaml" Height="200" Width="200" >
 
     <Grid>
-        <Button Text="Click me!"/>
+        <Button Content="Click me!"/>
     </Grid>
 </Window>

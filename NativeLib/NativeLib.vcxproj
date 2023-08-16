@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="diskio.c" />
     <ClCompile Include="double_tostring.c" />
+    <ClCompile Include="fat32.c" />
     <ClCompile Include="fatfs.c" />
     <ClCompile Include="ff.c" />
     <ClCompile Include="ffsystem.c" />
@@ -40,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="diskio.h" />
+    <ClInclude Include="fat32.h" />
     <ClInclude Include="ff.h" />
     <ClInclude Include="ffconf.h" />
     <ClInclude Include="integer.h" />

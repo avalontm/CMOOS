@@ -9,9 +9,9 @@ namespace MoosApplication
     {
         int count = 0;
 
-        public MainWindow() : base()
+        public MainWindow()
         {
-          
+            InitializeComponent();
         }
 
         void OnCounterClicked(object obj)
