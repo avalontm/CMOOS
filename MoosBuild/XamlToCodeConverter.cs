@@ -106,10 +106,10 @@ namespace XamlToCode
                 }
             }
 
-            string content = $"namespace {cns.Name} " + "\n{"; 
+            string content = $"namespace {cns.Name} " + "\n{\n"; 
             //Fix
             returnText = returnText.Replace($"public {RootObject.Name}()", "public void InitializeComponent()");
-            content += returnText + "\n}";
+            content += returnText + "\n}\n";
 
             return content;
         }

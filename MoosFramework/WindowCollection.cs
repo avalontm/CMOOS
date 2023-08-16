@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Moos.Framework.Controls;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace Moos.Framework

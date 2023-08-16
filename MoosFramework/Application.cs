@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Moos.Framework.Controls;
+using System.Windows;
 
 namespace Moos.Framework
 {

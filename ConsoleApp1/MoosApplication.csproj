@@ -12,10 +12,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MoosUI Include="MainWindow.xaml">
-	  </MoosUI>
+	  <MoosUI Include="MainWindow.xaml" />
 	</ItemGroup>
-
 
 	<ItemGroup>
 	  <Reference Include="Moos.Core">
@@ -27,4 +25,8 @@
 	</ItemGroup>
 
 	<Import Project="..\Tools\Moos.CSharp.targets" />
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.DotNet.ILCompiler" Version="7.0.0" />
+	</ItemGroup>
 </Project>

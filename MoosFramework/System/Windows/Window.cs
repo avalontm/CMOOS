@@ -1,7 +1,7 @@
 ﻿using Moos.Framework.Controls;
 using System.Windows.Markup;
 
-namespace System.Windows
+namespace Moos.Framework.Controls
 {
     public partial class Window : IWindow
     {
