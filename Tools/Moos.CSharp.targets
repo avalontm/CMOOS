@@ -4,7 +4,7 @@
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-
+ 		<PublishAot>true</PublishAot>
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
