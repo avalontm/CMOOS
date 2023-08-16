@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace MoosApplication
 {
-    public partial class MainWindow : UIMainWindow
+    public partial class MainWindow : Window
     {
         int count = 0;
 

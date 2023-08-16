@@ -54,5 +54,5 @@ using System.Windows.Markup;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: XmlnsPrefix("http://schemas.moos.com/2023/xaml", "Moos.Framework")]
-[assembly: XmlnsDefinition("http://schemas.moos.com/2023/xaml", "Moos.Framework.Controls")]
+[assembly: XmlnsPrefix("https://github.com/avalontm/cmoos", "Moos.Framework")]
+[assembly: XmlnsDefinition("https://github.com/avalontm/cmoos", "Moos.Framework.Controls")]

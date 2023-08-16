@@ -15,6 +15,7 @@ using x2006 = System.Windows.Markup;
 using System.Xml;
 using System.Diagnostics;
 using XamlToCode.DOM;
+using System.Linq;
 
 namespace XamlToCode
 {
@@ -69,15 +70,18 @@ namespace XamlToCode
             {
                 codeDomDomWriter.WriteNode(reader);
             }
+
             Debug.WriteLine("codeDOM complete.");
             CodeDomObjectNode objectNode = (CodeDomObjectNode)codeDomDomWriter.Result;
-
-            //DumpNodeTree(objectNode);
+          
+            // DumpNodeTree(objectNode);
 
             // Initialize CodeDom constructs
             ICodeGenerator cscg = cscProvider.CreateGenerator(stringWriter);
+ 
             ccu = new CodeCompileUnit();
             CodeNamespace cns = new CodeNamespace();
+
             ccu.Namespaces.Add(cns);
 
             // Go process XAML DOM
@@ -86,11 +90,28 @@ namespace XamlToCode
             CreateClass(cns, objectNode, initMethod);
             AddPublicObjectMembers();
 
+
             // Create code from codeDOM
             cscg.GenerateCodeFromCompileUnit(ccu, stringWriter, new CodeGeneratorOptions());
             string returnText = sb.ToString();
 
-            return returnText;
+            
+            if (MainCodeClassName.Contains("."))
+            {
+                string[] nameClass = MainCodeClassName.Split('.');
+
+                for (int i = 0; i < nameClass.Length - 1; i++)
+                {
+                    cns.Name += nameClass[i];
+                }
+            }
+
+            string content = $"namespace {cns.Name} " + "\n{"; 
+            //Fix
+            returnText = returnText.Replace($"public {RootObject.Name}()", "public void InitializeComponent()");
+            content += returnText + "\n}";
+
+            return content;
         }
 
         private void GenerateUsings(CodeNamespace cns, CodeDomObjectNode objectNode)
@@ -117,9 +138,11 @@ namespace XamlToCode
             {
                 rootType = new CodeTypeDeclaration((String)((ValueNode)objectNode.XClassNode.ItemNodes[0]).Value);
             }
+
             // Keep a copy
             MainCodeClassName = rootType.Name;
 
+          
             rootType.BaseTypes.Add(new CodeTypeReference(objectNode.Type.UnderlyingType));
             rootType.IsPartial = true;
             rootType.Attributes = MemberAttributes.Public;
@@ -130,6 +153,14 @@ namespace XamlToCode
             cmf.InitExpression = new CodeObjectCreateExpression(typeof(CultureInfo), new CodeSnippetExpression("\"en-us\""), new CodePrimitiveExpression(false));
 
             rootType.Members.Add(cmf);
+
+            if (rootType.Name.Contains("."))
+            {
+                string[] nameClass = rootType.Name.Split('.');
+                // Keep a copy
+                rootType.Name = nameClass.LastOrDefault();
+
+            }
 
             RootObject = rootType;
         }
@@ -146,7 +177,7 @@ namespace XamlToCode
                 }
                 CodeMemberField cmf = new CodeMemberField(targetObjectNode.Type.UnderlyingType, targetName);
                 cmf.Attributes = MemberAttributes.Public;
-
+ 
                 RootObject.Members.Add(cmf);
             }
         }
@@ -168,6 +199,7 @@ namespace XamlToCode
         private void AddMembers(CodeMemberMethod initComponentMethod, CodeExpression targetExpression, CodeDomObjectNode objectNode)
         {
             NodeCollection<MemberNode> members = objectNode.MemberNodes;
+
             foreach (MemberNode member in members)
             {
                 if (member.Member.Name == "Implementation")
@@ -254,11 +286,11 @@ namespace XamlToCode
             }
         }
 
-        private void ProcessItemNode(ItemNode itemNode, CodeMemberMethod initComponentMethod,
-            MemberNode member, CodeExpression targetExpression)
+        private void ProcessItemNode(ItemNode itemNode, CodeMemberMethod initComponentMethod, MemberNode member, CodeExpression targetExpression)
         {
             CodeDomObjectNode objectNode = (CodeDomObjectNode)itemNode;
             XamlType xamlType = objectNode.Type;
+
             if (xamlType == XamlLanguage.Static)
             {
                 //TODO: this could be posParams or named params...                            
@@ -477,22 +509,18 @@ namespace XamlToCode
             }
         }
 
-        private void GenerateMemberAssignmentWithProvideValueIfNecessary(CodeMemberMethod initComponentMethod, CodeExpression parentExpression, CodeDomObjectNode targetObjectNode,
-            MemberNode parentMember, CodeVariableReferenceExpression cvre)
+        private void GenerateMemberAssignmentWithProvideValueIfNecessary(CodeMemberMethod initComponentMethod, CodeExpression parentExpression, CodeDomObjectNode targetObjectNode, MemberNode parentMember, CodeVariableReferenceExpression cvre)
         {
             //if (parentMember.Member.IsUnknown)
             //{
             //    throw new Exception("Unknown member " + parentMember.Member.Name);
             //}
+
             XamlType xamlType = targetObjectNode.Type;
             if (xamlType.IsMarkupExtension)
             {
                 //call ProvideValue on the ME
-                GenerateMemberAssignment(initComponentMethod, parentMember, parentExpression,
-                    new CodeMethodInvokeExpression(cvre, "ProvideValue", new CodeExpression[] { 
-                        new CodeVariableReferenceExpression("context") 
-                    })
-                    , targetObjectNode);
+                GenerateMemberAssignment(initComponentMethod, parentMember, parentExpression, new CodeMethodInvokeExpression(cvre, "ProvideValue", new CodeExpression[] {  new CodeVariableReferenceExpression("context")  }) , targetObjectNode);
             }
             else
             {
@@ -507,6 +535,7 @@ namespace XamlToCode
             //{
             //    throw new Exception("Unknown member " + member.Member.Name);
             //}
+
             if (member.Member == XamlLanguage.Items)
             {
                 ObjectNode parentObjectNode = member.ParentObjectNode;
@@ -822,7 +851,6 @@ namespace XamlToCode
             {
                 Debug.WriteLine(rootNode.Type.Name);
             }
-
             NodeCollection<MemberNode> members = rootNode.MemberNodes;
             foreach (MemberNode member in members)
             {

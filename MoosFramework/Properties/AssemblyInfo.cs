@@ -17,5 +17,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Preserve]
 [assembly: Guid("97d2ccc9-710c-4fd0-8ed1-0cc44f35f1e5")]
-[assembly: XmlnsPrefix("http://schemas.moos.com/2023/xaml", "Moos.Framework")]
-[assembly: XmlnsDefinition("http://schemas.moos.com/2023/xaml", "Moos.Framework.Controls")]
+[assembly: XmlnsPrefix("https://github.com/avalontm/cmoos", "Moos.Framework")]
+[assembly: XmlnsDefinition("https://github.com/avalontm/cmoos", "Moos.Framework.Controls")]

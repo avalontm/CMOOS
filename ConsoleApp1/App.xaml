@@ -1,5 +1,5 @@
 ﻿<Application x:Class="MoosApplication.App"
-             xmlns="clr-namespace:Moos.Framework;assembly=Moos.Framework"
+             xmlns="https://github.com/avalontm/cmoos"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:MoosApplication"
              StartupUri="MainWindow.xaml">

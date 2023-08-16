@@ -1,9 +1,9 @@
-<Window x:Class="UIMainWindow"
-        xmlns="http://schemas.moos.com/2023/xaml"
+<Window xmlns="https://github.com/avalontm/cmoos"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+		x:Class="MoosApplication.MainWindow"
         Title="Moos Xaml" Height="200" Width="200" >
-
-    <Grid>
-        <Button Content="Click me!"/>
+	
+	<Grid>
+        <Button x:Name="btnClick" Content="Click me!"/>
     </Grid>
 </Window>
