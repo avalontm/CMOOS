@@ -22,9 +22,6 @@
     <Filter Include="源文件\fatfs">
       <UniqueIdentifier>{728cc175-8c6b-4328-a635-fb24151a3e09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\fat32fs">
-      <UniqueIdentifier>{aac441ac-5bb3-40f8-8529-25e3fe4b83f1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="interrupts.cpp">
@@ -63,9 +60,6 @@
     <ClCompile Include="double_tostring.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="fat32.c">
-      <Filter>源文件\fat32fs</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="interrupts_asm.asm">
@@ -96,9 +90,6 @@
     </ClInclude>
     <ClInclude Include="integer.h">
       <Filter>源文件\fatfs</Filter>
-    </ClInclude>
-    <ClInclude Include="fat32.h">
-      <Filter>源文件\fat32fs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
