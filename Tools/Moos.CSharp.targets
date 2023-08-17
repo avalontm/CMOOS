@@ -4,7 +4,8 @@
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
- 		<PublishAot>true</PublishAot>
+		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+ 		<!--PublishAot>true</PublishAot-->
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
@@ -24,7 +25,7 @@
 
 
 	<Target Name="HandleBuild" AfterTargets="AfterBuild" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
-		<Exec Command="dotnet publish -r win-x64"></Exec>
+		<Exec Command="dotnet publish -r win-x64 /p:MSBuildEnableWorkloadResolver=false /bl /p:EmitLegacyAssetsFileItems=true"></Exec>
 	</Target>
 
 	<Target Name="RenameExt" AfterTargets="CopyNativeBinary">

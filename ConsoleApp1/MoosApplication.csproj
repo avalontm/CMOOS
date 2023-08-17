@@ -26,7 +26,4 @@
 
 	<Import Project="..\Tools\Moos.CSharp.targets" />
 
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.DotNet.ILCompiler" Version="7.0.0" />
-	</ItemGroup>
 </Project>

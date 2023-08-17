@@ -5,16 +5,20 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BaseOutputPath>..\bin</BaseOutputPath>
+		
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+		
 		<DefineConstants>Kernel;UseAPIC;HasGUI</DefineConstants>
-
+		<!--PublishAot>true</PublishAot-->
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Entry</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
 		<!--Make the code faster!-->
 		<IlcOptimizationPreference>Size</IlcOptimizationPreference>
+		
 	</PropertyGroup>
 	
 
@@ -39,7 +43,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 	  <ProjectReference Include="..\Corlib\Moos.Core.csproj" />
 	</ItemGroup>
@@ -48,8 +52,6 @@
 
 	<Import Project="..\UIKernel\UIKernel.projitems" Label="Shared" />
 
-	<Target Name="RunResolvePackageDependencies" Condition="'$(RunResolvePackageDependencies)' != ''"/>
-	
 	<Target Name="BuildISO" AfterTargets="Publish">
 		<Delete Files="$(MSBuildStartupDirectory)\Tools\grub2\boot\ramdisk.tar"></Delete>
 		<Exec Command="&quot;$(MSBuildStartupDirectory)\Tools\7-Zip\7z.exe&quot; a &quot;$(MSBuildStartupDirectory)\Tools\grub2\boot\ramdisk.tar&quot; &quot;$(MSBuildStartupDirectory)\Ramdisk\*"></Exec>
