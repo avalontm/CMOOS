@@ -11,11 +11,11 @@ namespace Moos.Framework.Controls
         [DllImport("LoadPNG")]
         public static extern IntPtr LoadPNG(string file);
 
-        public static System.Drawing.Image FromFile(string file)
+        public static Image FromFile(string file)
         {
             string filePath = Application.Current.ExecutablePath + "Resources/" + file;
             IntPtr handler = LoadPNG(filePath);
-            return Unsafe.As<IntPtr, System.Drawing.Image>(ref handler);
+            return Unsafe.As<IntPtr, Image>(ref handler);
         }
     }
 }

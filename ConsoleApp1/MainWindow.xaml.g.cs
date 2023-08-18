@@ -15,6 +15,7 @@ using Moos.Framework.Data;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xaml;
 
 
 
@@ -34,7 +35,11 @@ public partial class MainWindow : Moos.Framework.Controls.Window {
         UIElementCollection _uIElementCollection1 = _grid0.Children;
         // ---------------------------
         btnClick = new Button();
+        ThicknessConverter _thicknessConverter = new ThicknessConverter();
+        btnClick.Margin = ((Thickness)(_thicknessConverter.ConvertFrom(null, EnglishCultureInfo, "5")));
         btnClick.Text = "Click me!";
+        EventConverter _eventConverter = new EventConverter();
+        btnClick.Click = ((EventHandler)(_eventConverter.ConvertFrom(null, EnglishCultureInfo, "onClick")));
         // ---------------------------
         Binding _binding2 = new Binding("");
         _binding2.Source = OnCounterClicked;

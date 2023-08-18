@@ -82,6 +82,17 @@ namespace Moos.Framework.Controls
             }
         }
 
+        EventHandler _click;
+        public EventHandler Click
+        {
+            get { return _click; }
+            set
+            {
+                _click = value;
+                ButtonCommand(Handler, value);
+            }
+        }
+
         object _commandParameter;
         public object CommandParameter
         {

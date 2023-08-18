@@ -12,9 +12,10 @@ namespace Moos.Framework.Controls
     {
         public static object CommandProperty;
 
+        public Thickness Margin { get; set; }
         public string Text { get; set; }
         public ICommand Command { get; set; }
-
+        public EventHandler Click { get; set; }
         public object CommandParameter { get; set; }
 
         public IInputElement CommandTarget { get; set; }

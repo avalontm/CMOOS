@@ -1,4 +1,6 @@
 ﻿using Moos.Framework.Controls;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -24,5 +26,9 @@ namespace MoosApplication
                 btnClick.Text = $"Clicked {count} times";
         }
 
+        void onClick(object sender, EventArgs e)
+        {
+            btnClick.Text = "onClick";
+        }
     }
 }

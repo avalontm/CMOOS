@@ -22,8 +22,8 @@ namespace Moos.Framework.Controls
         public static extern void ImageMargin(IntPtr handler, int left, int top, int right, int bottom);
         
 
-        System.Drawing.Image _source;
-        public System.Drawing.Image Source 
+        Image _source;
+        public Image Source 
         {
             get { return _source; }
             set
