@@ -14,20 +14,14 @@ namespace MoosApplication
             InitializeComponent();
         }
 
-        void OnCounterClicked(object obj)
+        void OnCounterClicked(object sender)
         {
-            Button button = (Button)obj;
+            count++;
 
-            if (button != null)
-            {
-                count++;
-
-                if (count == 1)
-                    button.Content = $"Clicked {count} time";
-                else
-                    button.Content = $"Clicked {count} times";
-            }
-
+            if (count == 1)
+                btnClick.Text = $"Clicked {count} time";
+            else
+                btnClick.Text = $"Clicked {count} times";
         }
 
     }

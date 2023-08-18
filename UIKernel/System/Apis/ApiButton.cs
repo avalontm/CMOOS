@@ -67,7 +67,7 @@ namespace System.Apis
             if (control != null)
             {
                 control.Text = text;
-                return control.Text;
+                return control;
             }
 
             return IntPtr.Zero;

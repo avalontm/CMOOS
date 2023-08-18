@@ -3,6 +3,8 @@
 /************************************************/
 
 using Internal.Runtime.CompilerServices;
+using MOOS.Driver;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -24,11 +26,12 @@ namespace System.Apis
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_GridChildrenAdd;
                 case "GridSetRow":
                     return (delegate*<IntPtr, int, int>)&API_GridSetRow;
-                    
+
             }
 
             return null;
         }
+
 
         public static IntPtr API_GridCreate(IntPtr owner)
         {
@@ -74,15 +77,16 @@ namespace System.Apis
         public static IntPtr API_GridChildrenAdd(IntPtr handler, IntPtr control)
         {
             Grid grid = Unsafe.As<IntPtr, Grid>(ref handler);
-
+          
             if (grid != null)
             {
                 Widget widget = Unsafe.As<IntPtr, Widget>(ref control);
                 widget.Parent = grid;
                 grid.Children.Add(widget);
+                return widget;
             }
 
-            return grid;
+            return IntPtr.Zero;
         }
 
         public static int API_GridSetRow(IntPtr control, int row)

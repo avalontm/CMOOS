@@ -1,5 +1,7 @@
-﻿using Moos.Framework.Input;
+﻿using Moos.Framework.Data;
+using Moos.Framework.Input;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -35,17 +37,17 @@ namespace Moos.Framework.Controls
         [DllImport("ButtonMargin")]
         public static extern void ButtonMargin(IntPtr handler, int left, int top, int right, int bottom);
 
-        string _content;
-        public string Content
+        string _text;
+        public string Text
         {
             get
             {
-                return _content;
+                return _text;
             }
             set
             {
-                _content = value;
-                ButtonText(Handler, _content);
+                _text = value;
+                ButtonText(Handler, _text);
             }
         }
 
@@ -135,6 +137,8 @@ namespace Moos.Framework.Controls
             }
         }
 
+        public static object CommandProperty { get; set; }
+
         public Button()
         {
            
@@ -144,6 +148,14 @@ namespace Moos.Framework.Controls
         {
             base.OnLoaded();
             Handler = ButtonCreate(Application.Current.MainWindow.Handler);
+            ButtonText(Handler, _text);
+            ButtonCommand(Handler, Command);
+            ButtonMargin(Handler, _margin.Left, _margin.Top, _margin.Right, _margin.Bottom);
+        }
+
+        public void SetBinding(object commandProperty, Binding binding2)
+        {
+            Command = new ICommand(binding2.Source);
         }
     }
 }

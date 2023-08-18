@@ -11,6 +11,7 @@ namespace MoosApplication
 //------------------------------------------------------------------------------
 
 using Moos.Framework.Controls;
+using Moos.Framework.Data;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,14 +26,19 @@ public partial class MainWindow : Moos.Framework.Controls.Window {
     
     public void InitializeComponent() {
         this.Title = "Moos Xaml";
-        this.Height = 200;
-        this.Width = 200;
+        this.Height = 450;
+        this.Width = 600;
         // ---------------------------
         Grid _grid0 = new Grid();
         // ---------------------------
         UIElementCollection _uIElementCollection1 = _grid0.Children;
         // ---------------------------
         btnClick = new Button();
+        btnClick.Text = "Click me!";
+        // ---------------------------
+        Binding _binding2 = new Binding("");
+        _binding2.Source = OnCounterClicked;
+        btnClick.SetBinding(Moos.Framework.Controls.Button.CommandProperty, _binding2);
         _uIElementCollection1.Add(btnClick);
         this.Content = _grid0;
     }

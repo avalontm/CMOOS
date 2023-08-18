@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -59,6 +60,15 @@ namespace Moos.Framework.Controls
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].OnLoaded();
+                if (Children[i].Handler != IntPtr.Zero)
+                {
+                    IntPtr cHandler = GridChildrenAdd(Handler, Children[i].Handler);
+
+                    if (cHandler != IntPtr.Zero)
+                    {
+                        Debug.WriteLine($"[Children] {cHandler} == {Children[i].Handler}");
+                    }
+                }
             }
         }
 

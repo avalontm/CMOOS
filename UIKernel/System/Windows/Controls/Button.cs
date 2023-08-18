@@ -1,6 +1,7 @@
 #if HasGUI
 using MOOS;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Data;
 using System.Windows.Forms;
@@ -22,7 +23,8 @@ namespace System.Windows.Controls
             Y = 0;
             Width = 300;
             Height = 42;
-            _background = new Brush(0xFF111111);
+            Background = new Brush(0xFFD4D4D4);
+            Foreground = new Brush(Color.Black);
             UseHighlight = true;
             CommandParameter = string.Empty;
         }
@@ -48,7 +50,7 @@ namespace System.Windows.Controls
                             {
                                 if (Command != null && Command.Source != null)
                                 {
-                                    Command.Source.Execute.Invoke(CommandParameter);
+                                    Command.Source.Execute?.Invoke(CommandParameter);
                                     return;
                                 }
                             }

@@ -31,6 +31,7 @@ namespace System.Windows.Controls
             {
                 Children[i].OnLoaded();
             }
+            Debug.WriteLine($"[Grid] OnLoaded {Children.Count}");
         }
 
         public override void OnUnloaded()
@@ -51,6 +52,7 @@ namespace System.Windows.Controls
             {
                 Children[i].OnUpdate();
             }
+
         }
 
         public override void OnResize()
@@ -166,7 +168,8 @@ namespace System.Windows.Controls
         }
 
         void onDrawGrids()
-        {
+        {                
+            //Draw Controls
             for (int g = 0; g < Grids.Count; g++)
             {
                 Grids[g].Position.X = ColumnDefinitions[Grids[g].Column].Position.X;

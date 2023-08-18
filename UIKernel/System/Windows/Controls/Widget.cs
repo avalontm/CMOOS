@@ -306,16 +306,23 @@ namespace System.Windows.Controls
                         {
                             if (Background != null)
                             {
-                                _background.Value = _old_background.Value;
+                                if (_old_background != null)
+                                {
+                                    _background.Value = _old_background.Value;
+                                }
                             }
                             if (HighlightBackground != null)
                             {
-                                BorderBrush.Value = _old_background.Value;
+                                if (_old_background != null)
+                                {
+                                    BorderBrush.Value = _old_background.Value;
+                                }
                             }
                         }
                     }
                 }
             }
+
         }
 
         public void onSetParent(Widget parent)

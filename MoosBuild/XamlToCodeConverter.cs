@@ -119,7 +119,8 @@ namespace XamlToCode
             cns.Imports.Add(new CodeNamespaceImport("System"));
             cns.Imports.Add(new CodeNamespaceImport("System.Windows"));
             cns.Imports.Add(new CodeNamespaceImport("System.Windows.Controls"));
-
+            cns.Imports.Add(new CodeNamespaceImport("Moos.Framework.Data"));
+            
             foreach (string namespaceName in NamespacesToUse.Keys)
             {
                 cns.Imports.Add(new CodeNamespaceImport(namespaceName));
