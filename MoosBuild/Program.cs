@@ -73,7 +73,6 @@ namespace MoosBuild
                        
                         string output = convert.Convert(xaml);
                         File.WriteAllText(fileName + ".g.cs", output );
-                        Console.WriteLine($" Result -> {output}");
                     }
                 }
             }
