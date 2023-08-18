@@ -4,6 +4,6 @@
         Title="Moos Xaml" Height="450" Width="600" >
 	
 	<Grid>
-        <Button x:Name="btnClick" Margin="5" Text="Click me!" Command="{Binding ElementName=OnCounterClicked}"/>
+        <Button x:Name="btnClick" Margin="5" Text="Click me!" Command="{Binding ElementName=OnCounterClicked}" Foreground="White"/>
     </Grid>
 </Window>

@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Moos.Framework.Controls
 {
-    public class Button : ContentControl
+    public partial class Button : ContentControl
     {
         [DllImport("ButtonCreate")]
         public static extern IntPtr ButtonCreate(IntPtr handler);
