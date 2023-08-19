@@ -10,6 +10,7 @@ namespace MoosApplication
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Moos.Framework;
 using Moos.Framework.Controls;
 using Moos.Framework.Data;
 using System;
@@ -32,19 +33,31 @@ public partial class MainWindow : Moos.Framework.Controls.Window {
         // ---------------------------
         Grid _grid0 = new Grid();
         // ---------------------------
-        UIElementCollection _uIElementCollection1 = _grid0.Children;
+        RowDefinitionCollection _rowDefinitionCollection1 = _grid0.RowDefinitions;
+        // ---------------------------
+        RowDefinition _rowDefinition2 = new RowDefinition();
+        GridLengthConverter _gridLengthConverter = new GridLengthConverter();
+        _rowDefinition2.Height = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "*")));
+        _rowDefinitionCollection1.Add(_rowDefinition2);
+        // ---------------------------
+        RowDefinition _rowDefinition3 = new RowDefinition();
+        _rowDefinition3.Height = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "auto")));
+        _rowDefinitionCollection1.Add(_rowDefinition3);
+        // ---------------------------
+        UIElementCollection _uIElementCollection4 = _grid0.Children;
         // ---------------------------
         btnClick = new Button();
+        Grid.SetRow(btnClick, 1);
         ThicknessConverter _thicknessConverter = new ThicknessConverter();
         btnClick.Margin = ((Thickness)(_thicknessConverter.ConvertFrom(null, EnglishCultureInfo, "5")));
         btnClick.Text = "Click me!";
         EventConverter _eventConverter = new EventConverter();
         btnClick.Click = ((EventHandler)(_eventConverter.ConvertFrom(null, EnglishCultureInfo, "onClick")));
         // ---------------------------
-        Binding _binding2 = new Binding("");
-        _binding2.Source = OnCounterClicked;
-        btnClick.SetBinding(Moos.Framework.Controls.Button.CommandProperty, _binding2);
-        _uIElementCollection1.Add(btnClick);
+        Binding _binding5 = new Binding("");
+        _binding5.Source = OnCounterClicked;
+        btnClick.SetBinding(Moos.Framework.Controls.Button.CommandProperty, _binding5);
+        _uIElementCollection4.Add(btnClick);
         this.Content = _grid0;
     }
 }

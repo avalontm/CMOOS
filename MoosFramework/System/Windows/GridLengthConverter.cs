@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace System.Windows
 {
-    internal class GridLengthConverter
+    public class GridLengthConverter
     {
         public object ConvertFrom(object context, CultureInfo cultureInfo, object source)
         {

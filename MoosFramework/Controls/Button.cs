@@ -157,11 +157,12 @@ namespace Moos.Framework.Controls
 
         public override void OnLoaded()
         {
-            base.OnLoaded();
             Handler = ButtonCreate(Application.Current.MainWindow.Handler);
             ButtonText(Handler, _text);
             ButtonCommand(Handler, Command);
             ButtonMargin(Handler, _margin.Left, _margin.Top, _margin.Right, _margin.Bottom);
+
+            base.OnLoaded();
         }
 
         public void SetBinding(object commandProperty, Binding binding2)

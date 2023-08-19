@@ -19,10 +19,6 @@ namespace Moos.Framework.Controls
         public static extern IntPtr GridColumnDefinitions(IntPtr handler, IntPtr cols);
         [DllImport("GridChildrenAdd")]
         public static extern IntPtr GridChildrenAdd(IntPtr handler, IntPtr control);
-        [DllImport("GridSetRow")]
-        public static extern int GridSetRow(IntPtr control, int row);
-        [DllImport("GridSetColumn")]
-        public static extern int GridSetColumn(IntPtr handler, IntPtr control, int column);
 
         RowDefinitionCollection _rowDefinitions;
         public RowDefinitionCollection RowDefinitions
@@ -54,8 +50,9 @@ namespace Moos.Framework.Controls
 
         public override void OnLoaded()
         {
-            base.OnLoaded();
             Handler = GridCreate(Application.Current.MainWindow.Handler);
+            GridRowDefinitions(Handler, _rowDefinitions);
+            GridColumnDefinitions(Handler, _columnDefinitions);
 
             for (int i = 0; i < Children.Count; i++)
             {
@@ -70,13 +67,13 @@ namespace Moos.Framework.Controls
                     }
                 }
             }
+
+            base.OnLoaded();
         }
 
         public static void SetRow(ContentControl control, int row)
         {
-           // this.Add(control);
             control.GridRow = GridSetRow(control.Handler, row);
-           // GridChildrenAdd(Handler, control.Handler);
         }
     }
 }

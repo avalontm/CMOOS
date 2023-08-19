@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Moos.Framework
 {
@@ -13,6 +15,8 @@ namespace Moos.Framework
         Star = 2
     }
 
+    [TypeConverter(typeof(GridLengthConverter))]
+    [Localizability(LocalizationCategory.None, Readability = Readability.Unreadable)]
     public class GridLength
     {
         public GridUnitType GridUnitType { get; private set; }

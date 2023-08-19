@@ -2,8 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
 		x:Class="MoosApplication.MainWindow"
         Title="Moos Xaml" Height="450" Width="600" >
-	
-	<Grid>
-        <Button x:Name="btnClick" Margin="5" Text="Click me!" Click="onClick" Command="{Binding ElementName=OnCounterClicked}" Foreground="White"/>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <Button Grid.Row="1" x:Name="btnClick" Margin="5" Text="Click me!" Click="onClick" Command="{Binding ElementName=OnCounterClicked}" Foreground="White"/>
     </Grid>
 </Window>
