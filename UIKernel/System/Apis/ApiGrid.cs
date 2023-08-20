@@ -43,7 +43,10 @@ namespace System.Apis
 
             if (papp != null)
             {
-                control.Parent = papp;
+                if (control.Parent == null)
+                {
+                    control.Parent = papp;
+                }
                 if (papp.Content == null)
                 {
                     papp.Content = control;

@@ -57,6 +57,7 @@ unsafe class Program
         HID.Initialize();
         EHCI.Initialize();
 
+
         if (HID.Mouse != null)
         {
             Console.Write("[Warning] Press please press Mouse any key to validate USB Mouse ");
@@ -87,6 +88,7 @@ unsafe class Program
             }
         }
 
+
         USB.StartPolling();
 
         //Use qemu for USB debug
@@ -99,11 +101,11 @@ unsafe class Program
         {
             Console.WriteLine("USB Keyboard not present");
         }
-
+        
         Audio.Initialize();
         AC97.Initialize();
         ES1371.Initialize();
-
+        
         #region NETWORK
         /*       
                //Network Config (AvalonTM)
@@ -145,7 +147,7 @@ unsafe class Program
     public static void SMain()
     {
         Console.WriteLine("Press any key to [ENTER] desktop...");
-        Console.ReadKey();
+        Console.ReadKey(true);
 
         Framebuffer.TripleBuffered = true;
 

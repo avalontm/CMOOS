@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Internal.Runtime.CompilerServices;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -68,6 +69,7 @@ namespace System.Windows.Controls
         public override void OnDraw()
         {
             base.OnDraw();
+
             onGrids();
         }
 
@@ -169,33 +171,35 @@ namespace System.Windows.Controls
 
         void onDrawGrids()
         {
-            //Draw Controls
-            for (int col = 0; col < _columns; col++)
+            if (this.IsLoaded)
             {
-                for (int row = 0; row < _rows; row++)
+                //Draw Controls
+                for (int col = 0; col < _columns; col++)
                 {
-                    Position pos = new Position(ColumnDefinitions[col].Position.X, RowDefinitions[row].Position.Y, ColumnDefinitions[col].Position.Width, RowDefinitions[row].Position.Height);
-
-                    for (int c = 0; c < Children.Count; c++)
+                    for (int row = 0; row < _rows; row++)
                     {
-                        if (row == Children[c].GridRow && col == Children[c].GridColumn)
+                        Position pos = new Position(ColumnDefinitions[col].Position.X, RowDefinitions[row].Position.Y, ColumnDefinitions[col].Position.Width, RowDefinitions[row].Position.Height);
+
+                        for (int c = 0; c < Children.Count; c++)
                         {
-                            Children[c].onSetParent(this, pos);
-
-                            if (Children[c].GridColumnSpan > 0)
+                            if (row == Children[c].GridRow && col == Children[c].GridColumn)
                             {
-                                Children[c].Pos.Position.Width = GetGridColumnSpan(Children[c].GridColumn, Children[c].GridColumnSpan);
-                            }
+                                Children[c].onSetParent(this, pos);
 
-                            if (Children[c].GridRowSpan > 0)
-                            {
-                                Children[c].Pos.Position.Height = GetGridRowSpan(Children[c].GridRow, Children[c].GridRowSpan);
-                            }
+                                if (Children[c].GridColumnSpan > 0)
+                                {
+                                    Children[c].Pos.Position.Width = GetGridColumnSpan(Children[c].GridColumn, Children[c].GridColumnSpan);
+                                }
 
-                            Children[c].OnDraw();
+                                if (Children[c].GridRowSpan > 0)
+                                {
+                                    Children[c].Pos.Position.Height = GetGridRowSpan(Children[c].GridRow, Children[c].GridRowSpan);
+                                }
+
+                                Children[c].OnDraw();
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -270,8 +274,23 @@ namespace System.Windows.Controls
             }
             else if (RowDefinitions[r].Height.IsStar)
             {
-                RowDefinitions[r].Height.Value = ((this.Parent.Height - rowPixels) / rowTotalStar);
-                RowDefinitions[r].Position.Height = RowDefinitions[r].Height.Value;
+                if (this.Parent != null)
+                {
+                    if (this.Parent is Grid)
+                    {
+                        RowDefinitions[r].Height.Value = ((((Grid)this.Parent).RowDefinitions[GridRow].Position.Height - rowPixels) / rowTotalStar);
+                        RowDefinitions[r].Position.Height = RowDefinitions[r].Height.Value;
+                    }
+                    else
+                    {
+                        RowDefinitions[r].Height.Value = ((this.Parent.Height - rowPixels) / rowTotalStar);
+                        RowDefinitions[r].Position.Height = RowDefinitions[r].Height.Value;
+                    }
+                }else
+                {
+                    RowDefinitions[r].Height.Value = ((this.Parent.Height - rowPixels) / rowTotalStar);
+                    RowDefinitions[r].Position.Height = RowDefinitions[r].Height.Value;
+                }
             }
             else if (RowDefinitions[r].Height.IsAbsolute)
             {
@@ -287,8 +306,24 @@ namespace System.Windows.Controls
             }
             else if (ColumnDefinitions[c].Width.IsStar)
             {
-                ColumnDefinitions[c].Width.Value = ((this.Parent.Width - colPixels) / colTotalStar);
-                ColumnDefinitions[c].Position.Width = ColumnDefinitions[c].Width.Value;
+                if (this.Parent != null)
+                {
+                    if (this.Parent is Grid)
+                    {
+                        ColumnDefinitions[c].Width.Value = ((((Grid)this.Parent).ColumnDefinitions[GridColumn].Position.Width - colPixels) / colTotalStar);
+                        ColumnDefinitions[c].Position.Width = ColumnDefinitions[c].Width.Value;
+                    }
+                    else
+                    { 
+                        ColumnDefinitions[c].Width.Value = ((this.Parent.Width - colPixels) / colTotalStar);
+                        ColumnDefinitions[c].Position.Width = ColumnDefinitions[c].Width.Value;
+                    }
+                }
+                else
+                {
+                    ColumnDefinitions[c].Width.Value = ((this.Parent.Width - colPixels) / colTotalStar);
+                    ColumnDefinitions[c].Position.Width = ColumnDefinitions[c].Width.Value;
+                }
             }
             else if (ColumnDefinitions[c].Width.IsAbsolute)
             {

@@ -47,24 +47,23 @@ public partial class MainWindow : Moos.Framework.Controls.Window {
         // ---------------------------
         UIElementCollection _uIElementCollection4 = _grid0.Children;
         // ---------------------------
-        Button _button5 = new Button();
-        Grid.SetRow(_button5, 0);
+        Grid _grid5 = new Grid();
+        _grid5.Row = 0;
+        // ---------------------------
+        UIElementCollection _uIElementCollection6 = _grid5.Children;
+        // ---------------------------
+        Button _button7 = new Button();
         ThicknessConverter _thicknessConverter = new ThicknessConverter();
-        _button5.Margin = ((Thickness)(_thicknessConverter.ConvertFrom(null, EnglishCultureInfo, "5")));
-        _button5.Text = "Button Fill";
-        _button5.Background = Colors.Red;
-        _uIElementCollection4.Add(_button5);
+        _button7.Margin = ((Thickness)(_thicknessConverter.ConvertFrom(null, EnglishCultureInfo, "5")));
+        _button7.Text = "Button Fill";
+        _button7.Background = Colors.Red;
+        _uIElementCollection6.Add(_button7);
+        _uIElementCollection4.Add(_grid5);
         // ---------------------------
-        Grid _grid6 = new Grid();
-        _grid6.Row = 1;
+        Grid _grid8 = new Grid();
+        _grid8.Row = 1;
         // ---------------------------
-        RowDefinitionCollection _rowDefinitionCollection7 = _grid6.RowDefinitions;
-        // ---------------------------
-        RowDefinition _rowDefinition8 = new RowDefinition();
-        _rowDefinition8.Height = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "auto")));
-        _rowDefinitionCollection7.Add(_rowDefinition8);
-        // ---------------------------
-        ColumnDefinitionCollection _columnDefinitionCollection9 = _grid6.ColumnDefinitions;
+        ColumnDefinitionCollection _columnDefinitionCollection9 = _grid8.ColumnDefinitions;
         // ---------------------------
         ColumnDefinition _columnDefinition10 = new ColumnDefinition();
         _columnDefinition10.Width = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "*")));
@@ -74,14 +73,19 @@ public partial class MainWindow : Moos.Framework.Controls.Window {
         _columnDefinition11.Width = ((GridLength)(_gridLengthConverter.ConvertFrom(null, EnglishCultureInfo, "*")));
         _columnDefinitionCollection9.Add(_columnDefinition11);
         // ---------------------------
-        UIElementCollection _uIElementCollection12 = _grid6.Children;
+        UIElementCollection _uIElementCollection12 = _grid8.Children;
         // ---------------------------
-        Button _button13 = new Button();
-        Grid.SetColumn(_button13, 0);
-        _button13.Margin = ((Thickness)(_thicknessConverter.ConvertFrom(null, EnglishCultureInfo, "5")));
-        _button13.Text = "Button Auto";
-        _button13.Background = Colors.Blue;
-        _uIElementCollection12.Add(_button13);
+        Grid _grid13 = new Grid();
+        _grid13.Column = 0;
+        // ---------------------------
+        UIElementCollection _uIElementCollection14 = _grid13.Children;
+        // ---------------------------
+        Button _button15 = new Button();
+        _button15.Margin = ((Thickness)(_thicknessConverter.ConvertFrom(null, EnglishCultureInfo, "5")));
+        _button15.Text = "Button Auto";
+        _button15.Background = Colors.Blue;
+        _uIElementCollection14.Add(_button15);
+        _uIElementCollection12.Add(_grid13);
         // ---------------------------
         btnClick = new Button();
         Grid.SetColumn(btnClick, 1);
@@ -90,14 +94,14 @@ public partial class MainWindow : Moos.Framework.Controls.Window {
         EventConverter _eventConverter = new EventConverter();
         btnClick.Click = ((EventHandler)(_eventConverter.ConvertFrom(null, EnglishCultureInfo, "onClick")));
         // ---------------------------
-        Binding _binding14 = new Binding("");
-        _binding14.Source = OnCounterClicked;
-        btnClick.SetBinding(Moos.Framework.Controls.Button.CommandProperty, _binding14);
+        Binding _binding16 = new Binding("");
+        _binding16.Source = OnCounterClicked;
+        btnClick.SetBinding(Moos.Framework.Controls.Button.CommandProperty, _binding16);
         ColorConverter _colorConverter = new ColorConverter();
         btnClick.Foreground = ((Color)(_colorConverter.ConvertFrom(null, EnglishCultureInfo, "#d2d2d2")));
         btnClick.Background = Colors.Green;
         _uIElementCollection12.Add(btnClick);
-        _uIElementCollection4.Add(_grid6);
+        _uIElementCollection4.Add(_grid8);
         this.Content = _grid0;
     }
 }

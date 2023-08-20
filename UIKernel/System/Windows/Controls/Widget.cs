@@ -143,7 +143,6 @@ namespace System.Windows.Controls
 
         internal Widget Parent { set; get; }
 
-
         GridCollection _pos;
         internal GridCollection Pos
         {
@@ -292,10 +291,10 @@ namespace System.Windows.Controls
         {
             this.Parent = parent;
             this.Pos = new GridCollection(pos, GridRow,  GridColumn);
-            X =  Pos.Position.X;
-            Y = Pos.Position.Y;
-            Width = Pos.Position.Width;
-            Height = Pos.Position.Height;
+            X = pos.X;
+            Y = pos.Y;
+            Width = pos.Width;
+            Height = pos.Height;
         }
 
         public void DrawBorder()

@@ -15,7 +15,7 @@ namespace MOOS
         internal static void Initialize()
         {
             PCIDevice device = PCI.GetDevice(0x1274, 0x1371);
-            if (!device) return;
+            if (device == null) return;
 
             device.Claimed = true;
             device.EnableDevice();
