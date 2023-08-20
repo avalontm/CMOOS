@@ -183,7 +183,7 @@ namespace System.Windows.Controls
                     {
                         Children[c].Parent = this;
                         Children[c].Pos = Grids[g];
-
+                       // Debug.WriteLine($"[Children] {Children[c].Pos.Position.X}, {Children[c].Pos.Position.Y}, {Children[c].Pos.Position.Width}, {Children[c].Pos.Position.Height}");
                         if (Children[c].GridColumnSpan > 0)
                         {
                             Children[c].Pos.Position.Width = GetGridColumnSpan(Children[c].GridColumn, Children[c].GridColumnSpan);

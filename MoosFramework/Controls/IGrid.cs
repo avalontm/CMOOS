@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace Moos.Framework.Controls
 {
@@ -63,17 +64,23 @@ namespace Moos.Framework.Controls
 
                     if (cHandler != IntPtr.Zero)
                     {
-                        Debug.WriteLine($"[Children] {cHandler} == {Children[i].Handler}");
+                        Debug.WriteLine($"[Children] {Children[i].Handler}");
                     }
                 }
             }
 
+            Debug.WriteLine($"[Grid] {Handler}");
             base.OnLoaded();
         }
 
         public static void SetRow(ContentControl control, int row)
         {
-            control.GridRow = GridSetRow(control.Handler, row);
+            control.Row = row;
+        }
+
+        public static void SetColumn(ContentControl control, int column)
+        {
+            control.Column = column;
         }
     }
 }

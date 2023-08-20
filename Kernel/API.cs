@@ -103,6 +103,13 @@ namespace MOOS
 
             #region API Controls
             //Call To Controls
+            void* _call_shared = ApiShared.HandleSystemCall(name);
+
+            if (_call_shared != null)
+            {
+                return _call_shared;
+            }
+
             void* _call_window = ApiWindow.HandleSystemCall(name);
 
             if (_call_window != null)

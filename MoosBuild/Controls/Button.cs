@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Moos.Framework.Controls
 {
@@ -17,7 +18,8 @@ namespace Moos.Framework.Controls
         public ICommand Command { get; set; }
         public EventHandler Click { get; set; }
         public object CommandParameter { get; set; }
-
+        public Color Background { get; set; }
+        public Color Foreground { get; set; }
         public IInputElement CommandTarget { get; set; }
     }
 

@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Drawing;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace Moos.Framework.Controls
 {
     public abstract partial class ContentControl : Layout, IView
     {
+        
+        [DllImport("ControlBackground")]
+        public static extern int ControlBackground(IntPtr control, uint color);
+        [DllImport("ControlForeground")]
+        public static extern int ControlForeground(IntPtr control, uint color);
         [DllImport("GridSetRow")]
         public static extern int GridSetRow(IntPtr control, int row);
         [DllImport("GridSetColumn")]
@@ -27,8 +33,8 @@ namespace Moos.Framework.Controls
         public LayoutOptions VerticalOptions { set; get; }
         public Color Background { get; set; }
         public bool IsVisisble { get; set; }
-        public int GridRow { get; set; }
-        public int GridColumn { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
 
         public ContentControl()
         {
@@ -37,8 +43,8 @@ namespace Moos.Framework.Controls
 
         public virtual void OnLoaded()
         {
-            GridRow = GridSetRow(Handler, GridRow);
-            GridColumn = GridSetColumn(Handler, GridColumn);
+            Row = GridSetRow(Handler, Row);
+            Column = GridSetColumn(Handler, Column);
         }
     }
 }

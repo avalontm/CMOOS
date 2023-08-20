@@ -8,7 +8,23 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        
-        <Button Grid.Row="1" x:Name="btnClick" Margin="5" Text="Click me!" Click="onClick" Command="{Binding ElementName=OnCounterClicked}" Foreground="White"/>
+
+        <Grid Grid.Row="0">
+            <Button Text="Button Fill" Background="Red"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Button Text="Button Auto" Background="Blue"/>
+            </Grid>
+
+            <Button Grid.Column="1" x:Name="btnClick" Margin="5" Text="Click me!" Click="onClick" Command="{Binding ElementName=OnCounterClicked}" Foreground="#d2d2d2" Background="Green"/>
+        </Grid>
+   
     </Grid>
 </Window>

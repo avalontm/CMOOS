@@ -46,31 +46,36 @@ namespace System.Windows.Controls
                     _old_background = new Brush(_background.Value);
                 }
 
-                Color color = Color.FromArgb(_old_background.Value);
-                
-                color.R = (byte)(color.R + 5);
-                color.G = (byte)(color.G + 5);
-                color.B = (byte)(color.B + 5);
-
-                if (color.R > 255)
-                {
-                    color.R = 255;
-                }
-
-                if (color.G > 255)
-                {
-                    color.G = 255;
-                }
-
-                if (color.B > 255)
-                {
-                    color.B = 255;
-                }
-
-                _highlight_background = new Brush(color);
-                color.Dispose();
+                onSetHighLight();
             }
             get { return _background; }
+        }
+
+        internal void onSetHighLight()
+        {
+            Color color = Color.FromArgb(_old_background.Value);
+
+            color.R = (byte)(color.R + 5);
+            color.G = (byte)(color.G + 5);
+            color.B = (byte)(color.B + 5);
+
+            if (color.R > 255)
+            {
+                color.R = 255;
+            }
+
+            if (color.G > 255)
+            {
+                color.G = 255;
+            }
+
+            if (color.B > 255)
+            {
+                color.B = 255;
+            }
+
+            _highlight_background = new Brush(color);
+            color.Dispose();
         }
 
         public Brush HighlightBackground

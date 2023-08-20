@@ -2,9 +2,9 @@
 using Moos.Framework.Input;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Moos.Framework.Controls
 {
@@ -27,12 +27,6 @@ namespace Moos.Framework.Controls
 
         [DllImport("ButtonCommandParameter")]
         public static extern IntPtr ButtonCommandParameter(IntPtr handler, IntPtr command);
-
-        [DllImport("ButtonBackground")]
-        public static extern int ButtonBackground(IntPtr handler, int color);
-
-        [DllImport("ButtonForeground")]
-        public static extern int ButtonForeground(IntPtr handler, int color);
 
         [DllImport("ButtonMargin")]
         public static extern void ButtonMargin(IntPtr handler, int left, int top, int right, int bottom);
@@ -111,7 +105,7 @@ namespace Moos.Framework.Controls
             set
             {
                 _background = value;
-                ButtonBackground(Handler, (int)_background.ToArgb());
+                ControlBackground(Handler, _background.ToArgb());
             }
         }
 
@@ -122,7 +116,7 @@ namespace Moos.Framework.Controls
             set
             {
                 _foreground = value;
-                ButtonForeground(Handler, (int)_foreground.ToArgb());
+                ControlForeground(Handler, _foreground.ToArgb());
             }
         }
 
@@ -152,7 +146,8 @@ namespace Moos.Framework.Controls
 
         public Button()
         {
-           
+            Foreground = new Color(0,0,0);
+            Background = new Color(0xFFD4D4D4);
         }
 
         public override void OnLoaded()
@@ -161,6 +156,8 @@ namespace Moos.Framework.Controls
             ButtonText(Handler, _text);
             ButtonCommand(Handler, Command);
             ButtonMargin(Handler, _margin.Left, _margin.Top, _margin.Right, _margin.Bottom);
+            Foreground.ARGB = ControlForeground(Handler, Foreground.ToArgb());
+            Background.ARGB = ControlBackground(Handler, Background.ToArgb());
 
             base.OnLoaded();
         }

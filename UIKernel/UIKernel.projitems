@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiImage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiShared.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Apis\ApiWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Explorers\ExplorerManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Sounds\AudioManager.cs" />

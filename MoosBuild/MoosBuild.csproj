@@ -51,6 +51,8 @@
     <Compile Include="CodeDomDomWriter.cs" />
     <Compile Include="CodeDomObjectNode.cs" />
     <Compile Include="Controls\Button.cs" />
+    <Compile Include="Controls\ColumnDefinition.cs" />
+    <Compile Include="Controls\ColumnDefinitionCollection.cs" />
     <Compile Include="Controls\ContentControl.cs" />
     <Compile Include="Controls\Grid.cs" />
     <Compile Include="Controls\GridLength.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceProviders.cs" />
+    <Compile Include="System\Windows\Media\Color.cs" />
+    <Compile Include="System\Windows\Media\ColorConverter.cs" />
     <Compile Include="XamlToCodeConverter.cs" />
   </ItemGroup>
   <ItemGroup>

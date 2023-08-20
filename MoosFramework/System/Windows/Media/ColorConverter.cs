@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Diagnostics;
+using System.Globalization;
 
 namespace System.Windows.Media
 {
-    public static class ColorConverter
+    public class ColorConverter
     {
-        public static uint ConvertFromString(string hex)
+        public static Color ConvertFromString(string hex)
         {
             string hexColor = "";
 
             if (string.IsNullOrEmpty(hex))
             {
-                return 0;
+                return Color.FromArgb(0,0,0);
             }
 
             hex = hex.ToUpper();
@@ -23,13 +21,12 @@ namespace System.Windows.Media
                 hex = hex.Substring(1);
             }
 
-            if (hex.Length < 8)
+            if(hex.Length < 8)
             {
                 hexColor = "FF" + hex;
-            }
-            else
+            }else
             {
-                hexColor = hex;
+                hexColor =  hex;
             }
 
             int i = hexColor.Length > 1 && hexColor[0] == '0' && (hexColor[1] == 'x' || hexColor[1] == 'X') ? 2 : 0;
@@ -42,12 +39,12 @@ namespace System.Windows.Media
                 if (x >= '0' && x <= '9') x = x - '0';
                 else if (x >= 'A' && x <= 'F') x = (x - 'A') + 10;
                 else if (x >= 'a' && x <= 'f') x = (x - 'a') + 10;
-                else return 0;
+                else return Color.FromArgb(0, 0, 0); 
 
                 value = 16 * value + x;
             }
 
-            return value ;
+            return new Color(value);
         }
 
         public static uint ConvertPixel(uint pixel, uint color)
@@ -60,13 +57,18 @@ namespace System.Windows.Media
             int g = (_base.G * _color.G) / 255;
             int b = (_base.B * _color.B) / 255;
 
-           return (uint)(a << 24 | r << 16 | g << 8 | b);
+            return (uint)(a << 24 | r << 16 | g << 8 | b);
         }
 
         public static Brush FromARGB(int a, int r, int g, int b)
         {
             uint color = (uint)(a << 24 | r << 16 | g << 8 | b);
             return new Brush(color);
+        }
+
+        public Color ConvertFrom(object context, CultureInfo cultureInfo, string source)
+        {
+            return ConvertFromString(source);
         }
     }
 }

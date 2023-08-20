@@ -10,5 +10,6 @@ namespace Moos.Framework.Controls
     public partial class ContentControl
     {
         public int Row { get; set; }
+        public int Column { get; set; }
     }
 }

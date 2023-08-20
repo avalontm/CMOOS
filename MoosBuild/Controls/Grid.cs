@@ -13,9 +13,14 @@ namespace Moos.Framework.Controls
     {
         public UIElementCollection Children { set; get; }
         public RowDefinitionCollection RowDefinitions { set; get; }
+        public ColumnDefinitionCollection ColumnDefinitions { set; get; }
 
         public static void SetRow(UIElement element, int value)
         { 
+        }
+
+        public static void SetColumn(UIElement element, int value)
+        {
         }
     }
 }
