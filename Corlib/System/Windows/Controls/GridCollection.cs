@@ -16,6 +16,13 @@ namespace System.Windows.Controls
             Column = column;
         }
 
+        public GridCollection(Position pos, int row, int column)
+        {
+            Position = pos;
+            Row = row;
+            Column = column;
+        }
+
         public override string ToString()
         {
             return $"X: {Position.X}, Y: {Position.Y}, Width: {Position.Width}, Height: {Position.Height}";

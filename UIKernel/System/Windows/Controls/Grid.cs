@@ -125,7 +125,7 @@ namespace System.Windows.Controls
                 }
                
             }
-    
+
             if (colTotalStar == 0)
             {
                 colTotalStar = 1;
@@ -168,37 +168,36 @@ namespace System.Windows.Controls
         }
 
         void onDrawGrids()
-        {                
+        {
             //Draw Controls
-            for (int g = 0; g < Grids.Count; g++)
+            for (int col = 0; col < _columns; col++)
             {
-                Grids[g].Position.X = ColumnDefinitions[Grids[g].Column].Position.X;
-                Grids[g].Position.Y = RowDefinitions[Grids[g].Row].Position.Y;
-                Grids[g].Position.Width = ColumnDefinitions[Grids[g].Column].Position.Width;
-                Grids[g].Position.Height = RowDefinitions[Grids[g].Row].Position.Height;
-
-                for (int c = 0; c < Children.Count; c++)
+                for (int row = 0; row < _rows; row++)
                 {
-                    if (Grids[g].Row == Children[c].GridRow && Grids[g].Column == Children[c].GridColumn)
+                    Position pos = new Position(ColumnDefinitions[col].Position.X, RowDefinitions[row].Position.Y, ColumnDefinitions[col].Position.Width, RowDefinitions[row].Position.Height);
+
+                    for (int c = 0; c < Children.Count; c++)
                     {
-                        Children[c].Parent = this;
-                        Children[c].Pos = Grids[g];
-                       // Debug.WriteLine($"[Children] {Children[c].Pos.Position.X}, {Children[c].Pos.Position.Y}, {Children[c].Pos.Position.Width}, {Children[c].Pos.Position.Height}");
-                        if (Children[c].GridColumnSpan > 0)
+                        if (row == Children[c].GridRow && col == Children[c].GridColumn)
                         {
-                            Children[c].Pos.Position.Width = GetGridColumnSpan(Children[c].GridColumn, Children[c].GridColumnSpan);
-                        }
+                            Children[c].onSetParent(this, pos);
 
-                        if (Children[c].GridRowSpan > 0)
-                        {
-                            Children[c].Pos.Position.Height = GetGridRowSpan(Children[c].GridRow, Children[c].GridRowSpan);
-                        }
+                            if (Children[c].GridColumnSpan > 0)
+                            {
+                                Children[c].Pos.Position.Width = GetGridColumnSpan(Children[c].GridColumn, Children[c].GridColumnSpan);
+                            }
 
-                        Children[c].OnDraw();
+                            if (Children[c].GridRowSpan > 0)
+                            {
+                                Children[c].Pos.Position.Height = GetGridRowSpan(Children[c].GridRow, Children[c].GridRowSpan);
+                            }
+
+                            Children[c].OnDraw();
+                        }
                     }
+
                 }
             }
-
         }
 
         int GetGridRowSpan(int row, int span)

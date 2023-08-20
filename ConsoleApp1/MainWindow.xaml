@@ -9,19 +9,18 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Button Text="Button Fill" Background="Red"/>
-        </Grid>
+        <Button Grid.Row="0"  Margin="5" Text="Button Fill" Background="Red"/>
 
         <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
-                <Button Text="Button Auto" Background="Blue"/>
-            </Grid>
+            <Button Grid.Column="0" Margin="5" Text="Button Auto" Background="Blue"/>
 
             <Button Grid.Column="1" x:Name="btnClick" Margin="5" Text="Click me!" Click="onClick" Command="{Binding ElementName=OnCounterClicked}" Foreground="#d2d2d2" Background="Green"/>
         </Grid>

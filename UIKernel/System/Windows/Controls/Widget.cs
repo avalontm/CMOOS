@@ -44,9 +44,9 @@ namespace System.Windows.Controls
                 if (_old_background == null)
                 {
                     _old_background = new Brush(_background.Value);
-                }
 
-                onSetHighLight();
+                    onSetHighLight();
+                }
             }
             get { return _background; }
         }
@@ -141,19 +141,8 @@ namespace System.Windows.Controls
             }
         }
 
-        Widget _parent;
-        internal Widget Parent
-        {
-            set
-            {
-                _parent = value;
-                onSetParent(_parent);
-            }
-            get
-            {
-                return _parent;
-            }
-        }
+        internal Widget Parent { set; get; }
+
 
         GridCollection _pos;
         internal GridCollection Pos
@@ -275,52 +264,21 @@ namespace System.Windows.Controls
                     {
                         if (MouseEnter)
                         {
-                            if (Background != null)
+                            if (_background != null)
                             {
-                                _background.Value = HighlightBackground.Value;
-                            }
-
-                            if (HighlightBackground != null)
-                            {
-                                Color color = Color.FromArgb(_highlight_background.Value);
-
-                                color.R = (byte)(color.R - 5);
-                                color.G = (byte)(color.G - 5);
-                                color.B = (byte)(color.B - 5);
-
-                                if (color.R < 0)
+                                if (_highlight_background != null)
                                 {
-                                    color.R = 0;
+                                    Background.Value = _highlight_background.Value;
                                 }
-
-                                if (color.G < 0)
-                                {
-                                    color.G = 0;
-                                }
-
-                                if (color.B < 0)
-                                {
-                                    color.B = 0;
-                                }
-
-                                BorderBrush = new Brush(color);
-                                color.Dispose();
                             }
                         }
                         else
                         {
-                            if (Background != null)
+                            if (_background != null)
                             {
                                 if (_old_background != null)
                                 {
-                                    _background.Value = _old_background.Value;
-                                }
-                            }
-                            if (HighlightBackground != null)
-                            {
-                                if (_old_background != null)
-                                {
-                                    BorderBrush.Value = _old_background.Value;
+                                    Background.Value = _old_background.Value;
                                 }
                             }
                         }
@@ -330,12 +288,14 @@ namespace System.Windows.Controls
 
         }
 
-        public void onSetParent(Widget parent)
+        public void onSetParent(Widget parent, Position pos)
         {
-            X = parent.X;
-            Y = parent.Y;
-            Width = parent.Width;
-            Height = parent.Height;
+            this.Parent = parent;
+            this.Pos = new GridCollection(pos, GridRow,  GridColumn);
+            X =  Pos.Position.X;
+            Y = Pos.Position.Y;
+            Width = Pos.Position.Width;
+            Height = Pos.Position.Height;
         }
 
         public void DrawBorder()
