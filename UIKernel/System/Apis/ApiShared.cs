@@ -29,9 +29,8 @@ namespace System.Apis
 
             if (control != null)
             {
-                Debug.WriteLine($"[API_ControlForeground] {color}");
                 control.Foreground = new Windows.Media.Brush(color);
-                control._old_foreground = control.Foreground;
+                control._old_foreground = new Windows.Media.Brush(color);
                 return color;
             }
 
@@ -44,9 +43,8 @@ namespace System.Apis
 
             if (control != null)
             {
-                Debug.WriteLine($"[API_ControlBackground] {color}");
                 control.Background = new Windows.Media.Brush(color);
-                control._old_background = control.Background;
+                control._old_background = new Windows.Media.Brush(color);
                 control.onSetHighLight();
 
                 return color;

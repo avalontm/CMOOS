@@ -46,6 +46,9 @@ namespace System.Windows
         }
 
         bool isResizing;
+
+        public EventHandler<SizeChangedInfo> OnCallReSize;
+
         public Window() : base()
         {
             this.IsVisible = false;
@@ -103,6 +106,11 @@ namespace System.Windows
             if (Content != null)
             {
                 Content.OnLoaded();
+            }
+
+            if (Content != null)
+            {
+                Content.OnResize();
             }
 
             this.IsVisible = true;
@@ -233,15 +241,15 @@ namespace System.Windows
 
             if (IsLoaded && this.IsVisible)
             {
-
                 if (Content != null)
                 {
-                    Content.OnUpdate();
-
-                    if (isResizing)
+                    if (isResizing || Move)
                     {
                         Content.OnResize();
                     }
+
+                    Content.OnUpdate();
+
                 }
 
                 if (CloseButton != null)

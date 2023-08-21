@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace Moos.Framework.Controls
 {
@@ -32,6 +33,10 @@ namespace Moos.Framework.Controls
 
         [DllImport("WindowContent")]
         public static extern IntPtr WindowContent(IntPtr handler, IntPtr content);
+
+        [DllImport("WindowOnCallReSize")]
+        public static extern void WindowOnCallReSize(IntPtr handler, IntPtr source);
+        
 
         public Image ScreenBuf { get; private set; }
         public IntPtr Handler { get; private set; }
@@ -88,7 +93,6 @@ namespace Moos.Framework.Controls
             IsHandler = true;
         }
 
-
         public virtual void OnLoaded()
         {
             this.Content?.OnLoaded();
@@ -98,6 +102,7 @@ namespace Moos.Framework.Controls
         {
 
         }
+
 
         public void ShowDialog()
         {

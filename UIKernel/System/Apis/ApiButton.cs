@@ -33,10 +33,6 @@ namespace System.Apis
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_ButtonCommand;
                 case "ButtonCommandParameter":
                     return (delegate*<IntPtr, IntPtr, IntPtr>)&API_ButtonCommandParameter;
-                case "ButtonBackground":
-                    return (delegate*<IntPtr, int, int>)&API_ButtonBackground;
-                case "ButtonForeground":
-                    return (delegate*<IntPtr, int, int>)&API_ButtonForeground;
                 case "ButtonMargin":
                     return (delegate*<IntPtr, int,int, int, int, void>)&API_ButtonMargin;
             }
@@ -124,32 +120,6 @@ namespace System.Apis
             }
 
             return IntPtr.Zero;
-        }
-
-        public static int API_ButtonBackground(IntPtr handler, int color)
-        {
-            Button control = Unsafe.As<IntPtr, Button>(ref handler);
-
-            if (control != null)
-            {
-                control.Background = new Windows.Media.Brush(color);
-                return (int)control.Background.Value;
-            }
-
-            return 0;
-        }
-
-        public static int API_ButtonForeground(IntPtr handler, int color)
-        {
-            Button control = Unsafe.As<IntPtr, Button>(ref handler);
-
-            if (control != null)
-            {
-                control.Foreground = new Windows.Media.Brush(color);
-                return (int)control.Foreground.Value;
-            }
-
-            return 0;
         }
         
         public static void API_ButtonMargin(IntPtr handler, int left, int top, int right, int bottom)

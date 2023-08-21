@@ -31,9 +31,21 @@ namespace System.Apis
                     return (delegate*<IntPtr, IntPtr>)&API_WindowShowDialog;
                 case "WindowClose":
                     return (delegate*<IntPtr, void>)&API_WindowClose;
+                case "WindowOnCallReSize":
+                    return (delegate*<IntPtr, IntPtr, void>)&API_WindowOnCallReSize;
             }
 
             return null;
+        }
+
+        static void API_WindowOnCallReSize(IntPtr handle, IntPtr source)
+        {
+            Window window = Unsafe.As<IntPtr, Window>(ref handle);
+
+            if (window != null)
+            {
+                window.OnCallReSize += Unsafe.As<IntPtr, EventHandler<SizeChangedInfo>>(ref source);
+            }
         }
 
         public static IntPtr API_WindowGetScreenBuf(IntPtr handle)

@@ -74,7 +74,7 @@ namespace System.Windows.Controls
                 color.B = 255;
             }
 
-            _highlight_background = new Brush(color);
+            HighlightBackground = new Brush(color);
             color.Dispose();
         }
 
@@ -280,6 +280,16 @@ namespace System.Windows.Controls
                                     Background.Value = _old_background.Value;
                                 }
                             }
+                        }
+                    }
+                }
+                else
+                {
+                    if (_background != null)
+                    {
+                        if (_old_background != null)
+                        {
+                            Background.Value = _old_background.Value;
                         }
                     }
                 }
