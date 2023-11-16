@@ -15,6 +15,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Xml;
+using System.Text;
+using System.Collections.Generic;
 
 unsafe class Program
 {
@@ -139,7 +141,7 @@ unsafe class Program
         Console.WriteLine($"[RADER] Version = {reader.GetNode("version").Values[1]}");
         Console.WriteLine();
         */
-       
+
         SMain();
     }
 
@@ -148,7 +150,36 @@ unsafe class Program
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 
-        System.Diagnostics.Process.Start("sys/app/explorer.mue");
+        byte[] bytes = System.IO.File.ReadAllBytes("startup.ini");
+
+        // Convierte los bytes a texto
+        string texto = Encoding.UTF8.GetString(bytes);
+
+        // Divide el texto por saltos de linea
+        string[] lineas = texto.Split('\n');
+
+        // Crea un diccionario
+        Dictionary<string, string> dictionary = new Dictionary<string, string>();
+
+        // Imprime las lineas
+        for (int i = 0; i < lineas.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(lineas[i]))
+            {
+                // Extrae el nombre y el valor del parámetro
+                string[] parts = lineas[i].Split('=');
+
+                if (parts.Length >= 2)
+                {
+                    // Añade el parámetro al diccionario
+                    dictionary.Add(parts[0].Trim(), parts[1].Trim());
+                }
+            }
+        }
+
+        string shell = dictionary["shell"];
+
+        System.Diagnostics.Process.Start($"sys/app/{shell}");
 
         for (; ; )
         {
