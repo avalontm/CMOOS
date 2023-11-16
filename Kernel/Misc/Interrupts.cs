@@ -5,10 +5,12 @@ namespace MOOS.Misc
 {
     public static class Interrupts
     {
+        public delegate void INTDelegate();
+
         public unsafe class INT
         {
             public int IRQ;
-            public delegate*<void> Handler;
+            public INTDelegate Handler;
         }
 
         public static List<INT> INTs;
@@ -18,10 +20,10 @@ namespace MOOS.Misc
             INTs = new List<INT>();
         }
 
-        public static void EndOfInterrupt(byte irq)
+        public static void EndOfInterrupt(int irq)
         {
 #if UseAPIC
-            LocalAPIC.EndOfInterrupt();
+            LocalAPIC.EndOfInterrupt(irq);
 #else
             PIC.EndOfInterrupt(irq);
 #endif
@@ -36,7 +38,7 @@ namespace MOOS.Misc
 #endif
         }
 
-        public static unsafe void EnableInterrupt(byte irq, delegate*<void> handler)
+        public static unsafe void EnableInterrupt(byte irq, INTDelegate handler)
         {
 #if UseAPIC
             IOAPIC.SetEntry(irq);

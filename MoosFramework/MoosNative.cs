@@ -56,6 +56,18 @@ public static unsafe class MoosNative
     [RuntimeExport("free")]
     public static ulong free(nint ptr) => AFree(ptr);
 
+    [DllImport("LoadPNG")]
+    public static extern IntPtr LoadPNG(string file);
+
+    [DllImport("_GUI")]
+    public static extern void ModeGUI();
+
+    [DllImport("GetMouseX")]
+    public static extern int GetMouseX();
+
+    [DllImport("GetMouseY")]
+    public static extern int GetMouseY();
+
     [RuntimeExport("__security_cookie")]
     public static void SecurityCookie()
     { 

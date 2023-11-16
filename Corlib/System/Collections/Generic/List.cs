@@ -8,7 +8,7 @@ namespace System.Collections.Generic
 
         public int Count = 0;
 
-        public List(int initsize = 256)
+        public List(int initsize = 2048)
         {
             _value = new T[initsize];
         }

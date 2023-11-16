@@ -11,12 +11,9 @@ using static Internal.Runtime.CompilerHelpers.InteropHelpers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Apis;
 using Image = System.Drawing.Image;
-
-#if HasGUI
-using MOOS.GUI;
-#endif
+using MOOS.Api;
+using System.Windows.Forms;
 
 namespace MOOS
 {
@@ -31,10 +28,10 @@ namespace MOOS
             {
                 case "ApplicationCreate":
                     return (delegate*<IntPtr, void>)&API_ApplicationCreate;
+                case "_GUI":
+                    return (delegate*<void>)&API_GUI;
                 case "LoadPNG":
                     return (delegate*<string, IntPtr>)&API_LoadPNG;
-                case "MessageBox":
-                    return (delegate*<string, string, void>)&API_MessageBox;
                 case "WriteLine":
                     return (delegate*<void>)&API_WriteLine;
                 case "DebugWriteLine":
@@ -79,22 +76,22 @@ namespace MOOS
                     return (delegate*<uint>)&API_Width;
                 case "Height":
                     return (delegate*<uint>)&API_Height;
+                case "GetMouseX":
+                    return (delegate*<uint>)&API_MouseX;
+                case "GetMouseY":
+                    return (delegate*<uint>)&API_MouseY;
                 case "WriteString":
                     return (delegate*<string, void>)&API_WriteString;
                 case "GetTime":
                     return (delegate*<ulong>)&API_GetTime;
-                case "DrawImage":
-                    return (delegate*<int, int, Image, void>)&API_DrawImage;
                 case "Error":
                     return (delegate*<string, bool, void>)&API_Error;
                 case "StartThread":
                     return (delegate*<delegate*<void>, void>)&API_StartThread;
                 case "StartThreadWithParameters":
                     return (delegate*<delegate*<void>, IntPtr, void>)&API_StartThreadWithParameters;
-#if Kernel && HasGUI
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
-#endif
                 case "Calloc":
                     return (delegate*<ulong, ulong, void*>)&API_Calloc;
                 case "SndWrite":
@@ -102,45 +99,21 @@ namespace MOOS
             }
 
             #region API Controls
-            //Call To Controls
-            void* _call_shared = ApiShared.HandleSystemCall(name);
+            //Call GDI 
+            void* _gdi = GDI.HandleSystemCall(name);
 
-            if (_call_shared != null)
+            if (_gdi != null)
             {
-                return _call_shared;
+                return _gdi;
             }
-
-            void* _call_window = ApiWindow.HandleSystemCall(name);
-
-            if (_call_window != null)
-            {
-                return _call_window;
-            }
-
-            void* _grid_button = ApiGrid.HandleSystemCall(name);
-
-            if (_grid_button != null)
-            {
-                return _grid_button;
-            }
-
-            void* _call_button = ApiButton.HandleSystemCall(name);
-
-            if (_call_button != null)
-            {
-                return _call_button;
-            }
-
-            void* _call_image = ApiImage.HandleSystemCall(name);
-
-            if (_call_image != null)
-            {
-                return _call_image;
-            }
-            #endregion
 
             Panic.Error($"System call \"{name}\" is not found");
             return null;
+        }
+
+        public static void API_GUI()
+        {
+            Framebuffer.TripleBuffered = true;
         }
 
         public static void API_ApplicationCreate(IntPtr handler)
@@ -158,10 +131,6 @@ namespace MOOS
             return new PNG(file);
         }
 
-        public static void API_MessageBox(string title, string message)
-        {
-            MessageBox.Show(message, title);
-        }
 
         public static int API_SndWrite(byte* buffer, int len)
         {
@@ -220,11 +189,6 @@ namespace MOOS
             return time;
         }
 
-        public static void API_DrawImage(int X, int Y, Image image)
-        {
-            Framebuffer.Graphics.DrawImage(X, Y, image, false);
-        }
-
         public static void API_WriteString(string s)
         {
             Console.Write(s);
@@ -234,6 +198,10 @@ namespace MOOS
         public static uint API_Width() => Framebuffer.Width;
 
         public static uint API_Height() => Framebuffer.Height;
+
+        public static uint API_MouseX() => Control.MousePosition.X;
+        public static uint API_MouseY() => Control.MousePosition.Y;
+
 
         public static void API_Update()
         {
@@ -372,3 +340,5 @@ namespace MOOS
 
     }
 }
+
+#endregion

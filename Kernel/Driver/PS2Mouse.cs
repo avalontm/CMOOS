@@ -25,7 +25,7 @@ namespace MOOS
         public static void Initialise()
         {
             MData = new byte[3];
-            Interrupts.EnableInterrupt(0x2c,&OnInterrupt);
+            Interrupts.EnableInterrupt(0x2c, OnInterrupt);
 
             byte _status;
 

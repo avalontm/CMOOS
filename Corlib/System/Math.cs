@@ -218,18 +218,18 @@ namespace System
 			return value < 0 ? -1 : value == 0 ? 0 : 1;
 		}
 
-		public static double Pow(double a, double b)
-		{
-			double c = 1;
-			for (int i = 0; i < b; i++)
-			{
-				c *= a;
-			}
+        public static double Pow(double a, double b)
+        {
+            double c = 1;
+            for (int i = 0; i < b; i++)
+            {
+                c *= a;
+            }
 
-			return c;
-		}
+            return c;
+        }
 
-		public static double Fact(double x)
+        public static double Fact(double x)
 		{
 			double ret = 1;
 			for (int i = 1; i <= x; i++)
@@ -240,30 +240,31 @@ namespace System
 			return ret;
 		}
 
-		public static double Sin(double x)
-		{
-			double y = x;
-			double s = -1;
-			for (int i = 3; i <= 100; i += 2)
-			{
-				y += s * (Pow(x, i) / Fact(i));
-				s *= -1;
-			}
-			return y;
-		}
+        public static double Sin(double x)
+        {
+            double y = x;
+            double s = -1;
+            for (int i = 3; i <= 100; i += 2)
+            {
+                y += s * (Pow(x, i) / Fact(i));
+                s *= -1;
+            }
+            return y;
+        }
 
-		public static double Cos(double x)
-		{
-			double y = 1;
-			double s = -1;
-			for (int i = 2; i <= 100; i += 2)
-			{
-				y += s * (Pow(x, i) / Fact(i));
-				s *= -1;
-			}
-			return y;
-		}
-		public static double Tan(double x)
+        public static double Cos(double x)
+        {
+            double y = 1;
+            double s = -1;
+            for (int i = 2; i <= 100; i += 2)
+            {
+                y += s * (Pow(x, i) / Fact(i));
+                s *= -1;
+            }
+            return y;
+        }
+
+        public static double Tan(double x)
 		{
 			return Sin(x) / Cos(x);
 		}

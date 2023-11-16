@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using static MOOS.Driver.ACPI;
 
 namespace MOOS.Driver
 {
@@ -209,35 +211,7 @@ namespace MOOS.Driver
         }
 
         public static List<byte> LocalAPIC_CPUIDs;
-
-        public static void Initialize()
-        {
-            FADT = null;
-            MADT = null;
-            IO_APIC = null;
-            HPET = null;
-            MCFG = null;
-
-            LocalAPIC_CPUIDs = new List<byte>();
-            ACPI_RSDP* rsdp = GetRSDP();
-            //MMIO.Map(rsdp->RsdtAddress, ushort.MaxValue);
-            ACPI_HEADER* hdr = (ACPI_HEADER*)rsdp->RsdtAddress;
-            ACPI_HEADER* rsdt = (ACPI_HEADER*)rsdp->RsdtAddress;
-
-            if (rsdt != null && *(uint*)rsdt == 0x54445352) //RSDT
-            {
-                uint* p = (uint*)(rsdt + 1);
-                uint* end = (uint*)((byte*)rsdt + rsdt->Length);
-
-                while (p < end)
-                {
-                    uint address = *p++;
-                    ParseDT((ACPI_HEADER*)address);
-                }
-            }
-
-            Console.WriteLine("[ACPI] ACPI Initialized");
-        }
+        public static bool Acpi_Init;
 
         private static void ParseDT(ACPI_HEADER* hdr)
         {
@@ -349,6 +323,37 @@ namespace MOOS.Driver
 
             return irq;
         }
+
+        public static void Initialize()
+        {
+            FADT = null;
+            MADT = null;
+            IO_APIC = null;
+            HPET = null;
+            MCFG = null;
+
+            LocalAPIC_CPUIDs = new List<byte>();
+            ACPI_RSDP* rsdp = GetRSDP();
+            //MMIO.Map(rsdp->RsdtAddress, ushort.MaxValue);
+            ACPI_HEADER* hdr = (ACPI_HEADER*)rsdp->RsdtAddress;
+            ACPI_HEADER* rsdt = (ACPI_HEADER*)rsdp->RsdtAddress;
+
+            if (rsdt != null && *(uint*)rsdt == 0x54445352) //RSDT
+            {
+                uint* p = (uint*)(rsdt + 1);
+                uint* end = (uint*)((byte*)rsdt + rsdt->Length);
+
+                while (p < end)
+                {
+                    uint address = *p++;
+                    ParseDT((ACPI_HEADER*)address);
+                }
+            }
+
+            Acpi_Init = true;
+            Console.WriteLine("[ACPI] ACPI Initialized");
+        }
+
     }
 #pragma warning restore
 }

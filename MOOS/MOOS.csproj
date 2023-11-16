@@ -5,13 +5,13 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BaseOutputPath>..\bin</BaseOutputPath>
-		
+
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 		
-		<DefineConstants>Kernel;UseAPIC;HasGUI</DefineConstants>
+		<DefineConstants>Kernel;UseAPIC</DefineConstants>
 		<!--PublishAot>true</PublishAot-->
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Entry</EntryPointSymbol>
@@ -49,8 +49,6 @@
 	</ItemGroup>
 
 	<Import Project="..\Kernel\Kernel.projitems" Label="Shared" />
-
-	<Import Project="..\UIKernel\UIKernel.projitems" Label="Shared" />
 
 	<Target Name="BuildISO" AfterTargets="Publish">
 		<Delete Files="$(MSBuildStartupDirectory)\Tools\grub2\boot\ramdisk.tar"></Delete>

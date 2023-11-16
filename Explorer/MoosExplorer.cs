@@ -1,11 +1,15 @@
-﻿using System.Diagnostics;
+﻿using Explorer.Managers;
+using Moos.Framework.Graphics;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Media;
 using System.Runtime;
 using System.Runtime.InteropServices;
 
-namespace MoosApplication
+namespace MoosExplorer
 {
-    public static unsafe class MoosProgram
+    public static unsafe class MoosExplorer
     {
         #region NativeMethods
         [RuntimeExport("malloc")]
@@ -68,8 +72,27 @@ namespace MoosApplication
         [RuntimeExport("Main")]
         public static void Main()
         {
-            App app = new App();
-            app.Run(new MainWindow());
+            Image Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
+            Wallpaper = Wallpaper.ResizeImage(GDI.GetWidth(), GDI.GetHeight());
+            
+            Console.WriteLine("Explorer");
+
+            MoosNative.ModeGUI();
+
+            CursorManager.Initialize();
+
+            for (; ; )
+            {
+                GDI.DrawImage(0, 0, Wallpaper, false);
+
+                GDI.AFillRectangle(0, GDI.GetHeight() - 48, GDI.GetWidth(), 48, 0xFFcccccc);
+                GDI.DrawLine(0, GDI.GetHeight() - 48, GDI.GetWidth(), GDI.GetHeight() - 48, 0xFFc7c7c7);
+
+                CursorManager.Update();
+                CursorManager.Draw();
+
+                GDI.DrawUpdate();
+            }
         }
     }
 }

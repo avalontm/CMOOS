@@ -104,7 +104,7 @@ namespace MOOS.Driver
             instance = this;
 
             // Setup interrupt handling
-            Interrupts.EnableInterrupt((byte)(0x20 + device.IRQ), &OnInterrupt);
+            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
         }
 
         internal static void OnInterrupt()

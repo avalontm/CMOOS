@@ -2,11 +2,11 @@ using Internal.Runtime.CompilerServices;
 using MOOS;
 using MOOS.Driver;
 using MOOS.Misc;
-using MOOS.NET;
+using System;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Text;
 using static Internal.Runtime.CompilerHelpers.InteropHelpers;
+using Console = System.Console;
 
 public static class IDT
 {
@@ -109,6 +109,7 @@ public static class IDT
         {
             Panic.Error($"CPU{SMP.ThisCPU} KERNEL PANIC!!!", true);
             InterruptReturnStack* irs;
+
             switch (irq)
             {
                 case 8:
@@ -128,11 +129,13 @@ public static class IDT
                     irs = (InterruptReturnStack*)(((byte*)stack) + sizeof(RegistersStack) + sizeof(ulong));
                     break;
             }
+
             Console.WriteLine($"RIP: 0x{stack->irs.rip.ToString("x2")}");
             Console.WriteLine($"Code Segment: 0x{stack->irs.cs.ToString("x2")}");
             Console.WriteLine($"RFlags: 0x{stack->irs.rflags.ToString("x2")}");
             Console.WriteLine($"RSP: 0x{stack->irs.rsp.ToString("x2")}");
             Console.WriteLine($"Stack Segment: 0x{stack->irs.ss.ToString("x2")}");
+
             switch (irq)
             {
                 case 0: Console.WriteLine("DIVIDE BY ZERO"); break;
@@ -186,14 +189,18 @@ public static class IDT
                 stack->rs.rax = (ulong)API.HandleSystemCall(name);
                 name.Dispose();
             }
+
             switch (irq)
             {
                 case 0x20:
                     //misc.asm Schedule_Next
                     if (stack->rs.rdx != 0x61666E6166696E)
+                    { 
                         Timer.OnInterrupt();
+                    }
                     break;
             }
+
             Interrupts.HandleInterrupt(irq);
         }
 
@@ -202,6 +209,6 @@ public static class IDT
             ThreadPool.Schedule(stack);
         }
 
-        Interrupts.EndOfInterrupt((byte)irq);
+        Interrupts.EndOfInterrupt(irq);
     }
 }

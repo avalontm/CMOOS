@@ -15,7 +15,7 @@ namespace System.Sounds
 
         internal static void Initialize()
         {
-            Interrupts.EnableInterrupt(0x20, &DoPlay);
+            Interrupts.EnableInterrupt(0x20, DoPlay);
         }
 
         internal static bool Load(string file)

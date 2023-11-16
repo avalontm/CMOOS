@@ -8,7 +8,6 @@ using MOOS.GUI;
 using MOOS.Misc;
 using MOOS.NET;
 using MOOS.NET.IPv4.UDP.DHCP;
-using System.Desktops;
 using System.Net.Http;
 using System.Runtime;
 using System.Runtime.InteropServices;
@@ -147,31 +146,13 @@ unsafe class Program
     public static void SMain()
     {
         Console.WriteLine("Press any key to [ENTER] desktop...");
-        Console.ReadKey(true);
+        Console.ReadKey();
 
-        Framebuffer.TripleBuffered = true;
-
-        DesktopManager.Initialize();
+        System.Diagnostics.Process.Start("sys/app/explorer.mue");
 
         for (; ; )
         {
-            Control.Update();
-
-            //UIKernel
-            DesktopManager.Update();
-            WindowManager.Update();
-
-            CursorManager.Update();
-
-            DesktopManager.Draw();
-            WindowManager.Draw();
-            NotificationManager.Draw();
-
-            //Mouse
-            Framebuffer.Graphics.DrawImage(Control.MousePosition.X + Control.MouseOffSet.X, Control.MousePosition.Y + Control.MouseOffSet.Y, CursorManager.GetCursor, true);
-            Framebuffer.Update();
-
-            fpsMeter.Update();
+            //Loop
         }
     }
 }

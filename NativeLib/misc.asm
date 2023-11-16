@@ -17,10 +17,10 @@ enable_avx PROC
 enable_avx ENDP
 
 enable_sse PROC
-    mov rcx,200h
-    mov rbx,cr4
-    or rbx,rcx
-    mov cr4,rbx
+    mov rcx, 200h
+    mov rbx, cr4
+    or rbx, rcx
+    mov cr4, rbx
     fninit
     ret
 enable_sse ENDP

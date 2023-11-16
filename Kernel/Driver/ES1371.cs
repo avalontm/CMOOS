@@ -36,7 +36,7 @@ namespace MOOS
             Native.Out32(Base + 0x20, 0x0020020C);
             Native.Out32(Base + 0x00, 0x00000020);
 
-            Interrupts.EnableInterrupt(0x20, &OnInterrupt);
+            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
             Audio.HasAudioDevice = true;
         }
 

@@ -50,10 +50,11 @@ namespace MOOS.Misc
             //AVX.init_avx();
 
             ACPI.Initialize();
+
 #if UseAPIC
             PIC.Disable();
-            LocalAPIC.Initialize();
             IOAPIC.Initialize();
+            LocalAPIC.Initialize();
 #else
         PIC.Enable();
 #endif
@@ -83,7 +84,7 @@ namespace MOOS.Misc
             //Only fixed size vhds are supported!
             Console.Write("[Initrd] Initrd: 0x");
             Console.WriteLine((Info->Mods[0]).ToString("x2"));
-      
+
             new Ramdisk((IntPtr)(Info->Mods[0]));
             //new FATFS();
             new TarFS();

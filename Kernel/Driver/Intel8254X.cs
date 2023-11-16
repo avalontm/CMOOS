@@ -150,7 +150,7 @@ namespace MOOS.Driver
 
             Instance = this;
 
-            Interrupts.EnableInterrupt(0x20, &OnInterrupt);
+            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
         }
 
         #region Devices

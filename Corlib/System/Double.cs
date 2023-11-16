@@ -19,12 +19,12 @@ namespace System
 		}
 
 		[DllImport("*")]
-		public static extern void dtoa_(double value, byte* buffer);
+		public static extern void double_tostring(double value, byte* buffer);
 
 		public override string ToString()
 		{
 			byte* p = stackalloc byte[22];
-			dtoa_(this, p);
+            double_tostring(this, p);
 			return Encoding.ASCII.GetString(p);
 		}
 	}

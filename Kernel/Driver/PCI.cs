@@ -89,6 +89,7 @@ namespace MOOS
         public static void Initialise()
         {
             Devices = new List<PCIDevice>();
+
             if ((PCIDevice.GetHeaderType(0x0, 0x0, 0x0) & 0x80) == 0)
             {
                 CheckBus(0x0);
@@ -109,6 +110,7 @@ namespace MOOS
             Console.Write("[PCI] PCI Initialized. ");
             Console.Write(((ulong)Devices.Count).ToString());
             Console.WriteLine(" Devices");
+            
         }
 
         /// <summary>

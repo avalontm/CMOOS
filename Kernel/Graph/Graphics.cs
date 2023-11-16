@@ -1,3 +1,4 @@
+using MOOS.GUI;
 using System;
 using System.Drawing;
 
@@ -192,6 +193,52 @@ namespace MOOS.Graph
                         {
                             Native.Movsd(VideoMemory + (Width * ((Y - _y) + h) + (X - _x)) + 1, (uint*)(ptr + ((h - _y) * image.Width) + 1 - _x), (ulong)(image.Width + _x - clip_x));
                         }
+            }
+        }
+
+
+        public GraphicsPath GetRoundedRectangle(Rectangle rect, int cornerRadius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            int x = rect.X;
+            int y = rect.Y;
+            int width = rect.Width;
+            int height = rect.Height;
+
+            // Top-left arc
+            path.AddArc(x, y , cornerRadius * 2, cornerRadius * 2, 180, 270);
+
+            // Top edge
+            path.AddLine(x + cornerRadius, y, x + width - cornerRadius, y);
+
+            // Top-right arc
+            path.AddArc(x + width - cornerRadius * 2, y, cornerRadius * 2, cornerRadius * 2, 270 , 360);
+
+            // Right edge
+            path.AddLine(x + width, y + cornerRadius, x + width, y + height - cornerRadius);
+
+            // Bottom-right arc
+            path.AddArc(x + width - cornerRadius * 2, y + height - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
+
+            // Bottom edge
+            path.AddLine(x + width - cornerRadius, y + height, x + cornerRadius, y + height);
+
+            // Bottom-left arc
+            path.AddArc(x, y + height - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 180);
+
+            // Left edge
+            path.AddLine(x, y + height - cornerRadius, x, y + cornerRadius);
+
+            return path;
+        }
+
+        public virtual void FillRoundedRectangle(int x, int y, int width, int height, int cornerRadius, uint color)
+        {
+            GraphicsPath path = GetRoundedRectangle(new Rectangle(x, y, width, height), cornerRadius);
+
+            for (int i = 0; i < path.PointCount; i++)
+            {
+                DrawPoint(path[i].X, path[i].Y, color);
             }
         }
 

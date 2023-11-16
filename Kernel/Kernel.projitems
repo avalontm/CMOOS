@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Animation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Api\GDI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AVX.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\AC97.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\ACPI.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FS\FileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FS\TarFS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Graphics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\GraphicsPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\VMWareSVGAIIGraphics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Allocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\ASC16.cs" />
@@ -89,7 +91,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Memory\ManagedMemoryBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Memory\MemoryBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Memory\MemoryOperations.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)INTs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IOGroup\Network\AMDPCNetIIIOGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IOGroup\IOGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IOGroup\PCI.cs" />
