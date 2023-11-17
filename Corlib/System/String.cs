@@ -243,6 +243,16 @@ namespace System
             return _indice;
         }
 
+		public static string charToString(char* charArray)
+        {
+            string str = "";
+            for (int i = 0; charArray[i] != '\0'; i++)
+            {
+                str += charArray[i];
+            }
+            return str;
+        }
+
         public int IndexOf(string subcadena, int indiceInicial)
         {
             int _indice = -1;

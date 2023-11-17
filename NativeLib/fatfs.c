@@ -32,10 +32,10 @@ void fatfs_init()
 	work = malloc(MAX_WORK_SIZE);
 	infos = malloc(sizeof(struct Info) * MAX_ITEM_FOR_EACH_DIR);
 
-	res = f_mount(&fs, L"0:", 0);
+	res = f_mount(&fs, L"0:", FA_OPEN_EXISTING);
 	if (res != FR_OK)
 	{
-		printf("Can't mount the partition");
+		printf("Can't mount the partition\n");
 	}
 }
 
@@ -43,10 +43,10 @@ void format_exfat()
 {
 	f_unmount(&fs, L"0:", 0);
 	f_mkfs(L"0:", FS_EXFAT, 0, work, MAX_WORK_SIZE);
-	f_mount(&fs, L"0:", 0);
+	res = f_mount(&fs, L"0:", FA_OPEN_EXISTING);
 	if (res != FR_OK)
 	{
-		printf("Can't mount the partition");
+		printf("Can't mount the partition\n");
 	}
 }
 
@@ -55,7 +55,7 @@ struct Info* get_files(unsigned short* directory)
 	res = f_opendir(&dir, directory);   // Open Root
 	if (res != FR_OK)
 	{
-		printf("Can't open directory speficed error code: %d", res);
+		printf("Can't open directory speficed error code: %d\n", res);
 		while (true);
 	}
 	int i = 0;
@@ -85,7 +85,7 @@ retry:
 			f_unlink(filename);
 			goto retry;
 		}
-		printf("Can't open file speficed error code: %d", res);
+		printf("Can't open file speficed error code: %d\n", res);
 		while (true);
 	}
 
@@ -102,7 +102,7 @@ UINT read_all_bytes(TCHAR* filename,void** data)
 
 	if(res != FR_OK)
 	{
-		printf("Can't open file speficed error code: %d", res);
+		printf("Can't open file speficed error code: %d\n", res);
 		while (true);
 	}
 

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace MOOS.Misc
@@ -86,10 +87,10 @@ namespace MOOS.Misc
             Console.WriteLine((Info->Mods[0]).ToString("x2"));
 
             new Ramdisk((IntPtr)(Info->Mods[0]));
-            //new FATFS();
+            
             new TarFS();
-            //new FAT32FS();
-
+            new FATFS();
+         
             KMain();
         }
 

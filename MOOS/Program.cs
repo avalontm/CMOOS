@@ -147,6 +147,30 @@ unsafe class Program
 
     public static void SMain()
     {
+        //File.Instance.Format();
+        Console.WriteLine("create");
+        //File.Instance.WriteAllBytes("file.txt", Encoding.UTF8.GetBytes("hola mundo!"));
+
+        Console.WriteLine("GetFiles");
+
+        var files = FileVirtual.Instance.GetFiles("/");
+
+        Console.WriteLine($"[files] {files.Count}");
+
+        for (int i = 0; i < files.Count; i++)
+        {
+            Console.WriteLine(files[i].Name);
+        }
+
+        files = MOOS.FS.File.Instance.GetFiles("/");
+
+        Console.WriteLine($"[files] {files.Count}");
+
+        for (int i = 0; i < files.Count; i++)
+        {
+            Console.WriteLine(files[i].Name);
+        }
+
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 

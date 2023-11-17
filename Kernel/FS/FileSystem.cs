@@ -92,4 +92,71 @@ namespace MOOS.FS
         public abstract void Format();
         public abstract void CreateDirectory(string Name);
     }
+
+    public static class FileVirtual
+    {
+        /// <summary>
+        /// This will be overwritten if you initialize file system
+        /// </summary>
+        public static FileVirtualSystem Instance;
+
+        public static List<FileInfo> GetFiles(string Directory) => Instance.GetFiles(Directory);
+        public static byte[] ReadAllBytes(string name) => Instance.ReadAllBytes(name);
+
+    }
+
+    public abstract class FileVirtualSystem
+    {
+        public FileVirtualSystem()
+        {
+            FileVirtual.Instance = this;
+        }
+
+        public const int SectorSize = 512;
+
+        public static ulong SizeToSec(ulong size)
+        {
+            return ((size - (size % SectorSize)) / SectorSize) + ((size % SectorSize) != 0 ? 1ul : 0);
+        }
+
+        public static bool IsInDirectory(string fname, string dir)
+        {
+            if (fname.Length < dir.Length) return false;
+            for (int i = 0; i < fname.Length; i++)
+            {
+                if (i < dir.Length)
+                {
+                    if (dir[i] != fname[i]) return false;
+                }
+                else
+                {
+                    if (fname[i] == '/') return false;
+                }
+            }
+            return true;
+        }
+
+        public string GetDirectory(string file)
+        {
+            string result = "";
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                string[] str = file.Split('/');
+
+                for (int i = 0; i < (str.Length - 1); i++)
+                {
+                    result += str[i] + "/";
+                }
+            }
+            return result;
+        }
+
+        public abstract List<FileInfo> GetFiles(string Directory);
+        public abstract void Delete(string Name);
+        public abstract byte[] ReadAllBytes(string Name);
+        public abstract void WriteAllBytes(string Name, byte[] Content);
+        public abstract void Format();
+        public abstract void CreateDirectory(string Name);
+    }
 }

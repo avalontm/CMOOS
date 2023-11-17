@@ -14,7 +14,6 @@ namespace MOOS.FS
             fatfs_init();
         }
 
-
         [DllImport("*")]
         private static extern Info* get_files(char* directory);
 
@@ -33,16 +32,22 @@ namespace MOOS.FS
         {
             if (Directory.Length != 0 && Directory[Directory.Length - 1] == '/') 
                 Directory[Directory.Length - 1] = '\0';
+
             Info* infos;
             fixed (char* p = Directory)
-            infos = get_files(p);
+            {
+                infos = get_files(p);
+            }
             int i = 0;
             List<FileInfo> files = new List<FileInfo>();
+   
             while (infos[i].Name[0] != 0) 
             {
+
                 files.Add(new FileInfo()
                 {
-                    Name = new string(infos[i].Name),
+
+                    Name = string.charToString(infos[i].Name),
                     Attribute = (FileAttribute)infos[i].Attribute
                 });
                 i++;
@@ -102,6 +107,7 @@ namespace MOOS.FS
         {
             format_exfat();
         }
+
 
         public override byte[] ReadAllBytes(string Name)
         {
