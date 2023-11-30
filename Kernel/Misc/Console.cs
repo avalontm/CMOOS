@@ -338,14 +338,15 @@ namespace MOOS
 
         public static void WriteLine(string s)
         {
-            Write(s);
+            string _s = string.Copy(s);
+            Write(_s);
             OnWrite?.Invoke('\n');
             WriteFramebuffer(' ');
             CursorX = 0;
             CursorY++;
             MoveUp();
             UpdateCursor();
-            s.Dispose();
+            _s.Dispose();
         }
 
         public static void WriteLine()

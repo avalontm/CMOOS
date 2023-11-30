@@ -5,7 +5,7 @@
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
- 		<!--PublishAot>true</PublishAot-->
+ 		<PublishAot>true</PublishAot>
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Main</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>

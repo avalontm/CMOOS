@@ -253,6 +253,21 @@ namespace System
             return str;
         }
 
+
+        public static string Copy(string a)
+        {
+            int Length = a.Length;
+            char* ptr = stackalloc char[Length];
+            int currentIndex = 0;
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                ptr[currentIndex] = a[i];
+                currentIndex++;
+            }
+            return new string(ptr, 0, Length);
+        }
+
         public int IndexOf(string subcadena, int indiceInicial)
         {
             int _indice = -1;
@@ -592,7 +607,5 @@ namespace System
 
             return result;
         }
-
-
     }
 }

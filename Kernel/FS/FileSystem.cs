@@ -93,6 +93,7 @@ namespace MOOS.FS
         public abstract void CreateDirectory(string Name);
     }
 
+    /*
     public static class FileVirtual
     {
         /// <summary>
@@ -158,5 +159,5 @@ namespace MOOS.FS
         public abstract void WriteAllBytes(string Name, byte[] Content);
         public abstract void Format();
         public abstract void CreateDirectory(string Name);
-    }
+    }*/
 }

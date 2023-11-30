@@ -6,6 +6,7 @@ using System.IO;
 using System.Media;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Windows.Controls;
 
 namespace MoosExplorer
 {
@@ -72,14 +73,22 @@ namespace MoosExplorer
         [RuntimeExport("Main")]
         public static void Main()
         {
+            Console.WriteLine("Explorer");
+
             Image Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
             Wallpaper = Wallpaper.ResizeImage(GDI.GetWidth(), GDI.GetHeight());
-            
-            Console.WriteLine("Explorer");
 
             MoosNative.ModeGUI();
 
             CursorManager.Initialize();
+
+            
+            Button boton = new Button();
+            boton.X = 100;
+            boton.Y = 100;
+            boton.Text = "boton";
+
+            boton.OnLoaded();
 
             for (; ; )
             {
@@ -88,6 +97,8 @@ namespace MoosExplorer
                 GDI.AFillRectangle(0, GDI.GetHeight() - 48, GDI.GetWidth(), 48, 0xFFcccccc);
                 GDI.DrawLine(0, GDI.GetHeight() - 48, GDI.GetWidth(), GDI.GetHeight() - 48, 0xFFc7c7c7);
 
+                boton.OnUpdate();
+                boton.OnDraw();
                 CursorManager.Update();
                 CursorManager.Draw();
 

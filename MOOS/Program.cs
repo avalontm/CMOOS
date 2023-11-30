@@ -108,7 +108,7 @@ unsafe class Program
         ES1371.Initialize();
         
         #region NETWORK
-        /*       
+        /*      
                //Network Config (AvalonTM)
                Network.Initialize();
                NetworkStack.Initialize();
@@ -147,20 +147,33 @@ unsafe class Program
 
     public static void SMain()
     {
+        /*
         //File.Instance.Format();
         Console.WriteLine("create");
         //File.Instance.WriteAllBytes("file.txt", Encoding.UTF8.GetBytes("hola mundo!"));
 
         Console.WriteLine("GetFiles");
 
-        var files = FileVirtual.Instance.GetFiles("/");
+        string dir = "/";
+        var files = FileVirtual.Instance.GetFiles(dir);
 
         Console.WriteLine($"[files] {files.Count}");
 
         for (int i = 0; i < files.Count; i++)
         {
-            Console.WriteLine(files[i].Name);
+            string name = files[i].Name;
+            Console.WriteLine(name);
+
+            if (files[i].Attribute != FileAttribute.Directory)
+            {
+                byte[] content = FileVirtual.Instance.ReadAllBytes(dir + name);
+                Console.WriteLine($"[copy] {dir + name}");
+                MOOS.FS.File.Instance.WriteAllBytes(dir + name, content);
+            }
+            name.Dispose();
         }
+
+        files.Dispose();
 
         files = MOOS.FS.File.Instance.GetFiles("/");
 
@@ -171,8 +184,14 @@ unsafe class Program
             Console.WriteLine(files[i].Name);
         }
 
+        files.Dispose();
+        */
+
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
+
+
+        Console.WriteLine($"[Startup]");
 
         byte[] bytes = System.IO.File.ReadAllBytes("startup.ini");
 
@@ -201,8 +220,19 @@ unsafe class Program
             }
         }
 
-        string shell = dictionary["shell"];
+        var files = MOOS.FS.File.Instance.GetFiles("sys/app");
 
+        Console.WriteLine($"[files] {files.Count}");
+
+        for (int i = 0; i < files.Count; i++)
+        {
+            Console.WriteLine(files[i].Name);
+        }
+
+
+        files.Dispose();
+        string shell = dictionary["shell"];
+        Console.WriteLine($"[Shell] sys/app/{shell}");
         System.Diagnostics.Process.Start($"sys/app/{shell}");
 
         for (; ; )

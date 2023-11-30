@@ -11,7 +11,11 @@ namespace Moos.Framework.Graphics
 
         [DllImport("AFillRectangle")]
         public static extern void AFillRectangle(int x, int y, int wight, int height, uint color);
-        
+
+
+        [DllImport("FillRectangle")]
+        public static extern void FillRectangle(int x, int y, int wight, int height, uint color);
+
         [DllImport("DrawPoint")]
         public static extern void DrawPoint(int x, int y, uint color, bool alpha);
         

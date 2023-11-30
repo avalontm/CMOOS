@@ -2,7 +2,7 @@ using System;
 
 namespace MOOS.FS
 {
-    public unsafe class Ramdisk : DiskVirtual
+    public unsafe class Ramdisk : Disk
     {
         byte* ptr;
 

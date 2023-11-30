@@ -35,5 +35,8 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="System\Drawing\" />
+  </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ namespace MOOS.FS
         public abstract bool Read(ulong sector, uint count, byte* data);
         public abstract bool Write(ulong sector, uint count, byte* data);
     }
-
+    /*
     public abstract unsafe class DiskVirtual
     {
         public static DiskVirtual Instance;
@@ -24,5 +24,5 @@ namespace MOOS.FS
 
         public abstract bool Read(ulong sector, uint count, byte* data);
         public abstract bool Write(ulong sector, uint count, byte* data);
-    }
+    }*/
 }

@@ -9,7 +9,7 @@ using System.Text;
 
 namespace MOOS.FS
 {
-    internal unsafe class TarFS : FileVirtualSystem
+    internal unsafe class TarFS : FileSystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct posix_tar_header
@@ -146,11 +146,8 @@ namespace MOOS.FS
             posix_tar_header hdr;
             posix_tar_header* ptr = &hdr;
 
-            if (Directory.Length != 0 && Directory[Directory.Length - 1] == '/')
-                Directory = Directory.Remove(Directory.Length - 1);
-
             List<FileInfo> list = new List<FileInfo>();
-            while (DiskVirtual.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
+            while (Disk.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
             {
                 sec++;
                 ulong size = mystrtoul(hdr.size, null, 8);
@@ -193,7 +190,7 @@ namespace MOOS.FS
                     buffer = new byte[(uint)SizeToSec(list[i].Param1) * 512];
                     fixed (byte* ptr = buffer)
                     {
-                        DiskVirtual.Instance.Read(list[i].Param0, (uint)SizeToSec(list[i].Param1), ptr);
+                        Disk.Instance.Read(list[i].Param0, (uint)SizeToSec(list[i].Param1), ptr);
                     }
                     buffer.Length = (int)list[i].Param1;
                     //Disposing
@@ -216,7 +213,7 @@ namespace MOOS.FS
             posix_tar_header hdr;
             posix_tar_header* ptr = &hdr;
 
-            while (DiskVirtual.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
+            while (Disk.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
             {
                 sec++;
                 ulong size = mystrtoul(hdr.size, null, 8);
@@ -252,7 +249,7 @@ namespace MOOS.FS
 
             fixed (byte* ptr = hdr.Build())
             {
-                DiskVirtual.Instance.Write(sec, (uint)(hdr.size+512), ptr);
+                Disk.Instance.Write(sec, (uint)(hdr.size+512), ptr);
             }
 
             dir.Dispose();
@@ -286,7 +283,7 @@ namespace MOOS.FS
 
             fixed (byte* ptr = hdr.Build())
             {
-                DiskVirtual.Instance.Write(sec, (uint)(hdr.size + 512), ptr);
+                Disk.Instance.Write(sec, (uint)(hdr.size + 512), ptr);
             }
         }
 

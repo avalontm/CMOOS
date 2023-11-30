@@ -18,6 +18,8 @@ namespace MOOS.Api
                     return (delegate*<int, int, int, int , uint, void>)&API_DrawRectangle;
                 case "AFillRectangle":
                     return (delegate*<int, int, int, int, uint, void>)&API_AFillRectangle;
+                case "FillRectangle":
+                    return (delegate*<int, int, int, int, uint, void>)&API_FillRectangle;
                 case "DrawPoint":
                     return (delegate*<int, int, uint, bool, void>)&API_DrawPoint;
                 case "DrawLine":
@@ -45,6 +47,11 @@ namespace MOOS.Api
         public static void API_AFillRectangle(int x, int y, int wight, int height, uint color)
         {
             Framebuffer.Graphics.AFillRectangle(x, y, wight, height, color);
+        }
+
+        public static void API_FillRectangle(int x, int y, int wight, int height, uint color)
+        {
+            Framebuffer.Graphics.FillRectangle(x, y, wight, height, color);
         }
 
         public static void API_DrawPoint(int x, int y, uint color, bool alpha)

@@ -1,6 +1,6 @@
 namespace System.Drawing
 {
-    public struct Color
+    public class Color
     {
         public static Color AliceBlue { get { return FromArgb(240, 248, 255); } }
         public static Color LightSalmon { get { return FromArgb(255, 160, 122); } }
@@ -143,6 +143,7 @@ namespace System.Drawing
         public static Color LightPink { get { return FromArgb(255, 182, 193); } }
         public static Color YellowGreen { get { return FromArgb(154, 205, 50); } }
 
+
         public uint ARGB;
 
         public byte A
@@ -197,26 +198,11 @@ namespace System.Drawing
             }
         }
 
-        public static bool operator ==(Color a, Color b)
-        {
-            return Equals(a, b);
-        }
-
-        public static bool operator !=(Color a, Color b)
-        {
-            return !Equals(a, b);
-        }
-
-        public static bool Equals(Color a, Color b)
-        {
-            return a.ARGB == b.ARGB;
-        }
-
         public uint ToArgb()
         {
-            return ARGB;
-        }
+            return (uint)(255 << 24 | this.R << 16 | this.G << 8 | this.B);
 
+        }
         public static uint ToArgb(byte r, byte g, byte b)
         {
             return (uint)(255 << 24 | r << 16 | g << 8 | b);

@@ -88,9 +88,8 @@ namespace MOOS.Misc
 
             new Ramdisk((IntPtr)(Info->Mods[0]));
             
+            //new FATFS();
             new TarFS();
-            new FATFS();
-         
             KMain();
         }
 

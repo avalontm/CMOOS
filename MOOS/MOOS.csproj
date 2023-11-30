@@ -6,14 +6,14 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BaseOutputPath>..\bin</BaseOutputPath>
 
-		<PublishAot>true</PublishAot>
+	
 		<Optimize>true</Optimize>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 
 		<DefineConstants>Kernel;UseAPIC</DefineConstants>
-		<!--PublishAot>true</PublishAot-->
+		<PublishAot>true</PublishAot>
 		<IlcSystemModule>Moos.Core</IlcSystemModule>
 		<EntryPointSymbol>Entry</EntryPointSymbol>
 		<LinkerSubsystem>NATIVE</LinkerSubsystem>
