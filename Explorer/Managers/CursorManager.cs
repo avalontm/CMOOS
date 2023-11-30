@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,10 @@ namespace Explorer.Managers
 {
     public class CursorManager
     {
+        [DllImport("GetMouseButtons")]
+        public static extern int GetMouseButtons();
+
+
         public static Point MousePosition = new Point();
         public static Point MouseOffSet = new Point();
         static Image CursorNormal { set; get; }
@@ -64,7 +69,10 @@ namespace Explorer.Managers
 
         public static void Update()
         {
+            Mouse.Buttons = (MouseButtons)GetMouseButtons();
+            Mouse.Update();
             MousePosition = new Point(MoosNative.GetMouseX(), MoosNative.GetMouseY());
+           
 
             /*
             if (WindowManager.HasWindowFocusResizing)

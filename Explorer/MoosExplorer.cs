@@ -1,4 +1,5 @@
 ﻿using Explorer.Managers;
+using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
 using System.Diagnostics;
 using System.Drawing;
@@ -74,19 +75,24 @@ namespace MoosExplorer
         public static void Main()
         {
             Console.WriteLine("Explorer");
-
-            Image Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
-            Wallpaper = Wallpaper.ResizeImage(GDI.GetWidth(), GDI.GetHeight());
-
             MoosNative.ModeGUI();
 
-            CursorManager.Initialize();
+            FontManager.Load("sys/media/Yahei.png", 18);
 
-            
+            int screenWidth = GDI.GetWidth();
+            int screenHeight = GDI.GetHeight();
+
+            Image Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
+            Wallpaper = Wallpaper.ResizeImage(screenWidth, screenHeight);
+
+            CursorManager.Initialize();
+   
             Button boton = new Button();
-            boton.X = 100;
-            boton.Y = 100;
-            boton.Text = "boton";
+            boton.X = 5;
+            boton.Y = screenHeight - 48;
+            boton.Width = 64;
+            boton.Height = 48;
+            boton.Text = "inicio";
 
             boton.OnLoaded();
 
@@ -94,8 +100,8 @@ namespace MoosExplorer
             {
                 GDI.DrawImage(0, 0, Wallpaper, false);
 
-                GDI.AFillRectangle(0, GDI.GetHeight() - 48, GDI.GetWidth(), 48, 0xFFcccccc);
-                GDI.DrawLine(0, GDI.GetHeight() - 48, GDI.GetWidth(), GDI.GetHeight() - 48, 0xFFc7c7c7);
+                GDI.AFillRectangle(0, screenHeight - 48, screenWidth, 48, 0xFFcccccc);
+                GDI.DrawLine(0, screenHeight - 48, screenWidth, screenHeight - 48, 0xFFc7c7c7);
 
                 boton.OnUpdate();
                 boton.OnDraw();

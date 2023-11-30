@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Foundry>
 <VM>
-<VMId type="string">52 26 be 72 fc 0c 25 a4-67 7c 34 2e 05 10 08 69</VMId>
+<VMId type="string">52 00 4d f8 be 32 fb ff-1c 2d 6f f4 bb 93 bb 01</VMId>
 <ClientMetaData>
 <clientMetaDataAttributes/>
 <HistoryEventList/></ClientMetaData>

@@ -76,10 +76,6 @@ namespace MOOS
                     return (delegate*<uint>)&API_Width;
                 case "Height":
                     return (delegate*<uint>)&API_Height;
-                case "GetMouseX":
-                    return (delegate*<uint>)&API_MouseX;
-                case "GetMouseY":
-                    return (delegate*<uint>)&API_MouseY;
                 case "WriteString":
                     return (delegate*<string, void>)&API_WriteString;
                 case "GetTime":
@@ -99,12 +95,29 @@ namespace MOOS
             }
 
             #region API Controls
+
+            //Call MOUSE
+            void* _mouse = MOUSE.HandleSystemCall(name);
+
+            if (_mouse != null)
+            {
+                return _mouse;
+            }
+
             //Call GDI 
             void* _gdi = GDI.HandleSystemCall(name);
 
             if (_gdi != null)
             {
                 return _gdi;
+            }
+
+            //Call FONT
+            void* _font = FONT.HandleSystemCall(name);
+
+            if (_font != null)
+            {
+                return _font;
             }
 
             Panic.Error($"System call \"{name}\" is not found");
@@ -198,9 +211,6 @@ namespace MOOS
         public static uint API_Width() => Framebuffer.Width;
 
         public static uint API_Height() => Framebuffer.Height;
-
-        public static uint API_MouseX() => Control.MousePosition.X;
-        public static uint API_MouseY() => Control.MousePosition.Y;
 
 
         public static void API_Update()

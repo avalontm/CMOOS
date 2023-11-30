@@ -1,18 +1,19 @@
+using System.Diagnostics;
 using System.Drawing;
 
 namespace System.Windows.Forms
 {
-    public class Control
+    public class Mouse
     {
-        public static Point MousePosition;
-        public static Point MouseOffSet = new Point();
-        public static MouseButtons MouseButtons;
-        static MouseButtons lastMouseButtons;
+        public static Point Position;
+        public static Point OffSet = new Point();
+        public static MouseButtons Buttons;
+        static MouseButtons lastButtons;
         public static bool Clicked { private set; get; }
 
         public static void Update()
         {
-            if (lastMouseButtons == MouseButtons.None && MouseButtons == MouseButtons.Left)
+            if (lastButtons == MouseButtons.None && Buttons == MouseButtons.Left)
             {
                 Clicked = true;
             }
@@ -20,7 +21,7 @@ namespace System.Windows.Forms
             {
                 Clicked = false;
             }
-            lastMouseButtons = MouseButtons;
+            lastButtons = Buttons;
         }
     }
 }

@@ -92,14 +92,14 @@ namespace MOOS
             uint y = cmd.cx; /* You should map these somewhere to the actual resolution. */
             byte z = (byte)cmd.dx; /* Z is a single signed byte indicating scroll direction. */
 
-            Control.MouseButtons = MouseButtons.None;
-            if (BitHelpers.IsBitSet(buttons, 3)) Control.MouseButtons |= MouseButtons.Middle;
-            if (BitHelpers.IsBitSet(buttons, 4)) Control.MouseButtons |= MouseButtons.Right;
-            if (BitHelpers.IsBitSet(buttons, 5)) Control.MouseButtons |= MouseButtons.Left;
-            //Control.MousePosition.X = (int)(((x * 100) / 65536) * (Framebuffer.Width / 100));
-            //Control.MousePosition.Y = (int)(((y * 100) / 65536) * (Framebuffer.Height / 100));
-            Control.MousePosition.X = (int)(x / 65536f * Framebuffer.Width);
-            Control.MousePosition.Y = (int)(y / 65536f * Framebuffer.Height);
+            Mouse.Buttons = MouseButtons.None;
+            if (BitHelpers.IsBitSet(buttons, 3)) Mouse.Buttons |= MouseButtons.Middle;
+            if (BitHelpers.IsBitSet(buttons, 4)) Mouse.Buttons |= MouseButtons.Right;
+            if (BitHelpers.IsBitSet(buttons, 5)) Mouse.Buttons |= MouseButtons.Left;
+            //Mouse.MousePosition.X = (int)(((x * 100) / 65536) * (Framebuffer.Width / 100));
+            //Mouse.MousePosition.Y = (int)(((y * 100) / 65536) * (Framebuffer.Height / 100));
+            Mouse.Position.X = (int)(x / 65536f * Framebuffer.Width);
+            Mouse.Position.Y = (int)(y / 65536f * Framebuffer.Height);
 
             /* TODO: Do something useful here with these values, such as providing them to userspace! */
         }

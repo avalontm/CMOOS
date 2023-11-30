@@ -86,10 +86,10 @@ namespace MOOS.Misc
             {
                 HID.GetMouseThings(HID.Mouse, out sbyte AxisX, out sbyte AxisY, out MouseButtons buttons);
 
-                Control.MousePosition.X = Math.Clamp(Control.MousePosition.X + AxisX, 0, Framebuffer.Width);
-                Control.MousePosition.Y = Math.Clamp(Control.MousePosition.Y + AxisY, 0, Framebuffer.Height);
+                Mouse.Position.X = Math.Clamp(Mouse.Position.X + AxisX, 0, Framebuffer.Width);
+                Mouse.Position.Y = Math.Clamp(Mouse.Position.Y + AxisY, 0, Framebuffer.Height);
 
-                Control.MouseButtons = buttons;
+                Mouse.Buttons = buttons;
             }
         }
 

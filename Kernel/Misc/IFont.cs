@@ -85,6 +85,7 @@ namespace MOOS.Misc
             {
                 w += DrawChar(Framebuffer.Graphics,-1, -1, Str[i]);
             }
+            Str.Dispose();
             return w;
         }
 
@@ -103,10 +104,12 @@ namespace MOOS.Misc
 
                     if (HeightLimit != -1 && h >= HeightLimit)
                     {
-                        return;
+                        break;
                     }
                 }
             }
+
+            Str.Dispose();
         }
     }
 }

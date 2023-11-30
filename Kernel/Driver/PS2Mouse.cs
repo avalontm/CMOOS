@@ -51,7 +51,7 @@ namespace MOOS
 
             WriteRegister(0xF2);
 
-            Control.MouseButtons = MouseButtons.None;
+            Mouse.Buttons = MouseButtons.None;
         }
 
         public static void WriteRegister(byte value)
@@ -100,14 +100,14 @@ namespace MOOS
 
                 MData[0] &= 0x07;
 
-                Control.MouseButtons = MouseButtons.None;
+                Mouse.Buttons = MouseButtons.None;
                 if (MData[0] == 0x01)
                 {
-                    Control.MouseButtons = MouseButtons.Left;
+                    Mouse.Buttons = MouseButtons.Left;
                 }
                 if (MData[0] == 0x02)
                 {
-                    Control.MouseButtons = MouseButtons.Right;
+                    Mouse.Buttons = MouseButtons.Right;
                 }
 
                 aX = (sbyte)MData[1];
@@ -115,8 +115,8 @@ namespace MOOS
                 aY = (sbyte)MData[2];
                 aY = -aY;
 
-                Control.MousePosition.X = Math.Clamp(Control.MousePosition.X + aX, 0, Framebuffer.Width);
-                Control.MousePosition.Y = Math.Clamp(Control.MousePosition.Y + aY, 0, Framebuffer.Height);
+                Mouse.Position.X = Math.Clamp(Mouse.Position.X + aX, 0, Framebuffer.Width);
+                Mouse.Position.Y = Math.Clamp(Mouse.Position.Y + aY, 0, Framebuffer.Height);
             }
         }
     }

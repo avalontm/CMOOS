@@ -69,8 +69,8 @@ namespace MOOS
             SecondBuffer = (uint*)Allocator.Allocate((ulong)(XRes * YRes * 4));
             Native.Stosd(FirstBuffer, 0, (ulong)(XRes * YRes));
             Native.Stosd(SecondBuffer, 0, (ulong)(XRes * YRes));
-            Control.MousePosition.X = XRes / 2;
-            Control.MousePosition.Y = YRes / 2;
+            Mouse.Position.X = XRes / 2;
+            Mouse.Position.Y = YRes / 2;
             Graphics = new Graphics(Width, Height, FB);
             VideoMemory = FB;
 

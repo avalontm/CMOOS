@@ -1,4 +1,4 @@
-using Moos.Framework.Data;
+using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,21 +9,17 @@ namespace System.Windows.Controls
     public class Button : Widget
     {
         public string Text { set; get; }
-        public Binding Command { set; get; }
-        public static object CommandProperty { get; set; }
-        public object CommandParameter { get; set; }
-        public bool UseCircle;
 
-        public Button()
+        public Button() : base()
         {
             X = 0;
             Y = 0;
             Width = 300;
             Height = 42;
-            Background = Color.FromArgb(0xFFD4D4D4);
+            Background = Color.FromArgb(255, 212, 212, 212);
             Foreground = Color.Black;
-            UseHighlight = true;
-            CommandParameter = string.Empty;
+            BorderBrush = Color.FromArgb(0xFFCCCCCC);
+
             IsVisible = true;
         }
 
@@ -38,30 +34,13 @@ namespace System.Windows.Controls
 
             if (IsLoaded && IsVisible)
             {
-                /*
-                if (WindowManager.FocusWindow == Window)
-                {
-                    if (MouseEnter)
-                    {
-                        if (IsFocus)
-                        {
-                            if (Control.Clicked)
-                            {
-                                if (Command != null && Command.Source != null)
-                                {
-                                    Command.Source.Execute?.Invoke(CommandParameter);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }*/
+                
             }
         }
 
         public bool IsUnderMouse()
         {
-            if (Control.MousePosition.X > X && Control.MousePosition.X < X + Width && Control.MousePosition.Y > Y && Control.MousePosition.Y < Y + Height) return true;
+            if (Mouse.Position.X > X && Mouse.Position.X < X + Width && Mouse.Position.Y > Y && Mouse.Position.Y < Y + Height) return true;
             return false;
         }
 
@@ -78,7 +57,7 @@ namespace System.Windows.Controls
 
                 if (!string.IsNullOrEmpty(Text))
                 {
-                  //  WindowManager.font.DrawString(X + Width / 2 - WindowManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - WindowManager.font.FontSize / 2 + 2, Text, Foreground.Value);
+                   // FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
                 }
 
                 if (BorderBrush != null)
@@ -88,10 +67,5 @@ namespace System.Windows.Controls
             }
         }
 
-        public void SetBinding(object commandProperty, Binding binding)
-        {
-            Command = binding;
-            CommandParameter = commandProperty;
-        }
     }
 }
