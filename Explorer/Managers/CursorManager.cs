@@ -72,38 +72,6 @@ namespace Explorer.Managers
             Mouse.Buttons = (MouseButtons)GetMouseButtons();
             Mouse.Update();
             MousePosition = new Point(MoosNative.GetMouseX(), MoosNative.GetMouseY());
-           
-
-            /*
-            if (WindowManager.HasWindowFocusResizing)
-            {
-                Control.MouseOffSet.X = -(CursorHorizontal.Width / 2);
-                Control.MouseOffSet.Y = -(CursorHorizontal.Height / 2);
-                return;
-            }
-
-            if (WindowManager.HasWindowMoving)
-            {
-                Control.MouseOffSet.X = 0;
-                Control.MouseOffSet.Y = 0;
-                State.Value = CursorState.Grab;
-                return;
-            }
-
-            if (FocusControl != null)
-            {
-                if (FocusControl.MouseEnter)
-                {
-                    if (FocusControl.Cursor.Value != CursorState.None)
-                    {
-                        Control.MouseOffSet.X = 0;
-                        Control.MouseOffSet.Y = 0;
-                        State.Value = FocusControl.Cursor.Value;
-                        return;
-                    }
-                }
-            }
-            */
 
             MouseOffSet.X = 0;
             MouseOffSet.Y = 0;

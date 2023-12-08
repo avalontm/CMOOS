@@ -147,49 +147,8 @@ unsafe class Program
 
     public static void SMain()
     {
-        /*
-        //File.Instance.Format();
-        Console.WriteLine("create");
-        //File.Instance.WriteAllBytes("file.txt", Encoding.UTF8.GetBytes("hola mundo!"));
-
-        Console.WriteLine("GetFiles");
-
-        string dir = "/";
-        var files = FileVirtual.Instance.GetFiles(dir);
-
-        Console.WriteLine($"[files] {files.Count}");
-
-        for (int i = 0; i < files.Count; i++)
-        {
-            string name = files[i].Name;
-            Console.WriteLine(name);
-
-            if (files[i].Attribute != FileAttribute.Directory)
-            {
-                byte[] content = FileVirtual.Instance.ReadAllBytes(dir + name);
-                Console.WriteLine($"[copy] {dir + name}");
-                MOOS.FS.File.Instance.WriteAllBytes(dir + name, content);
-            }
-            name.Dispose();
-        }
-
-        files.Dispose();
-
-        files = MOOS.FS.File.Instance.GetFiles("/");
-
-        Console.WriteLine($"[files] {files.Count}");
-
-        for (int i = 0; i < files.Count; i++)
-        {
-            Console.WriteLine(files[i].Name);
-        }
-
-        files.Dispose();
-        */
-
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
-
 
         Console.WriteLine($"[Startup]");
 
@@ -229,7 +188,6 @@ unsafe class Program
             Console.WriteLine(files[i].Name);
         }
 
-
         files.Dispose();
         string shell = dictionary["shell"];
         Console.WriteLine($"[Shell] sys/app/{shell}");
@@ -237,7 +195,8 @@ unsafe class Program
 
         for (; ; )
         {
-            //Loop
+            Native.Hlt();
+
         }
     }
 }

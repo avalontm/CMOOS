@@ -2,6 +2,7 @@
 using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Drawing;
 using System.IO;
 using System.Media;
@@ -96,19 +97,23 @@ namespace MoosExplorer
 
             boton.OnLoaded();
 
+            
             for (; ; )
             {
+
+                CursorManager.Update();
+                boton.OnUpdate();
+
                 GDI.DrawImage(0, 0, Wallpaper, false);
 
                 GDI.AFillRectangle(0, screenHeight - 48, screenWidth, 48, 0xFFcccccc);
                 GDI.DrawLine(0, screenHeight - 48, screenWidth, screenHeight - 48, 0xFFc7c7c7);
 
-                boton.OnUpdate();
                 boton.OnDraw();
-                CursorManager.Update();
                 CursorManager.Draw();
 
                 GDI.DrawUpdate();
+
             }
         }
     }

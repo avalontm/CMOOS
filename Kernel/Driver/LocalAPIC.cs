@@ -80,7 +80,7 @@ namespace MOOS.Driver
         public static void Initialize()
         {
             // Configure Spurious Interrupt Vector Register
-            //  WriteRegister((uint)LAPIC_SVR, 0x1FF);
+              WriteRegister((uint)LAPIC_SVR, 0x1FF);
 
             /* Enable all interrupts */
             WriteRegister(LAPIC_TPR, 0);

@@ -12,7 +12,7 @@ namespace MOOS.Driver
             //Divide 16
             LocalAPIC.WriteRegister(0x3e0, 0x3);
             LocalAPIC.WriteRegister(0x380, (uint)((Timer.Bus_Clock / 16) / hz));
-           // Interrupts.EnableInterrupt(0x20);
+            Interrupts.EnableInterrupt(0x20);
         }
 
         public static uint EstimateBusSpeed() 

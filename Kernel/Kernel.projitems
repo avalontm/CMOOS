@@ -75,7 +75,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Native.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\PageTable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Panic.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Misc\Pollings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\PNG.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Threading.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\VendorID.cs" />

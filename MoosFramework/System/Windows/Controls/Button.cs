@@ -3,7 +3,6 @@ using Moos.Framework.Graphics;
 using System.Drawing;
 using System.Windows.Forms;
 
-
 namespace System.Windows.Controls
 {
     public class Button : Widget
@@ -57,7 +56,7 @@ namespace System.Windows.Controls
 
                 if (!string.IsNullOrEmpty(Text))
                 {
-                   // FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
+                    FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
                 }
 
                 if (BorderBrush != null)
