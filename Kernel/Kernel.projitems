@@ -65,7 +65,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Console.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\CPUID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\EntryPoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Misc\FPSMeter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\GC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\GDT.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\IDT.cs" />

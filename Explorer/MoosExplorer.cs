@@ -1,7 +1,6 @@
 ﻿using Explorer.Managers;
 using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
-using Moos.Framework.Input;
 using Moos.Framework.System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;

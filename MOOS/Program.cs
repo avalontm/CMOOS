@@ -4,7 +4,6 @@ using System.IO;
 using MOOS;
 using MOOS.Driver;
 using MOOS.FS;
-using MOOS.GUI;
 using MOOS.Misc;
 using MOOS.NET;
 using MOOS.NET.IPv4.UDP.DHCP;
@@ -34,8 +33,6 @@ unsafe class Program
         return ScanCode != 0;
     }
 
-    public static FPSMeter fpsMeter;
-
     /*
      * Minimum system requirement:
      * 1024MiB of RAM
@@ -49,8 +46,6 @@ unsafe class Program
     static void KMain()
     {
         Animator.Initialize();
-
-        fpsMeter = new FPSMeter();
 
         Console.WriteLine("Use Native AOT (Core RT) Technology.");
 
@@ -192,6 +187,12 @@ unsafe class Program
         string shell = dictionary["shell"];
         Console.WriteLine($"[Shell] sys/app/{shell}");
         System.Diagnostics.Process.Start($"sys/app/{shell}");
+
+
+        bytes.Dispose();
+        texto.Dispose();
+        lineas.Dispose();
+        shell.Dispose();
 
         for (; ; )
         {
