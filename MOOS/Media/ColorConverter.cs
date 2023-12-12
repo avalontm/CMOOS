@@ -45,6 +45,7 @@ namespace MOOS.Media
                 value = 16 * value + x;
             }
 
+            hexColor.Dispose();
             return value;
         }
 
@@ -57,7 +58,8 @@ namespace MOOS.Media
             int r = (_base.R * _color.R) / 255;
             int g = (_base.G * _color.G) / 255;
             int b = (_base.B * _color.B) / 255;
-
+            _base.Dispose();
+            _color.Dispose();
             return (uint)(a << 24 | r << 16 | g << 8 | b);
         }
     }

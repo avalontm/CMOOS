@@ -60,6 +60,7 @@ namespace MOOS.Misc
                     {
                         counter++;
                     }
+                    _color.Dispose();
                 }
                 if (w > (FontSize/3) && counter == FontSize) return w;
             }

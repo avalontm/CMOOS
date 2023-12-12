@@ -23,7 +23,6 @@ namespace MOOS
 
         public static unsafe void* HandleSystemCall(string name)
         {
-
             switch (name)
             {
                 case "ApplicationCreate":
@@ -95,6 +94,14 @@ namespace MOOS
             }
 
             #region API Controls
+
+            //Call RTC
+            void* _rtc = APIRTC.HandleSystemCall(name);
+
+            if (_rtc != null)
+            {
+                return _rtc;
+            }
 
             //Call MOUSE
             void* _mouse = MOUSE.HandleSystemCall(name);

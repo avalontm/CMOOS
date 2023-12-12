@@ -1,6 +1,7 @@
 using Moos.Framework.Graphics;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -10,6 +11,9 @@ namespace System.Windows
 {
     public abstract class Widget
     {
+        [DllImport("GetMouseButtons")]
+        public static extern int GetMouseButtons();
+
         internal Cursor _cursor;
         internal Color _background;
         internal Color _foreground;
@@ -100,14 +104,6 @@ namespace System.Windows
                
             }
 
-        }
-
-        public void DrawBorder()
-        {
-            if (IsLoaded && IsVisible)
-            {
-                GDI.DrawRectangle(X - BorderThickness.Left, Y - BorderThickness.Top, Width + BorderThickness.Right, Height + BorderThickness.Bottom, BorderBrush.ARGB);
-            }
         }
 
     }

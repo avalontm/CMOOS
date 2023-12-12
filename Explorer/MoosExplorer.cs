@@ -1,6 +1,7 @@
 ﻿using Explorer.Managers;
 using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
+using Moos.Framework.System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.Drawing;
@@ -79,37 +80,50 @@ namespace MoosExplorer
             MoosNative.ModeGUI();
 
             FontManager.Load("sys/media/Yahei.png", 18);
-
+            FPSMeter pfs = new FPSMeter();
             int screenWidth = GDI.GetWidth();
             int screenHeight = GDI.GetHeight();
 
-            Image Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
+            Image Wallpaper = null;
+            /*
+            Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
             Wallpaper = Wallpaper.ResizeImage(screenWidth, screenHeight);
+            */
 
             CursorManager.Initialize();
    
             Button boton = new Button();
             boton.X = 5;
-            boton.Y = screenHeight - 48;
-            boton.Width = 64;
-            boton.Height = 48;
-            boton.Text = "inicio";
+            boton.Y = screenHeight - 42;
+            boton.Width = 75;
+            boton.Height = 38;
+            boton.Text = "start";
 
             boton.OnLoaded();
-
             
             for (; ; )
             {
 
                 CursorManager.Update();
                 boton.OnUpdate();
+                pfs.Update();
 
-                GDI.DrawImage(0, 0, Wallpaper, false);
+                if (Wallpaper == null)
+                {
+                    GDI.AFillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                }
+                else
+                {
+                    GDI.DrawImage(0, 0, Wallpaper, false);
+                }
 
-                GDI.AFillRectangle(0, screenHeight - 48, screenWidth, 48, 0xFFcccccc);
-                GDI.DrawLine(0, screenHeight - 48, screenWidth, screenHeight - 48, 0xFFc7c7c7);
+                GDI.AFillRectangle(0, screenHeight - 48, screenWidth, 48, 0xFFC3C7CB);
+                GDI.DrawLine(0, screenHeight - 46, screenWidth, screenHeight - 46, 0xFFFFFFFF);
 
                 boton.OnDraw();
+
+                FontManager.font.DrawString(0, 0, string.Format("FPS: {0}", pfs.FPS), 0xFFFFFFFF); 
+
                 CursorManager.Draw();
 
                 GDI.DrawUpdate();

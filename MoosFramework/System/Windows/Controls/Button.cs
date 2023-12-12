@@ -15,9 +15,9 @@ namespace System.Windows.Controls
             Y = 0;
             Width = 300;
             Height = 42;
-            Background = Color.FromArgb(255, 212, 212, 212);
+            Background = Color.FromArgb(0xFFC3C7CB);
             Foreground = Color.Black;
-            BorderBrush = Color.FromArgb(0xFFCCCCCC);
+            BorderBrush = Color.FromArgb(0xFFFFFFFF);
 
             IsVisible = true;
         }
@@ -33,13 +33,15 @@ namespace System.Windows.Controls
 
             if (IsLoaded && IsVisible)
             {
-                
+                Mouse.Buttons = (MouseButtons)GetMouseButtons();
+                Mouse.Update();
+                Mouse.Position = new Point(MoosNative.GetMouseX(), MoosNative.GetMouseY());
             }
         }
 
         public bool IsUnderMouse()
         {
-            if (Mouse.Position.X > X && Mouse.Position.X < X + Width && Mouse.Position.Y > Y && Mouse.Position.Y < Y + Height) return true;
+            if (Mouse.Position.X > X && Mouse.Position.X < (X + Width) && Mouse.Position.Y > Y && Mouse.Position.Y < (Y + Height)) return true;
             return false;
         }
 
@@ -59,12 +61,51 @@ namespace System.Windows.Controls
                     FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
                 }
 
-                if (BorderBrush != null)
+                if (IsUnderMouse() && Mouse.Buttons == MouseButtons.Left)
                 {
-                    DrawBorder();
+                    DrawPressedBorder();
+                }
+                else
+                {
+                    DrawNormalBorder();
                 }
             }
         }
 
+        void DrawNormalBorder()
+        {
+            if (IsLoaded && IsVisible)
+            {
+                //white
+                GDI.DrawLine(X, Y, X + Width, Y, 0xFFFFFFFF);
+                GDI.DrawLine(X, Y, X, Y + Height - 2, 0xFFFFFFFF);
+                
+                //gray
+                GDI.DrawLine(X + Width , Y, X + Width , Y + Height - 2, 0xFF868a8e);
+                GDI.DrawLine(X - 2, Y + Height -1, X + Width, Y + Height - 1, 0xFF868a8e);
+
+                //black
+                GDI.DrawLine(X + Width +1, Y , X + Width +1, Y + Height -1, 0xFF000000);
+                GDI.DrawLine(X-2, Y + Height, X + Width , Y + Height , 0xFF000000);
+            }
+        }
+
+        void DrawPressedBorder()
+        {
+            if (IsLoaded && IsVisible)
+            {
+                //black
+                GDI.DrawLine(X, Y, X + Width -1, Y, 0xFF000000);
+                GDI.DrawLine(X, Y, X , Y + Height, 0xFF000000);
+
+                //gray
+                GDI.DrawLine(X + 1, Y, X + 1, Y + Height - 2, 0xFF868a8e);
+                GDI.DrawLine(X + 1, Y , X + 1, Y + Height - 1, 0xFF868a8e);
+
+                //white
+                GDI.DrawLine(X, Y + Height, X + Width, Y + Height, 0xFFFFFFFF);
+                GDI.DrawLine(X + Width, Y, X + Width, Y + Height - 2, 0xFFFFFFFF);
+            }
+        }
     }
 }

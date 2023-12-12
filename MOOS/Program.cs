@@ -196,7 +196,6 @@ unsafe class Program
         for (; ; )
         {
             Native.Hlt();
-
         }
     }
 }

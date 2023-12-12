@@ -29,6 +29,12 @@ namespace Moos.Framework.Fonts
             msg.Dispose();
         }
 
+        public void DrawString(int x, int y, string msg, uint color)
+        {
+            FontDrawString(handler, x, y, msg, color);
+            msg.Dispose();
+        }
+
         public int MeasureString(string text)
         {
             int measure = FontMeasureString(handler, text);
