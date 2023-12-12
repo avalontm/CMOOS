@@ -78,6 +78,7 @@ namespace MoosExplorer
         static Image Wallpaper = null;
         static int screenWidth = 0;
         static int screenHeight = 0;
+        static Button start = null;
 
         [RuntimeExport("Main")]
         public static void Main()
@@ -97,20 +98,20 @@ namespace MoosExplorer
 
             CursorManager.Initialize();
    
-            Button boton = new Button();
-            boton.X = 5;
-            boton.Y = screenHeight - 42;
-            boton.Width = 75;
-            boton.Height = 38;
-            boton.Text = "start";
-            boton.Clicked = start_clicked;
-            boton.OnLoaded();
+            start = new Button();
+            start.X = 5;
+            start.Y = screenHeight - 42;
+            start.Width = 75;
+            start.Height = 38;
+            start.Text = "start";
+            start.Clicked = start_clicked;
+            start.OnLoaded();
             
             for (; ; )
             {
 
                 CursorManager.Update();
-                boton.OnUpdate();
+                start.OnUpdate();
                 pfs.Update();
 
                 if (Wallpaper == null)
@@ -122,10 +123,7 @@ namespace MoosExplorer
                     GDI.DrawImage(0, 0, Wallpaper, false);
                 }
 
-                GDI.AFillRectangle(0, screenHeight - 48, screenWidth, 48, 0xFFC3C7CB);
-                GDI.DrawLine(0, screenHeight - 46, screenWidth, screenHeight - 46, 0xFFFFFFFF);
-
-                boton.OnDraw();
+                DrawBottomBar();
 
                 FontManager.font.DrawString(0, 0, string.Format("FPS: {0}", pfs.FPS), 0xFFFFFFFF); 
 
@@ -136,7 +134,15 @@ namespace MoosExplorer
             }
         }
 
-        private static void start_clicked(object sender, object e)
+        static void DrawBottomBar()
+        {
+            GDI.AFillRectangle(0, screenHeight - 48, screenWidth, 48, 0xFFC3C7CB);
+            GDI.DrawLine(0, screenHeight - 46, screenWidth, screenHeight - 46, 0xFFFFFFFF);
+
+            start.OnDraw();
+        }
+
+        static void start_clicked(object sender, object e)
         {
             if (Wallpaper == null)
             {
