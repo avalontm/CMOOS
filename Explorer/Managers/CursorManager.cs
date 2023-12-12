@@ -71,7 +71,8 @@ namespace Explorer.Managers
         {
             Mouse.Buttons = (MouseButtons)GetMouseButtons();
             Mouse.Update();
-            MousePosition = new Point(MoosNative.GetMouseX(), MoosNative.GetMouseY());
+            Mouse.Position = new Point(MoosNative.GetMouseX(), MoosNative.GetMouseY());
+            MousePosition = Mouse.Position;
 
             MouseOffSet.X = 0;
             MouseOffSet.Y = 0;

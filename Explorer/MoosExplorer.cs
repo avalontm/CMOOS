@@ -1,6 +1,7 @@
 ﻿using Explorer.Managers;
 using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
+using Moos.Framework.Input;
 using Moos.Framework.System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
@@ -73,6 +74,11 @@ namespace MoosExplorer
         }
         #endregion
 
+
+        static Image Wallpaper = null;
+        static int screenWidth = 0;
+        static int screenHeight = 0;
+
         [RuntimeExport("Main")]
         public static void Main()
         {
@@ -81,10 +87,9 @@ namespace MoosExplorer
 
             FontManager.Load("sys/media/Yahei.png", 18);
             FPSMeter pfs = new FPSMeter();
-            int screenWidth = GDI.GetWidth();
-            int screenHeight = GDI.GetHeight();
+            screenWidth = GDI.GetWidth();
+            screenHeight = GDI.GetHeight();
 
-            Image Wallpaper = null;
             /*
             Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
             Wallpaper = Wallpaper.ResizeImage(screenWidth, screenHeight);
@@ -98,7 +103,7 @@ namespace MoosExplorer
             boton.Width = 75;
             boton.Height = 38;
             boton.Text = "start";
-
+            boton.Clicked = start_clicked;
             boton.OnLoaded();
             
             for (; ; )
@@ -128,6 +133,15 @@ namespace MoosExplorer
 
                 GDI.DrawUpdate();
 
+            }
+        }
+
+        private static void start_clicked(object sender, object e)
+        {
+            if (Wallpaper == null)
+            {
+                Wallpaper = PNG.FromFile("sys/media/Wallpaper2.png");
+                Wallpaper = Wallpaper.ResizeImage(screenWidth, screenHeight);
             }
         }
     }

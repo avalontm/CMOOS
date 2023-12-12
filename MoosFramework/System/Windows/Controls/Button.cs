@@ -1,5 +1,6 @@
 using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
+using Moos.Framework.Input;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -8,6 +9,7 @@ namespace System.Windows.Controls
     public class Button : Widget
     {
         public string Text { set; get; }
+        public EventHandler<object> Clicked { set; get; }
 
         public Button() : base()
         {
@@ -33,9 +35,10 @@ namespace System.Windows.Controls
 
             if (IsLoaded && IsVisible)
             {
-                Mouse.Buttons = (MouseButtons)GetMouseButtons();
-                Mouse.Update();
-                Mouse.Position = new Point(MoosNative.GetMouseX(), MoosNative.GetMouseY());
+                if (IsUnderMouse() && Mouse.Clicked)
+                {
+                    Clicked?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
