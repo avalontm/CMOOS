@@ -129,6 +129,9 @@ namespace MoosExplorer
                 DrawSelection();
                 DrawBottomBar();
 
+
+                DrawMessagBox();
+
                 FontManager.font.DrawString(0, 0, string.Format("FPS: {0}", pfs.FPS), 0xFFFFFFFF); 
 
                 CursorManager.Draw();
@@ -136,6 +139,12 @@ namespace MoosExplorer
                 GDI.DrawUpdate();
 
             }
+        }
+
+        private static void DrawMessagBox()
+        {
+            MessageBox.Instance.OnUpdate();
+            MessageBox.Instance.OnDraw();
         }
 
         static void DrawSelection()

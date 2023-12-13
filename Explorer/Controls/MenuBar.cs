@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Media;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace Explorer.Controls
 {
@@ -62,7 +63,14 @@ namespace Explorer.Controls
 
         void onShutDown(object sender, object e)
         {
-            PowerManger.ShutDown();
+            Hide();
+
+            DialogResult result = MessageBox.Show( "Are you sure to want to:", "Shut Down Moos", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                //PowerManger.ShutDown();
+            }
         }
 
         public override void OnUnloaded()
@@ -73,6 +81,11 @@ namespace Explorer.Controls
         public override void OnUpdate()
         {
             base.OnUpdate();
+
+            if(IsLoaded && IsVisible)
+            {
+
+            }
         }
 
         public override void OnDraw()
@@ -90,6 +103,12 @@ namespace Explorer.Controls
                 DrawBarVertical();
                 DrawItems();
             }
+        }
+
+        public bool IsUnderMouse()
+        {
+            if (Mouse.Position.X > X && Mouse.Position.X < (X + Width) && Mouse.Position.Y > Y && Mouse.Position.Y < (Y + Height)) return true;
+            return false;
         }
 
         void DrawItems()
