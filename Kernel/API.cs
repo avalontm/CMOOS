@@ -91,6 +91,10 @@ namespace MOOS
                     return (delegate*<ulong, ulong, void*>)&API_Calloc;
                 case "SndWrite":
                     return (delegate*<byte*, int, int>)&API_SndWrite;
+                case "ShutDown":
+                    return (delegate*<void>)&API_ShutDown;
+                case "Reboot":
+                    return (delegate*<void>)&API_Reboot;
             }
 
             #region API Controls
@@ -131,6 +135,16 @@ namespace MOOS
             return null;
         }
 
+        public static void API_ShutDown()
+        {
+            Power.Shutdown();
+        }
+
+        public static void API_Reboot()
+        {
+            Power.Reboot();
+        }
+      
         public static void API_GUI()
         {
             Framebuffer.TripleBuffered = true;

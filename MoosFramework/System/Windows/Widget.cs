@@ -25,8 +25,8 @@ namespace System.Windows
         public int Height { set; get; }
         public bool MouseEnter { set; get; }
 
-        internal bool IsVisible { set; get; }
-        internal bool IsLoaded { set; get; }
+        public bool IsVisible { set; get; }
+        public bool IsLoaded { private set; get; }
 
         public Color Background
         {
