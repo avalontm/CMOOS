@@ -26,6 +26,10 @@ namespace MOOS
         {
             switch (name)
             {
+                case "GetCurrentProcess":
+                    return (delegate*<IntPtr>)&API_GetCurrentProcess;
+                case "KillProcess":
+                    return (delegate*<IntPtr, void>)&API_KillProcess;
                 case "ApplicationCreate":
                     return (delegate*<IntPtr, void>)&API_ApplicationCreate;
                 case "_GUI":
@@ -158,6 +162,23 @@ namespace MOOS
             Framebuffer.TripleBuffered = true;
         }
 
+        private static void API_KillProcess(IntPtr handler)
+        {
+            Process process = Unsafe.As<IntPtr, Process>(ref handler);
+            Thread thread =  Unsafe.As<Thread>(process.startInfo.Handler);
+            Console.WriteLine("Kill Process: " + thread.GetHandle());
+            thread = null;
+
+            process = null;
+       
+        }
+
+
+        public static IntPtr API_GetCurrentProcess()
+        {
+            return process;
+        }
+
         public static void API_ApplicationCreate(IntPtr handler)
         {
             IApplicationBase _base = Unsafe.As<IntPtr, IApplicationBase>(ref handler);
@@ -173,7 +194,6 @@ namespace MOOS
             return new PNG(file);
         }
 
-
         public static int API_SndWrite(byte* buffer, int len)
         {
             return Audio.snd_write(buffer, len);
@@ -187,7 +207,6 @@ namespace MOOS
         public static void API_BindOnKeyChangedHandler(EventHandler<ConsoleKeyInfo> handler)
         {
             Keyboard.OnKeyChanged += handler;
-
         }
 
         public static void API_StartThread(delegate*<void> func)
@@ -197,10 +216,10 @@ namespace MOOS
 
         public static void API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
         {
+            Thread thread = new Thread(func).Start();
             process = new Process();
             process.startInfo = Unsafe.As<IntPtr, ProcessStartInfo>(ref handler);
-
-            new Thread(func).Start();
+            process.startInfo.Handler = thread.GetHandle();
         }
 
         public static void API_Error(string s, bool skippable)
@@ -305,7 +324,6 @@ namespace MOOS
             }
             buffer.Dispose();
         }
-
 
         [RuntimeExport("Lock")]
         public static void API_Lock()

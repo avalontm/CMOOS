@@ -9,14 +9,14 @@ namespace System.Diagnostics
 {
     public unsafe class Process
     {
-        public ProcessStartInfo? startInfo { set; get; }
+        public ProcessStartInfo startInfo { set; get; }
 
         public Process()
         {
             startInfo = new ProcessStartInfo();
         }
 
-        public static Process? Start(ProcessStartInfo startInfo)
+        public static Process Start(ProcessStartInfo startInfo)
         {
             return Start(startInfo.FileName, startInfo.Arguments);
         }
@@ -81,7 +81,7 @@ namespace System.Diagnostics
         static extern void StartThread(delegate*<void> func);
 
         [DllImport("StartThreadWithParameters")]
-        static extern void StartThreadWithParameters(delegate*<void> func, IntPtr handler);
+        static extern IntPtr StartThreadWithParameters(delegate*<void> func, IntPtr handler);
 
         [DllImport("*")]
         static unsafe extern void memset(byte* ptr, byte c, ulong count);
@@ -112,5 +112,6 @@ namespace System.Diagnostics
                 reloc_block = (DataDirectory*)(reloc_block->Size + (ulong)reloc_block);
             }
         }
+
     }
 }

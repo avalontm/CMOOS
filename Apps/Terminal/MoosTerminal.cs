@@ -1,4 +1,5 @@
-﻿using Moos.Framework.Fonts;
+﻿using Internal.Runtime.CompilerServices;
+using Moos.Framework.Fonts;
 using Moos.Framework.Graphics;
 using Moos.Framework.System;
 using System;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Media;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Terminal.Managers;
 
 
@@ -76,34 +78,49 @@ namespace MoosExplorer
         [DllImport("StartThread")]
         public static extern void StartThread(delegate*<void> ptr);
 
+        [DllImport("GetCurrentProcess")]
+        public static extern IntPtr GetCurrentProcess();
+
+        [DllImport("KillProcess")]
+        public static extern void KillProcess(IntPtr handler);
+        
         #endregion
+
+        static Process process = null;
+        static Process mainProcess  =null;
 
         [RuntimeExport("Main")]
         public static void Main()
         {
+            mainProcess = Unsafe.As<Process>(GetCurrentProcess());
             Console.Clear();
 
             Console.WriteLine($"CMOOS [Version 1.0.0.0] ");
             Console.WriteLine($"(c) AvalonTM. Todos los derechos reservados.");
             Console.WriteLine();
 
-            for (; ; )
+            while (mainProcess)
             {
                 Console.Write("cmoos>");
                 string s = Console.ReadLine(6);
                 onCommand(s);
             }
-
         }
 
         static void onCommand(string s)
         {
-            Console.WriteLine();
+            if (!string.IsNullOrEmpty(s))
+            {
+                Console.WriteLine();
+            }
 
             switch (s)
             {
                 case "info":
                     onSystemInfo();
+                    break;
+                case "pid":
+                  Console.WriteLine("Process: " + mainProcess);
                     break;
                 case "reboot":
                     PowerManger.Reboot();
@@ -114,24 +131,40 @@ namespace MoosExplorer
                 case "cls":
                     Console.Clear();
                     break;
+                case "exit":
+                    onTerminate();
+                    break;
                 default:
                     if (!string.IsNullOrEmpty(s))
                     {
-                        Process process = Shell.Start(s);
+                        process = Shell.Start(s);
 
                         if (process == null)
                         {
-                            Console.WriteLine(@"""" + s + @"""" + " no se reconoce como un comando interno o externo,\nprograma o archivo por lotes ejecutable.\n");
+                            Console.WriteLine(@"""" + s + @"""" + " no se reconoce como un comando interno o externo,\nprograma o archivo por lotes ejecutable.");
                         }
                         else
                         {
-
+                            while (process != null) { 
+                            
+                            }
+                            Console.WriteLine("Process termiante") ;
                         }
                     }
                     break;
             }
 
-            Console.WriteLine();
+            if (!string.IsNullOrEmpty(s))
+            {
+                Console.WriteLine();
+            }
+        }
+
+        static void onTerminate()
+        {
+            KillProcess(mainProcess);
+            mainProcess = null;
+            process = null;
         }
 
         static void onSystemInfo()

@@ -86,6 +86,7 @@ namespace MOOS.Misc
             }
         }
 
+
         public static void Sleep(ulong Millionsecos)
         {
             Timer.Sleep(Millionsecos);
@@ -156,6 +157,15 @@ namespace MOOS.Misc
             Panic.Error("Termination Failed!");
         }
 
+        public static void Terminate(int index)
+        {
+            Console.Write("Thread ");
+            Console.Write(index.ToString());
+            Console.WriteLine(" Has Exited");
+            Threads[index].Terminated = true;
+            Schedule_Next();
+        }
+
         [DllImport("*")]
         public static extern void Schedule_Next();
 
@@ -204,11 +214,9 @@ namespace MOOS.Misc
 
             for(; ; )
             {
-                if (
-                    !Threads[Index].Terminated &&
-                    Threads[Index].RunOnWhichCPU == SMP.ThisCPU
-                    )
+                if ( !Threads[Index].Terminated && Threads[Index].RunOnWhichCPU == SMP.ThisCPU)
                 {
+
                     //Save FPU
                     Native.Fxsave64(Threads[Index].FxArea);
                     Native.Movsb(Threads[Index].Stack, stack, (ulong)sizeof(IDT.IDTStackGeneric));
@@ -220,11 +228,8 @@ namespace MOOS.Misc
             do
             {
                 Index = (Index + 1) % Threads.Count;
-            } while
-            (
-                Threads[Index].Terminated ||
-                Threads[Index].RunOnWhichCPU != SMP.ThisCPU
-            );
+            } 
+            while ( Threads[Index].Terminated || Threads[Index].RunOnWhichCPU != SMP.ThisCPU );
 
             #region CPU Usage
             if(SMP.ThisCPU== 0)
@@ -243,10 +248,11 @@ namespace MOOS.Misc
             }
             TickAll++;
             #endregion
-            
+
             //Restore FPU
             Native.Fxrstor64(Threads[Index].FxArea);
             Native.Movsb(stack, Threads[Index].Stack, (ulong)sizeof(IDT.IDTStackGeneric));
+
         }
     }
 }

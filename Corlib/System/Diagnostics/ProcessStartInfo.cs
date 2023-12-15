@@ -9,8 +9,8 @@ namespace System.Diagnostics
         private string? _directory;
         private string? _userName;
         private string? _verb;
-
-       // private Collection<string>? _argumentList;
+        private IntPtr _handler;
+        // private Collection<string>? _argumentList;
         //private ProcessWindowStyle _windowStyle;
 
         //internal DictionaryWrapper? _environmentVariables;
@@ -80,6 +80,13 @@ namespace System.Diagnostics
         {
             get => _verb ?? string.Empty;
             set => _verb = value;
+        }
+
+        [AllowNull]
+        public IntPtr Handler
+        {
+            get => _handler ;
+            set => _handler = value;
         }
     }
 }

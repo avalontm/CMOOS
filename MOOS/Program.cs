@@ -181,9 +181,9 @@ unsafe class Program
         lineas.Dispose();
         shell.Dispose();
 
-        for (; ; )
+        for (; ;)
         {
-            //Native.Hlt();
+            Native.Hlt();
         }
     }
 }

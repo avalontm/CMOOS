@@ -70,7 +70,8 @@
 											%(Filename) == 'System.Security' or
 											%(Filename) == 'WindowsBase' or
 											%(Filename) == 'System.Diagnostics.Process' or 
-											%(Filename) == 'System.Console'
+											%(Filename) == 'System.Console' or
+											%(Filename) == 'System.Threading'
 											" />
 			<ReferencePath Remove="@(ReferencePath)" />
 		</ItemGroup>
