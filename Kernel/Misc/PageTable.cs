@@ -7,7 +7,7 @@ namespace MOOS
         public enum PageSize
         {
             Typical = 4096,
-            //Huge = 0x200000
+            Huge = 0x200000
         }
 
         public static ulong* PML4;
@@ -41,13 +41,13 @@ namespace MOOS
             ulong* pml3 = Next(PML4, pml4_entry);
             ulong* pml2 = Next(pml3, pml3_entry);
 
-            /*
+            
             if (pageSize == PageSize.Huge)
             {
                 return &pml2[pml2_entry];
             }
             else 
-            */
+            
             if (pageSize == PageSize.Typical)
             {
                 ulong* pml1 = Next(pml2, pml2_entry);
@@ -63,13 +63,13 @@ namespace MOOS
         /// <param name="PhysicalAddress"></param>
         public static void Map(ulong VirtualAddress, ulong PhysicalAddress, PageSize pageSize = PageSize.Typical)
         {
-            /*
+            
             if (pageSize == PageSize.Huge)
             {
                 *GetPage(VirtualAddress, pageSize) = PhysicalAddress | 0b10000011;
             }
             else 
-            */
+            
             if (pageSize == PageSize.Typical)
             {
                 *GetPage(VirtualAddress, pageSize) = PhysicalAddress | 0b11;

@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Diagnostics
 {
+    /*
     public static class Console
     {
         [DllImport("ConsoleWrite")]
@@ -20,5 +21,5 @@ namespace System.Diagnostics
 
             AConsoleWriteLine();
         }
-    }
+    }*/
 }

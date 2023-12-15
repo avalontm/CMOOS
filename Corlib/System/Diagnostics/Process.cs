@@ -21,7 +21,7 @@ namespace System.Diagnostics
             return Start(startInfo.FileName, startInfo.Arguments);
         }
 
-        public static Process? Start(string file, string arguments = "")
+        public static Process Start(string file, string arguments = "")
         {
             byte[] exe = File.ReadAllBytes(file);
 

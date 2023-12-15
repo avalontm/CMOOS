@@ -33,5 +33,9 @@ namespace Moos.Framework.Graphics
 
         [DllImport("DrawUpdate")]
         public static extern void DrawUpdate();
+
+        [DllImport("DrawClear")]
+        public static extern void DrawClear();
+        
     }
 }

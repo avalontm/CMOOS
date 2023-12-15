@@ -14,6 +14,7 @@ using System.Windows.Input;
 using Image = System.Drawing.Image;
 using MOOS.Api;
 using System.Windows.Forms;
+using System.Text;
 
 namespace MOOS
 {
@@ -37,6 +38,8 @@ namespace MOOS
                     return (delegate*<void>)&API_DebugWriteLine;
                 case "ConsoleWriteLine":
                     return (delegate*<void>)&API_ConsoleWriteLine;
+                case "ConsoleClear":
+                    return (delegate*<void>)&API_ConsoleClear;
                 case "Allocate":
                     return (delegate*<ulong, nint>)&API_Allocate;
                 case "Reallocate":
@@ -59,6 +62,10 @@ namespace MOOS
                     return (delegate*<char, void>)&API_DebugWrite;
                 case "ConsoleWrite":
                     return (delegate*<char, void>)&API_ConsoleWrite;
+                case "ConsoleReadLine":
+                    return (delegate*<byte**, void>)&API_ConsoleReadLine;
+                case "ConsoleReadLineWithStart":
+                    return (delegate*<int, byte**, void>)&API_ConsoleReadLineWithStart;
                 case "SwitchToConsoleMode":
                     return (delegate*<void>)&API_SwitchToConsoleMode;
                 case "DrawPoint":
@@ -134,6 +141,7 @@ namespace MOOS
             Panic.Error($"System call \"{name}\" is not found");
             return null;
         }
+
 
         public static void API_ShutDown()
         {
@@ -264,7 +272,41 @@ namespace MOOS
         {
             Console.WriteLine();
         }
-        
+
+        public static void API_ConsoleClear()
+        {
+            Console.Clear();
+        }
+
+        public static void API_ConsoleReadLine(byte** data)
+        {
+            string buffer = Console.ReadLine();
+
+            ulong length = buffer.Length;
+            *data = (byte*)Allocator.Allocate((ulong)length);
+       
+            fixed (byte* p = UTF8Encoding.UTF8.GetBytes(buffer))
+            {
+                Native.Movsb(*data, p, length);
+            }
+            buffer.Dispose();
+        }
+
+        private static void API_ConsoleReadLineWithStart(int start, byte** data)
+        {
+            string buffer = Console.ReadLine(start);
+
+            ulong length = buffer.Length;
+            *data = (byte*)Allocator.Allocate((ulong)length);
+
+            fixed (byte* p = UTF8Encoding.UTF8.GetBytes(buffer))
+            {
+                Native.Movsb(*data, p, length);
+            }
+            buffer.Dispose();
+        }
+
+
         [RuntimeExport("Lock")]
         public static void API_Lock()
         {
@@ -311,6 +353,10 @@ namespace MOOS
         {
             byte[] buffer = File.Instance.ReadAllBytes(name);
 
+            if(buffer == null)
+            {
+                return;
+            }
             *data = (byte*)Allocator.Allocate((ulong)buffer.Length);
             *length = (ulong)buffer.Length;
             fixed (byte* p = buffer) Native.Movsb(*data, p, *length);

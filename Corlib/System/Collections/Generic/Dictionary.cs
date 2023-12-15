@@ -30,7 +30,6 @@ namespace System.Collections.Generic
             Values = new List<TValue>();
         }
 
-
         public bool ContainsKey(TKey key)
         {
             return Keys.IndexOf(key) != -1;

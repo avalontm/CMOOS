@@ -45,8 +45,6 @@ unsafe class Program
     [RuntimeExport("KMain")]
     static void KMain()
     {
-        Animator.Initialize();
-
         Console.WriteLine("Use Native AOT (Core RT) Technology.");
 
         Hub.Initialize();
@@ -174,19 +172,8 @@ unsafe class Program
             }
         }
 
-        var files = MOOS.FS.File.Instance.GetFiles("sys/app");
-
-        Console.WriteLine($"[files] {files.Count}");
-
-        for (int i = 0; i < files.Count; i++)
-        {
-            Console.WriteLine(files[i].Name);
-        }
-
-        files.Dispose();
-        string shell = dictionary["shell"];
-        Console.WriteLine($"[Shell] sys/app/{shell}");
-        System.Diagnostics.Process.Start($"sys/app/{shell}");
+        string shell = dictionary["terminal"];
+        System.Diagnostics.Process.Start($"sys/app/terminal.mue");
 
 
         bytes.Dispose();
@@ -196,7 +183,7 @@ unsafe class Program
 
         for (; ; )
         {
-            Native.Hlt();
+            //Native.Hlt();
         }
     }
 }

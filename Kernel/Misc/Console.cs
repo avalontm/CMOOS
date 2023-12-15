@@ -201,6 +201,17 @@ namespace MOOS
             UpdateCursor();
         }
 
+
+        public static void Back(int start)
+        {
+            if (CursorX == 0) return;
+            if(CursorX == start) return;
+            WriteFramebuffer(' ');
+            CursorX--;
+            WriteFramebuffer(' ');
+            UpdateCursor();
+        }
+
         public static void Write(char chr, bool dontInvoke = false)
         {
             if(chr == '\n') 
@@ -266,6 +277,29 @@ namespace MOOS
             return Keyboard.KeyInfo;
         }
 
+        public static ConsoleKeyInfo ReadKey(int start, bool intercept = false)
+        {
+            Keyboard.CleanKeyInfo(true);
+            while (Keyboard.KeyInfo.KeyChar == '\0') Native.Hlt();
+            if (!intercept)
+            {
+                switch (Keyboard.KeyInfo.Key)
+                {
+                    case ConsoleKey.Enter:
+                        Console.WriteLine();
+                        break;
+                    case ConsoleKey.Delete:
+                    case ConsoleKey.Backspace:
+                        Console.Back(start);
+                        break;
+                    default:
+                        Console.Write(Keyboard.KeyInfo.KeyChar);
+                        break;
+                }
+            }
+            return Keyboard.KeyInfo;
+        }
+
         public static string ReadLine() 
         {
             string s = string.Empty;
@@ -278,6 +312,36 @@ namespace MOOS
                     case ConsoleKey.Backspace:
                         if (s.Length == 0) continue;
                         s.Length -= 1;
+                        break;
+                    default:
+                        string cache1 = key.KeyChar.ToString();
+                        string cache2 = s + cache1;
+                        s.Dispose();
+                        cache1.Dispose();
+                        s = cache2;
+                        break;
+
+                }
+                Native.Hlt();
+            }
+            return s;
+        }
+
+        public static string ReadLine(int start)
+        {
+            string s = string.Empty;
+            ConsoleKeyInfo key;
+            while ((key = Console.ReadKey(start)).Key != ConsoleKey.Enter)
+            {
+                switch (key.Key)
+                {
+                    case ConsoleKey.Delete:
+                    case ConsoleKey.Backspace:
+                        if (s.Length == 0) continue;
+                        if (start + s.Length > start)    
+                        {
+                            s.Length -= 1;
+                        }
                         break;
                     default:
                         string cache1 = key.KeyChar.ToString();

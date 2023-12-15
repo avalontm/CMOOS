@@ -26,12 +26,15 @@ namespace MOOS.Api
                     return (delegate*<int, int, int, int, uint, void>)&API_DrawLine;
                 case "DrawImage":
                     return (delegate*<int, int, IntPtr, bool, void>)&API_DrawImage;
+                case "DrawClear":
+                    return (delegate*<void>)&API_DrawClear;
                 case "DrawUpdate":
                     return (delegate*<void>)&API_DrawUpdate;
             }
 
             return null;
         }
+
 
         public static void API_DrawImage(int x, int y, IntPtr handler, bool alpha)
         {
@@ -62,6 +65,11 @@ namespace MOOS.Api
         public static void API_DrawLine(int x0, int y0, int x1, int y1, uint color)
         {
             Framebuffer.Graphics.DrawLine(x0, y0, x1, y1, color);
+        }
+
+        public static void API_DrawClear()
+        {
+            Framebuffer.Graphics.Clear(0x0);
         }
 
         public static void API_DrawUpdate()

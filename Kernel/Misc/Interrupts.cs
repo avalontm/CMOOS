@@ -52,7 +52,11 @@ namespace MOOS.Misc
         {
             for (int i = 0; i < INTs.Count; i++)
             {
-                if (INTs[i].IRQ == irq) INTs[i].Handler();
+                if (INTs[i].IRQ == irq)
+                {
+                    INTs[i].Handler();
+                }
+                
             }
         }
     }

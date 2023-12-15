@@ -1,9 +1,25 @@
 ﻿using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System
 {
-    public static class Console
+    public unsafe static class Console
     {
+        [DllImport("*")]
+        static extern void ConsoleWrite(char c);
+
+        [DllImport("*")]
+        static extern void ConsoleWriteLine();
+
+        [DllImport("ConsoleClear")]
+        static extern void ConsoleClear();
+
+        [DllImport("ConsoleReadLine")]
+        static extern void ConsoleReadLine(out byte* data);
+
+        [DllImport("ConsoleReadLineWithStart")]
+        static extern void ConsoleReadLineWithStart(int start, out byte* data);
+
         public static void WriteLine(string s)
         {
             for (int i = 0; i < s.Length; i++)
@@ -33,10 +49,23 @@ namespace System
             s.Dispose();
         }
 
-        [DllImport("*")]
-        static extern void ConsoleWrite(char c);
+        public static string ReadLine()
+        {
+            ConsoleReadLine(out var data);
 
-        [DllImport("*")]
-        static extern void ConsoleWriteLine();
+            return UTF8Encoding.UTF8.GetString(data);
+        }
+
+        public static string ReadLine(int start)
+        {
+            ConsoleReadLineWithStart(start, out var data);
+
+            return UTF8Encoding.UTF8.GetString(data);
+        }
+
+        public static void Clear()
+        {
+            ConsoleClear();
+        }
     }
 }

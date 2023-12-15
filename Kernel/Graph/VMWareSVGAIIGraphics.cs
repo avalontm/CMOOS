@@ -12,7 +12,7 @@ namespace MOOS.Graph
     {
         VMWareSVGAII svga;
 
-        public VMWareSVGAIIGraphics(ushort Width = 1280, ushort Height = 768) : base(Width, Height, null)
+        public VMWareSVGAIIGraphics(ushort Width = 800, ushort Height = 600) : base(Width, Height, null)
         {
             svga = new VMWareSVGAII();
             svga.SetMode(Width, Height);

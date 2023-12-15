@@ -63,7 +63,6 @@ namespace System.Windows.Forms
                 DrawButtons();
                 DrawNormalBorder();
             }
-
         }
 
         void DrawTitleBar()
@@ -119,7 +118,7 @@ namespace System.Windows.Forms
             }
         }
 
-        public static DialogResult Show(string? text, string? caption, MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
+        public static DialogResult Show(string? text, string? caption, EventHandler<object> confirm, MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
         {
             Instance.Width = 350;
             Instance.Height = 150;
@@ -140,6 +139,7 @@ namespace System.Windows.Forms
                 Instance.Buttons[0].X  = Instance.X + Instance.Width - (Instance.Buttons[0].Width *2) - 10;
                 Instance.Buttons[0].Y = Instance.Y + Instance.Height - Instance.Buttons[0].Height - 5;
                 Instance.Buttons[0].Text = "YES";
+                Instance.Buttons[0].Clicked = confirm;
                 Instance.Buttons[0].OnLoaded();
 
                 Instance.Buttons[1] = new Button();
@@ -148,6 +148,7 @@ namespace System.Windows.Forms
                 Instance.Buttons[1].X = Instance.X + Instance.Width - Instance.Buttons[1].Width - 5;
                 Instance.Buttons[1].Y = Instance.Y + Instance.Height - Instance.Buttons[1].Height - 5;
                 Instance.Buttons[1].Text = "NO";
+                Instance.Buttons[1].Clicked = onCancel;
                 Instance.Buttons[1].OnLoaded();
             }
 
@@ -159,6 +160,11 @@ namespace System.Windows.Forms
             }
 
             return Instance.Result;
+        }
+
+        static void onCancel(object sender, object e)
+        {
+            Instance.IsVisible = false;
         }
     }
 }

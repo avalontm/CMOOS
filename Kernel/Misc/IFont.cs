@@ -49,10 +49,11 @@ namespace MOOS.Misc
                 for (int h = 0; h < FontSize; h++)
                 {
                     uint _color = image.GetPixel(baseX + w, baseY + h);
-                    //Replace pixel color
-                    _color = ColorConverter.ConvertPixel(_color, color);
-                    if (X != -1 && Y != -1)
-                    {
+
+                    if (X >= 0 && Y >= 0 && X <= g.Width && Y <= g.Height)
+                    {   
+                        //Replace pixel color
+                        _color = ColorConverter.ConvertPixel(_color, color);
                         g.DrawPoint((X + w), (Y + h), _color, true);
                     }
 
@@ -74,8 +75,7 @@ namespace MOOS.Misc
             int w = 0, h = 0;
             for (int i = 0; i < Str.Length; i++)
             {
-                w += 
-                    DrawChar(g, X + w, Y + h, Str[i]);
+                w += DrawChar(g, X + w, Y + h, Str[i]);
             }
         }
 

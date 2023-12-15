@@ -62,13 +62,15 @@
 											%(Filename) == 'System.Collections.Specialized' or 
 											%(Filename) == 'System.ComponentModel' or 
 											%(Filename) == 'System.Attribute' or 
-											
+											%(Filename) == 'System.Console' or 
 											%(Filename) == 'System.Drawing.Primitives' or
 											%(Filename) == 'System.IO' or
 											%(Filename) == 'System.Runtime' or
 											%(Filename) == 'System.Runtime.InteropServices' or
 											%(Filename) == 'System.Security' or
-											%(Filename) == 'WindowsBase'
+											%(Filename) == 'WindowsBase' or
+											%(Filename) == 'System.Diagnostics.Process' or 
+											%(Filename) == 'System.Console'
 											" />
 			<ReferencePath Remove="@(ReferencePath)" />
 		</ItemGroup>

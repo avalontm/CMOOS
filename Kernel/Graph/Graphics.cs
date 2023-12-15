@@ -77,7 +77,7 @@ namespace MOOS.Graph
 
         public virtual uint GetPoint(int X, int Y)
         {
-            if (X > 0 && Y > 0 && X < Width && Y < Height)
+            if (X >= 0 && Y >= 0 && X <= Width && Y <= Height)
             {
                 return VideoMemory[Width * Y + X];
             }
@@ -86,34 +86,39 @@ namespace MOOS.Graph
 
         public virtual void DrawPoint(int X, int Y, uint color, bool alphaBlending = false)
         {
-            if (alphaBlending)
+            if (X < 0 || Y < 0 || X >= Width || Y >= Height)
             {
-                uint foreground = color;
-                int fA = (byte)((foreground >> 24) & 0xFF);
-                int fR = (byte)((foreground >> 16) & 0xFF);
-                int fG = (byte)((foreground >> 8) & 0xFF);
-                int fB = (byte)((foreground) & 0xFF);
-
-                uint background = GetPoint(X, Y);
-                int bA = (byte)((background >> 24) & 0xFF);
-                int bR = (byte)((background >> 16) & 0xFF);
-                int bG = (byte)((background >> 8) & 0xFF);
-                int bB = (byte)((background) & 0xFF);
-
-                int alpha = fA;
-                int inv_alpha = 255 - alpha;
-
-                int newR = (fR * alpha + inv_alpha * bR) >> 8;
-                int newG = (fG * alpha + inv_alpha * bG) >> 8;
-                int newB = (fB * alpha + inv_alpha * bB) >> 8;
-
-                color = Color.ToArgb((byte)newR, (byte)newG, (byte)newB);
+                return; // Evitar operaciones si el punto está fuera del área de dibujo
             }
 
-            if (X > 0 && Y > 0 && X < Width && Y < Height)
+            if (!alphaBlending)
             {
                 VideoMemory[Width * Y + X] = color;
+                return;
             }
+
+            uint background = GetPoint(X, Y);
+
+            int fA = (byte)((color >> 24) & 0xFF);
+            int fR = (byte)((color >> 16) & 0xFF);
+            int fG = (byte)((color >> 8) & 0xFF);
+            int fB = (byte)(color & 0xFF);
+
+            int bA = (byte)((background >> 24) & 0xFF);
+            int bR = (byte)((background >> 16) & 0xFF);
+            int bG = (byte)((background >> 8) & 0xFF);
+            int bB = (byte)(background & 0xFF);
+
+            int alpha = fA;
+            int inv_alpha = 255 - alpha;
+
+            int newR = (fR * alpha + inv_alpha * bR) >> 8;
+            int newG = (fG * alpha + inv_alpha * bG) >> 8;
+            int newB = (fB * alpha + inv_alpha * bB) >> 8;
+
+            uint blendedColor = Color.ToArgb((byte)newR, (byte)newG, (byte)newB);
+
+            VideoMemory[Width * Y + X] = blendedColor;
         }
 
         public virtual void DrawRectangle(int X, int Y, int Width, int Height, uint Color, int Weight = 1)
