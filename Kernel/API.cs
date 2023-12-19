@@ -15,6 +15,7 @@ using Image = System.Drawing.Image;
 using MOOS.Api;
 using System.Windows.Forms;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MOOS
 {
@@ -29,7 +30,9 @@ namespace MOOS
                 case "GetCurrentProcess":
                     return (delegate*<IntPtr>)&API_GetCurrentProcess;
                 case "KillProcess":
-                    return (delegate*<IntPtr, void>)&API_KillProcess;
+                    return (delegate*<IntPtr, bool>)&API_KillProcess;
+                case "GetProcess":
+                    return (delegate*<IntPtr, IntPtr>)&API_GetProcess;
                 case "ApplicationCreate":
                     return (delegate*<IntPtr, void>)&API_ApplicationCreate;
                 case "_GUI":
@@ -95,7 +98,7 @@ namespace MOOS
                 case "StartThread":
                     return (delegate*<delegate*<void>, void>)&API_StartThread;
                 case "StartThreadWithParameters":
-                    return (delegate*<delegate*<void>, IntPtr, void>)&API_StartThreadWithParameters;
+                    return (delegate*<delegate*<void>, IntPtr, IntPtr>)&API_StartThreadWithParameters;
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
                 case "Calloc":
@@ -162,21 +165,33 @@ namespace MOOS
             Framebuffer.TripleBuffered = true;
         }
 
-        private static void API_KillProcess(IntPtr handler)
+        static IntPtr API_GetProcess(IntPtr handler)
         {
             Process process = Unsafe.As<IntPtr, Process>(ref handler);
-            Thread thread =  Unsafe.As<Thread>(process.startInfo.Handler);
-            Console.WriteLine("Kill Process: " + thread.GetHandle());
-            thread = null;
 
-            process = null;
-       
+            if (process == null)
+            {
+                return IntPtr.Zero;
+            }
+
+            return process;
         }
 
+        private static bool API_KillProcess(IntPtr handler)
+        {
+            Process process = Unsafe.As<IntPtr, Process>(ref handler);
+            if (process != null)
+            {
+                Console.WriteLine("Kill Process: " + process.GetHandle());
+                process.Dispose();
+                return true;
+            }
+            return false;
+        }
 
         public static IntPtr API_GetCurrentProcess()
         {
-            return process;
+            return process.GetHandle();
         }
 
         public static void API_ApplicationCreate(IntPtr handler)
@@ -214,12 +229,14 @@ namespace MOOS
             new Thread(func).Start();
         }
 
-        public static void API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
+        public static IntPtr API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
         {
             Thread thread = new Thread(func).Start();
             process = new Process();
             process.startInfo = Unsafe.As<IntPtr, ProcessStartInfo>(ref handler);
             process.startInfo.Handler = thread.GetHandle();
+
+            return process.GetHandle();
         }
 
         public static void API_Error(string s, bool skippable)

@@ -7,30 +7,20 @@ using System.Runtime.InteropServices;
 
 namespace MOOS.Misc
 {
-    [StructLayout(LayoutKind.Sequential,Pack = 1)]
-    public unsafe struct FxArea
-    {
-        public fixed byte value[512];
-    }
-
     public unsafe class Thread
     {
         public bool Terminated;
         public IDT.IDTStackGeneric* Stack;
         public int RunOnWhichCPU;
         public bool IsIdleThread = false;
-        public FxArea* FxArea;
 
-        public Thread(delegate*<void> method,ulong stack_size = 16384)
+        public Thread(delegate*<void> method, ulong stack_size = 16384)
         {
             NewThread(method, stack_size);
         }
 
         private void NewThread(delegate*<void> method, ulong stack_size)
         {
-            FxArea = (FxArea*)Allocator.Allocate(sizeof(FxArea));
-            Native.Movsb(FxArea, ThreadPool.DefaultFxArea,sizeof(FxArea));
-
             Stack = (IDT.IDTStackGeneric*)Allocator.Allocate((ulong)sizeof(IDT.IDTStackGeneric));
 
             Stack->irs.cs = 0x08;
@@ -68,9 +58,9 @@ namespace MOOS.Misc
             lock (this)
             {
                 bool hasThatCPU = false;
-                for(int i = 0; i < ACPI.LocalAPIC_CPUIDs.Count; i++) 
+                for (int i = 0; i < ACPI.LocalAPIC_CPUIDs.Count; i++)
                 {
-                    if (ACPI.LocalAPIC_CPUIDs[i] == run_on_which_cpu) 
+                    if (ACPI.LocalAPIC_CPUIDs[i] == run_on_which_cpu)
                     {
                         hasThatCPU = true;
                     }
@@ -86,7 +76,6 @@ namespace MOOS.Misc
             }
         }
 
-
         public static void Sleep(ulong Millionsecos)
         {
             Timer.Sleep(Millionsecos);
@@ -99,7 +88,6 @@ namespace MOOS.Misc
         public static bool Initialized = false;
         public static bool Locked = false;
         public static long Locker = 0;
-        public static FxArea* DefaultFxArea;
 
         private static int Index
         {
@@ -115,8 +103,6 @@ namespace MOOS.Misc
 
         public static void Initialize()
         {
-            DefaultFxArea = (FxArea*)Allocator.Allocate(sizeof(FxArea));
-            Native.Fxsave64(DefaultFxArea);
             Native.Cli();
             //Bootstrap CPU
             if (SMP.ThisCPU == 0)
@@ -157,17 +143,26 @@ namespace MOOS.Misc
             Panic.Error("Termination Failed!");
         }
 
-        public static void Terminate(int index)
-        {
-            Console.Write("Thread ");
-            Console.Write(index.ToString());
-            Console.WriteLine(" Has Exited");
-            Threads[index].Terminated = true;
-            Schedule_Next();
-        }
-
         [DllImport("*")]
         public static extern void Schedule_Next();
+        [DllImport("*")]
+        public static extern void Schedule_Exit();
+
+        public static void TestThread()
+        {
+            Console.WriteLine("Non-Loop Thread Test!");
+            return;
+        }
+
+        public static void A()
+        {
+            for (; ; ) Console.WriteLine("Thread A");
+        }
+
+        public static void B()
+        {
+            for (; ; ) Console.WriteLine("Thread B");
+        }
 
         public static void IdleThread()
         {
@@ -178,7 +173,7 @@ namespace MOOS.Misc
 
         public static bool CanLock => Unsafe.As<bool, ulong>(ref Initialized);
 
-        public static void Lock() 
+        public static void Lock()
         {
             Locker = SMP.ThisCPU;
             Locked = true;
@@ -186,7 +181,7 @@ namespace MOOS.Misc
             LocalAPIC.SendAllInterrupt(0x20);
         }
 
-        public static void UnLock() 
+        public static void UnLock()
         {
             Locked = false;
         }
@@ -212,13 +207,13 @@ namespace MOOS.Misc
             //Lock locker CPU
             if (Locked && Locker == SMP.ThisCPU) return;
 
-            for(; ; )
+            for (; ; )
             {
-                if ( !Threads[Index].Terminated && Threads[Index].RunOnWhichCPU == SMP.ThisCPU)
+                if (
+                    !Threads[Index].Terminated &&
+                    Threads[Index].RunOnWhichCPU == SMP.ThisCPU
+                    )
                 {
-
-                    //Save FPU
-                    Native.Fxsave64(Threads[Index].FxArea);
                     Native.Movsb(Threads[Index].Stack, stack, (ulong)sizeof(IDT.IDTStackGeneric));
                     break;
                 }
@@ -228,11 +223,14 @@ namespace MOOS.Misc
             do
             {
                 Index = (Index + 1) % Threads.Count;
-            } 
-            while ( Threads[Index].Terminated || Threads[Index].RunOnWhichCPU != SMP.ThisCPU );
+            } while
+            (
+                Threads[Index].Terminated ||
+                Threads[Index].RunOnWhichCPU != SMP.ThisCPU
+            );
 
             #region CPU Usage
-            if(SMP.ThisCPU== 0)
+            if (SMP.ThisCPU == 0)
             {
                 if ((Timer.Ticks % 100) == 0)
                 {
@@ -249,10 +247,7 @@ namespace MOOS.Misc
             TickAll++;
             #endregion
 
-            //Restore FPU
-            Native.Fxrstor64(Threads[Index].FxArea);
             Native.Movsb(stack, Threads[Index].Stack, (ulong)sizeof(IDT.IDTStackGeneric));
-
         }
     }
 }

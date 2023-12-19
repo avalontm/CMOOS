@@ -65,7 +65,7 @@ namespace System.Diagnostics
                 process.startInfo.Arguments = arguments;
 
                 //Start Process
-                StartThreadWithParameters(p, process.startInfo);
+                process = Unsafe.As<Process>(StartThreadWithParameters(p, process.startInfo));
             }
 
             return process;

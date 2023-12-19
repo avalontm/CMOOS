@@ -31,6 +31,13 @@ Schedule_Next PROC
     ret
 Schedule_Next ENDP
 
+Schedule_Exit PROC
+    mov ah, 4Ch    ; Cargar el número de función para terminar el proceso en AH
+    mov al, 0      ; Código de retorno (0 significa terminación sin error)
+    int 21h        ; Llamar a la interrupción 21h (servicio de DOS)
+    ret
+Schedule_EXIT ENDP
+
 _TEXT ENDS
 
 END

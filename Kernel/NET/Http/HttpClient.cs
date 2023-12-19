@@ -17,7 +17,7 @@ namespace System.Net.Http
         int port;
         string protocol;
         string host;
-        int timeout = 5;
+        int timeout = 10;
 
         public HttpClient(string host, int port = 80)
         {
@@ -36,18 +36,25 @@ namespace System.Net.Http
 
         public HttpContent GetAsync(string path)
         {
+           
             HttpContent http = new HttpContent();
             http.Status = 404;
-
+ 
             DnsClient dns = new DnsClient();
 
             Timer.Sleep(100);
-
+    
             dns.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address
            
             dns.SendAsk(host);
-         
-            Address _address = dns.Receive();
+
+            Address _address = null;
+
+            while (_address == null)
+            {
+                _address = dns.Receive();
+            }
+
             Timer.Sleep(100);
 
             if (!client.IsConnected())

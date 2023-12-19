@@ -50,6 +50,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
             {
                 if (second > (timeout / 1000))
                 {
+                    Console.WriteLine("nothing");
                     return -1;
                 }
                 if (_deltaT != RTC.Second)

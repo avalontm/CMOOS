@@ -82,8 +82,9 @@ namespace MoosExplorer
         public static extern IntPtr GetCurrentProcess();
 
         [DllImport("KillProcess")]
-        public static extern void KillProcess(IntPtr handler);
-        
+        public static extern bool KillProcess(IntPtr handler);
+        [DllImport("GetProcess")]
+        public static extern IntPtr GetProcess(IntPtr handler);
         #endregion
 
         static Process process = null;
@@ -98,13 +99,17 @@ namespace MoosExplorer
             Console.WriteLine($"CMOOS [Version 1.0.0.0] ");
             Console.WriteLine($"(c) AvalonTM. Todos los derechos reservados.");
             Console.WriteLine();
-
-            while (mainProcess)
+            
+            for (; ;)
             {
-                Console.Write("cmoos>");
-                string s = Console.ReadLine(6);
-                onCommand(s);
+                if (mainProcess)
+                {
+                    Console.Write("cmoos>");
+                    string s = Console.ReadLine(6);
+                    onCommand(s);
+                }
             }
+
         }
 
         static void onCommand(string s)
@@ -120,7 +125,7 @@ namespace MoosExplorer
                     onSystemInfo();
                     break;
                 case "pid":
-                  Console.WriteLine("Process: " + mainProcess);
+                    Console.WriteLine("Proceso: " + mainProcess.GetHandle());
                     break;
                 case "reboot":
                     PowerManger.Reboot();
@@ -145,10 +150,12 @@ namespace MoosExplorer
                         }
                         else
                         {
-                            while (process != null) { 
-                            
+                            Console.WriteLine($"Process: {process.GetHandle()}" );
+                            while (GetProcess(process.GetHandle()) != IntPtr.Zero)
+                            {
+
                             }
-                            Console.WriteLine("Process termiante") ;
+                            Console.WriteLine("Proceso terminado");
                         }
                     }
                     break;
@@ -162,9 +169,19 @@ namespace MoosExplorer
 
         static void onTerminate()
         {
-            KillProcess(mainProcess);
-            mainProcess = null;
-            process = null;
+            if (KillProcess(mainProcess.GetHandle()))
+            {
+                mainProcess = null;
+            }
+
+            if (process != null)
+            {
+                if (KillProcess(process.GetHandle()))
+                {
+                    process = null;
+
+                }
+            }
         }
 
         static void onSystemInfo()

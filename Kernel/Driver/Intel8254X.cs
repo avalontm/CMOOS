@@ -149,8 +149,7 @@ namespace MOOS.Driver
             mTransmitBuffer = new Queue<byte[]>();
 
             Instance = this;
-
-            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
+            Interrupts.EnableInterrupt(0x20, OnInterrupt);
         }
 
         #region Devices
@@ -371,13 +370,13 @@ namespace MOOS.Driver
 
             if ((Status & 0x04) != 0)
             {
-                //Console.WriteLine("[Intel8254X] Linking Up");
+                Console.WriteLine("[Intel8254X] Linking Up");
                 Instance.Linkup();
             }
 
             if ((Status & 0x10) != 0)
             {
-               // Console.WriteLine("[Intel8254X] Good Threshold");
+                Console.WriteLine("[Intel8254X] Good Threshold");
             }
 
             if ((Status & 0x80) != 0)
