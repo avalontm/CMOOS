@@ -11,6 +11,20 @@ namespace Terminal.Managers
     {
         public static Process Start(string file)
         {
+            if (string.IsNullOrEmpty(file))
+            {
+                return null;
+            }
+
+            if (file.Length > 4)
+            {
+                string ext = file.Substring(file.Length - 4, file.Length);
+
+                if (ext != ".mue")
+                {
+                    file = file + ".mue";
+                }
+            }
            return Process.Start("sys/app/" + file);
         }
     }

@@ -60,7 +60,6 @@ namespace MOOS.NET.ARP
 
                     if (NetworkStack.AddressMap.ContainsKey(arp_request.TargetIP.Hash) == true)
                     {
-                        Console.WriteLine("ARP Request Recvd from " + arp_request.SenderIP.ToString());
                         NetworkDevice nic = NetworkStack.AddressMap[arp_request.TargetIP.Hash];
 
                         ARPReply_Ethernet reply = new ARPReply_Ethernet(nic.MACAddress, arp_request.TargetIP, arp_request.SenderMAC, arp_request.SenderIP);
@@ -74,8 +73,6 @@ namespace MOOS.NET.ARP
                 if ((arp_packet.HardwareType == 1) && (arp_packet.ProtocolType == 0x0800))
                 {
                     ARPReply_Ethernet arp_reply = new ARPReply_Ethernet(packetData);
-                    Console.WriteLine("Received ARP Reply");
-                    Console.WriteLine("ARP Reply Recvd from " + arp_reply.SenderIP.ToString());
                     ARPCache.Update(arp_reply.SenderIP, arp_reply.SenderMAC);
 
                     OutgoingBuffer.ARPCache_Update(arp_reply);
@@ -86,16 +83,14 @@ namespace MOOS.NET.ARP
         /// <summary>
         /// Create new instance of the <see cref="ARPPacket"/> class.
         /// </summary>
-        internal ARPPacket()
-            : base()
+        internal ARPPacket() : base()
         { }
 
         /// <summary>
         /// Create new instance of the <see cref="ARPPacket"/> class.
         /// </summary>
         /// <param name="rawData">Raw data.</param>
-        public ARPPacket(byte[] rawData)
-            : base(rawData)
+        public ARPPacket(byte[] rawData) : base(rawData)
         { }
 
         /// <summary>
@@ -122,9 +117,7 @@ namespace MOOS.NET.ARP
         /// <param name="protoLen">Protocol length.</param>
         /// <param name="operation">Operation.</param>
         /// <param name="packet_size">Packet size.</param>
-        protected ARPPacket(MACAddress dest, MACAddress src, ushort hwType, ushort protoType,
-            byte hwLen, byte protoLen, ushort operation, int packet_size)
-            : base(dest, src, 0x0806, packet_size)
+        protected ARPPacket(MACAddress dest, MACAddress src, ushort hwType, ushort protoType, byte hwLen, byte protoLen, ushort operation, int packet_size) : base(dest, src, 0x0806, packet_size)
         {
             RawData[14] = (byte)(hwType >> 8);
             RawData[15] = (byte)(hwType >> 0);
@@ -157,8 +150,7 @@ namespace MOOS.NET.ARP
         /// <returns>string value.</returns>
         public override string ToString()
         {
-            return "ARP Packet Src=" + srcMAC + ", Dest=" + destMAC + ", HWType=" + aHardwareType + ", Protocol=" + aProtocolType +
-                ", Operation=" + Operation;
+            return "ARP Packet Src=" + srcMAC + ", Dest=" + destMAC + ", HWType=" + aHardwareType + ", Protocol=" + aProtocolType + ", Operation=" + Operation;
         }
     }
 }

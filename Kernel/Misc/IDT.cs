@@ -3,6 +3,7 @@ using MOOS;
 using MOOS.Driver;
 using MOOS.Misc;
 using System;
+using System.Common.Extentions;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using static Internal.Runtime.CompilerHelpers.InteropHelpers;
@@ -103,8 +104,9 @@ public static class IDT
     }
 
     [RuntimeExport("intr_handler")]
-    public static unsafe void intr_handler(int irq, IDTStackGeneric* stack)
+    public static unsafe void intr_handler(byte irq, IDTStackGeneric* stack)
     {
+       // Console.WriteLine($"[intr_handler] {irq}");
         if (irq < 0x20)
         {
             Panic.Error($"CPU{SMP.ThisCPU} KERNEL PANIC!!!", true);
@@ -201,6 +203,7 @@ public static class IDT
                     break;
             }
 
+         
             Interrupts.HandleInterrupt(irq);
         }
 

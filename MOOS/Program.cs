@@ -107,20 +107,21 @@ unsafe class Program
         NetworkStack.Initialize();
 
         Timer.Sleep(100);
-
+        
         if (NetworkDevice.Devices.Count > 0)
         {
             //Send a DHCP Discover packet 
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
-            xClient.SendDiscoverPacket();
-            Timer.Sleep(1000);
-
+            int result = xClient.SendDiscoverPacket();
+            Timer.Sleep(100);
+            /*
             HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
             var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
             Console.WriteLine($"[RESPONSE] {response.Content}");
+            */
         }
-
+        
         #endregion
 
         /*

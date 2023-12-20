@@ -1,4 +1,5 @@
-﻿using MOOS.NET.Config;
+﻿using Internal.Runtime;
+using MOOS.NET.Config;
 using MOOS.NET.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace MOOS.NET.IPv4.UDP
         /// </summary>
         /// <param name="destPort">Destination port.</param>
         /// <returns>UdpClient</returns>
-        internal static UdpClient GetClient(ushort destPort)
+        internal static UdpClient GetClient(uint destPort)
         {
             UdpClient client;
             clients.TryGetValue(destPort, out client);
@@ -114,11 +115,11 @@ namespace MOOS.NET.IPv4.UDP
 
             clients.TryGetValue((uint)localPort, out client);
 
-            if(client != null)
+            if (client != null)
             {
-                clients.Remove((uint)localPort);
+                bool status = clients.Remove((uint)localPort);
+                Console.WriteLine($"[Closed] {status}");
             }
-
         }
 
         /// <summary>
@@ -189,6 +190,7 @@ namespace MOOS.NET.IPv4.UDP
             while (rxBuffer.Count < 1) ;
 
             var packet = new UDPPacket(rxBuffer.Dequeue().RawData);
+            if (packet == null) return new byte[0]; //Fix :)
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;
 

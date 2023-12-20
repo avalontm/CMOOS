@@ -42,6 +42,56 @@ namespace System.Common.Extentions
             return ConvertToHex((uint)n, 4); //TODO: this cast might throw OverflowException. Better catch it.
         }
 
+        public static unsafe string ToStringHex(this int s)
+        {
+            var val = s;
+            char* x = stackalloc char[21];
+            var i = 19;
+
+            x[20] = '\0';
+
+            do
+            {
+                var d = val % 16;
+                val /= 16;
+
+                if (d > 9)
+                    d += 0x37;
+                else
+                    d += 0x30;
+                x[i--] = (char)d;
+            } while (val > 0);
+
+            i++;
+
+            return new string(x + i, 0, 20 - i);
+        }
+
+        public static unsafe string ToStringHex(this byte s)
+        {
+            var val = s;
+            char* x = stackalloc char[21];
+            var i = 19;
+
+            x[20] = '\0';
+
+            do
+            {
+                var d = val % 16;
+                val /= 16;
+
+                if (d > 9)
+                    d += 0x37;
+                else
+                    d += 0x30;
+                x[i--] = (char)d;
+            } while (val > 0);
+
+            i++;
+
+            return new string(x + i, 0, 20 - i);
+        }
+
         /// <summary>
         /// Convert int to hexadecimal string of a given length.
         /// </summary>

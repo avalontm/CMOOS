@@ -12,7 +12,6 @@ namespace MOOS.Driver
         private const int IOAPICVER = 0x01;
         private const int IOAPICARB = 0x02;
         private const int IOREDTBL = 0x10;
-        public static uint io_apic_count = 0;
 
         public static void Initialize()
         {
@@ -21,18 +20,24 @@ namespace MOOS.Driver
                 Panic.Error("[I/O APIC] Can't initialize I/O APIC");
                 return;
             }
-           
+
             uint value = In(IOAPICVER);
-            io_apic_count = ((value >> 16) & 0xFF) + 1;
+            uint count = ((value >> 16) & 0xFF) + 1;
 
             //Disable All Entries
-            for (uint i = 0; i < io_apic_count; ++i)
+            for (uint i = 0; i < count; ++i)
             {
                 SetEntry((byte)i, 1 << 16);
             }
 
-            Console.WriteLine($"[IOAPIC] {io_apic_count}");
+            //Interrupts.EnableInterrupt(128, OnInterruptExceptions);
             Console.WriteLine("[I/O APIC] I/O APIC Initialized");
+        }
+
+
+        private static void OnInterruptExceptions()
+        {
+            Console.WriteLine("OnInterruptExceptions");
         }
 
         public static uint In(byte reg)
@@ -55,7 +60,10 @@ namespace MOOS.Driver
 
         public static void SetEntry(uint irq)
         {
-            SetEntry((byte)ACPI.RemapIRQ(irq - 0x20), irq);
+            byte index = (byte)ACPI.RemapIRQ(irq - 0x20);
+
+            Console.WriteLine($"[SetEntry] {index} | {irq}");
+            SetEntry(index, irq);
         }
     }
 }

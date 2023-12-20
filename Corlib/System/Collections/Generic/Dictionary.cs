@@ -18,10 +18,9 @@ namespace System.Collections.Generic
 
         public int Count { get { return Values.Count; } }
 
-        public void Remove(TKey key)
+        public bool Remove(TKey key)
         {
-            Values.Remove(Values[Keys.IndexOf(key)]);
-            Keys.Remove(key);
+            return  Values.Remove(Values[Keys.IndexOf(key)]) && Keys.Remove(key); 
         }
 
         public Dictionary()

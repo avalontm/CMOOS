@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Internal.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Common.Extentions;
 using System.Diagnostics;
@@ -82,11 +83,21 @@ namespace MOOS.NET
 
         public bool IsValid()
         {
+            if (bytes == null)
+            {
+                return false;
+            }
+
             return bytes != null && bytes.Length == 6;
         }
 
         public int CompareTo(MACAddress other)
         {
+            if (bytes == null)
+            {
+                return 0;
+            }
+
             int i = 0;
             i = bytes[0].CompareTo(other.bytes[0]);
             if (i != 0) return i;
@@ -106,6 +117,10 @@ namespace MOOS.NET
 
         public bool Equals(MACAddress other)
         {
+            if (bytes == null)
+            {
+                return false;
+            }
             return bytes[0] == other.bytes[0] &&
                 bytes[1] == other.bytes[1] &&
                 bytes[2] == other.bytes[2] &&
@@ -121,12 +136,20 @@ namespace MOOS.NET
 
         public ulong ToNumber()
         {
+            if (bytes == null)
+            {
+                return 0;
+            }
             return (ulong)((bytes[0] << 40) | (bytes[1] << 32) | (bytes[2] << 24) | (bytes[3] << 16) |
                 (bytes[4] << 8) | bytes[5]);
         }
 
         public uint To32BitNumber()
         {
+            if(bytes == null)
+            {
+               return 0;
+            }
             return (uint)((bytes[0] << 40) | (bytes[1] << 32) | (bytes[2] << 24) | (bytes[3] << 16) |
                 (bytes[4] << 8) | bytes[5]);
         }
@@ -152,6 +175,10 @@ namespace MOOS.NET
         {
             string str = "";
 
+            if(bytes == null)
+            {
+                return str;
+            }
             for (int i = 0; i < bytes.Length; i++)
             {
                 str += $"{bytes[i].ToHex()}:";

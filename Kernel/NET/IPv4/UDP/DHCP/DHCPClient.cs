@@ -46,11 +46,11 @@ namespace MOOS.NET.IPv4.UDP.DHCP
             int second = 0;
             int _deltaT = 0;
 
+
             while (rxBuffer.Count < 1)
             {
                 if (second > (timeout / 1000))
                 {
-                    Console.WriteLine("nothing");
                     return -1;
                 }
                 if (_deltaT != RTC.Second)
@@ -62,8 +62,11 @@ namespace MOOS.NET.IPv4.UDP.DHCP
 
             var packet = new DHCPPacket(rxBuffer.Dequeue().RawData);
 
+            if (packet == null) return -1;
+
             if (packet.MessageType == 2) //Boot Reply
             {
+
                 if (packet.RawData[284] == 0x02) //Offer packet received
                 {
                     return SendRequestPacket(packet.Client);
@@ -173,7 +176,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                         Console.WriteLine("[DHCP ACK][" + NetworkDevice.Devices[i].Name + "] Packet received, applying IP configuration...");  
                     }
 
-                    if (packet.Client != null && packet.Subnet != null && packet.Server && packet.DNS != null)
+                    if (packet.Client != null && packet.Subnet != null && packet.Server != null && packet.DNS != null)
                     {
                         Console.WriteLine("   IP Address  : " + packet.Client);
                         Console.WriteLine("   Subnet mask : " + packet.Subnet);

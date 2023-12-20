@@ -1,5 +1,6 @@
 using MOOS.Driver;
 using System.Collections.Generic;
+using System.Common.Extentions;
 
 namespace MOOS.Misc
 {
@@ -9,7 +10,7 @@ namespace MOOS.Misc
 
         public unsafe class INT
         {
-            public int IRQ;
+            public byte IRQ;
             public INTDelegate Handler;
         }
 
@@ -20,7 +21,7 @@ namespace MOOS.Misc
             INTs = new List<INT>();
         }
 
-        public static void EndOfInterrupt(int irq)
+        public static void EndOfInterrupt(byte irq)
         {
 #if UseAPIC
             LocalAPIC.EndOfInterrupt(irq);
@@ -48,7 +49,7 @@ namespace MOOS.Misc
             INTs.Add(new INT() { IRQ = irq, Handler = handler });
         }
 
-        public static unsafe void HandleInterrupt(int irq)
+        public static unsafe void HandleInterrupt(byte irq)
         {
             for (int i = 0; i < INTs.Count; i++)
             {

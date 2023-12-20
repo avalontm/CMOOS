@@ -5,6 +5,7 @@ using MOOS.Misc;
 using MOOS.NET;
 using System;
 using System.Collections.Generic;
+using System.Common.Extentions;
 using System.Runtime.InteropServices;
 using static MOOS.Misc.MMIO;
 
@@ -61,8 +62,8 @@ namespace MOOS.Driver
             }
         }
 
-        public Intel8254X(PCIDevice device)
-        {
+        public Intel8254X(PCIDevice device)  : base()
+        { 
             if (device == null)
             {
                 Console.WriteLine("PCI Device is null. Unable to get Intel 8254X card");
@@ -148,8 +149,9 @@ namespace MOOS.Driver
             mRecvBuffer = new Queue<byte[]>();
             mTransmitBuffer = new Queue<byte[]>();
 
-            Instance = this;
-            Interrupts.EnableInterrupt(0x20, OnInterrupt);
+            Instance = this; 
+
+            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
         }
 
         #region Devices
@@ -366,6 +368,7 @@ namespace MOOS.Driver
 
         internal static void OnInterrupt()
         {
+            Console.WriteLine("[Intel8254X]");
             uint Status = Instance.ReadRegister(0xC0);
 
             if ((Status & 0x04) != 0)
@@ -376,7 +379,7 @@ namespace MOOS.Driver
 
             if ((Status & 0x10) != 0)
             {
-                Console.WriteLine("[Intel8254X] Good Threshold");
+               Console.WriteLine("[Intel8254X] Good Threshold");
             }
 
             if ((Status & 0x80) != 0)
@@ -391,8 +394,8 @@ namespace MOOS.Driver
                     Instance.RXCurr = (Instance.RXCurr + 1) % 32;
                     Instance.WriteRegister(0x2818, _RXCurr);
                 }
-               
             }
+            PIC.EoiSlave();
         }
 
         #region Register Access
@@ -461,7 +464,6 @@ namespace MOOS.Driver
             set { Out32((uint*)(Base + 0x1C), value); }
         }
         #endregion
-
 
         #region Network Device Implementation
         public override string Name

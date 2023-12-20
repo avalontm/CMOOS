@@ -132,7 +132,7 @@ namespace MOOS.Driver
             Bar5 = ReadRegister32(0x24);
 
             //Command = ReadRegister16((byte)Config.Command);
-            //Status = ReadRegister16((byte)Config.Status);
+            Status = ReadRegister16((byte)Config.Status);
 
             RevisionID = ReadRegister8((byte)Config.RevisionID);
             ProgIF = ReadRegister8((byte)Config.ProgIF);

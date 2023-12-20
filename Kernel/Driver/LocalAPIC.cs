@@ -80,7 +80,7 @@ namespace MOOS.Driver
         public static void Initialize()
         {
             // Configure Spurious Interrupt Vector Register
-              WriteRegister((uint)LAPIC_SVR, 0x1FF);
+            WriteRegister((uint)LAPIC_SVR, 0x1FF);
 
             /* Enable all interrupts */
             WriteRegister(LAPIC_TPR, 0);
@@ -96,7 +96,6 @@ namespace MOOS.Driver
             {
                 Console.WriteLine("[Local APIC] Local APIC initialized");
             }
-            
         }
 
         public static uint GetId()
@@ -104,26 +103,8 @@ namespace MOOS.Driver
             return ReadRegister((uint)LAPIC_ID) >> 24;
         }
 
-        static bool CheckLapicId(uint apic_id)
-        {
-            /*
-            for (int i = 0; i < SMP.NumCPU; ++i)
-            {
-                if (cpu_lapic[i]->apic_id == lapic_id)
-                {
-                    return true;
-                }
-            }*/
-            return false;
-        }
-
         public static void SendInit(uint apic_id)
         {
-            if (CheckLapicId(apic_id))
-            {
-                return;
-            }
-
             /* Send IPI */
             SendIPI(apic_id, (uint)(ICR_INIT | ICR_PHYSICAL
                 | ICR_ASSERT | ICR_EDGE | ICR_NO_SHORTHAND));
