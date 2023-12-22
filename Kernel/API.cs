@@ -16,23 +16,24 @@ using MOOS.Api;
 using System.Windows.Forms;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace MOOS
 {
     public static unsafe class API
     {
-        internal static Process process { set; get; }
+        internal static List<Process> process { private set; get; } = new List<Process>();
 
         public static unsafe void* HandleSystemCall(string name)
         {
             switch (name)
             {
                 case "GetCurrentProcess":
-                    return (delegate*<IntPtr>)&API_GetCurrentProcess;
+                    return (delegate*<uint>)&API_GetCurrentProcess;
                 case "KillProcess":
-                    return (delegate*<IntPtr, bool>)&API_KillProcess;
+                    return (delegate*<uint, bool>)&API_KillProcess;
                 case "GetProcess":
-                    return (delegate*<IntPtr, IntPtr>)&API_GetProcess;
+                    return (delegate*<uint, IntPtr>)&API_GetProcess;
                 case "ApplicationCreate":
                     return (delegate*<IntPtr, void>)&API_ApplicationCreate;
                 case "_GUI":
@@ -96,9 +97,9 @@ namespace MOOS
                 case "Error":
                     return (delegate*<string, bool, void>)&API_Error;
                 case "StartThread":
-                    return (delegate*<delegate*<void>, void>)&API_StartThread;
+                    return (delegate*<delegate*<void>, uint>)&API_StartThread;
                 case "StartThreadWithParameters":
-                    return (delegate*<delegate*<void>, IntPtr, IntPtr>)&API_StartThreadWithParameters;
+                    return (delegate*<delegate*<void>, IntPtr, uint>)&API_StartThreadWithParameters;
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
                 case "Calloc":
@@ -165,33 +166,37 @@ namespace MOOS
             Framebuffer.TripleBuffered = true;
         }
 
-        static IntPtr API_GetProcess(IntPtr handler)
+        static IntPtr API_GetProcess(uint processID)
         {
-            Process process = Unsafe.As<IntPtr, Process>(ref handler);
-
-            if (process == null)
+            for (int i = 0; i < process.Count; i++)
             {
-                return IntPtr.Zero;
+                if (process[i].ProcessID == processID)
+                {
+                    return process[i];
+                }
             }
 
-            return process;
+            return IntPtr.Zero;
         }
 
-        private static bool API_KillProcess(IntPtr handler)
+        private static bool API_KillProcess(uint processID)
         {
-            Process process = Unsafe.As<IntPtr, Process>(ref handler);
-            if (process != null)
+            for(int i = 0; i < process.Count; i++)
             {
-                Console.WriteLine("Kill Process: " + process.GetHandle());
-                process.Dispose();
-                return true;
+                if (process[i].ProcessID == processID)
+                {
+                    ThreadPool.Threads[i].State = ThreadState.Dead;
+                    process[i].Dispose();
+                    ThreadPool.Schedule_Next();
+                    return true;
+                }
             }
             return false;
         }
 
-        public static IntPtr API_GetCurrentProcess()
+        public static uint API_GetCurrentProcess()
         {
-            return process.GetHandle();
+            return process[process.Count-1].ProcessID;
         }
 
         public static void API_ApplicationCreate(IntPtr handler)
@@ -200,7 +205,7 @@ namespace MOOS
 
             if (_base != null)
             {
-               _base.SetExecutablePath(process.startInfo.WorkingDirectory);
+               _base.SetExecutablePath(process[process.Count - 1].startInfo.WorkingDirectory);
             }
         }
 
@@ -224,19 +229,20 @@ namespace MOOS
             Keyboard.OnKeyChanged += handler;
         }
 
-        public static void API_StartThread(delegate*<void> func)
-        {
-            new Thread(func).Start();
-        }
-
-        public static IntPtr API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
+        public static uint API_StartThread(delegate*<void> func)
         {
             Thread thread = new Thread(func).Start();
-            process = new Process();
-            process.startInfo = Unsafe.As<IntPtr, ProcessStartInfo>(ref handler);
-            process.startInfo.Handler = thread.GetHandle();
+            return thread.ProcessID;
+        }
 
-            return process.GetHandle();
+        public static uint API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
+        {
+            Thread thread = new Thread(func).Start();
+            Process _process = new Process();
+            _process.startInfo = Unsafe.As<IntPtr, ProcessStartInfo>(ref handler);
+            _process.ProcessID = thread.ProcessID;
+            process.Add(_process);
+            return _process.ProcessID;
         }
 
         public static void API_Error(string s, bool skippable)

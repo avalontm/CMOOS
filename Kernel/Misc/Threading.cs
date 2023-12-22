@@ -7,12 +7,23 @@ using System.Runtime.InteropServices;
 
 namespace MOOS.Misc
 {
+    public enum ThreadState : int
+    {
+        NotActive = 0,
+        Running = 1,    // Thread is currently running
+        Dead = 2,       // Thread is terminated
+        Sleep = 3,      // Thread is sleeping
+
+        
+    };
+
     public unsafe class Thread
     {
-        public bool Terminated;
+        public ThreadState State = ThreadState.NotActive;
         public IDT.IDTStackGeneric* Stack;
         public int RunOnWhichCPU;
         public bool IsIdleThread = false;
+        public uint ProcessID = 0;
 
         public Thread(delegate*<void> method, ulong stack_size = 16384)
         {
@@ -34,7 +45,8 @@ namespace MOOS.Misc
 
             Stack->irs.rip = (ulong)method;
 
-            Terminated = false;
+            State = ThreadState.NotActive;
+            ProcessID = GenerateID();
         }
 
         public Thread(Action action, ulong stack_size = 16384)
@@ -48,6 +60,7 @@ namespace MOOS.Misc
             {
                 //Bootstrap CPU
                 this.RunOnWhichCPU = 0;
+                State = ThreadState.Running;
                 ThreadPool.Threads.Add(this);
                 return this;
             }
@@ -71,6 +84,7 @@ namespace MOOS.Misc
                 }
 
                 this.RunOnWhichCPU = run_on_which_cpu;
+                State = ThreadState.Running;
                 ThreadPool.Threads.Add(this);
                 return this;
             }
@@ -79,6 +93,50 @@ namespace MOOS.Misc
         public static void Sleep(ulong Millionsecos)
         {
             Timer.Sleep(Millionsecos);
+        }
+
+        int GenerateID()
+        {
+            Random random = new Random(ThreadPool.Threads.Count);
+            string str = "1";
+
+            for (int i = 0; i < 5; i++)
+            {
+                // Generar un número aleatorio entre 0 y 9 y agregarlo a la cadena
+                int numeroAleatorio = random.Next(0, 9);
+                str +=  numeroAleatorio.ToString();
+            }
+            
+            return StringAInt(str);
+        }
+
+        static int StringAInt(string cadena)
+        {
+            int numero = 0;
+            bool esNegativo = false;
+            int i = 0;
+
+            // Manejar el signo negativo si está presente
+            if (cadena[0] == '-')
+            {
+                esNegativo = true;
+                i = 1;
+            }
+
+            // Convertir cada dígito de la cadena a un número entero
+            for (; i < cadena.Length; i++)
+            {
+                int digito = cadena[i] - '0'; // Convertir el carácter a su valor numérico
+                numero = numero * 10 + digito; // Construir el número multiplicando por 10 y sumando el nuevo dígito
+            }
+
+            // Aplicar el signo negativo si es necesario
+            if (esNegativo)
+            {
+                numero = -numero;
+            }
+
+            return numero;
         }
     }
 
@@ -135,12 +193,9 @@ namespace MOOS.Misc
 
         public static void Terminate()
         {
-            Console.Write("Thread ");
-            Console.Write(Index.ToString());
-            Console.WriteLine(" Has Exited");
-            Threads[Index].Terminated = true;
+            Threads[Index].State = ThreadState.Dead;
             Schedule_Next();
-            Panic.Error("Termination Failed!");
+            while (true) ;// Hook up till the next time slice
         }
 
         [DllImport("*")]
@@ -193,10 +248,7 @@ namespace MOOS.Misc
 
             for (; ; )
             {
-                if (
-                    !Threads[Index].Terminated &&
-                    Threads[Index].RunOnWhichCPU == SMP.ThisCPU
-                    )
+                if (Threads[Index].State == ThreadState.Running && Threads[Index].RunOnWhichCPU == SMP.ThisCPU )
                 {
                     Native.Movsb(Threads[Index].Stack, stack, (ulong)sizeof(IDT.IDTStackGeneric));
                     break;
@@ -207,11 +259,8 @@ namespace MOOS.Misc
             do
             {
                 Index = (Index + 1) % Threads.Count;
-            } while
-            (
-                Threads[Index].Terminated ||
-                Threads[Index].RunOnWhichCPU != SMP.ThisCPU
-            );
+            } 
+            while (Threads[Index].State == ThreadState.Dead || Threads[Index].RunOnWhichCPU != SMP.ThisCPU );
 
             #region CPU Usage
             if (SMP.ThisCPU == 0)

@@ -79,53 +79,56 @@ namespace MoosExplorer
         public static extern void StartThread(delegate*<void> ptr);
 
         [DllImport("GetCurrentProcess")]
-        public static extern IntPtr GetCurrentProcess();
+        public static extern uint GetCurrentProcess();
 
         [DllImport("KillProcess")]
-        public static extern bool KillProcess(IntPtr handler);
+        public static extern bool KillProcess(uint processID);
         [DllImport("GetProcess")]
-        public static extern IntPtr GetProcess(IntPtr handler);
+        public static extern IntPtr GetProcess(uint processID);
         #endregion
 
         static Process process = null;
-        static Process mainProcess  =null;
-
+        static uint mainProcess  = 0;
+ 
         [RuntimeExport("Main")]
         public static void Main()
         {
-            mainProcess = Unsafe.As<Process>(GetCurrentProcess());
+            mainProcess = GetCurrentProcess();
             Console.Clear();
 
             Console.WriteLine($"CMOOS [Version 1.0.0.0] ");
             Console.WriteLine($"(c) AvalonTM. Todos los derechos reservados.");
             Console.WriteLine();
-            
-            for (; ;)
-            {
-                if (mainProcess)
-                {
-                    Console.Write("cmoos>");
-                    string s = Console.ReadLine(6);
-                    onCommand(s);
-                }
-            }
 
+            while (GetProcess(mainProcess) != IntPtr.Zero)
+            {
+                Console.Write("cmoos>");
+                string s = Console.ReadLine(6);
+                onCommand(s);
+            }
         }
 
         static void onCommand(string s)
         {
+            if(string.IsNullOrEmpty(s))
+            {
+                return;
+            }
+
             if (!string.IsNullOrEmpty(s))
             {
                 Console.WriteLine();
             }
 
-            switch (s)
+            string[] args = s.Split(' ');
+
+            switch (args[0])
             {
                 case "info":
                     onSystemInfo();
                     break;
                 case "pid":
-                    Console.WriteLine("Proceso: " + mainProcess.GetHandle());
+                    Console.WriteLine("Proceso: " + mainProcess);
                     break;
                 case "reboot":
                     PowerManger.Reboot();
@@ -136,9 +139,15 @@ namespace MoosExplorer
                 case "cls":
                     Console.Clear();
                     break;
+                case "tasklist":
+                    onTaskList();
+                    break;
+                case "kill":
+                    onTaskKill(args);
+                    break;
                 case "exit":
                     onTerminate();
-                    break;
+                    return;
                 default:
                     if (!string.IsNullOrEmpty(s))
                     {
@@ -150,12 +159,12 @@ namespace MoosExplorer
                         }
                         else
                         {
-                            Console.WriteLine($"Process: {process.GetHandle()}" );
-                            while (GetProcess(process.GetHandle()) != IntPtr.Zero)
+                            while (process != null && GetProcess(process.ProcessID) != IntPtr.Zero)
                             {
 
                             }
-                            Console.WriteLine("Proceso terminado");
+
+                            return;
                         }
                     }
                     break;
@@ -167,19 +176,47 @@ namespace MoosExplorer
             }
         }
 
-        static void onTerminate()
+        static void onTaskKill(string[] args)
         {
-            if (KillProcess(mainProcess.GetHandle()))
+            if (args.Length <= 1)
             {
-                mainProcess = null;
+                Console.WriteLine("Error: Sintaxis incorrecta.");
+                Console.WriteLine("Escriba: kill processID");
+                return;
             }
 
-            if (process != null)
+            uint processID = Convert.ToUInt32(args[1]);
+
+            bool status = KillProcess(processID);
+
+            if(status)
             {
-                if (KillProcess(process.GetHandle()))
+                if(process != null && process.ProcessID == processID)
                 {
                     process = null;
+                }
+            }
+            else
+            {
+                Console.WriteLine(@"ERROR: no se encontro el proceso """ + processID + @""".");
+            }
+        }
 
+        static void onTaskList()
+        {
+          
+        }
+
+        static void onTerminate()
+        {
+            if (KillProcess(mainProcess))
+            {
+                if (process != null)
+                {
+                    if (KillProcess(process.ProcessID))
+                    {
+                        process = null;
+                    }
                 }
             }
         }

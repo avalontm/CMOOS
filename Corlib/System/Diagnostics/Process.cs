@@ -10,6 +10,7 @@ namespace System.Diagnostics
     public unsafe class Process
     {
         public ProcessStartInfo startInfo { set; get; }
+        public uint ProcessID { set; get; }
 
         public Process()
         {
@@ -65,7 +66,7 @@ namespace System.Diagnostics
                 process.startInfo.Arguments = arguments;
 
                 //Start Process
-                process = Unsafe.As<Process>(StartThreadWithParameters(p, process.startInfo));
+                process.ProcessID = StartThreadWithParameters(p, process.startInfo);
             }
 
             return process;
@@ -78,10 +79,10 @@ namespace System.Diagnostics
         static extern ulong free(nint ptr);
 
         [DllImport("StartThread")]
-        static extern void StartThread(delegate*<void> func);
+        static extern uint StartThread(delegate*<void> func);
 
         [DllImport("StartThreadWithParameters")]
-        static extern IntPtr StartThreadWithParameters(delegate*<void> func, IntPtr handler);
+        static extern uint StartThreadWithParameters(delegate*<void> func, IntPtr handler);
 
         [DllImport("*")]
         static unsafe extern void memset(byte* ptr, byte c, ulong count);

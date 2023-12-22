@@ -100,6 +100,7 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
+        /*
         #region NETWORK
 
         //Network Config (AvalonTM)
@@ -115,14 +116,15 @@ unsafe class Program
             DHCPClient xClient = new DHCPClient();
             int result = xClient.SendDiscoverPacket();
             Timer.Sleep(100);
-            /*
+            
             HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
             var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
             Console.WriteLine($"[RESPONSE] {response.Content}");
-            */
+            
         }
         
         #endregion
+        */
 
         /*
         XmlReader reader = XmlReader.Create("info.xml");

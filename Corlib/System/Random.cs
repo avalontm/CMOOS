@@ -41,8 +41,7 @@ namespace System
 		private uint z;
 		private uint c;
 
-		public Random()
-			: this(123456789)
+		public Random() : this(123456789)
 		{
 		}
 
