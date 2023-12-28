@@ -203,6 +203,7 @@ namespace System.Drawing
             return (uint)(255 << 24 | this.R << 16 | this.G << 8 | this.B);
 
         }
+
         public static uint ToArgb(byte r, byte g, byte b)
         {
             return (uint)(255 << 24 | r << 16 | g << 8 | b);

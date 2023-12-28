@@ -53,7 +53,7 @@ namespace MOOS.Misc
                     if (X >= 0 && Y >= 0 && X <= g.Width && Y <= g.Height)
                     {   
                         //Replace pixel color
-                        _color = ColorConverter.ConvertPixel(_color, color);
+                        //_color = ColorConverter.ConvertPixel(_color, color);
                         g.DrawPoint((X + w), (Y + h), _color, true);
                     }
 

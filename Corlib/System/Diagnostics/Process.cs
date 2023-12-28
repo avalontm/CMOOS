@@ -11,6 +11,8 @@ namespace System.Diagnostics
     {
         public ProcessStartInfo startInfo { set; get; }
         public uint ProcessID { set; get; }
+        public IntPtr Handler { get; set; }
+        public IntPtr Draw { get; set; }
 
         public Process()
         {
@@ -66,7 +68,7 @@ namespace System.Diagnostics
                 process.startInfo.Arguments = arguments;
 
                 //Start Process
-                process.ProcessID = StartThreadWithParameters(p, process.startInfo);
+                StartThreadWithParameters(p, process);
             }
 
             return process;
@@ -82,7 +84,7 @@ namespace System.Diagnostics
         static extern uint StartThread(delegate*<void> func);
 
         [DllImport("StartThreadWithParameters")]
-        static extern uint StartThreadWithParameters(delegate*<void> func, IntPtr handler);
+        static extern IntPtr StartThreadWithParameters(delegate*<void> func, IntPtr handler);
 
         [DllImport("*")]
         static unsafe extern void memset(byte* ptr, byte c, ulong count);

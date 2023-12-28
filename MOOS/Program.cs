@@ -1,24 +1,24 @@
 //#define NETWORK
 
-using System.IO;
+using Internal.Runtime.CompilerServices;
+using Moos.Core.System.Windows;
 using MOOS;
 using MOOS.Driver;
-using MOOS.FS;
 using MOOS.Misc;
-using MOOS.NET;
-using MOOS.NET.IPv4.UDP.DHCP;
-using System.Net.Http;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Xml;
 using System.Text;
-using System.Collections.Generic;
+using System.Windows.Forms;
+using Console = MOOS.Console;
 
 unsafe class Program
 {
+    [DllImport("GetProcess")]
+    public static extern IntPtr GetProcess(uint processID);
+
     static void Main() { }
 
     static bool USBMouseTest()
@@ -176,17 +176,42 @@ unsafe class Program
         }
 
         string shell = dictionary["terminal"];
-        System.Diagnostics.Process.Start($"sys/app/terminal.mue");
+        var explorer = System.Diagnostics.Process.Start($"sys/app/explorer.mue");
 
+        while (explorer.Handler == IntPtr.Zero)
+        {
+            Native.Hlt();
+        }
+
+        while (explorer.Draw == IntPtr.Zero)
+        {
+            Native.Hlt(); //Detenemos el cpu
+        }
+
+        /* IMPORTANTE ACTIVAR */
+        Native.Cli(); //Reactivamos el cpu
+        Native.Sti(); //Activamos los interrups
 
         bytes.Dispose();
         texto.Dispose();
         lineas.Dispose();
         shell.Dispose();
 
-        for (; ;)
+        for (; ; )
         {
-            Native.Hlt();
+            if (Framebuffer.TripleBuffered)
+            {
+                for (int i = 0; i < API.process.Count; i++)
+                {
+                    if (ThreadPool.Threads[i].State == ThreadState.Running)
+                    {
+                        IntPtr handle = API.process[i].Draw;
+                        Action _draw = Unsafe.As<IntPtr, Action>(ref handle);
+                        _draw.Invoke();
+                    }
+                }
+                Framebuffer.Update();
+            }
         }
     }
 }

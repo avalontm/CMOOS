@@ -86,7 +86,7 @@ namespace MOOS.Graph
 
         public virtual void DrawPoint(int X, int Y, uint color, bool alphaBlending = false)
         {
-            if (X < 0 || Y < 0 || X >= Width || Y >= Height)
+            if (X < 0 || Y < 0 || X > Width || Y > Height)
             {
                 return; // Evitar operaciones si el punto está fuera del área de dibujo
             }

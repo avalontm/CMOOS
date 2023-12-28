@@ -122,7 +122,7 @@ namespace MoosExplorer
 
             string[] args = s.Split(' ');
 
-            switch (args[0])
+            switch (args[0].ToLower())
             {
                 case "info":
                     onSystemInfo();
@@ -204,7 +204,8 @@ namespace MoosExplorer
 
         static void onTaskList()
         {
-          
+            Console.WriteLine($"Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor");
+            Console.WriteLine($"========================= ======== ================ =========== ============");
         }
 
         static void onTerminate()

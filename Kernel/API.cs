@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using Moos.Core.System.Windows;
 
 namespace MOOS
 {
@@ -35,9 +36,13 @@ namespace MOOS
                 case "GetProcess":
                     return (delegate*<uint, IntPtr>)&API_GetProcess;
                 case "ApplicationCreate":
-                    return (delegate*<IntPtr, void>)&API_ApplicationCreate;
+                    return (delegate*<IntPtr, uint>)&API_ApplicationCreate;
+                case "ApplicationDraw":
+                    return (delegate*<IntPtr, IntPtr, void>)&API_ApplicationDraw;
                 case "_GUI":
                     return (delegate*<void>)&API_GUI;
+                case "_getGUI":
+                    return (delegate*<bool>)&API_GetGUI;
                 case "LoadPNG":
                     return (delegate*<string, IntPtr>)&API_LoadPNG;
                 case "WriteLine":
@@ -99,7 +104,7 @@ namespace MOOS
                 case "StartThread":
                     return (delegate*<delegate*<void>, uint>)&API_StartThread;
                 case "StartThreadWithParameters":
-                    return (delegate*<delegate*<void>, IntPtr, uint>)&API_StartThreadWithParameters;
+                    return (delegate*<delegate*<void>, IntPtr, IntPtr>)&API_StartThreadWithParameters;
                 case "BindOnKeyChangedHandler":
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
                 case "Calloc":
@@ -150,7 +155,6 @@ namespace MOOS
             return null;
         }
 
-
         public static void API_ShutDown()
         {
             Power.Shutdown();
@@ -164,6 +168,11 @@ namespace MOOS
         public static void API_GUI()
         {
             Framebuffer.TripleBuffered = true;
+        }
+
+        public static bool API_GetGUI()
+        {
+            return Framebuffer.TripleBuffered;
         }
 
         static IntPtr API_GetProcess(uint processID)
@@ -199,14 +208,25 @@ namespace MOOS
             return process[process.Count-1].ProcessID;
         }
 
-        public static void API_ApplicationCreate(IntPtr handler)
+        public static uint API_ApplicationCreate(IntPtr handler)
         {
-            IApplicationBase _base = Unsafe.As<IntPtr, IApplicationBase>(ref handler);
+            Process _process = process[process.Count - 1];
+            _process.Handler = handler;
+            return _process.ProcessID;
+        }
 
-            if (_base != null)
+        private static void API_ApplicationDraw(IntPtr handler, IntPtr draw)
+        {
+            UIApplication app = Unsafe.As<IntPtr, UIApplication>(ref handler);
+            Action action = Unsafe.As<IntPtr, Action>(ref draw);
+            app.setDraw(action);
+
+            Process _process = process[process.Count - 1];
+            if (_process.Draw == IntPtr.Zero)
             {
-               _base.SetExecutablePath(process[process.Count - 1].startInfo.WorkingDirectory);
+                _process.Draw = draw;
             }
+            Native.Hlt();
         }
 
         public static IntPtr API_LoadPNG(string file)
@@ -235,14 +255,13 @@ namespace MOOS
             return thread.ProcessID;
         }
 
-        public static uint API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
+        public static IntPtr API_StartThreadWithParameters(delegate*<void> func, IntPtr handler)
         {
             Thread thread = new Thread(func).Start();
-            Process _process = new Process();
-            _process.startInfo = Unsafe.As<IntPtr, ProcessStartInfo>(ref handler);
+            Process _process = Unsafe.As<IntPtr, Process>(ref handler);
             _process.ProcessID = thread.ProcessID;
             process.Add(_process);
-            return _process.ProcessID;
+            return _process;
         }
 
         public static void API_Error(string s, bool skippable)

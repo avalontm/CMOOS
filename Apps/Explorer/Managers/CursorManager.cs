@@ -82,7 +82,7 @@ namespace Explorer.Managers
         public static void Draw()
         {
             //Mouse
-            GDI.DrawImage(CursorManager.MousePosition.X + CursorManager.MouseOffSet.X, CursorManager.MousePosition.Y + CursorManager.MouseOffSet.Y, CursorManager.GetCursor, true);
+            GDI.DrawImage(MousePosition.X + MouseOffSet.X, MousePosition.Y + MouseOffSet.Y, GetCursor, true);
         }
     }
 }
