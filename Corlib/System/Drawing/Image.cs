@@ -27,7 +27,7 @@ namespace System.Drawing
 
         public Color GetColor(int X, int Y)
         {
-            return Color.FromArgb((uint)RawData[Y * Width + X]);
+            return Color.FromArgb(GetPixel(X,Y));
         }
 
         public void SetPixel(int x, int y, Color color)

@@ -70,13 +70,15 @@ namespace MOOS.Misc
         }
 
 
-        public void DrawString(int X, int Y, string Str, Graphics g)
+        public int DrawString(int X, int Y, string Str, Graphics g)
         {
             int w = 0, h = 0;
             for (int i = 0; i < Str.Length; i++)
             {
                 w += DrawChar(g, X + w, Y + h, Str[i]);
             }
+            Str.Dispose();
+            return w;
         }
 
         public int MeasureString(string Str)
@@ -84,14 +86,14 @@ namespace MOOS.Misc
             int w = 0;
             for (int i = 0; i < Str.Length; i++)
             {
-                w += DrawChar(Framebuffer.Graphics,-1, -1, Str[i]);
+                w += 9;// DrawChar(Framebuffer.Graphics,-1, -1, Str[i]);
             }
             Str.Dispose();
             return w;
         }
 
 
-        public void DrawString(int X, int Y, string Str, uint color = 0xFF000000, int LineLimit = -1, int HeightLimit = -1)
+        public int DrawString(int X, int Y, string Str, uint color = 0xFF000000, int LineLimit = -1, int HeightLimit = -1)
         {
             int w = 0, h = 0;
             for (int i = 0; i < Str.Length; i++)
@@ -111,6 +113,7 @@ namespace MOOS.Misc
             }
 
             Str.Dispose();
+            return w;
         }
     }
 }
