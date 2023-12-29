@@ -8,13 +8,17 @@ using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using System.Windows.Forms;
 
+
 namespace System.Windows
 {
-    public unsafe class UIApplication
+    public unsafe class Application
     {
         #region Native
         [DllImport("SwitchToMode")]
         public static extern void SwitchToMode(bool gui);
+
+        [DllImport("GetProcess")]
+        public static extern IntPtr GetProcess(uint processID);
 
         [DllImport("ApplicationCreate")]
         public static extern uint ApplicationCreate(IntPtr handler);
@@ -27,16 +31,14 @@ namespace System.Windows
 
         [DllImport("KillProcess")]
         public static extern bool KillProcess(uint processID);
-        [DllImport("GetProcess")]
-        public static extern IntPtr GetProcess(uint processID);
         #endregion
 
         public static uint processID { get; private set; }
 
-        public UIApplication()
+        public Application()
         {
             processID = ApplicationCreate(this);
-            SwitchToMode(true);
+            SwitchToMode(false);
         }
 
         public void Run()

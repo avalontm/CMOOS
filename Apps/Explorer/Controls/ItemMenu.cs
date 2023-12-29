@@ -84,7 +84,7 @@ namespace Explorer.Controls
                         color = 0xFFFFFFFF;
                     }
 
-                    FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, color);
+                    FontManager.font.DrawString(X + Icon.Width + 20, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, color);
                 }
 
             }

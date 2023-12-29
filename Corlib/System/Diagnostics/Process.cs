@@ -71,8 +71,29 @@ namespace System.Diagnostics
                 StartThreadWithParameters(p, process);
             }
 
+            while (process.Handler == IntPtr.Zero)
+            {
+                Hlt();
+            }
+
+            while (process.Draw == IntPtr.Zero)
+            {
+                Hlt(); //Detenemos el cpu
+            }
+
+            // IMPORTANTE ACTIVAR //
+            Cli(); //Reactivamos el cpu
+            Sti(); //Activamos los interrups
+
             return process;
         }
+
+        [DllImport("NativeHlt")]
+        static extern uint Hlt();
+        [DllImport("NativeCli")]
+        static extern uint Cli();
+        [DllImport("NativeSti")]
+        static extern uint Sti();
 
         [DllImport("*")]
         static extern nint malloc(ulong size);

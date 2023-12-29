@@ -1,5 +1,6 @@
 ﻿using Explorer.Managers;
 using Moos.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Media;
@@ -17,8 +18,8 @@ namespace Explorer.Controls
 
         public MenuBar()
         {
-            Width = 250;
-            Height = 450;
+            Width = 230;
+            Height = 380;
 
             Background = Color.FromArgb(0xFFC3C7CB);
             Foreground = Color.Black;
@@ -59,13 +60,51 @@ namespace Explorer.Controls
             separator.OnLoaded();
 
             items.Add(separator);
+
+            ///////////////////////////////////
+            //Add Menu Items Here
+            ///////////////////////////////////
+
+            newMenu("Run...", "sys/media/menu_runtask.png", onRunTask);
+            newMenu("Help", "sys/media/menu_help.png", onHelp);
+        }
+
+        void newMenu(string title, string icon, EventHandler<object> action)
+        {
+            ItemMenu menu = new ItemMenu();
+            menu.Height = hContainer;
+            menu.Width = this.Width - wContainer - 3;
+            menu.X = this.X + wContainer + 1;
+            menu.Y = this.Y + this.Height - ((items.Count * hContainer) + 6);
+            menu.Icon = PNG.FromFile(icon);
+            menu.Text = title;
+            menu.Clicked = action;
+            menu.OnLoaded();
+
+            items.Add(menu);
+        }
+
+        void onHelp(object sender, object e)
+        {
+            Hide();
+        }
+
+        void onRunTask(object sender, object e)
+        {
+            Hide();
+            MessageBox.Show("Write the name of the program:", "Execute", onRunConfirm, MessageBoxButtons.OKCancel);
+        }
+
+        void onRunConfirm(object sender, object e)
+        {
+           
         }
 
         void onShutDown(object sender, object e)
         {
             Hide();
 
-            MessageBox.Show("Are you sure to want to:", "Shut Down Moos", onShuwDownConfirm, MessageBoxButtons.YesNo);
+            MessageBox.Show("Are you sure to want to:", "Shut Down Moos", onShuwDownConfirm, MessageBoxButtons.YesNo, MessageBoxIcon.ShutDown);
         }
 
         void onShuwDownConfirm(object sender, object e)

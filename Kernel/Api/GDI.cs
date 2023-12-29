@@ -38,43 +38,67 @@ namespace MOOS.Api
 
         public static void API_DrawImage(int x, int y, IntPtr handler, bool alpha)
         {
-            Image image = Unsafe.As<IntPtr, Image>(ref handler);
-            Framebuffer.Graphics.DrawImage(x, y,  image, alpha);
+            if (Framebuffer.TripleBuffered)
+            {
+                Image image = Unsafe.As<IntPtr, Image>(ref handler);
+                Framebuffer.Graphics.DrawImage(x, y, image, alpha);
+            }
         }
 
         public static void API_DrawRectangle(int x, int y, int wight, int height, uint color)
         {
-            Framebuffer.Graphics.DrawRectangle(x, y, wight, height, color);
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Graphics.DrawRectangle(x, y, wight, height, color);
+            }
         }
 
         public static void API_AFillRectangle(int x, int y, int wight, int height, uint color)
         {
-            Framebuffer.Graphics.AFillRectangle(x, y, wight, height, color);
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Graphics.AFillRectangle(x, y, wight, height, color);
+            }
         }
 
         public static void API_FillRectangle(int x, int y, int wight, int height, uint color)
         {
-            Framebuffer.Graphics.FillRectangle(x, y, wight, height, color);
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Graphics.FillRectangle(x, y, wight, height, color);
+            }
         }
 
         public static void API_DrawPoint(int x, int y, uint color, bool alpha)
         {
-            Framebuffer.Graphics.DrawPoint(x, y, color, alpha);
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Graphics.DrawPoint(x, y, color, alpha);
+            }
         }
 
         public static void API_DrawLine(int x0, int y0, int x1, int y1, uint color)
         {
-            Framebuffer.Graphics.DrawLine(x0, y0, x1, y1, color);
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Graphics.DrawLine(x0, y0, x1, y1, color);
+            }
         }
 
         public static void API_DrawClear()
         {
-            Framebuffer.Graphics.Clear(0x0);
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Graphics.Clear(0x0);
+            }
         }
 
         public static void API_DrawUpdate()
         {
-            Framebuffer.Update();
+            if (Framebuffer.TripleBuffered)
+            {
+                Framebuffer.Update();
+            }
         }
     }
 }

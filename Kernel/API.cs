@@ -37,8 +37,6 @@ namespace MOOS
                     return (delegate*<uint, IntPtr>)&API_GetProcess;
                 case "ApplicationCreate":
                     return (delegate*<IntPtr, uint>)&API_ApplicationCreate;
-                case "ApplicationDraw":
-                    return (delegate*<IntPtr, IntPtr, void>)&API_ApplicationDraw;
                 case "_GUI":
                     return (delegate*<void>)&API_GUI;
                 case "_getGUI":
@@ -79,8 +77,8 @@ namespace MOOS
                     return (delegate*<byte**, void>)&API_ConsoleReadLine;
                 case "ConsoleReadLineWithStart":
                     return (delegate*<int, byte**, void>)&API_ConsoleReadLineWithStart;
-                case "SwitchToConsoleMode":
-                    return (delegate*<void>)&API_SwitchToConsoleMode;
+                case "SwitchToMode":
+                    return (delegate*<bool, void>)&API_SwitchToMode;
                 case "DrawPoint":
                     return (delegate*<int, int, uint, void>)&API_DrawPoint;
                 case "Lock":
@@ -89,6 +87,12 @@ namespace MOOS
                     return (delegate*<void>)&API_Unlock;
                 case "Clear":
                     return (delegate*<uint, void>)&API_Clear;
+                case "NativeHlt":
+                    return (delegate*<void>)&API_NativeHlt;
+                case "NativeCli":
+                    return (delegate*<void>)&API_NativeCli;
+                case "NativeSti":
+                    return (delegate*<void>)&API_NativeSti;
                 case "Update":
                     return (delegate*<void>)&API_Update;
                 case "Width":
@@ -155,6 +159,21 @@ namespace MOOS
             return null;
         }
 
+        public static void API_NativeHlt()
+        {
+            Native.Hlt();
+        }
+
+        public static void API_NativeCli()
+        {
+            Native.Cli();
+        }
+
+        public static void API_NativeSti()
+        {
+            Native.Sti();
+        }
+
         public static void API_ShutDown()
         {
             Power.Shutdown();
@@ -213,20 +232,6 @@ namespace MOOS
             Process _process = process[process.Count - 1];
             _process.Handler = handler;
             return _process.ProcessID;
-        }
-
-        private static void API_ApplicationDraw(IntPtr handler, IntPtr draw)
-        {
-            UIApplication app = Unsafe.As<IntPtr, UIApplication>(ref handler);
-            Action action = Unsafe.As<IntPtr, Action>(ref draw);
-            app.setDraw(action);
-
-            Process _process = process[process.Count - 1];
-            if (_process.Draw == IntPtr.Zero)
-            {
-                _process.Draw = draw;
-            }
-            Native.Hlt();
         }
 
         public static IntPtr API_LoadPNG(string file)
@@ -399,9 +404,9 @@ namespace MOOS
             Framebuffer.Graphics.DrawPoint(x, y, color);
         }
 
-        public static void API_SwitchToConsoleMode()
+        public static void API_SwitchToMode(bool gui)
         {
-            Framebuffer.TripleBuffered = false;
+            Framebuffer.TripleBuffered = gui;
         }
 
         public static void API_CreateDirectory(string name)

@@ -45,6 +45,8 @@ unsafe class Program
     [RuntimeExport("KMain")]
     static void KMain()
     {
+        BitFont.Initialize();
+
         Console.WriteLine("Use Native AOT (Core RT) Technology.");
 
         Hub.Initialize();
@@ -82,7 +84,6 @@ unsafe class Program
             }
         }
 
-
         USB.StartPolling();
 
         //Use qemu for USB debug
@@ -96,6 +97,7 @@ unsafe class Program
             Console.WriteLine("USB Keyboard not present");
         }
 
+     
         Audio.Initialize();
         AC97.Initialize();
         ES1371.Initialize();
@@ -176,22 +178,8 @@ unsafe class Program
         }
 
         string shell = dictionary["terminal"];
-        var explorer = System.Diagnostics.Process.Start($"sys/app/explorer.mue");
-
-        while (explorer.Handler == IntPtr.Zero)
-        {
-            Native.Hlt();
-        }
-
-        while (explorer.Draw == IntPtr.Zero)
-        {
-            Native.Hlt(); //Detenemos el cpu
-        }
-
-        /* IMPORTANTE ACTIVAR */
-        Native.Cli(); //Reactivamos el cpu
-        Native.Sti(); //Activamos los interrups
-
+        var explorer = System.Diagnostics.Process.Start($"sys/app/terminal.mue");
+        
         bytes.Dispose();
         texto.Dispose();
         lineas.Dispose();
@@ -199,19 +187,7 @@ unsafe class Program
 
         for (; ; )
         {
-            if (Framebuffer.TripleBuffered)
-            {
-                for (int i = 0; i < API.process.Count; i++)
-                {
-                    if (ThreadPool.Threads[i].State == ThreadState.Running)
-                    {
-                        IntPtr handle = API.process[i].Draw;
-                        Action _draw = Unsafe.As<IntPtr, Action>(ref handle);
-                        _draw.Invoke();
-                    }
-                }
-                Framebuffer.Update();
-            }
+           
         }
     }
 }

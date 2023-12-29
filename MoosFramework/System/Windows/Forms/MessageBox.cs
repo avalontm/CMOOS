@@ -139,7 +139,7 @@ namespace System.Windows.Forms
                 Instance.Buttons[0].X  = Instance.X + Instance.Width - (Instance.Buttons[0].Width *2) - 10;
                 Instance.Buttons[0].Y = Instance.Y + Instance.Height - Instance.Buttons[0].Height - 5;
                 Instance.Buttons[0].Text = "YES";
-                Instance.Buttons[0].Clicked = confirm;
+                Instance.Buttons[0].Clicked = onConfirm(confirm);
                 Instance.Buttons[0].OnLoaded();
 
                 Instance.Buttons[1] = new Button();
@@ -151,15 +151,48 @@ namespace System.Windows.Forms
                 Instance.Buttons[1].Clicked = onCancel;
                 Instance.Buttons[1].OnLoaded();
             }
+            else if(buttons == MessageBoxButtons.OKCancel)
+            {
+                Instance.Buttons = new Button[2];
+
+                Instance.Buttons[0] = new Button();
+                Instance.Buttons[0].Width = 64;
+                Instance.Buttons[0].Height = 28;
+                Instance.Buttons[0].X = Instance.X + Instance.Width - (Instance.Buttons[0].Width * 2) - 10;
+                Instance.Buttons[0].Y = Instance.Y + Instance.Height - Instance.Buttons[0].Height - 5;
+                Instance.Buttons[0].Text = "OK";
+                Instance.Buttons[0].Clicked = onConfirm(confirm);
+                Instance.Buttons[0].OnLoaded();
+
+                Instance.Buttons[1] = new Button();
+                Instance.Buttons[1].Width = 64;
+                Instance.Buttons[1].Height = 28;
+                Instance.Buttons[1].X = Instance.X + Instance.Width - Instance.Buttons[1].Width - 5;
+                Instance.Buttons[1].Y = Instance.Y + Instance.Height - Instance.Buttons[1].Height - 5;
+                Instance.Buttons[1].Text = "CANCEL";
+                Instance.Buttons[1].Clicked = onCancel;
+                Instance.Buttons[1].OnLoaded();
+            }
 
             Instance.IsVisible = true;
             
-            if(icon == MessageBoxIcon.None)
+            switch(icon)
             {
-                Instance.Icon = PNG.FromFile("sys/media/menu_shutdown.png");
+                case MessageBoxIcon.ShutDown:
+                    Instance.Icon = PNG.FromFile("sys/media/menu_shutdown.png");
+                    break;
+                default:
+                    //Instance.Icon = PNG.FromFile("sys/media/menu_shutdown.png");
+                    break;
             }
 
             return Instance.Result;
+        }
+
+        static EventHandler<object> onConfirm(EventHandler<object> confirm)
+        {
+            Instance.IsVisible = false;
+            return confirm;   
         }
 
         static void onCancel(object sender, object e)

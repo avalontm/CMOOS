@@ -1,3 +1,4 @@
+
 namespace MOOS
 {
     public static unsafe class ASC16
@@ -30,6 +31,11 @@ namespace MOOS
                     }
                 }
             }
+        }
+
+        public static int MeasureString(string text)
+        {
+            return text.Length * 8;
         }
     }
 }

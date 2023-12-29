@@ -90,6 +90,12 @@ namespace MOOS.Misc
 
         private static BitFontDescriptor GetBitFontDescriptor(string FontName)
         {
+            if(RegisteredBitFont == null)
+            {
+                Panic.Error("BitFont Descriptor Not Found");
+                return null;
+            }
+
             for (int i = 0; i < RegisteredBitFont.Count; i++)
             {
                 if (RegisteredBitFont[i].Name == FontName)
@@ -128,16 +134,24 @@ namespace MOOS.Misc
 
             int Line = 0;
             int UsedX = 0;
+
             for (int i = 0; i < Text.Length; i++)
             {
                 char c = Text[i];
+               
                 if (c == '\n' || (LineWidth != -1 && UsedX + bitFontDescriptor.Size > LineWidth))
                 {
                     Line++;
                     UsedX = 0;
                     continue;
                 }
-                UsedX += BitFont.DrawChar(bitFontDescriptor.Raw, Size, Size8, color, bitFontDescriptor.Charset.IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * Line, false) + 2 + Divide;
+
+                int index = bitFontDescriptor.Charset.IndexOf(c);
+                if (index >= 0)
+                {
+                    Console.Write(c);
+                    UsedX += BitFont.DrawChar(bitFontDescriptor.Raw, Size, Size8, color, index, UsedX + X, Y + bitFontDescriptor.Size * Line, false) + 2 + Divide;
+                }
             }
 
             return UsedX;
