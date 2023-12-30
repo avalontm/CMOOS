@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -62,7 +63,15 @@ namespace Explorer
             clock.Text = GetHourAndMinute();
             clock.OnLoaded();
 
+            onStartup();
+
             onLoop();
+        }
+
+        void onStartup()
+        {
+            Wav wav = new Wav("sys/sounds/startup.wav");
+            wav.Play();
         }
 
         void onLoop()

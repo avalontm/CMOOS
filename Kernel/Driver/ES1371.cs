@@ -11,6 +11,7 @@ namespace MOOS
         internal static uint Base;
         internal static byte* Buffer;
         const int CacheSize = 0xFFFFF;
+        internal static byte IRQ;
 
         internal static void Initialize()
         {
@@ -36,7 +37,7 @@ namespace MOOS
             Native.Out32(Base + 0x20, 0x0020020C);
             Native.Out32(Base + 0x00, 0x00000020);
 
-            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
+            Interrupts.EnableInterrupt(0x20, &OnInterrupt);
             Audio.HasAudioDevice = true;
         }
 

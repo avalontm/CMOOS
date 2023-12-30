@@ -6,12 +6,10 @@ namespace MOOS.Misc
 {
     public static class Interrupts
     {
-        public delegate void INTDelegate();
-
         public unsafe class INT
         {
             public byte IRQ;
-            public INTDelegate Handler;
+            public delegate*<void> Handler;
         }
 
         public static List<INT> INTs;
@@ -39,7 +37,7 @@ namespace MOOS.Misc
 #endif
         }
 
-        public static unsafe void EnableInterrupt(byte irq, INTDelegate handler)
+        public static unsafe void EnableInterrupt(byte irq, delegate*<void> handler)
         {
 #if UseAPIC
             IOAPIC.SetEntry(irq);

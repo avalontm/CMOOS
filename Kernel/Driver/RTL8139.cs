@@ -69,7 +69,7 @@ namespace MOOS.NET
             instance = this;
 
             // Setup interrupt handling
-            Interrupts.EnableInterrupt(device.IRQ, OnInterrupt);
+            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
         }
 
         internal static void OnInterrupt()

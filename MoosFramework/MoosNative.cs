@@ -81,7 +81,24 @@ public static unsafe class MoosNative
 
     [DllImport("GetCPU")]
     public static extern ulong CPUUsage();
-    
+
+    [DllImport("SndWrite")]
+    public static extern void SndWrite(byte* buffer, uint size);
+
+    [DllImport("SndLoad")]
+    public static extern bool SndLoad(string name, out ulong size, out byte* data);
+
+    [DllImport("AudioCacheSize")]
+    public static extern int AudioCacheSize();
+
+    [DllImport("API_AudioBytesWritten")]
+    public static extern int AudioBytesWritten();
+
+    [DllImport("SndDoPlay")]
+    public static extern int SndDoPlay(delegate*<void> handler);
+
+    [DllImport("HasAudioDevice")]
+    public static extern bool HasAudioDevice();
 
     #endregion
 

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Runtime;
 using Terminal.Managers;
 using System.Runtime.InteropServices;
+using System.Media;
 
 namespace Terminal
 {
@@ -111,6 +112,9 @@ namespace Terminal
 
             switch (args[0].ToLower())
             {
+                case "play":
+                    onAudioPlay();
+                    break;
                 case "info":
                     onSystemInfo();
                     break;
@@ -164,6 +168,13 @@ namespace Terminal
             {
                 Console.WriteLine();
             }
+        }
+
+        void onAudioPlay()
+        {
+            Console.WriteLine($"HasAudioDevice: {MoosNative.HasAudioDevice()}");
+            Wav wav = new Wav("sys/sounds/shutdown.wav");
+            wav.Play();
         }
 
         void onGetTime()

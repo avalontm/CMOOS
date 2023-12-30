@@ -1,5 +1,6 @@
 using MOOS.Misc;
 using System;
+using System.Common.Extentions;
 
 namespace MOOS.Driver
 {
@@ -61,8 +62,6 @@ namespace MOOS.Driver
         public static void SetEntry(uint irq)
         {
             byte index = (byte)ACPI.RemapIRQ(irq - 0x20);
-
-            Console.WriteLine($"[SetEntry] {index} | {irq}");
             SetEntry(index, irq);
         }
     }

@@ -117,8 +117,6 @@ namespace MOOS
                     return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
                 case "Calloc":
                     return (delegate*<ulong, ulong, void*>)&API_Calloc;
-                case "SndWrite":
-                    return (delegate*<byte*, int, int>)&API_SndWrite;
                 case "ShutDown":
                     return (delegate*<void>)&API_ShutDown;
                 case "Reboot":
@@ -157,6 +155,13 @@ namespace MOOS
             if (_font != null)
             {
                 return _font;
+            }
+
+            void* _snd = AUDIO.HandleSystemCall(name);
+
+            if (_snd != null)
+            {
+                return _snd;
             }
 
             Panic.Error($"System call \"{name}\" is not found");
@@ -241,11 +246,6 @@ namespace MOOS
         public static IntPtr API_LoadPNG(string file)
         {
             return new PNG(file);
-        }
-
-        public static int API_SndWrite(byte* buffer, int len)
-        {
-            return Audio.snd_write(buffer, len);
         }
 
         public static void* API_Calloc(ulong num, ulong size)

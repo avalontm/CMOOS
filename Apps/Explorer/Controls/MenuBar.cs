@@ -16,6 +16,8 @@ namespace Explorer.Controls
         private int wContainer = 25;
         private int hContainer = 48;
 
+        private Wav snd_shutdown = null; 
+
         public MenuBar()
         {
             Width = 230;
@@ -103,6 +105,13 @@ namespace Explorer.Controls
         void onShutDown(object sender, object e)
         {
             Hide();
+
+            if (snd_shutdown == null)
+            {
+                snd_shutdown = new Wav("sys/sounds/shutdown.wav");
+            }
+
+            snd_shutdown.Play();
 
             MessageBox.Show("Are you sure to want to:", "Shut Down Moos", onShuwDownConfirm, MessageBoxButtons.YesNo, MessageBoxIcon.ShutDown);
         }

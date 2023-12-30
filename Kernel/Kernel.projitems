@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Animation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Api\APIRTC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Api\AUDIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Api\FONT.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Api\GDI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Api\MOUSE.cs" />

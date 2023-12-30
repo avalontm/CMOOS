@@ -18,7 +18,7 @@ namespace MOOS
 
         public static bool Initialize()
         {
-            Interrupts.EnableInterrupt(0x21, OnInterrupt);
+            Interrupts.EnableInterrupt(0x21, &OnInterrupt);
             keyChars = new char[]
             {
                 '\0','\0','1','2','3','4','5','6','7','8','9','0','-','=','\b',' ',
