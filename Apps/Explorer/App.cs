@@ -46,8 +46,9 @@ namespace Explorer
             start = new Button();
             start.X = 5;
             start.Y = screenHeight - 42;
-            start.Width = 75;
+            start.Width = 90;
             start.Height = 38;
+            start.Icon = PNG.FromFile("sys/media/Start.png").ResizeImage(24,24);
             start.Text = "start";
             start.Clicked = start_clicked;
             start.OnLoaded();

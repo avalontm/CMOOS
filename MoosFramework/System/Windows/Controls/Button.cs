@@ -9,6 +9,7 @@ namespace System.Windows.Controls
     {
         public string Text { set; get; }
         public EventHandler<object> Clicked { set; get; }
+        public Image Icon { get; set; }
 
         public Button() : base()
         {
@@ -58,9 +59,21 @@ namespace System.Windows.Controls
                     GDI.FillRectangle(X, Y, Width, Height, Background.ARGB);
                 }
 
+                if (Icon != null)
+                {
+                    GDI.DrawImage(X + 5, (Y + (Icon.Height / 3)), Icon, true);
+                }
+
                 if (!string.IsNullOrEmpty(Text))
                 {
-                    FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
+                    if (Icon != null)
+                    {
+                        FontManager.font.DrawString((X + 5 + Width + Icon.Width) / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
+                    }
+                    else
+                    {
+                        FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Text) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Text, Foreground);
+                    }
                 }
 
                 if (IsUnderMouse() && Mouse.Buttons == MouseButtons.Left)
