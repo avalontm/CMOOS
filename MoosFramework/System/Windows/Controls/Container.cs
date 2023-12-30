@@ -17,8 +17,8 @@ namespace System.Windows.Controls
         {
             X = 0;
             Y = 0;
-            Width = 120;
-            Height = 42;
+            Width = 100;
+            Height = 35;
             Background = Color.FromArgb(0xFFC3C7CB);
             Foreground = Color.Black;
             BorderBrush = Color.FromArgb(0xFFFFFFFF);
@@ -71,17 +71,17 @@ namespace System.Windows.Controls
         {
             if (IsLoaded && IsVisible)
             {
-                //white
-                GDI.DrawLine(X, Y, X + Width, Y, 0xFFFFFFFF);
-                GDI.DrawLine(X, Y, X, Y + Height - 2, 0xFFFFFFFF);
+                //gray
+                GDI.DrawLine(X, Y, X + Width, Y, 0xFF868a8e);
+                GDI.DrawLine(X, Y, X, Y + Height - 2, 0xFF868a8e);
 
                 //gray
                 GDI.DrawLine(X + Width, Y, X + Width, Y + Height - 2, 0xFF868a8e);
                 GDI.DrawLine(X - 2, Y + Height - 1, X + Width, Y + Height - 1, 0xFF868a8e);
 
-                //black
-                GDI.DrawLine(X + Width + 1, Y, X + Width + 1, Y + Height - 1, 0xFF000000);
-                GDI.DrawLine(X - 2, Y + Height, X + Width, Y + Height, 0xFF000000);
+                //white
+                GDI.DrawLine(X + Width + 1, Y, X + Width + 1, Y + Height - 1, 0xFFFFFFFF);
+                GDI.DrawLine(X - 2, Y + Height, X + Width, Y + Height, 0xFFFFFFFF);
             }
         }
     }

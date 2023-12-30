@@ -103,6 +103,10 @@ namespace MOOS
                     return (delegate*<string, void>)&API_WriteString;
                 case "GetTime":
                     return (delegate*<ulong>)&API_GetTime;
+                case "GetCPU":
+                    return (delegate*<uint>)&API_Get_CPUUsage;
+                case "GetMemory":
+                    return (delegate*<ulong>)&API_GetMemory;
                 case "Error":
                     return (delegate*<string, bool, void>)&API_Error;
                 case "StartThread":
@@ -295,6 +299,17 @@ namespace MOOS
             time |= second << 8;
 
             return time;
+        }
+
+
+        public static uint API_Get_CPUUsage()
+        {
+            return ThreadPool.CPUUsage;
+        }
+
+        public static ulong API_GetMemory()
+        {
+            return Allocator.MemoryInUse;
         }
 
         public static void API_WriteString(string s)

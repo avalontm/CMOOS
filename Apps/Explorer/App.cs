@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,9 +19,6 @@ namespace Explorer
 {
     public unsafe partial class App : UIApplication
     {
-        [DllImport("GetTime")]
-        public static extern ulong GetTime();
-        
         static Image Wallpaper = null;
         static int screenWidth = 0;
         static int screenHeight = 0;
@@ -29,7 +27,6 @@ namespace Explorer
         static Container clock = null;
         static Point LastPoint = new Point();
         static FPSMeter pfs = null;
-        static ulong time = 0;
 
         public App() 
         {
@@ -59,13 +56,10 @@ namespace Explorer
             menu.Y = (screenHeight - 48) - menu.Height;
             menu.OnLoaded();
 
-            time = GetTime();
-           // var (hour, minute) = GetHourAndMinute(time);
-
             clock = new Container();
             clock.X = screenWidth - clock.Width - 5;
-            clock.Y = screenHeight - clock.Height;
-            clock.Text = $"{time}";//$"{hour}:{(minute < 10 ? "0" : "")}{minute}";
+            clock.Y = screenHeight - clock.Height -5;
+            clock.Text = GetHourAndMinute();
             clock.OnLoaded();
 
             onLoop();
@@ -75,12 +69,7 @@ namespace Explorer
         {
             while(GetProcess(processID) != IntPtr.Zero)
             {
-                time = GetTime();
-                //var (hour, minute) = GetHourAndMinute(time);
-
                 pfs.Update();
-
-                clock.Text = $"{time}";// $"{hour}:{(minute < 10 ? "0" : "")}{minute}";
 
                 CursorManager.Update();
                 start.OnUpdate();
@@ -93,7 +82,8 @@ namespace Explorer
 
                 DrawMessagBox();
 
-                FontManager.font.DrawString(0, 0, string.Format("FPS: {0}", pfs.FPS), 0xFFFFFFFF);
+                string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes";
+                FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
 
                 CursorManager.Draw();
 
@@ -101,16 +91,18 @@ namespace Explorer
             }
         }
 
-        (int hour, int minute) GetHourAndMinute(ulong time)
+        string GetHourAndMinute()
         {
+            ulong time = MoosNative.GetTime();
+
             ulong hourMask = 0xFF000000; // Máscara para aislar la hora
             ulong minuteMask = 0x00FF0000; // Máscara para aislar los minutos
 
-            // Obtiene la hora y los minutos utilizando las máscaras y desplazamientos
+            //Obtiene la hora y los minutos utilizando las máscaras y desplazamientos
             int hour = (int)((time & hourMask) >> 24);
             int minute = (int)((time & minuteMask) >> 16);
 
-            return (hour, minute);
+            return $"{hour}:{(minute < 10 ? "0" : "")}{minute}";
         }
 
         void DrawMessagBox()
@@ -195,6 +187,7 @@ namespace Explorer
 
             start.OnDraw();
             menu.OnDraw();
+            clock.Text = GetHourAndMinute();
             clock.OnDraw();
         }
 

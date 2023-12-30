@@ -5,9 +5,12 @@ using Moos.Core.System.Windows;
 using MOOS;
 using MOOS.Driver;
 using MOOS.Misc;
+using MOOS.NET;
+using MOOS.NET.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -102,23 +105,21 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
-        /*
+  /*
         #region NETWORK
 
         //Network Config (AvalonTM)
         Network.Initialize();
         NetworkStack.Initialize();
 
-        Timer.Sleep(100);
-        
+
         if (NetworkDevice.Devices.Count > 0)
         {
             //Send a DHCP Discover packet 
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             int result = xClient.SendDiscoverPacket();
-            Timer.Sleep(100);
-            
+
             HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
             var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
             Console.WriteLine($"[RESPONSE] {response.Content}");
@@ -178,7 +179,7 @@ unsafe class Program
         }
 
         string shell = dictionary["terminal"];
-        var explorer = System.Diagnostics.Process.Start($"sys/app/terminal.mue");
+        System.Diagnostics.Process.Start($"sys/app/terminal.mue");
         
         bytes.Dispose();
         texto.Dispose();

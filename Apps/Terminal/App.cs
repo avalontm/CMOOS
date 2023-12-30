@@ -114,6 +114,9 @@ namespace Terminal
                 case "info":
                     onSystemInfo();
                     break;
+                case "time":
+                    onGetTime();
+                    break;
                 case "pid":
                     Console.WriteLine("Proceso: " + processID);
                     break;
@@ -161,6 +164,20 @@ namespace Terminal
             {
                 Console.WriteLine();
             }
+        }
+
+        void onGetTime()
+        {
+            ulong time = MoosNative.GetTime();
+
+            ulong hourMask = 0xFF000000; // Máscara para aislar la hora
+            ulong minuteMask = 0x00FF0000; // Máscara para aislar los minutos
+
+            //Obtiene la hora y los minutos utilizando las máscaras y desplazamientos
+            int hour = (int)((time & hourMask) >> 24);
+            int minute = (int)((time & minuteMask) >> 16);
+
+            Console.WriteLine($"{hour}:{(minute < 10 ? "0" : "")}{minute}");
         }
 
         void onTaskKill(string[] args)

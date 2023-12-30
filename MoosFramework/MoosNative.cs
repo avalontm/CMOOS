@@ -72,6 +72,17 @@ public static unsafe class MoosNative
     public static void SecurityCookie()
     { 
     }
+
+    [DllImport("GetTime")]
+    public static extern ulong GetTime();
+
+    [DllImport("GetMemory")]
+    public static extern uint MemoryInUse();
+
+    [DllImport("GetCPU")]
+    public static extern ulong CPUUsage();
+    
+
     #endregion
 
 }
