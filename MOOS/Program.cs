@@ -178,13 +178,17 @@ unsafe class Program
             }
         }
 
-        string shell = dictionary["terminal"];
+        string terminal = dictionary["terminal"];
+        string explorer = dictionary["shell"];
+        Console.WriteLine($"terminal: {terminal}");
+        Console.WriteLine($"explorer: {explorer}");
+        Console.ReadKey();
         System.Diagnostics.Process.Start($"sys/app/terminal.mue");
         
         bytes.Dispose();
         texto.Dispose();
         lineas.Dispose();
-        shell.Dispose();
+        terminal.Dispose();
 
         for (; ; )
         {

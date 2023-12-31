@@ -4,36 +4,55 @@ namespace System.Collections.Generic
 {
     public class List<T>
     {
-        private T[] _value;
+        private T[] _items;
+        private int _size;
+        private int _capacity;
 
-        public int Count = 0;
-
-        public List(int initsize = 256)
+        public List(int capacity = 1)
         {
-            _value = new T[initsize];
+            _items = new T[capacity];
+            _size = 0;
+            _capacity = capacity;
         }
 
         public List(T[] t)
         {
-            _value = t;
+            _items = t;
+            _size = t.Length;
+            _capacity = _size;
+        }
+
+        public int Count
+        {
+            get
+            {
+                return _size;
+            }
         }
 
         public T this[int index]
         {
             get
             {
-                return _value[index];
+                return _items[index];
             }
             set
             {
-                _value[index] = value;
+                _items[index] = value;
             }
         }
 
         public void Add(T t)
         {
-            _value[Count] = t;
-            Count++;
+            if (_capacity <= _size)
+            {
+                var _new = new T[_size + 1];
+                Array.Copy(_items, ref _new, 0);
+                _items = _new;
+                _capacity++;
+            }
+
+            _items[_size++] = t;
         }
 
         public void Insert(int index, T item, bool internalMove = false)
@@ -42,22 +61,22 @@ namespace System.Collections.Generic
             //if (index == IndexOf(item)) return;
 
             if (!internalMove)
-                Count++;
+                _size++;
 
             if (internalMove)
             {
                 int _index = IndexOf(item);
                 for (int i = _index; i < Count - 1; i++)
                 {
-                    _value[i] = _value[i + 1];
+                    _items[i] = _items[i + 1];
                 }
             }
 
             for (int i = Count - 1; i > index; i--)
             {
-                _value[i] = _value[i - 1];
+                _items[i] = _items[i - 1];
             }
-            _value[index] = item;
+            _items[index] = item;
         }
 
         public T[] ToArray()
@@ -77,7 +96,7 @@ namespace System.Collections.Generic
                 T first = this[i];
                 T second = item;
 
-                if (this[i] == item)
+                if (this[i].Equals( item))
                     return i;
             }
 
@@ -97,25 +116,26 @@ namespace System.Collections.Generic
 
         public void RemoveAt(int index)
         {
-            Count--;
+            Console.WriteLine($"RemoveAt: {index}");
+            _size--;
 
             for (int i = index; i < Count; i++)
             {
-                _value[i] = _value[i + 1];
+                _items[i] = _items[i + 1];
             }
 
-            _value[Count] = default(T);
+            _items[Count] = default(T);
         }
 
         public override void Dispose()
         {
-            _value.Dispose();
+            _items.Dispose();
             base.Dispose();
         }
 
         public void Clear()
         {
-            Count = 0;
+            _size = 0;
         }
     }
 }

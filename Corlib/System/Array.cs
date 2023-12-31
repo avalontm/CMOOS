@@ -173,7 +173,7 @@ namespace System
 
 		public static void Copy<T>(T[] sourceArray, ref T[] destinationArray, int startIndex)
 		{
-			Copy(sourceArray, ref destinationArray, startIndex, sourceArray.Length);
+			Copy(sourceArray, ref destinationArray, startIndex, destinationArray.Length);
 		}
 
 		public static void Copy(Array sourceArray, ref Array destinationArray, int startIndex, int count)
@@ -203,7 +203,7 @@ namespace System
 
 			int x = 0;
 			object[] temp = new object[count];
-			for (int i = startIndex; i < startIndex + count; i++)
+			for (int i = startIndex; i < sourceArray.Length; i++)
 			{
 				temp[x] = sourceArray[i];
 				x++;
@@ -238,7 +238,7 @@ namespace System
 
 			int x = 0;
 			T[] temp = new T[count];
-			for (int i = startIndex; i < startIndex + count; i++)
+			for (int i = startIndex; i < sourceArray.Length; i++)
 			{
 				temp[x] = sourceArray[i];
 				x++;

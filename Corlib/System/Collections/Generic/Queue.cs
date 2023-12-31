@@ -1,23 +1,25 @@
+using System.Drawing;
+
 namespace System.Collections.Generic
 {
     public class Queue<T>
     {
-        List<T> list;
+        T[] _items;
+        int _size;
+        int _capacity;
 
-        public Queue(int initsize = 256)
+        public Queue(int capacity = 1)
         {
-            list = new List<T>(initsize);
+            _items = new T[capacity];
+            _size = 0;
+            _capacity = capacity;
         }
 
         public T Tail 
         {
             get 
             {
-                if (Count == 0) return default;
-                else 
-                {
-                    return list[list.Count - 1];
-                }
+               return _items[_size];
             }
         }
 
@@ -25,28 +27,30 @@ namespace System.Collections.Generic
         {
             get
             {
-                if (Count == 0) return default;
-                else
-                {
-                    return list[0];
-                }
+                return _items[0];
             }
         }
 
-        public int Count => list.Count;
-
-
         public void Enqueue(T item)
         {
-            list.Add(item);
+            if (_capacity <= _size)
+            {
+                var _new = new T[_size + 1];
+                Array.Copy(_items, ref _new, 0);
+                _items = _new;
+                _capacity++;
+            }
+
+            _items[_size++] = item;
         }
 
         public T Dequeue()
         {
-            if (list.Count == 0) return default;
-
-            list.Count--;
-            return list[list.Count];
+            var res = _items[0];
+            for (int i = 1; i < _size; i++)
+                _items[i - 1] = _items[i];
+            _size--;
+            return res;
         }
 
         public T Peek()
@@ -54,5 +58,23 @@ namespace System.Collections.Generic
             return Head;
         }
 
+        public int Count
+        {
+            get
+            {
+                return _size;
+            }
+        }
+
+        public void Clear()
+        {
+            _size = 0;
+        }
+
+        public override void Dispose()
+        {
+            _items.Dispose();
+            base.Dispose();
+        }
     }
 }
