@@ -51,6 +51,14 @@ namespace MOOS
                     return (delegate*<void>)&API_ConsoleWriteLine;
                 case "ConsoleClear":
                     return (delegate*<void>)&API_ConsoleClear;
+                case "ConsoleSetBackgroundColor":
+                     return (delegate*<uint, void>)&API_ConsoleSetBackgroundColor;
+                case "ConsoleGetBackgroundColor":
+                    return (delegate*<uint>)&API_ConsoleGetBackgroundColor;
+                case "ConsoleSetForegroundColor":
+                    return (delegate*<uint, void>)&API_ConsoleSetForegroundColor;
+                case "ConsoleGetForegroundColor":
+                    return (delegate*<uint>)&API_ConsoleGetForegroundColor;
                 case "Allocate":
                     return (delegate*<ulong, nint>)&API_Allocate;
                 case "Reallocate":
@@ -75,6 +83,8 @@ namespace MOOS
                     return (delegate*<char, void>)&API_ConsoleWrite;
                 case "ConsoleReadLine":
                     return (delegate*<byte**, void>)&API_ConsoleReadLine;
+                case "ConsoleReadKey":
+                    return (delegate*<uint>)&API_ConsoleReadKey;
                 case "ConsoleReadLineWithStart":
                     return (delegate*<int, byte**, void>)&API_ConsoleReadLineWithStart;
                 case "SwitchToMode":
@@ -168,6 +178,26 @@ namespace MOOS
             return null;
         }
 
+        private static void API_ConsoleSetBackgroundColor(uint color)
+        {
+            Console.BackgroundColor = (ConsoleColor)color;
+        }
+
+        public static uint API_ConsoleGetBackgroundColor()
+        {
+          return  (uint)Console.BackgroundColor;
+        }
+
+        private static void API_ConsoleSetForegroundColor(uint color)
+        {
+            Console.ForegroundColor = (ConsoleColor)color;
+        }
+
+        public static uint API_ConsoleGetForegroundColor()
+        {
+            return (uint)Console.ForegroundColor;
+        }
+
         public static void API_NativeHlt()
         {
             Native.Hlt();
@@ -207,7 +237,7 @@ namespace MOOS
         {
             for (int i = 0; i < process.Count; i++)
             {
-                if (process[i].ProcessID == processID)
+                if (process[i] != null && process[i].ProcessID == processID)
                 {
                     return process[i];
                 }
@@ -224,6 +254,7 @@ namespace MOOS
                 {
                     ThreadPool.Threads[i].State = ThreadState.Dead;
                     process[i].Dispose();
+                    process[i] = null;
                     ThreadPool.Schedule_Next();
                     return true;
                 }
@@ -357,6 +388,13 @@ namespace MOOS
         public static void API_ConsoleClear()
         {
             Console.Clear();
+        }
+
+        public static uint API_ConsoleReadKey()
+        {
+            var key = Console.ReadKey();
+
+            return (uint)key.KeyChar;
         }
 
         public static void API_ConsoleReadLine(byte** data)

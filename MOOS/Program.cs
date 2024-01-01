@@ -149,8 +149,6 @@ unsafe class Program
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 
-        Console.WriteLine($"[Startup]");
-
         byte[] bytes = System.IO.File.ReadAllBytes("startup.ini");
 
         // Convierte los bytes a texto
@@ -179,10 +177,6 @@ unsafe class Program
         }
 
         string terminal = dictionary["terminal"];
-        string explorer = dictionary["shell"];
-        Console.WriteLine($"terminal: {terminal}");
-        Console.WriteLine($"explorer: {explorer}");
-        Console.ReadKey();
         System.Diagnostics.Process.Start($"sys/app/terminal.mue");
         
         bytes.Dispose();

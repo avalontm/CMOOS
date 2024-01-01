@@ -9,19 +9,28 @@ namespace System.Windows
     public partial class Window : Widget
     {
         public string Title { get; set; }
-        public EventHandler<object> Close { set; get; }
 
         public Window() : base()
         {
             X = 0;
             Y = 0;
             Width = 300;
-            Height = 42;
+            Height = 280;
             Background = Color.FromArgb(0xFFC3C7CB);
             Foreground = Color.Black;
             BorderBrush = Color.FromArgb(0xFFFFFFFF);
 
             IsVisible = true;
+        }
+
+        public void ShowDialog()
+        {
+            this.IsVisible = true;
+        }
+
+        public void Close()
+        {
+            this.IsVisible = false;
         }
 
         public override void OnLoaded()
@@ -59,10 +68,7 @@ namespace System.Windows
                     GDI.FillRectangle(X, Y, Width, Height, Background.ARGB);
                 }
 
-                if (!string.IsNullOrEmpty(Title))
-                {
-                    FontManager.font.DrawString(X + Width / 2 - FontManager.font.MeasureString(Title) / 2 - 1, Y + Height / 2 - FontManager.font.Size / 2 + 2, Title, Foreground);
-                }
+                DrawTitleBar();
 
                 if (IsUnderMouse() && Mouse.Buttons == MouseButtons.Left)
                 {
@@ -72,6 +78,16 @@ namespace System.Windows
                 {
                     DrawNormalBorder();
                 }
+            }
+        }
+
+        void DrawTitleBar()
+        {
+            GDI.FillRectangle(X + 2, Y + 2, Width - 6, 28, 0xFF0000AA);
+
+            if (!string.IsNullOrEmpty(Title))
+            {
+                FontManager.font.DrawString(X + 5, (Y + 28 / 2) - (FontManager.font.Size / 2) + 4, Title, 0xFFFFFFFF);
             }
         }
 

@@ -47,42 +47,27 @@ namespace MOOS.Api
 
         public static void API_DrawRectangle(int x, int y, int wight, int height, uint color)
         {
-            if (Framebuffer.TripleBuffered)
-            {
-                Framebuffer.Graphics.DrawRectangle(x, y, wight, height, color);
-            }
+            Framebuffer.Graphics.DrawRectangle(x, y, wight, height, color);
         }
 
         public static void API_AFillRectangle(int x, int y, int wight, int height, uint color)
         {
-            if (Framebuffer.TripleBuffered)
-            {
-                Framebuffer.Graphics.AFillRectangle(x, y, wight, height, color);
-            }
+            Framebuffer.Graphics.AFillRectangle(x, y, wight, height, color);
         }
 
         public static void API_FillRectangle(int x, int y, int wight, int height, uint color)
         {
-            if (Framebuffer.TripleBuffered)
-            {
-                Framebuffer.Graphics.FillRectangle(x, y, wight, height, color);
-            }
+            Framebuffer.Graphics.FillRectangle(x, y, wight, height, color);
         }
 
         public static void API_DrawPoint(int x, int y, uint color, bool alpha)
         {
-            if (Framebuffer.TripleBuffered)
-            {
-                Framebuffer.Graphics.DrawPoint(x, y, color, alpha);
-            }
+            Framebuffer.Graphics.DrawPoint(x, y, color, alpha);
         }
 
         public static void API_DrawLine(int x0, int y0, int x1, int y1, uint color)
         {
-            if (Framebuffer.TripleBuffered)
-            {
-                Framebuffer.Graphics.DrawLine(x0, y0, x1, y1, color);
-            }
+            Framebuffer.Graphics.DrawLine(x0, y0, x1, y1, color);
         }
 
         public static void API_DrawClear()

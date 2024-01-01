@@ -17,7 +17,7 @@ using System.Windows.Forms;
 
 namespace MoosExplorer
 {
-    public static unsafe class MoosExplorer
+    public static unsafe class Program
     {
         #region NativeMethods
         [RuntimeExport("malloc")]

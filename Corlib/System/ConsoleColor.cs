@@ -17,6 +17,6 @@ namespace System
         LightRed = 0xC,
         LightPurple = 0xD,
         Yellow = 0xE,
-        White = 0xF
+        White = 0xF,
     }
 }

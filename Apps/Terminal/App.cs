@@ -153,10 +153,14 @@ namespace Terminal
                         }
                         else
                         {
-                            while (process != null && GetProcess(process.ProcessID) != IntPtr.Zero)
+                            while (GetProcess(process.ProcessID) != IntPtr.Zero)
                             {
 
                             }
+
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Clear();
 
                             return;
                         }

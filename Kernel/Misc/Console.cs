@@ -20,23 +20,22 @@ namespace MOOS
         private static uint[] ColorsFB;
 
         public static ConsoleColor ForegroundColor;
+        public static ConsoleColor BackgroundColor;
 
         internal static void Setup()
         {
             OnWrite = null;
 
-            Clear();
-
             ColorsFB = new uint[16]
             {
                 Color.Black.ToArgb(),
-                Color.Blue.ToArgb(),
+                Color.BlueDark.ToArgb(),
                 Color.Green.ToArgb(),
                 Color.Cyan.ToArgb(),
                 Color.Red.ToArgb(),
                 Color.Purple.ToArgb(),
                 Color.Brown.ToArgb(),
-                Color.Gray.ToArgb(),
+                Color.GrayLight.ToArgb(),
                 Color.DarkGray.ToArgb(),
                 Color.LightBlue.ToArgb(),
                 Color.LightGreen.ToArgb(),
@@ -48,6 +47,10 @@ namespace MOOS
             };
 
             ForegroundColor = ConsoleColor.White;
+            BackgroundColor = ConsoleColor.Black;
+
+            Clear();
+
         }
 
         public static void Wait(ref bool b)
@@ -249,7 +252,7 @@ namespace MOOS
             {
                 int X = (Framebuffer.Graphics.Width / 2) - ((Width * 8) / 2) + (CursorX * 8);
                 int Y = (Framebuffer.Graphics.Height / 2) - ((Height * 16) / 2) + (CursorY * 16);
-                Framebuffer.Graphics.FillRectangle(X, Y, 8, 16, 0x0);
+                Framebuffer.Graphics.FillRectangle(X, Y, 8, 16, ColorsFB[(int)BackgroundColor]);
                 ASC16.DrawChar(chr, X, Y, ColorsFB[(int)ForegroundColor]);
             }
         }
@@ -392,10 +395,17 @@ namespace MOOS
         {
             if (Framebuffer.VideoMemory != null && !Framebuffer.TripleBuffered)
             {
+                uint color = 0x0;
+
+                if (ColorsFB != null)
+                {
+                    color = ColorsFB[(int)ForegroundColor];
+                }
+
                 ASC16.DrawChar('_',
                             (Framebuffer.Graphics.Width / 2) - ((Width * 8) / 2) + ((CursorX) * 8),
                             (Framebuffer.Graphics.Height / 2) - ((Height * 16) / 2) + (CursorY * 16),
-                            0xFFFFFFFF
+                            color
                             );
             }
         }
@@ -432,16 +442,23 @@ namespace MOOS
 
         private static void ClearFramebuffer()
         {
-            if (Framebuffer.VideoMemory != null && !Framebuffer.TripleBuffered) 
+            if (Framebuffer.VideoMemory != null && !Framebuffer.TripleBuffered)
             {
+                uint color = 0x0;
+
+                if (ColorsFB != null)
+                {
+                    color = ColorsFB[(int)BackgroundColor];
+                }
                 Framebuffer.Graphics.FillRectangle
                     (
                             (Framebuffer.Graphics.Width / 2) - ((Width * 8) / 2) + ((CursorX) * 8),
                             (Framebuffer.Graphics.Height / 2) - ((Height * 16) / 2) + (CursorY * 16),
                             Width * 8,
                             Height * 16,
-                            0x0
+                            color
                     );
+
             }
         }
     }

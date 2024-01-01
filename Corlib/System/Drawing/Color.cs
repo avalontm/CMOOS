@@ -142,6 +142,8 @@ namespace System.Drawing
         public static Color Yellow { get { return FromArgb(255, 255, 0); } }
         public static Color LightPink { get { return FromArgb(255, 182, 193); } }
         public static Color YellowGreen { get { return FromArgb(154, 205, 50); } }
+        public static Color BlueDark { get { return FromArgb(0, 0, 170); } }
+        public static Color GrayLight { get { return FromArgb(170, 170, 170); } }
 
 
         public uint ARGB;
@@ -197,6 +199,7 @@ namespace System.Drawing
                 ARGB |= (uint)(value << 0);
             }
         }
+
 
         public uint ToArgb()
         {

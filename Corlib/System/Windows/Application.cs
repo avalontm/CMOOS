@@ -43,7 +43,7 @@ namespace System.Windows
 
         public void Run()
         {
-            for(; ; )
+            while (GetProcess(processID) != IntPtr.Zero)
             {
 
             }

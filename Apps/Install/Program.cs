@@ -15,9 +15,9 @@ using Terminal;
 using Terminal.Managers;
 
 
-namespace MoosExplorer
+namespace Install
 {
-    public static unsafe class MoosTerminal
+    public static unsafe class Program
     {
         [RuntimeExport("Main")]
         public static void Main()
