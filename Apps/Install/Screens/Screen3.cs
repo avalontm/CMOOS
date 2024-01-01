@@ -25,7 +25,7 @@ namespace Install.Screens
             GDI.DrawRectangle(15, App.screenHeight - 75, max, 32, App.Gray.ToArgb());
             GDI.FillRectangle(20, App.screenHeight - 70, progressWidth, 22, App.Green.ToArgb());
 
-            MoosNative.Sleep(100);
+            MoosNative.Sleep(50);
 
             if (progress < 100)
             {
