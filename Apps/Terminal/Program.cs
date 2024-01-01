@@ -15,7 +15,7 @@ using Terminal;
 using Terminal.Managers;
 
 
-namespace MoosExplorer
+namespace Terminal
 {
     public static unsafe class Program
     {

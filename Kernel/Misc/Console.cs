@@ -272,6 +272,10 @@ namespace MOOS
                     case ConsoleKey.Backspace:
                         Console.Back();
                         break;
+                    case ConsoleKey.Up:
+                    case ConsoleKey.Down:
+                    case ConsoleKey.Left:
+                    case ConsoleKey.Right:
                     default:
                         Console.Write(Keyboard.KeyInfo.KeyChar);
                         break;
@@ -295,6 +299,10 @@ namespace MOOS
                     case ConsoleKey.Backspace:
                         Console.Back(start);
                         break;
+                    case ConsoleKey.Up:
+                    case ConsoleKey.Down:
+                    case ConsoleKey.Left:
+                    case ConsoleKey.Right:
                     default:
                         Console.Write(Keyboard.KeyInfo.KeyChar);
                         break;

@@ -100,6 +100,9 @@ public static unsafe class MoosNative
     [DllImport("HasAudioDevice")]
     public static extern bool HasAudioDevice();
 
+    [DllImport("Sleep")]
+    public static extern bool Sleep(ulong ms);
+
     #endregion
 
 }

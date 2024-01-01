@@ -14,6 +14,15 @@ namespace System.Diagnostics
         public IntPtr Handler { get; set; }
         public IntPtr Draw { get; set; }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            ProcessID = 0;
+            Handler = IntPtr.Zero;
+            Draw = IntPtr.Zero;
+            startInfo = null;
+        }
+
         public Process()
         {
             startInfo = new ProcessStartInfo();
@@ -68,18 +77,12 @@ namespace System.Diagnostics
                 process.startInfo.Arguments = arguments;
 
                 //Start Process
-                StartThreadWithParameters(p, process);
+                IntPtr handler = StartThreadWithParameters(p, process);
+
+                process = Unsafe.As<IntPtr, Process>(ref handler);
             }
 
-            while (process.Handler == IntPtr.Zero)
-            {
-                Hlt();
-            }
-
-            while (process.Draw == IntPtr.Zero)
-            {
-                Hlt(); //Detenemos el cpu
-            }
+            Hlt();
 
             // IMPORTANTE ACTIVAR //
             Cli(); //Reactivamos el cpu

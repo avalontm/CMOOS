@@ -84,7 +84,7 @@ namespace MOOS
                 case "ConsoleReadLine":
                     return (delegate*<byte**, void>)&API_ConsoleReadLine;
                 case "ConsoleReadKey":
-                    return (delegate*<uint>)&API_ConsoleReadKey;
+                    return (delegate*<byte>)&API_ConsoleReadKey;
                 case "ConsoleReadLineWithStart":
                     return (delegate*<int, byte**, void>)&API_ConsoleReadLineWithStart;
                 case "SwitchToMode":
@@ -239,7 +239,10 @@ namespace MOOS
             {
                 if (process[i] != null && process[i].ProcessID == processID)
                 {
-                    return process[i];
+                    if (ThreadPool.Threads[i].State != ThreadState.Dead)
+                    {
+                        return (IntPtr)process[i];
+                    }
                 }
             }
 
@@ -264,7 +267,17 @@ namespace MOOS
 
         public static uint API_GetCurrentProcess()
         {
-            return process[process.Count-1].ProcessID;
+            for(int i = process.Count -1; i >= 0; i--)
+            {
+                if (process[i] != null)
+                {
+                    if (ThreadPool.Threads[i].State != ThreadState.Dead)
+                    {
+                        return process[i].ProcessID;
+                    }
+                }
+            }
+            return -1;
         }
 
         public static uint API_ApplicationCreate(IntPtr handler)
@@ -301,7 +314,7 @@ namespace MOOS
             Process _process = Unsafe.As<IntPtr, Process>(ref handler);
             _process.ProcessID = thread.ProcessID;
             process.Add(_process);
-            return _process;
+            return (IntPtr)_process;
         }
 
         public static void API_Error(string s, bool skippable)
@@ -390,11 +403,11 @@ namespace MOOS
             Console.Clear();
         }
 
-        public static uint API_ConsoleReadKey()
+        public static byte API_ConsoleReadKey()
         {
             var key = Console.ReadKey();
 
-            return (uint)key.KeyChar;
+            return (byte)key.Key;
         }
 
         public static void API_ConsoleReadLine(byte** data)

@@ -12,6 +12,7 @@ using System.Media;
 using Moos.Framework.Graphics;
 using System.Windows.Media;
 using Moos.Framework.Fonts;
+using Install.Screens;
 
 
 namespace Install
@@ -77,13 +78,13 @@ namespace Install
 
         #endregion
 
-        static int screenWidth = 0;
-        static int screenHeight = 0;
+        public static int screenWidth = 0;
+        public static int screenHeight = 0;
         public static Color Gray = null;
         public static Color Black = null;
+        public static Color Green = null;
 
-        static bool LoadedScreen =false;
-        static int IndexScreen = 0;
+        public static int IndexScreen = 0;
 
         public App()
         {
@@ -94,6 +95,7 @@ namespace Install
 
             Gray = new Color(170, 170, 170);
             Black = new Color(0, 0, 0);
+            Green = new Color(183, 235, 52);
 
             Console.BackgroundColor = ConsoleColor.Blue;
             Console.ForegroundColor = ConsoleColor.Gray;
@@ -109,57 +111,18 @@ namespace Install
                 switch (IndexScreen)
                 {
                     case 0:
-                        Screen1();
+                        Screen1.Draw();
                         break;
                     case 1:
-                        Screen2();
+                        Screen2.Draw();
+                        break;
+                    case 2:
+                        Screen3.Draw();
                         break;
                     default:
                         KillProcess(processID);
                     break;
                 }
-            }
-        }
-
-
-        void Screen1()
-        {
-            Console.Clear();
-
-            LoadedScreen = true;
-            FontManager.font.DrawString(5, 5, "CMOOS 95 Setup", Gray.ToArgb());
-
-            GDI.FillRectangle(0, screenHeight - 28, screenWidth, 32, Gray.ToArgb());
-            FontManager.font.DrawString(5, screenHeight - 20, "ENTER=Continue", Black.ToArgb());
-
-            char c = Console.ReadKey();
-
-            if (c == '\n')
-            {
-                LoadedScreen = false;
-                IndexScreen = 1;
-            }
-
-        }
-
-        void Screen2()
-        {
-            Console.Clear();
-
-            LoadedScreen = true;
-            FontManager.font.DrawString(5, 5, "CMOOS 95 Setup", Gray.ToArgb());
-            FontManager.font.DrawString(5, 20, "Select Drive", Gray.ToArgb());
-
-            GDI.FillRectangle(0, screenHeight - 28, screenWidth, 32, Gray.ToArgb());
-            FontManager.font.DrawString(5, screenHeight - 20, "ENTER=Continue", Black.ToArgb());
-
-
-            char c = Console.ReadKey();
-
-            if (c == '\n')
-            {
-                LoadedScreen = false;
-                IndexScreen = 2;
             }
         }
     }

@@ -116,15 +116,20 @@ namespace System.Collections.Generic
 
         public void RemoveAt(int index)
         {
-            Console.WriteLine($"RemoveAt: {index}");
-            _size--;
-
-            for (int i = index; i < Count; i++)
+            var _new = new T[_size-1];
+            int a = 0;
+            for (int i = 0; i < Count; i++)
             {
-                _items[i] = _items[i + 1];
+                if (i != index)
+                {
+                    _new[a] = _items[i];
+                    a++;
+                }
             }
 
-            _items[Count] = default(T);
+            _items = _new;
+            _size--;
+            _capacity--;
         }
 
         public override void Dispose()

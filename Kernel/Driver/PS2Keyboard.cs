@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Copyright (c) 2022 nifanfa, This code is part of the OS-Sharp licensed under the MIT licence.
 */
 
@@ -25,8 +25,8 @@ namespace MOOS
                 'q','w','e','r','t','y','u','i','o','p','[',']','\n','\0',
                 'a','s','d','f','g','h','j','k','l',';','\'','`','\0','\\',
                 'z','x','c','v','b','n','m',',','.','/','\0','\0','\0',' ','\0',
-                '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','-',
-                '\0','\0','\0','+','\0','\0','\0','\0','\b','/','\n','\0','\0','\0','\b','\0','\0'
+                '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','↑','\0','-',
+                '←','\0','→','+','\0','↓','\0','\0','\b','/','\n','\0','\0','\0','\b','\0','\0'
                 ,'\0','\0','\0','\0','\0','\0','\0','\0','\0'
             };
 
@@ -92,6 +92,7 @@ namespace MOOS
                 Keyboard.KeyInfo.KeyChar = Keyboard.KeyInfo.Modifiers.HasFlag(ConsoleModifiers.CapsLock) ? keyCharsShift[b].ToUpper() : keyCharsShift[b];
             }
 
+
             if (b < keys.Length)
             {
                 Keyboard.KeyInfo.Key = keys[b];
@@ -100,7 +101,7 @@ namespace MOOS
             {
                 Keyboard.KeyInfo.Key = keys[b - 0x80];
             }
-
+ 
             Keyboard.InvokeOnKeyChanged(Keyboard.KeyInfo);
         }
 

@@ -193,8 +193,12 @@ namespace MOOS.Misc
 
         public static void Terminate()
         {
+            Native.Hlt(); //Detenemos el cpu
             Threads[Index].State = ThreadState.Dead;
             Schedule_Next();
+            // IMPORTANTE ACTIVAR //
+            Native.Cli(); //Reactivamos el cpu
+            Native.Sti(); //Activamos los interrups
             while (true) ;// Hook up till the next time slice
         }
 

@@ -18,7 +18,7 @@ namespace System
         static extern void ConsoleReadLine(out byte* data);
 
         [DllImport("ConsoleReadKey")]
-        static extern uint ConsoleReadKey();
+        static extern byte ConsoleReadKey();
 
         [DllImport("ConsoleReadLineWithStart")]
         static extern void ConsoleReadLineWithStart(int start, out byte* data);
@@ -61,9 +61,9 @@ namespace System
             }
         }
 
-        public static char ReadKey()
+        public static ConsoleKey ReadKey()
         {
-            return (char)ConsoleReadKey();
+            return (ConsoleKey)ConsoleReadKey();
         }
 
         public static void WriteLine(string s)
