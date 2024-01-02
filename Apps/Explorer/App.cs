@@ -64,9 +64,26 @@ namespace Explorer
             clock.Text = GetHourAndMinute();
             clock.OnLoaded();
 
+
+            MoosNative.SetBindOnKeyChangedHandler(onKeyBoardHandler);
+
             onStartup();
 
             onLoop();
+        }
+
+        private void onKeyBoardHandler(object sender, ConsoleKeyInfo e)
+        {
+            if (e.KeyState == ConsoleKeyState.Pressed)
+            {
+                if (e.Key == ConsoleKey.Z || e.Key == ConsoleKey.LeftWindows || e.Key == ConsoleKey.RightWindows)
+                {
+                    if (menu != null)
+                    {
+                        menu.IsVisible = !menu.IsVisible;
+                    }
+                }
+            }
         }
 
         void onStartup()

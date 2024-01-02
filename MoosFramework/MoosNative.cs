@@ -103,7 +103,16 @@ public static unsafe class MoosNative
     [DllImport("Sleep")]
     public static extern bool Sleep(ulong ms);
 
+    [DllImport("BindOnKeyChangedHandler")]
+    static extern void BindOnKeyChangedHandler(IntPtr handler);
+
     #endregion
 
+
+    public static void SetBindOnKeyChangedHandler(EventHandler<ConsoleKeyInfo> PS2Keyboard_OnKeyChangedHandler)
+    {
+        IntPtr handler = (IntPtr)PS2Keyboard_OnKeyChangedHandler;
+        BindOnKeyChangedHandler(handler);
+    }
 }
 

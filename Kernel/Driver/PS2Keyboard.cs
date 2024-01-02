@@ -19,15 +19,16 @@ namespace MOOS
         public static bool Initialize()
         {
             Interrupts.EnableInterrupt(0x21, &OnInterrupt);
+           
             keyChars = new char[]
             {
                 '\0','\0','1','2','3','4','5','6','7','8','9','0','-','=','\b',' ',
                 'q','w','e','r','t','y','u','i','o','p','[',']','\n','\0',
                 'a','s','d','f','g','h','j','k','l',';','\'','`','\0','\\',
                 'z','x','c','v','b','n','m',',','.','/','\0','\0','\0',' ','\0',
-                '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','↑','\0','-',
-                '←','\0','→','+','\0','↓','\0','\0','\b','/','\n','\0','\0','\0','\b','\0','\0'
-                ,'\0','\0','\0','\0','\0','\0','\0','\0','\0'
+                '\f','\f','\f','\f','\f','\f','\f','\f','\f','\f','\0','\0','\0','↑','\0','-',
+                '←','\0','→','+','\0','↓','\0','\0','\b','/','\n','\0','\b','\b','\b','\b','\b'
+                ,'\b'
             };
 
             keyCharsShift = new char[]
@@ -46,8 +47,8 @@ namespace MOOS
                 Q, W, E, R, T, Y, U, I, O, P, Oem4, Oem6, Return, LControlKey,
                 A, S, D, F, G, H, J, K, L, Oem1, Oem7, Oem3, LShiftKey, Oem8,
                 Z, X, C, V, B, N, M, OemComma, OemPeriod, Oem2, RShiftKey, Multiply, LMenu, Space, Capital, F1, F2, F3, F4, F5,
-                F6, F7, F8, F9, F10, NumLock, Scroll, Home, Up, Prior, Subtract, Left, Clear, Right, Add, End,
-                Down, Next, Insert, Delete, Snapshot, None, Oem5, F11, F12
+                F6, F7, F8, F9, F10, NumLock, Scroll, LeftWindows, Up, Prior, Subtract, Left, Clear, Right, Add, End,
+                Down, Next, Insert, Delete, Snapshot, None, Oem5, F11, F12,LeftWindows, RightWindows
             };
 
             Keyboard.CleanKeyInfo();

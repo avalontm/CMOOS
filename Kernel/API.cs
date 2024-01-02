@@ -124,7 +124,7 @@ namespace MOOS
                 case "StartThreadWithParameters":
                     return (delegate*<delegate*<void>, IntPtr, IntPtr>)&API_StartThreadWithParameters;
                 case "BindOnKeyChangedHandler":
-                    return (delegate*<EventHandler<ConsoleKeyInfo>, void>)&API_BindOnKeyChangedHandler;
+                    return (delegate*<IntPtr, void>)&API_BindOnKeyChangedHandler;
                 case "Calloc":
                     return (delegate*<ulong, ulong, void*>)&API_Calloc;
                 case "ShutDown":
@@ -297,9 +297,11 @@ namespace MOOS
             return stdlib.calloc(num, size);
         }
 
-        public static void API_BindOnKeyChangedHandler(EventHandler<ConsoleKeyInfo> handler)
+        public static void API_BindOnKeyChangedHandler(IntPtr handler)
         {
-            Keyboard.OnKeyChanged += handler;
+            EventHandler<ConsoleKeyInfo> keyboard = Unsafe.As<IntPtr, EventHandler<ConsoleKeyInfo>>(ref handler);
+
+            Keyboard.OnKeyChanged +=  keyboard;
         }
 
         public static uint API_StartThread(delegate*<void> func)

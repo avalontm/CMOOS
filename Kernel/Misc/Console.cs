@@ -276,6 +276,22 @@ namespace MOOS
                     case ConsoleKey.Down:
                     case ConsoleKey.Left:
                     case ConsoleKey.Right:
+
+                    case ConsoleKey.F1:
+                    case ConsoleKey.F2:
+                    case ConsoleKey.F3:
+                    case ConsoleKey.F4:
+                    case ConsoleKey.F5:
+                    case ConsoleKey.F6:
+                    case ConsoleKey.F7:
+                    case ConsoleKey.F8:
+                    case ConsoleKey.F9:
+                    case ConsoleKey.F10:
+                    case ConsoleKey.F11:
+                    case ConsoleKey.F12:
+
+                    case ConsoleKey.LeftWindows:
+                    case ConsoleKey.RightWindows:
                     default:
                         Console.Write(Keyboard.KeyInfo.KeyChar);
                         break;
@@ -303,6 +319,23 @@ namespace MOOS
                     case ConsoleKey.Down:
                     case ConsoleKey.Left:
                     case ConsoleKey.Right:
+
+                    case ConsoleKey.F1:
+                    case ConsoleKey.F2:
+                    case ConsoleKey.F3:
+                    case ConsoleKey.F4:
+                    case ConsoleKey.F5:
+                    case ConsoleKey.F6:
+                    case ConsoleKey.F7:
+                    case ConsoleKey.F8:
+                    case ConsoleKey.F9:
+                    case ConsoleKey.F10:
+                    case ConsoleKey.F11:
+                    case ConsoleKey.F12:
+
+                    case ConsoleKey.LeftWindows:
+                    case ConsoleKey.RightWindows:
+
                     default:
                         Console.Write(Keyboard.KeyInfo.KeyChar);
                         break;

@@ -17,6 +17,7 @@ namespace MOOS.Misc
         public static void Initialize()
         {
             INTs = new List<INT>();
+            Native.Sti();
         }
 
         public static void EndOfInterrupt(byte irq)
@@ -39,11 +40,13 @@ namespace MOOS.Misc
 
         public static unsafe void EnableInterrupt(byte irq, delegate*<void> handler)
         {
+
 #if UseAPIC
             IOAPIC.SetEntry(irq);
 #else
             PIC.ClearMask(irq);
 #endif
+
             INTs.Add(new INT() { IRQ = irq, Handler = handler });
         }
 

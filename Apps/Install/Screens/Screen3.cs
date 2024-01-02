@@ -18,24 +18,23 @@ namespace Install.Screens
             Console.Clear();
 
             int max = App.screenWidth - 60;
-            int progressWidth = (int)((progress / 100.0) * (max-10));
-
-            FontManager.font.DrawString(15, App.screenHeight - 32, $"{progress}% complete", App.Gray.ToArgb());
-
-            GDI.DrawRectangle(15, App.screenHeight - 75, max, 32, App.Gray.ToArgb());
-            GDI.FillRectangle(20, App.screenHeight - 70, progressWidth, 22, App.Green.ToArgb());
-
-            MoosNative.Sleep(50);
+            int progressWidth = (int)((progress / 100.0) * (max-5));
 
             if (progress < 100)
             {
                 progress++;
             }
 
+            GDI.DrawRectangle(15, App.screenHeight - 75, max, 32, App.Gray.ToArgb());
+            GDI.FillRectangle(20, App.screenHeight - 70, progressWidth, 22, App.Green.ToArgb());
+
+            FontManager.font.DrawString(15, App.screenHeight - 32, $"{progress}% complete", App.Gray.ToArgb());
+
+            MoosNative.Sleep(50);
 
             if (progress == 100)
             {
-                FontManager.font.DrawString(App.screenWidth - 200, App.screenHeight - 32, $"CONTINUE for exit", App.Gray.ToArgb());
+                FontManager.font.DrawString(App.screenWidth - 200, App.screenHeight - 32, $"ENTER for exit", App.Gray.ToArgb());
 
                 ConsoleKey key = Console.ReadKey();
 
