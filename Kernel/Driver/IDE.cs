@@ -134,8 +134,9 @@ namespace MOOS.Driver
                     Console.Write("Size: ");
                     Console.Write((Size / (1024 * 1024)).ToString());
                     Console.WriteLine("MiB");
+
                 }
-                DriveInfo.Dispose();
+                //DriveInfo.Dispose();
 
                 var drv = new IDEDevice();
 
@@ -145,7 +146,7 @@ namespace MOOS.Driver
                 drv.DeviceHeadPort= DeviceHeadPort;
                 drv.StatusPort= StatusPort;
                 drv.CommandPort= CommandPort;
-
+                drv.FeaturePort = FeaturePort;
 
                 drv.DataPort = DataPort;
                 drv.SectorCountPort = SectorCountPort;
@@ -191,10 +192,12 @@ namespace MOOS.Driver
 
         public ulong Size;
 
+        public ushort FeaturePort;
+
         public bool ReadOrWrite(uint sector, byte* data, bool write)
         {
             Native.Out8(DeviceHeadPort, (byte)(0xE0 | (Drive << 4) | ((sector >> 24) & 0x0F)));
-            //Native.Out8(FeaturePort, 0);
+            Native.Out8(FeaturePort, 0);
             Native.Out8(SectorCountPort, 1);
             Native.Out8(LBAHighPort, (byte)((sector >> 16) & 0xFF));
             Native.Out8(LBAMidPort, (byte)((sector >> 8) & 0xFF));

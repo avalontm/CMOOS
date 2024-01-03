@@ -4,6 +4,7 @@ using Internal.Runtime.CompilerServices;
 using Moos.Core.System.Windows;
 using MOOS;
 using MOOS.Driver;
+using MOOS.FS;
 using MOOS.Misc;
 using MOOS.NET;
 using MOOS.NET.IPv4.UDP.DHCP;

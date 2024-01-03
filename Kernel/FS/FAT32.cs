@@ -1,6 +1,10 @@
-﻿using MOOS.IO;
+﻿using MOOS.Driver;
+using MOOS.IO;
+using MOOS.Memory;
 using System;
 using System.Collections.Generic;
+using System.Common.Extentions;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MOOS.FS
@@ -53,24 +57,41 @@ namespace MOOS.FS
 
         protected string VolumeLabel;
 
-
+        [DllImport("*")]
+        private static extern void fatfs_init();
+        IDEDevice device;
         public FAT32()
         {
-
+            device = IDE.Ports[0];
+         
+            fatfs_init();
+            bool isValid = IsFAT();
+            Console.WriteLine($"FAT: {isValid}");
         }
 
         private unsafe bool IsFAT()
         {
             byte[] BootSector = new byte[512];
 
-            IOPort io = new IOPort((ushort)0U, (ushort)1U);
-            // if (!io.Read32( BootSector))
-            //     return false;
-            io.Read8(BootSector);
+            fixed (byte* p = BootSector)
+            {
+                Native.Insw(device.DataPort, (ushort*)p, (ulong)(BootSector.Length / 2));
 
-            var xSig = BitConverter.ToUInt16(BootSector, 510);
+                for (int i = 0; i < BootSector.Length; i++)
+                {
+                    BootSector[i] = p[i];
+                }
+            }
+
+           /*
+            IOPort idevice = new IOPort((ushort)(device.DataPort));
+            idevice.Read8(BootSector);
+            */
+
+            ushort xSig = BitConverter.ToUInt16(BootSector, 510);
+            Console.WriteLine($"xSig: {xSig} == 43605");
             if (xSig != 0xAA55)
-                return false;
+               // return false;
 
             /* BPB (BIOS Parameter Block) */
             BytePerSector = BitConverter.ToUInt16(BootSector, 11);
@@ -78,6 +99,8 @@ namespace MOOS.FS
             ReservedSector = BitConverter.ToUInt16(BootSector, 14);
             TotalFAT = BootSector[16];
             DirectoryEntry = BitConverter.ToUInt16(BootSector, 17);
+
+            Console.WriteLine($"TotalFAT: {TotalFAT}");
 
             if (BitConverter.ToUInt16(BootSector, 19) == 0)
             {
@@ -88,7 +111,7 @@ namespace MOOS.FS
             {
                 TotalSectors = BitConverter.ToUInt16(BootSector, 19);
             }
-
+           
             /* FAT 12 and FAT 16 ONLY */
             SectorsPerFAT = BitConverter.ToUInt16(BootSector, 22);
 
@@ -98,9 +121,17 @@ namespace MOOS.FS
                 SectorsPerFAT = BitConverter.ToUInt32(BootSector, 36);
             }
 
+            Console.WriteLine($"BytePerSector: {BytePerSector}");
+            Console.WriteLine($"SectorsPerCluster: {SectorsPerCluster}");
+            Console.WriteLine($"ReservedSector: {ReservedSector}");
+            Console.WriteLine($"Total: {TotalFAT}");
+            Console.WriteLine($"DirectoryEntry: {DirectoryEntry}");
+            Console.WriteLine($"TotalSectors: {TotalSectors}");
+            Console.WriteLine($"SectorsPerFAT: {SectorsPerFAT}");
+
             /* Not Necessary, To Avoid Crashes during corrupted BPB Info */
             // Just to prevent ourself from hacking
-            if (TotalFAT == 0 || TotalFAT > 2 || BytePerSector == 0 || TotalSectors == 0 || SectorsPerCluster == 0)
+            if (TotalFAT == 0 || TotalFAT < 2 || BytePerSector == 0 || TotalSectors == 0 || SectorsPerCluster == 0)
                 return false;
 
             /* Some basic calculations to check basic error :P */
@@ -120,7 +151,10 @@ namespace MOOS.FS
             if (FatType == FatType.FAT32)
             {
                 SerialNo = BitConverter.ToUInt32(BootSector, 39);
-                //VolumeLabel = new string((sbyte*)BootSector.GetDataOffset(), 71, 11);   // for checking
+                fixed (byte* p = BootSector)
+                {
+                    VolumeLabel = new string((char*)p, 43, 11);   // for checking
+                }
                 RootCluster = BitConverter.ToUInt32(BootSector, 44);
                 RootSector = 0;
                 RootSectorCount = 0;
@@ -129,14 +163,33 @@ namespace MOOS.FS
             else
             {
                 SerialNo = BitConverter.ToUInt32(BootSector, 67);
-                //VolumeLabel = new string((sbyte*)BootSector.GetDataOffset(), 43, 11);
+
+                fixed (byte* p = BootSector)
+                {
+                    VolumeLabel = new string((char*)p, 43, 11);   // for checking
+                }
+
                 RootSector = ReservedSector + (TotalFAT * SectorsPerFAT);
                 RootSectorCount = (UInt32)((DirectoryEntry * 32 + (BytePerSector - 1)) / BytePerSector);
                 fatEntries = SectorsPerFAT * 512 / 4;
             }
+
+            Console.WriteLine($"SerialNo: {SerialNo}");
+            Console.WriteLine($"VolumeLabel: {VolumeLabel}");
+
+            Console.WriteLine($"RootCluster: {RootCluster}");
+            Console.WriteLine($"RootSector: {RootSector}");
+            Console.WriteLine($"RootSectorCount: {RootSectorCount}");
+            Console.WriteLine($"fatEntries: {fatEntries}");
+
             /* Now it shows our forward path ;) */
             EntriesPerSector = (UInt32)(BytePerSector / 32);
             DataSector = ReservedSector + (TotalFAT * SectorsPerFAT) + RootSectorCount;
+
+            Console.WriteLine($"EntriesPerSector: {EntriesPerSector}");
+            Console.WriteLine($"DataSector: {DataSector}");
+
+            Console.WriteLine($"FatType: {(int)FatType}");
 
             //mFSType = FileSystemType.FAT;
             return true;
