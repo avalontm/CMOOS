@@ -4,6 +4,8 @@ namespace System
 {
     public struct Byte
     {
+        public const byte MaxValue = 255;
+
         public static byte Parse(string s)
         {
             const string digits = "0123456789";

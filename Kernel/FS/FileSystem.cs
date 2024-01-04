@@ -91,6 +91,7 @@ namespace MOOS.FS
         public abstract void WriteAllBytes(string Name, byte[] Content);
         public abstract void Format();
         public abstract void CreateDirectory(string Name);
+        public abstract bool ChangeDirectory(string Name);
     }
 
     /*

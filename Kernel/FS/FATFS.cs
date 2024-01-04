@@ -150,5 +150,10 @@ namespace MOOS.FS
         {
             
         }
+
+        public override bool ChangeDirectory(string Name)
+        {
+           return false;
+        }
     }
 }

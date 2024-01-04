@@ -147,6 +147,10 @@ unsafe class Program
 
     public static void SMain()
     {
+        File.Instance.CreateDirectory("/test");
+
+        bool isChanged  = File.Instance.ChangeDirectory("/test");
+        Console.WriteLine($"isChanged: {isChanged}");
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 
