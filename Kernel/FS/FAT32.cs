@@ -97,14 +97,14 @@ namespace MOOS.FS
 
         [DllImport("*")]
         private static extern void fatfs_init();
-        IDEDevice device;
+        IDEDevice IDevice;
 
         bool IsValid = false;
 
         public FAT32()
         {
             mPartitions = new List<Partition>();
-            device = IDE.Ports[0];
+            IDevice = IDE.Ports[0];
 
             IsValid = IsFAT();
 
@@ -153,7 +153,7 @@ namespace MOOS.FS
             {
                 UInt32 xSectorCount = BitConverter.ToUInt32(aMBR, aLoc + 12);
                 UInt32 xStartSector = BitConverter.ToUInt32(aMBR, aLoc + 8);
-                mPartitions.Add(new Partition(device, xStartSector, xSectorCount));
+                mPartitions.Add(new Partition(IDevice, xStartSector, xSectorCount));
                 //Console.WriteLine($"Partition: {xStartSector} | {xSectorCount}");
             }
         }
@@ -164,7 +164,7 @@ namespace MOOS.FS
 
             fixed (byte* p = aMBR)
             {
-                device.Read(0U, 1U, p);
+                IDevice.Read(0U, 1U, p);
 
                 for (int i = 0; i < SectorSize; i++)
                 {
@@ -261,7 +261,7 @@ namespace MOOS.FS
 
         public override List<FileInfo> GetFiles(string Directory)
         {
-          return new List<FileInfo>();
+            return new List<FileInfo>();
         }
 
         public override void Delete(string Name)
@@ -271,8 +271,23 @@ namespace MOOS.FS
 
         public override byte[] ReadAllBytes(string Name)
         {
+            /*
+            byte[] xFileData = new byte[(UInt32)SectorsPerCluster * 512];
+
+            var location = FindEntry(new FileSystem.Find.WithName(FileName), FatCurrentDirectoryEntry);
+            if (location == null)
+                return null;
+
+            byte[] xReturnData = new byte[location.Size];
+            UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
+            this.IDevice.Read(xSector, SectorsPerCluster, xFileData);
+            Array.Copy(xFileData, 0, xReturnData, 0, location.Size);
+            return xReturnData;
+            */
+
             return null;
         }
+
 
         public override void WriteAllBytes(string Name, byte[] Content)
         {

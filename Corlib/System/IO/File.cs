@@ -18,6 +18,11 @@ namespace System.IO
         {
             ReadAllBytes(file, out var size, out var data);
 
+            if(data == null)
+            {
+                return null;
+            }
+
             byte[] buffer = new byte[size];
 
             for (int i = 0; i < size; i++)

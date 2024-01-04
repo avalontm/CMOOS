@@ -150,7 +150,13 @@ unsafe class Program
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 
-        byte[] bytes = System.IO.File.ReadAllBytes("startup.ini");
+        byte[] bytes = File.ReadAllBytes("startup.ini");
+
+        if (bytes == null)
+        {
+            Console.WriteLine("File not found!");
+            return;
+        }
 
         // Convierte los bytes a texto
         string texto = Encoding.UTF8.GetString(bytes);
@@ -179,7 +185,7 @@ unsafe class Program
 
         string terminal = dictionary["terminal"];
         System.Diagnostics.Process.Start($"sys/app/terminal.mue");
-        
+
         bytes.Dispose();
         texto.Dispose();
         lineas.Dispose();
@@ -187,7 +193,7 @@ unsafe class Program
 
         for (; ; )
         {
-           
+
         }
     }
 }
