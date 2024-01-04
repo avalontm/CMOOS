@@ -1,5 +1,10 @@
 using MOOS.FS;
+using MOOS.IO;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using static MOOS.PIC;
+using static MOOS.SATA;
 
 namespace MOOS.Driver
 {
@@ -93,7 +98,8 @@ namespace MOOS.Driver
 
             if (!Available()) return;
 
-            Native.Out8(ControlPort, 0);
+            // Disable IRQ
+            Native.Out8(ControlPort, 0x2);
 
             for (byte port = 0; port < 2; port++)
             {
@@ -114,29 +120,19 @@ namespace MOOS.Driver
                     continue;
                 }
 
-                ulong Size = 0;
-                var DriveInfo = new byte[4096];
-                fixed (byte* p = DriveInfo)
-                {
-                    Native.Insw(DataPort, (ushort*)p, (ulong)(DriveInfo.Length / 2));
+                var DriveInfo = new ushort[256];
+                IOPort io = new IOPort(DataPort);
+                io.Read16(DriveInfo);
 
-                    Size = (*(uint*)(p + IDEDevice.MaxLBA28)) * IDEDevice.SectorSize;
+                var mModel = DriveInfo.GetString(27, 40);
+                var mSerialNo = DriveInfo.GetString(10, 20);
+                var mSize = (DriveInfo.ToUInt32(60) + IDEDevice.MaxLBA28) * IDEDevice.SectorSize;
+              
+                Console.WriteLine($"[IDE] {mModel}");
+                Console.WriteLine($"Model: {mSerialNo}");
+                Console.WriteLine($"Size: {(mSize / (1024 * 1024))} Mb");
 
-                    Console.Write("[IDE] ");
-                    byte* pName = ((byte*)p) + IDEDevice.ModelNumber;
-                    for (int i = 0; i < 40; i++)
-                    {
-                        Console.Write((char)pName[i]);
-                        if (pName[i + 1] == 0x20 && pName[i + 2] == 0x20) break;
-                    }
-                    Console.Write(' ');
-
-                    Console.Write("Size: ");
-                    Console.Write((Size / (1024 * 1024)).ToString());
-                    Console.WriteLine("MiB");
-
-                }
-                //DriveInfo.Dispose();
+                DriveInfo.Dispose();
 
                 var drv = new IDEDevice();
 
@@ -153,10 +149,72 @@ namespace MOOS.Driver
 
                 drv.Drive = port;
 
-                drv.Size = Size;
+                drv.Size = mSize;
 
                 Ports.Add(drv);
             }
+        }
+    }
+
+    internal static class Misc
+    {
+        internal static ushort ToUInt16(this ushort[] xBuff, int loc)
+        {
+            // Combinar dos bytes consecutivos en un valor UInt16
+            ushort result = (ushort)((xBuff[loc + 1] << 8) | xBuff[loc]);
+
+            return result;
+        }
+
+        internal static ushort ToUInt16(this byte[] xBuff, int loc)
+        {
+            // Combinar dos bytes consecutivos en un valor UInt16
+            ushort result = (ushort)((xBuff[loc + 1] << 8) | xBuff[loc]);
+
+            return result;
+        }
+
+
+        internal static byte ToUInt8(this ushort[] xBuff, int loc)
+        {
+            return (byte)(xBuff[loc] & 0xFF);
+        }
+
+        internal static UInt32 ToUInt32(this ushort[] xBuff, int loc)
+        {
+            return (UInt32)(xBuff[loc + 1] << 16 | xBuff[loc]);
+        }
+
+        internal static UInt64 ToUInt64(this ushort[] xBuff, int loc)
+        {
+            return (UInt64)(xBuff[loc + 3] << 48 | xBuff[loc + 2] << 32 | xBuff[loc + 1] << 16 | xBuff[loc]);
+        }
+
+        internal static UInt64 ToUInt48(this ushort[] xBuff, int loc)
+        {
+            return (UInt64)(xBuff[loc + 2] << 32 | xBuff[loc + 1] << 16 | xBuff[loc]);
+        }
+
+        internal static string GetString(this ushort[] xBuff, int loc, int length)
+        {
+            char[] xResult = new char[length];
+            for (int k = 0; k < (length / 2); k++)
+            {
+                xResult[k * 2] = (char)((xBuff[loc + k] >> 8) & 0xFF);
+                xResult[k * 2 + 1] = (char)(xBuff[loc + k] & 0xFF);
+            }
+            return new String(xResult);
+        }
+
+        internal static string GetString(this byte[] xBuff, int loc, int length)
+        {
+            char[] xResult = new char[length];
+            for (int k = 0; k < (length / 2); k++)
+            {
+                xResult[k * 2] = (char)((xBuff[loc + k] >> 8) & 0xFF);
+                xResult[k * 2 + 1] = (char)(xBuff[loc + k] & 0xFF);
+            }
+            return new String(xResult);
         }
     }
 
@@ -197,7 +255,7 @@ namespace MOOS.Driver
         public bool ReadOrWrite(uint sector, byte* data, bool write)
         {
             Native.Out8(DeviceHeadPort, (byte)(0xE0 | (Drive << 4) | ((sector >> 24) & 0x0F)));
-            Native.Out8(FeaturePort, 0);
+           // Native.Out8(FeaturePort, 0);
             Native.Out8(SectorCountPort, 1);
             Native.Out8(LBAHighPort, (byte)((sector >> 16) & 0xFF));
             Native.Out8(LBAMidPort, (byte)((sector >> 8) & 0xFF));

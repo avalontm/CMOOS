@@ -46,7 +46,12 @@ namespace MOOS.IO
         static protected uint Read32(ushort aPort) { 
             return Native.In32(aPort);
         }
-        
+
+        public void Out8(byte aData)
+        {
+            Write8(Port, aData);
+        }
+
         public void Read8(byte[] aData)
         {
             for (int i = 0; i < aData.Length / 2; i++)

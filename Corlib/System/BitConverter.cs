@@ -111,8 +111,31 @@ namespace System
 			return GetBytes(*(long*)&value);
 		}
 
-		// Converts an array of bytes into a char.  
-		public static char ToChar(byte[] value, int startIndex)
+        public static uint ToInt8(byte[] value, int startIndex)
+        {
+            if (value == null)
+            {
+                // Handle null array
+               // throw new ArgumentNullException(nameof(value));
+            }
+
+            if ((uint)startIndex >= value.Length)
+            {
+                // Handle startIndex out of range
+               // throw new ArgumentOutOfRangeException(nameof(startIndex), "Start index is out of range");
+            }
+
+            if (startIndex > value.Length - 1)
+            {
+                // Handle insufficient space in array for Int8
+               // throw new ArgumentException("Array length is insufficient to read Int8 from the startIndex");
+            }
+
+            return (uint)(value[startIndex] & 0xFF);
+        }
+
+        // Converts an array of bytes into a char.  
+        public static char ToChar(byte[] value, int startIndex)
 		{
 			if (value == null)
 			{
@@ -149,14 +172,22 @@ namespace System
 				//ThrowHelper.ThrowArgumentException(ExceptionResource.Arg_ArrayPlusOffTooSmall);
 			}
 
-			fixed (byte* pbyte = &value[startIndex])
-			{
-				return startIndex % 2 == 0
-				? *(short*)pbyte
-				: IsLittleEndian ? (short)((*pbyte) | (*(pbyte + 1) << 8)) : (short)((*pbyte << 8) | (*(pbyte + 1)));
-			}
+            fixed (byte* ptr = &value[startIndex])
+            {
+                if (startIndex % 2 == 0)
+                {
+                    return *(short*)ptr;
+                }
 
-		}
+                if (IsLittleEndian)
+                {
+                    return (short)(*ptr |  (ptr[1] << 8));
+                }
+
+                return (short)((*ptr << 8) | ptr[1]);
+            }
+
+        }
 
 		// Converts an array of bytes into an int.  
 		public static unsafe int ToInt32(byte[] value, int startIndex)
@@ -175,15 +206,21 @@ namespace System
 				//ThrowHelper.ThrowArgumentException(ExceptionResource.Arg_ArrayPlusOffTooSmall);
 			}
 
-			fixed (byte* pbyte = &value[startIndex])
-			{
-				return startIndex % 4 == 0
-				? *(int*)pbyte
-				: IsLittleEndian
-				? (*pbyte) | (*(pbyte + 1) << 8) | (*(pbyte + 2) << 16) | (*(pbyte + 3) << 24)
-				: (*pbyte << 24) | (*(pbyte + 1) << 16) | (*(pbyte + 2) << 8) | (*(pbyte + 3));
-			}
-		}
+            fixed (byte* ptr = &value[startIndex])
+            {
+                if (startIndex % 4 == 0)
+                {
+                    return *(int*)ptr;
+                }
+
+                if (IsLittleEndian)
+                {
+                    return *ptr | (ptr[1] << 8) | (ptr[2] << 16) | (ptr[3] << 24);
+                }
+
+                return (*ptr << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
+            }
+        }
 
 		// Converts an array of bytes into a long.
 		public static unsafe long ToInt64(byte[] value, int startIndex)
@@ -202,27 +239,26 @@ namespace System
 				//ThrowHelper.ThrowArgumentException(ExceptionResource.Arg_ArrayPlusOffTooSmall);
 			}
 
-			fixed (byte* pbyte = &value[startIndex])
-			{
-				if (startIndex % 8 == 0)
-				{ // data is aligned 
-					return *(long*)pbyte;
-				} else
-				{
-					if (IsLittleEndian)
-					{
-						int i1 = (*pbyte) | (*(pbyte + 1) << 8) | (*(pbyte + 2) << 16) | (*(pbyte + 3) << 24);
-						int i2 = (*(pbyte + 4)) | (*(pbyte + 5) << 8) | (*(pbyte + 6) << 16) | (*(pbyte + 7) << 24);
-						return (uint)i1 | ((long)i2 << 32);
-					} else
-					{
-						int i1 = (*pbyte << 24) | (*(pbyte + 1) << 16) | (*(pbyte + 2) << 8) | (*(pbyte + 3));
-						int i2 = (*(pbyte + 4) << 24) | (*(pbyte + 5) << 16) | (*(pbyte + 6) << 8) | (*(pbyte + 7));
-						return (uint)i2 | ((long)i1 << 32);
-					}
-				}
-			}
-		}
+
+            fixed (byte* ptr = &value[startIndex])
+            {
+                if (startIndex % 8 == 0)
+                {
+                    return *(long*)ptr;
+                }
+
+                if (IsLittleEndian)
+                {
+                    int num = *ptr | (ptr[1] << 8) | (ptr[2] << 16) | (ptr[3] << 24);
+                    int num2 = ptr[4] | (ptr[5] << 8) | (ptr[6] << 16) | (ptr[7] << 24);
+                    return (uint)num | ((long)num2 << 32);
+                }
+
+                int num3 = (*ptr << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
+                int num4 = (ptr[4] << 24) | (ptr[5] << 16) | (ptr[6] << 8) | ptr[7];
+                return (uint)num4 | ((long)num3 << 32);
+            }
+        }
 
 
 		// Converts an array of bytes into an ushort.
