@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Common.Extentions;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -356,7 +357,9 @@ namespace MOOS.FS
                 return;
             }
 
+
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
+
 
             PartInfo[0].Write(xSector, SectorsPerCluster, Content);
         }
@@ -389,7 +392,7 @@ namespace MOOS.FS
 
             if (dirName.Length > 0)
             {
-                fileName = fileName.Substring(dirName.Length +1);
+                fileName = fileName.Substring(dirName.Length + 1);
             }
 
             byte[] xFileData = new byte[(UInt32)SectorsPerCluster * 512];
@@ -402,7 +405,6 @@ namespace MOOS.FS
 
             PartInfo[0].Read(xSector, SectorsPerCluster, xFileData);
 
-            Console.WriteLine($"xFileData: {xFileData.Length}");
             return xFileData;
         }
 
@@ -538,26 +540,32 @@ namespace MOOS.FS
 
             PartInfo[0].Read(location.DirectorySector, SectorsPerCluster, xdata);
 
-            BinaryFormat directory = new BinaryFormat(xdata);
-            directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
-            directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, str[0]);
+            BinaryFormat file = new BinaryFormat(xdata);
 
-            if (str.Length > 1)
+            for (int i = 0; i < (size / (xdata.Length)); i++)
             {
-                directory.SetString(Entry.DOSExtension + location.DirectorySectorIndex * 32, str[1]);
-            }
+                file.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
+                file.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, str[0]);
 
-            directory.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)0x20);
-            directory.SetByte(Entry.Reserved + location.DirectorySectorIndex * 32, 0);
-            directory.SetByte(Entry.CreationTimeFine + location.DirectorySectorIndex * 32, 0);
-            directory.SetUShort(Entry.CreationTime + location.DirectorySectorIndex * 32, 0);
-            directory.SetUShort(Entry.CreationDate + location.DirectorySectorIndex * 32, 0);
-            directory.SetUShort(Entry.LastAccessDate + location.DirectorySectorIndex * 32, 0);
-            directory.SetUShort(Entry.LastModifiedTime + location.DirectorySectorIndex * 32, 0);
-            directory.SetUShort(Entry.LastModifiedDate + location.DirectorySectorIndex * 32, 0);
-            directory.SetUShort(Entry.FirstCluster + location.DirectorySectorIndex * 32, (ushort)FirstCluster);
-            directory.SetUInt(Entry.FileSize + location.DirectorySectorIndex * 32, size);
-            directory.SetUInt(Entry.EntrySize + location.DirectorySectorIndex * 32, size);
+                if (str.Length > 1)
+                {
+                    file.SetString(Entry.DOSExtension + location.DirectorySectorIndex * 32, str[1]);
+                }
+
+                file.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)0x20);
+                file.SetByte(Entry.Reserved + location.DirectorySectorIndex * 32, 0);
+                file.SetByte(Entry.CreationTimeFine + location.DirectorySectorIndex * 32, 0);
+                file.SetUShort(Entry.CreationTime + location.DirectorySectorIndex * 32, 0);
+                file.SetUShort(Entry.CreationDate + location.DirectorySectorIndex * 32, 0);
+                file.SetUShort(Entry.LastAccessDate + location.DirectorySectorIndex * 32, 0);
+                file.SetUShort(Entry.LastModifiedTime + location.DirectorySectorIndex * 32, 0);
+                file.SetUShort(Entry.LastModifiedDate + location.DirectorySectorIndex * 32, 0);
+                file.SetUShort(Entry.FirstCluster + location.DirectorySectorIndex * 32, (ushort)FirstCluster);
+                file.SetUInt(Entry.FileSize + location.DirectorySectorIndex * 32, size);
+                file.SetUInt(Entry.EntrySize + location.DirectorySectorIndex * 32, size);
+
+                location.DirectorySectorIndex += 1;
+            }
 
             PartInfo[0].Write(location.DirectorySector, SectorsPerCluster, xdata);
         }
@@ -644,7 +652,6 @@ namespace MOOS.FS
             for (int i = 0; i < dirs.Length; i++)
             {
                 location = FindEntry(new WithName(dirs[i]), FatCurrentDirectoryEntry);
-                Console.WriteLine($"dirChange: {dirs[0]}");
             }
 
             if (location != null)
