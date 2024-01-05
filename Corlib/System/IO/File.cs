@@ -41,9 +41,12 @@ namespace System.IO
             }
         }
 
-        public static bool Exists([NotNullWhen(true)] string? path)
+        public static bool Exists(string file)
         {
-            //return FileSystem.FileExists(path);
+            if(ReadAllBytes(file) != null)
+            {
+                return true;
+            }
             return false;
         }
 

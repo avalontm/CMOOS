@@ -92,24 +92,20 @@ namespace MOOS.FS
         private UInt32 DataSectorCount;
         private UInt32 ClusterCount;
         private FatType FatType;
-        private UInt32 SerialNo;
         private UInt32 RootCluster;
         private UInt32 RootSector;
         private UInt32 RootSectorCount;
         private UInt32 DataSector;
         private UInt32 EntriesPerSector;
         private UInt32 fatEntries;
-        private string VolumeLabel;
-        private UInt32 FatCurrentDirectoryEntry;
 
+        private UInt32 FatCurrentDirectoryEntry;
 
         protected List<Partition> mPartitions;
 
         internal List<Partition> PartInfo
         { get { return mPartitions; } }
 
-        [DllImport("*")]
-        private static extern void fatfs_init();
         IDEDevice IDevice;
 
         bool IsValid = false;
@@ -120,8 +116,6 @@ namespace MOOS.FS
             IDevice = IDE.Ports[0];
 
             IsValid = IsFAT();
-
-            FlushDetails();
         }
 
         public void FlushDetails()
@@ -246,7 +240,7 @@ namespace MOOS.FS
             /* Now we open door of gold coins xDD */
             if (FatType == FatType.FAT32)
             {
-                SerialNo = BitConverter.ToUInt32(BootSector, 39);
+                SerialNo = BitConverter.ToUInt32(BootSector, 67);
                 VolumeLabel = ASCII.GetString(BootSector, 71, 11);   // for checking
                 RootCluster = BitConverter.ToUInt32(BootSector, 44);
                 RootSector = 0;
@@ -255,7 +249,7 @@ namespace MOOS.FS
             /* The key is of another door */
             else
             {
-                SerialNo = BitConverter.ToUInt32(BootSector, 67);
+                SerialNo = BitConverter.ToUInt32(BootSector, 39);
                 VolumeLabel = ASCII.GetString(BootSector, 43, 11);
 
                 RootSector = ReservedSector + (TotalFAT * SectorsPerFAT);
@@ -308,26 +302,28 @@ namespace MOOS.FS
                             continue;
                     }
 
-                    if (aData[i] != 0xE5)//Entry Exist
+                    if (aData[i] != 0xE5) //Entry Exist
                     {
                         Entry_Detail = new FileInfo()
                         {
                             Name = ASCII.GetString(aData, (int)i, 8).Trim(),
                             Param0 = sec,
-                            Param1 = BitConverter.ToUInt32(aData, (int)(i + Entry.FileSize))
+                            Size = BitConverter.ToUInt32(aData, (int)(i + Entry.FileSize))
                         };
 
                         if (!Entry_Type)
                         {
                             Entry_Detail.Attribute = FileAttribute.Archive;
+                            Entry_Detail.Ext = ASCII.GetString(aData, (int)(i + 8), 3).Trim();
                         }
                         else
                         {
                             Entry_Detail.Attribute = FileAttribute.Directory;
+                            Entry_Detail.Ext = "";
                         }
 
                         xResult.Add(Entry_Detail);
-                        sec += SizeToSec(Entry_Detail.Param0);
+                        sec += SizeToSec(Entry_Detail.Size);
                     }
                 }
             }
@@ -343,9 +339,22 @@ namespace MOOS.FS
 
         public override void WriteAllBytes(string FileName, byte[] Content)
         {
+            if (string.IsNullOrEmpty(FileName))
+            {
+                Console.WriteLine($"File Name empty.");
+                return;
+            }
+
+            FileName = FileName.ToUpper();
+
+            CreateFile(FileName, Content.Length);
+
             var location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
             if (location == null)
+            {
+                Console.WriteLine("File not found!");
                 return;
+            }
 
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
 
@@ -357,17 +366,43 @@ namespace MOOS.FS
 
         }
 
-        public override byte[] ReadAllBytes(string FileName)
+        public override byte[] ReadAllBytes(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return null;
+            }
+
+            string dirName = null;
+            fileName = fileName.ToUpper();
+
+            if (fileName.IndexOf('/') == -1)
+            {
+                dirName = "";
+            }
+            else
+            {
+                dirName = $"{fileName.Substring(0, fileName.LastIndexOf('/'))}";
+            }
+
+            ChangeDirectory(dirName);
+
+            if (dirName.Length > 0)
+            {
+                fileName = fileName.Substring(dirName.Length +1);
+            }
+
             byte[] xFileData = new byte[(UInt32)SectorsPerCluster * 512];
 
-            var location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
+            var location = FindEntry(new WithName(fileName), FatCurrentDirectoryEntry);
             if (location == null)
                 return null;
 
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
 
             PartInfo[0].Read(xSector, SectorsPerCluster, xFileData);
+
+            Console.WriteLine($"xFileData: {xFileData.Length}");
             return xFileData;
         }
 
@@ -380,7 +415,6 @@ namespace MOOS.FS
         unsafe uint GetClusterEntryValue(uint cluster)
         {
             uint fatoffset = 0;
-
 
             fatoffset = cluster * 4;
 
@@ -486,8 +520,56 @@ namespace MOOS.FS
             return newCluster;
         }
 
-        public unsafe override void CreateDirectory(string DirName)
+        public void CreateFile(string FileName, uint size)
         {
+            string[] str = FileName.Split('.');
+
+            //TODO: Same Entry Exist exception.
+            FatFileLocation location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
+
+            if(location == null)
+            {
+                location = FindEntry(new Empty(), FatCurrentDirectoryEntry);
+            }
+
+            uint FirstCluster = AllocateFirstCluster();
+
+            var xdata = new byte[512 * SectorsPerCluster];
+
+            PartInfo[0].Read(location.DirectorySector, SectorsPerCluster, xdata);
+
+            BinaryFormat directory = new BinaryFormat(xdata);
+            directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
+            directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, str[0]);
+
+            if (str.Length > 1)
+            {
+                directory.SetString(Entry.DOSExtension + location.DirectorySectorIndex * 32, str[1]);
+            }
+
+            directory.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)0x20);
+            directory.SetByte(Entry.Reserved + location.DirectorySectorIndex * 32, 0);
+            directory.SetByte(Entry.CreationTimeFine + location.DirectorySectorIndex * 32, 0);
+            directory.SetUShort(Entry.CreationTime + location.DirectorySectorIndex * 32, 0);
+            directory.SetUShort(Entry.CreationDate + location.DirectorySectorIndex * 32, 0);
+            directory.SetUShort(Entry.LastAccessDate + location.DirectorySectorIndex * 32, 0);
+            directory.SetUShort(Entry.LastModifiedTime + location.DirectorySectorIndex * 32, 0);
+            directory.SetUShort(Entry.LastModifiedDate + location.DirectorySectorIndex * 32, 0);
+            directory.SetUShort(Entry.FirstCluster + location.DirectorySectorIndex * 32, (ushort)FirstCluster);
+            directory.SetUInt(Entry.FileSize + location.DirectorySectorIndex * 32, size);
+            directory.SetUInt(Entry.EntrySize + location.DirectorySectorIndex * 32, size);
+
+            PartInfo[0].Write(location.DirectorySector, SectorsPerCluster, xdata);
+        }
+
+        public override void CreateDirectory(string DirName)
+        {
+            if(ChangeDirectory(DirName))
+            {
+                Console.WriteLine("Directory already exists.");
+                return;
+            }
+
             //TODO: Same Entry Exist exception.
             FatFileLocation location = FindEntry(new Empty(), FatCurrentDirectoryEntry);
 
@@ -550,18 +632,26 @@ namespace MOOS.FS
 
         public override bool ChangeDirectory(string DirName)
         {
-            if (string.IsNullOrEmpty(DirName))
-                return false;
+            if (!string.IsNullOrEmpty(DirName))
+            {
+                DirName = DirName.ToUpper();
+            }
 
-            var location = FindEntry(new WithName(DirName), FatCurrentDirectoryEntry);
+            string[] dirs = DirName.Split('/');
+
+            FatFileLocation location = null;
+
+            for (int i = 0; i < dirs.Length; i++)
+            {
+                location = FindEntry(new WithName(dirs[i]), FatCurrentDirectoryEntry);
+                Console.WriteLine($"dirChange: {dirs[0]}");
+            }
 
             if (location != null)
             {
                 FatCurrentDirectoryEntry = location.FirstCluster;
                 return true;
             }
-
-           Console.WriteLine("Directory Not Found!");
 
             return false;
         }
@@ -671,16 +761,18 @@ namespace MOOS.FS
             string entryname = ASCII.GetString(data, (int)offset, 8).Trim();
             string entryExt = ASCII.GetString(data, (int)(offset + 8), 3).Trim();
 
-         
+     
             string[] xStr = name.Split('.');
  
             if (xStr.Length > 1)
             {
+                //Console.WriteLine($"{entryname.ToLower()} == {xStr[0].Trim().ToLower()} && {entryExt.ToLower()} == {xStr[1].Trim().ToLower()}");
                 if (entryname.ToLower() == xStr[0].Trim().ToLower() && entryExt.ToLower() == xStr[1].Trim().ToLower())
                 {
                     return true;
                 }
             }
+
             if (entryname.ToLower() == this.name.Trim().ToLower())
             {
                 return true;

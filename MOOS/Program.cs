@@ -10,6 +10,7 @@ using MOOS.NET;
 using MOOS.NET.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
+using System.Common.Extentions;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Runtime;
@@ -147,19 +148,43 @@ unsafe class Program
 
     public static void SMain()
     {
-        var files = File.Instance.GetFiles("");
+        string text = "terminal = sys/app/terminal.mue\nshell = sys/app/explorer.mue";
 
-        for(int i = 0; i < files.Count; i++)
+        File.Instance.WriteAllBytes("startup.ini", Encoding.UTF8.GetBytes(text));
+        string dir = "";
+
+        Console.WriteLine($"");
+        Console.WriteLine($"Volume in drive 0 is {File.Instance.VolumeLabel}");
+        Console.WriteLine($"Volume Serial Number is {File.Instance.SerialNo.ToSeparatorHex()}");
+        Console.WriteLine($@"Directory of drive 0 {dir}");
+        Console.WriteLine($"");
+
+        int _files = 0;
+        int _dirs = 0;
+        ulong _fSize = 0;
+
+        var files = File.Instance.GetFiles(dir);
+       
+        for (int i = 0; i < files.Count; i++)
         {
             if (files[i].Attribute == FileAttribute.Directory)
             {
-                Console.WriteLine($"Dir: {files[i].Name}");
+                Console.WriteLine($"{files[i].Name}     DIR");
+                _dirs++;
             }
             else
             {
-                Console.WriteLine($"File: {files[i].Name}");
+                _files++;
+                _fSize += files[i].Size;
+
+                Console.WriteLine($"{files[i].Name}   {files[i].Ext}    {files[i].Size.ToString()}");
             }
         }
+
+        Console.WriteLine($"");
+        Console.WriteLine($"{_files} file(s)                    {_fSize} bytes");
+        Console.WriteLine($"{_dirs} dir(s)                    {(1024 * (1024*1024)-_fSize)}  bytes free");
+        Console.WriteLine($"");
 
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
@@ -174,7 +199,7 @@ unsafe class Program
 
         // Convierte los bytes a texto
         string texto = Encoding.UTF8.GetString(bytes);
-
+   
         // Divide el texto por saltos de linea
         string[] lineas = texto.Split('\n');
 
@@ -189,7 +214,7 @@ unsafe class Program
                 // Extrae el nombre y el valor del parámetro
                 string[] parts = lineas[i].Split('=');
 
-                if (parts.Length >= 2)
+                if (parts.Length > 1)
                 {
                     // Añade el parámetro al diccionario
                     dictionary.Add(parts[0].Trim(), parts[1].Trim());
@@ -198,7 +223,9 @@ unsafe class Program
         }
 
         string terminal = dictionary["terminal"];
-        System.Diagnostics.Process.Start($"sys/app/terminal.mue");
+        Console.WriteLine($"execute: {terminal}");
+
+        System.Diagnostics.Process.Start("sys/terminal.mue");
 
         bytes.Dispose();
         texto.Dispose();

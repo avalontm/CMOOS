@@ -140,6 +140,11 @@ namespace System.Common.Extentions
             return ConvertToHex(aValue, 8);
         }
 
+        public static string ToSeparatorHex(this uint aValue)
+        {
+            return ConvertToHex(aValue, 8, 4);
+        }
+
         /// <summary>
         /// Convert 32-bit unsigned int to hexadecimal string of a given length.
         /// </summary>
@@ -243,7 +248,25 @@ namespace System.Common.Extentions
         {
             return ConvertToHex(aValue).PadLeft(aWidth, '0'); //TODO: PadLeft might throw ArgumentOutOfRangeException. Better catch it.
         }
+        private static string ConvertToHex(uint aValue, int aWidth, int insert)
+        {
+            string str = ConvertToHex(aValue).PadLeft(aWidth, '0');
 
+            string newStr = "";
+            int index = 0;
+            for(int i =0; i  < str.Length + 1; i++)
+            {
+                if(i == insert)
+                {
+                    newStr += '-';
+                }else
+                {
+                    newStr += str[index];
+                    index++;
+                }
+            }
+            return newStr; //TODO: PadLeft might throw ArgumentOutOfRangeException. Better catch it.
+        }
         /// <summary>
         /// Convert 64-bit unsigned int to hexadecimal string.
         /// </summary>

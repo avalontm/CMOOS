@@ -1,18 +1,21 @@
+using System;
 using System.Collections.Generic;
 
 namespace MOOS.FS
 {
     public class FileInfo 
     {
-        public string Name;
-        public FileAttribute Attribute;
+        public string Name { set; get; }
+        public string Ext { set; get; }
+        public FileAttribute Attribute { set; get; }
 
         public ulong Param0;
-        public ulong Param1;
+        public ulong Size;
 
         public override void Dispose()
         {
             Name.Dispose();
+            Ext.Dispose();
             base.Dispose();
         }
     }
@@ -40,6 +43,9 @@ namespace MOOS.FS
 
     public abstract class FileSystem
     {
+        public string VolumeLabel;
+        public UInt32 SerialNo;
+
         public FileSystem()
         {
             File.Instance = this;
@@ -94,24 +100,24 @@ namespace MOOS.FS
         public abstract bool ChangeDirectory(string Name);
     }
 
-    /*
-    public static class FileVirtual
+    
+    public static class RamFile
     {
         /// <summary>
         /// This will be overwritten if you initialize file system
         /// </summary>
-        public static FileVirtualSystem Instance;
+        public static FileRamSystem Instance;
 
         public static List<FileInfo> GetFiles(string Directory) => Instance.GetFiles(Directory);
         public static byte[] ReadAllBytes(string name) => Instance.ReadAllBytes(name);
 
     }
 
-    public abstract class FileVirtualSystem
+    public abstract class FileRamSystem
     {
-        public FileVirtualSystem()
+        public FileRamSystem()
         {
-            FileVirtual.Instance = this;
+            RamFile.Instance = this;
         }
 
         public const int SectorSize = 512;
@@ -160,5 +166,5 @@ namespace MOOS.FS
         public abstract void WriteAllBytes(string Name, byte[] Content);
         public abstract void Format();
         public abstract void CreateDirectory(string Name);
-    }*/
+    }
 }

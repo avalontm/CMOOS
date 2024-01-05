@@ -9,7 +9,7 @@ using System.Text;
 
 namespace MOOS.FS
 {
-    internal unsafe class TarFS : FileSystem
+    internal unsafe class TarFS : FileRamSystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct posix_tar_header
@@ -147,17 +147,20 @@ namespace MOOS.FS
             posix_tar_header* ptr = &hdr;
 
             List<FileInfo> list = new List<FileInfo>();
-            while (Disk.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
+            while (DiskRam.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
             {
                 sec++;
                 ulong size = mystrtoul(hdr.size, null, 8);
                 string name = string.FromASCII((nint)hdr.name, Strings.strlen(hdr.name) - (hdr.name[Strings.strlen(hdr.name) - 1] == '/' ? 1 : 0));
+
                 if (IsInDirectory(name, Directory))
                 {
                     FileInfo info = new FileInfo();
                     info.Param0 = sec;
-                    info.Param1 = size;
+                    info.Size = size;
                     info.Name = name.Substring(name.LastIndexOf('/') + 1);
+                    info.Ext = "";
+
                     if (hdr.typeflag == '5') info.Attribute |= FileAttribute.Directory;
                     list.Add(info);
                 }
@@ -185,14 +188,14 @@ namespace MOOS.FS
 
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].Name.Equals(fname))
+                if (!string.IsNullOrEmpty(list[i].Name) && list[i].Name.Equals(fname))
                 {
-                    buffer = new byte[(uint)SizeToSec(list[i].Param1) * 512];
+                    buffer = new byte[(uint)SizeToSec(list[i].Size) * 512];
                     fixed (byte* ptr = buffer)
                     {
-                        Disk.Instance.Read(list[i].Param0, (uint)SizeToSec(list[i].Param1), ptr);
+                        DiskRam.Instance.Read(list[i].Param0, (uint)SizeToSec(list[i].Size), ptr);
                     }
-                    buffer.Length = (int)list[i].Param1;
+                    buffer.Length = (int)list[i].Size;
                     //Disposing
                     for (i = 0; i < list.Count; i++)
                     {
@@ -213,7 +216,7 @@ namespace MOOS.FS
             posix_tar_header hdr;
             posix_tar_header* ptr = &hdr;
 
-            while (Disk.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
+            while (DiskRam.Instance.Read(sec, 1, (byte*)ptr) && hdr.name[0])
             {
                 sec++;
                 ulong size = mystrtoul(hdr.size, null, 8);
@@ -249,7 +252,7 @@ namespace MOOS.FS
 
             fixed (byte* ptr = hdr.Build())
             {
-                Disk.Instance.Write(sec, (uint)(hdr.size+512), ptr);
+                DiskRam.Instance.Write(sec, (uint)(hdr.size+512), ptr);
             }
 
             dir.Dispose();
@@ -283,7 +286,7 @@ namespace MOOS.FS
 
             fixed (byte* ptr = hdr.Build())
             {
-                Disk.Instance.Write(sec, (uint)(hdr.size + 512), ptr);
+                DiskRam.Instance.Write(sec, (uint)(hdr.size + 512), ptr);
             }
         }
 
@@ -297,9 +300,5 @@ namespace MOOS.FS
 
         }
 
-        public override bool ChangeDirectory(string Name)
-        {
-            return false;
-        }
     }
 }

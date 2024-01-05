@@ -39,6 +39,7 @@ namespace System.Diagnostics
 
             if(exe == null || exe.Length == 0)
             {
+                Console.WriteLine($@"file ""{file}"" not exist.");
                 return null;
             }
 

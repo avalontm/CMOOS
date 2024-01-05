@@ -490,6 +490,7 @@ namespace MOOS
             {
                 return;
             }
+
             *data = (byte*)Allocator.Allocate((ulong)buffer.Length);
             *length = (ulong)buffer.Length;
             fixed (byte* p = buffer) Native.Movsb(*data, p, *length);

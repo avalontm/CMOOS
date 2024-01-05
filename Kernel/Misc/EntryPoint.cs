@@ -86,10 +86,11 @@ namespace MOOS.Misc
             Console.Write("[Initrd] Initrd: 0x");
             Console.WriteLine((Info->Mods[0]).ToString("x2"));
 
-            //new Ramdisk((IntPtr)(Info->Mods[0]));
-            
+            new Ramdisk((IntPtr)(Info->Mods[0]));
+           
+            new TarFS();
             new FAT32();
-            //new TarFS();
+            
             KMain();
         }
 
