@@ -65,6 +65,18 @@ namespace MOOS.FS
                 return status;
             }
         }
+
+        public bool Write(uint aSectorNo, uint aSectorCount, byte[] aData)
+        {
+            fixed (byte* p = aData)
+            {
+                if (aSectorNo + aSectorCount > mSectorCount)
+                    return false;
+
+                return mParent.Write(mStartSector + aSectorNo, aSectorCount, p);
+
+            }
+        }
     }
 
     public unsafe class FAT32 : FileSystem
@@ -259,9 +271,69 @@ namespace MOOS.FS
             return true;
         }
 
-        public override List<FileInfo> GetFiles(string Directory)
+        public override List<FileInfo> GetFiles(string DirName)
         {
-            return new List<FileInfo>();
+            ChangeDirectory(DirName);
+
+            var xResult = new List<FileInfo>();
+
+            byte[] aData = new byte[(UInt32)(512 * SectorsPerCluster)];
+
+            UInt32 xSector = DataSector + ((FatCurrentDirectoryEntry - RootCluster) * SectorsPerCluster);
+            PartInfo[0].Read(xSector, SectorsPerCluster, aData);
+
+            #region ReadingCode
+            uint Entry_offset = 0;
+            bool Entry_Type; //True -> Directory & False -> File
+            string Entry_Name;
+            string Entry_Ext;
+            FileInfo Entry_Detail;
+
+            for (uint i = 0; i < SectorsPerCluster * 512; i += 32)
+            {
+                if (aData[i] == 0x0)
+                    break;
+                else
+                {
+                    //Find Entry Type
+                    switch (aData[i + 11])
+                    {
+                        case 0x10:
+                            Entry_Type = true;
+                            break;
+                        case 0x20:
+                            Entry_Type = false;
+                            break;
+                        default:
+                            continue;
+                    }
+
+                    Entry_offset = i;
+
+                    if (aData[i] != 0xE5)//Entry Exist
+                    {
+                        Entry_Detail = new FileInfo()
+                        {
+                            Name = ASCII.GetString(aData, (int)i, 8).Trim(),
+
+                        };
+
+                        if (!Entry_Type)
+                        {
+                            Entry_Detail.Attribute = FileAttribute.Archive;
+                        }
+                        else
+                        {
+                            Entry_Detail.Attribute = FileAttribute.Directory;
+                        }
+
+                        xResult.Add(Entry_Detail);
+                    }
+                }
+            }
+            #endregion
+
+            return xResult;
         }
 
         public override void Delete(string Name)
@@ -280,16 +352,9 @@ namespace MOOS.FS
 
             byte[] xReturnData = new byte[location.Size];
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
-            fixed (byte* p = xFileData)
-            {
-                this.IDevice.Read(xSector, SectorsPerCluster, p);
 
-                for (int i = 0; i < xReturnData.Length; i++)
-                {
-                    xReturnData[i] = p[i];
-                }
-                return xReturnData;
-            }
+            PartInfo[0].Read(xSector, SectorsPerCluster, xFileData);
+            return xReturnData;
         }
 
         protected bool IsClusterFree(uint cluster)
@@ -314,10 +379,7 @@ namespace MOOS.FS
 
             var xdata = new byte[512 * nbrSectors];
 
-            fixed (byte* p = xdata)
-            {
-                this.IDevice.Read(sector, nbrSectors, p);
-            }
+            PartInfo[0].Read(sector, nbrSectors, xdata);
 
             BinaryFormat fat = new BinaryFormat(xdata);
 
@@ -381,6 +443,11 @@ namespace MOOS.FS
             fixed (byte* p = xData)
             {
                 this.IDevice.Read(sector, nbrSectors, p);
+
+                for (int i = 0; i < xData.Length; i++)
+                {
+                    xData[i] = p[i];
+                }
             }
             BinaryFormat fat = new BinaryFormat(xData);
 
@@ -424,10 +491,7 @@ namespace MOOS.FS
 
             var xdata = new byte[512 * SectorsPerCluster];
 
-            fixed (byte* p = xdata)
-            {
-                this.IDevice.Read(location.DirectorySector, SectorsPerCluster, p);
-            }
+            PartInfo[0].Read(location.DirectorySector, SectorsPerCluster, xdata);
 
             BinaryFormat directory = new BinaryFormat(xdata);
             directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
@@ -443,19 +507,13 @@ namespace MOOS.FS
             directory.SetUShort(Entry.LastModifiedDate + location.DirectorySectorIndex * 32, 0);
             directory.SetUShort(Entry.FirstCluster + location.DirectorySectorIndex * 32, (ushort)FirstCluster);
             directory.SetUInt(Entry.FileSize + location.DirectorySectorIndex * 32, 0);
-           
-            fixed (byte* p = xdata)
-            {
-                this.IDevice.Write(location.DirectorySector, SectorsPerCluster, p);
-            }
+
+            PartInfo[0].Write(location.DirectorySector, SectorsPerCluster, xdata);
 
             FatFileLocation loc = FindEntry(new Empty(), FirstCluster);
             xdata = new byte[512 * SectorsPerCluster];
 
-            fixed (byte* p = xdata)
-            {
-                this.IDevice.Read(loc.DirectorySector, SectorsPerCluster, p);
-            }
+            PartInfo[0].Read(loc.DirectorySector, SectorsPerCluster, xdata);
 
             directory = new BinaryFormat(xdata);
             for (int i = 0; i < 2; i++)
@@ -483,10 +541,7 @@ namespace MOOS.FS
                 loc.DirectorySectorIndex += 1;
             }
 
-            fixed (byte* p = xdata)
-            {
-                this.IDevice.Write(loc.DirectorySector, SectorsPerCluster, p);
-            }
+            PartInfo[0].Write(loc.DirectorySector, SectorsPerCluster, xdata);
         }
 
         public override bool ChangeDirectory(string DirName)
@@ -535,17 +590,12 @@ namespace MOOS.FS
 
             byte[] aData = new byte[512 * SectorsPerCluster];
 
-            fixed (byte* p = aData)
-            {
-                this.IDevice.Read(activeSector, SectorsPerCluster, p);
-            }
+            PartInfo[0].Read(activeSector, SectorsPerCluster, aData);
 
             BinaryFormat directory = new BinaryFormat(aData);
 
             for (uint index = 0; index < EntriesPerSector * SectorsPerCluster; index++)
             {
-                Console.WriteLine("Lawl: " + ((uint)(index * 32)).ToString());
-
                 if (compare.Compare(directory.Data, index * 32, FatType))
                 {
                     FatFileAttributes attribute = (FatFileAttributes)directory.GetByte((index * Entry.EntrySize) + Entry.FileAttributes);

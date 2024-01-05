@@ -147,10 +147,20 @@ unsafe class Program
 
     public static void SMain()
     {
-        File.Instance.CreateDirectory("/test");
+        var files = File.Instance.GetFiles("");
 
-        bool isChanged  = File.Instance.ChangeDirectory("/test");
-        Console.WriteLine($"isChanged: {isChanged}");
+        for(int i = 0; i < files.Count; i++)
+        {
+            if (files[i].Attribute == FileAttribute.Directory)
+            {
+                Console.WriteLine($"Dir: {files[i].Name}");
+            }
+            else
+            {
+                Console.WriteLine($"File: {files[i].Name}");
+            }
+        }
+       
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 
