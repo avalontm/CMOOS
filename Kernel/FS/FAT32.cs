@@ -284,10 +284,8 @@ namespace MOOS.FS
             PartInfo[0].Read(xSector, SectorsPerCluster, aData);
 
             #region ReadingCode
-            uint Entry_offset = 0;
             bool Entry_Type; //True -> Directory & False -> File
-            string Entry_Name;
-            string Entry_Ext;
+
             FileInfo Entry_Detail;
             ulong sec = 0;
 
@@ -298,19 +296,17 @@ namespace MOOS.FS
                 else
                 {
                     //Find Entry Type
-                    switch (aData[i + 11])
+                    switch ((FileAttribute)aData[i + 11])
                     {
-                        case 0x10:
+                        case FileAttribute.Directory:
                             Entry_Type = true;
                             break;
-                        case 0x20:
+                        case FileAttribute.Archive:
                             Entry_Type = false;
                             break;
                         default:
                             continue;
                     }
-
-                    Entry_offset = i;
 
                     if (aData[i] != 0xE5)//Entry Exist
                     {
@@ -345,9 +341,24 @@ namespace MOOS.FS
            
         }
 
-        public override byte[] ReadAllBytes(string FileName)
+        public override void WriteAllBytes(string FileName, byte[] Content)
+        {
+            var location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
+            if (location == null)
+                return;
+
+            UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
+
+            PartInfo[0].Write(xSector, SectorsPerCluster, Content);
+        }
+
+        public override void Format()
         {
 
+        }
+
+        public override byte[] ReadAllBytes(string FileName)
+        {
             byte[] xFileData = new byte[(UInt32)SectorsPerCluster * 512];
 
             var location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
@@ -473,16 +484,6 @@ namespace MOOS.FS
                 return 0;
 
             return newCluster;
-        }
-
-        public override void WriteAllBytes(string Name, byte[] Content)
-        {
-          
-        }
-
-        public override void Format()
-        {
-          
         }
 
         public unsafe override void CreateDirectory(string DirName)
