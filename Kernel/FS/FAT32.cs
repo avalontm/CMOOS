@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Common.Extentions;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -288,6 +289,7 @@ namespace MOOS.FS
             string Entry_Name;
             string Entry_Ext;
             FileInfo Entry_Detail;
+            ulong sec = 0;
 
             for (uint i = 0; i < SectorsPerCluster * 512; i += 32)
             {
@@ -315,7 +317,8 @@ namespace MOOS.FS
                         Entry_Detail = new FileInfo()
                         {
                             Name = ASCII.GetString(aData, (int)i, 8).Trim(),
-
+                            Param0 = sec,
+                            Param1 = BitConverter.ToUInt32(aData, (int)(i + Entry.FileSize))
                         };
 
                         if (!Entry_Type)
@@ -328,6 +331,7 @@ namespace MOOS.FS
                         }
 
                         xResult.Add(Entry_Detail);
+                        sec += SizeToSec(Entry_Detail.Param0);
                     }
                 }
             }
@@ -343,18 +347,17 @@ namespace MOOS.FS
 
         public override byte[] ReadAllBytes(string FileName)
         {
-            
+
             byte[] xFileData = new byte[(UInt32)SectorsPerCluster * 512];
 
             var location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
             if (location == null)
                 return null;
 
-            byte[] xReturnData = new byte[location.Size];
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
 
             PartInfo[0].Read(xSector, SectorsPerCluster, xFileData);
-            return xReturnData;
+            return xFileData;
         }
 
         protected bool IsClusterFree(uint cluster)
@@ -546,7 +549,7 @@ namespace MOOS.FS
 
         public override bool ChangeDirectory(string DirName)
         {
-            if (DirName == null)
+            if (string.IsNullOrEmpty(DirName))
                 return false;
 
             var location = FindEntry(new WithName(DirName), FatCurrentDirectoryEntry);
@@ -667,7 +670,9 @@ namespace MOOS.FS
             string entryname = ASCII.GetString(data, (int)offset, 8).Trim();
             string entryExt = ASCII.GetString(data, (int)(offset + 8), 3).Trim();
 
+         
             string[] xStr = name.Split('.');
+ 
             if (xStr.Length > 1)
             {
                 if (entryname.ToLower() == xStr[0].Trim().ToLower() && entryExt.ToLower() == xStr[1].Trim().ToLower())
@@ -675,7 +680,6 @@ namespace MOOS.FS
                     return true;
                 }
             }
-
             if (entryname.ToLower() == this.name.Trim().ToLower())
             {
                 return true;

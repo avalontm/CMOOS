@@ -589,7 +589,22 @@ namespace System
             return result;
         }
 
-		public string Replace(string a, string b)
+        public string Trim(char c)
+        {
+            string result = "";
+
+            for (int i = 0; i < this.Length; i++)
+            {
+                if (!char.IsWhiteSpace(this[i]) && this[i] != c)
+                {
+                    result += this[i];
+                }
+            }
+
+            return result;
+
+        }
+        public string Replace(string a, string b)
 		{
             string result = "";
 
