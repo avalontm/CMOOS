@@ -1,4 +1,5 @@
-﻿using MOOS.Driver;
+﻿using MOOS.Api;
+using MOOS.Driver;
 using MOOS.IO;
 using MOOS.Memory;
 using System;
@@ -338,30 +339,59 @@ namespace MOOS.FS
            
         }
 
-        public override void WriteAllBytes(string FileName, byte[] Content)
+        public override void WriteAllBytes(string fileName, byte[] data)
         {
-            if (string.IsNullOrEmpty(FileName))
+            if (string.IsNullOrEmpty(fileName))
             {
                 Console.WriteLine($"File Name empty.");
                 return;
             }
 
-            FileName = FileName.ToUpper();
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return;
+            }
 
-            CreateFile(FileName, Content.Length);
+            string dirName = null;
+            fileName = fileName.ToUpper();
 
-            var location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
+            if (fileName.IndexOf('/') == -1)
+            {
+                dirName = "";
+            }
+            else
+            {
+                dirName = $"{fileName.Substring(0, fileName.LastIndexOf('/'))}";
+            }
+
+            ChangeDirectory(dirName);
+
+            if (dirName.Length > 0)
+            {
+                fileName = fileName.Substring(dirName.Length + 1);
+            }
+
+            CreateFile(fileName, data.Length);
+
+            
+            var location = FindEntry(new WithName(fileName), FatCurrentDirectoryEntry);
             if (location == null)
             {
                 Console.WriteLine("File not found!");
                 return;
             }
-
-
+         
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
 
+            uint cluster = (uint)Math.Round(location.Size / BytePerSector, 2);
 
-            PartInfo[0].Write(xSector, SectorsPerCluster, Content);
+            if (cluster <= 0)
+            {
+                cluster = SectorsPerCluster;
+            }
+
+            PartInfo[0].Write(xSector, cluster, data);
+
         }
 
         public override void Format()
@@ -395,15 +425,23 @@ namespace MOOS.FS
                 fileName = fileName.Substring(dirName.Length + 1);
             }
 
-            byte[] xFileData = new byte[(UInt32)SectorsPerCluster * 512];
-
             var location = FindEntry(new WithName(fileName), FatCurrentDirectoryEntry);
             if (location == null)
+            {
                 return null;
+            }
 
+            byte[] xFileData = new byte[location.Size];
             UInt32 xSector = DataSector + ((location.FirstCluster - RootCluster) * SectorsPerCluster);
 
-            PartInfo[0].Read(xSector, SectorsPerCluster, xFileData);
+            uint cluster = (uint)Math.Round(location.Size / BytePerSector, 2);
+
+            if (cluster <= 0)
+            {
+                cluster = SectorsPerCluster;
+            }
+
+            PartInfo[0].Read(xSector, cluster, xFileData);
 
             return xFileData;
         }
@@ -490,24 +528,13 @@ namespace MOOS.FS
 
             var xData = new byte[512 * nbrSectors];
 
-            fixed (byte* p = xData)
-            {
-                this.IDevice.Read(sector, nbrSectors, p);
+            PartInfo[0].Read(sector, nbrSectors, xData);
 
-                for (int i = 0; i < xData.Length; i++)
-                {
-                    xData[i] = p[i];
-                }
-            }
             BinaryFormat fat = new BinaryFormat(xData);
-
 
             fat.SetUInt(sectorOffset, nextcluster);
 
-            fixed (byte* p = fat.Data)
-            {
-                this.IDevice.Write(sector, nbrSectors,p);
-            }
+            PartInfo[0].Write(sector, nbrSectors, xData);
 
             return true;
         }
@@ -522,52 +549,76 @@ namespace MOOS.FS
             return newCluster;
         }
 
-        public void CreateFile(string FileName, uint size)
+        public void CreateFile(string FileName, int size)
         {
             string[] str = FileName.Split('.');
 
             //TODO: Same Entry Exist exception.
             FatFileLocation location = FindEntry(new WithName(FileName), FatCurrentDirectoryEntry);
 
-            if(location == null)
+            if (location == null)
             {
                 location = FindEntry(new Empty(), FatCurrentDirectoryEntry);
             }
 
             uint FirstCluster = AllocateFirstCluster();
 
-            var xdata = new byte[512 * SectorsPerCluster];
+            var xdata = new byte[(512 * SectorsPerCluster)];
 
             PartInfo[0].Read(location.DirectorySector, SectorsPerCluster, xdata);
 
             BinaryFormat file = new BinaryFormat(xdata);
 
-            for (int i = 0; i < (size / (xdata.Length)); i++)
+            file.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
+            file.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, str[0]);
+
+            if (str.Length > 1)
             {
-                file.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
-                file.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, str[0]);
-
-                if (str.Length > 1)
-                {
-                    file.SetString(Entry.DOSExtension + location.DirectorySectorIndex * 32, str[1]);
-                }
-
-                file.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)0x20);
-                file.SetByte(Entry.Reserved + location.DirectorySectorIndex * 32, 0);
-                file.SetByte(Entry.CreationTimeFine + location.DirectorySectorIndex * 32, 0);
-                file.SetUShort(Entry.CreationTime + location.DirectorySectorIndex * 32, 0);
-                file.SetUShort(Entry.CreationDate + location.DirectorySectorIndex * 32, 0);
-                file.SetUShort(Entry.LastAccessDate + location.DirectorySectorIndex * 32, 0);
-                file.SetUShort(Entry.LastModifiedTime + location.DirectorySectorIndex * 32, 0);
-                file.SetUShort(Entry.LastModifiedDate + location.DirectorySectorIndex * 32, 0);
-                file.SetUShort(Entry.FirstCluster + location.DirectorySectorIndex * 32, (ushort)FirstCluster);
-                file.SetUInt(Entry.FileSize + location.DirectorySectorIndex * 32, size);
-                file.SetUInt(Entry.EntrySize + location.DirectorySectorIndex * 32, size);
-
-                location.DirectorySectorIndex += 1;
+                file.SetString(Entry.DOSExtension + location.DirectorySectorIndex * 32, str[1]);
             }
+      
+            file.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)FatFileAttributes.Archive);
+            file.SetByte(Entry.Reserved + location.DirectorySectorIndex * 32, 0);
+            file.SetByte(Entry.CreationTimeFine + location.DirectorySectorIndex * 32, 1);
+            file.SetUShort(Entry.CreationTime + location.DirectorySectorIndex * 32, getTime());
+            file.SetUShort(Entry.CreationDate + location.DirectorySectorIndex * 32, getDate());
+            file.SetUShort(Entry.LastAccessDate + location.DirectorySectorIndex * 32, getDate());
+            file.SetUShort(Entry.LastModifiedTime + location.DirectorySectorIndex * 32, getTime());
+            file.SetUShort(Entry.LastModifiedDate + location.DirectorySectorIndex * 32, getDate());
+            file.SetUShort(Entry.FirstCluster + location.DirectorySectorIndex * 32, (ushort)FirstCluster);
+            file.SetUInt(Entry.FileSize + location.DirectorySectorIndex * 32, size);
+            file.SetUInt(Entry.EntrySize + location.DirectorySectorIndex * 32, size);
 
             PartInfo[0].Write(location.DirectorySector, SectorsPerCluster, xdata);
+        }
+
+        ushort getDate()
+        {
+            ushort year = RTC.Year;
+            ushort month = RTC.Month;
+            ushort day = RTC.Day;
+
+            ushort packedDate = 0;
+
+            packedDate |= (ushort)(1980 + year << 9); 
+            packedDate |= (ushort)(month << 5);       
+            packedDate |= (ushort)(day);    
+
+            return packedDate;
+        }
+
+        ushort getTime()
+        {
+            ushort hour = RTC.Hour;
+            ushort minute = RTC.Minute;
+            ushort second = RTC.Second;
+            ushort packedTime = 0;
+
+            packedTime |= (ushort)(hour << 11);   
+            packedTime |= (ushort)(minute << 5); 
+            packedTime |= second;          
+
+            return packedTime;
         }
 
         public override void CreateDirectory(string DirName)
@@ -591,7 +642,7 @@ namespace MOOS.FS
             directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, "            ", 11);
             directory.SetString(Entry.DOSName + location.DirectorySectorIndex * 32, DirName);
 
-            directory.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)0x10);
+            directory.SetByte(Entry.FileAttributes + location.DirectorySectorIndex * 32, (byte)FatFileAttributes.SubDirectory);
             directory.SetByte(Entry.Reserved + location.DirectorySectorIndex * 32, 0);
             directory.SetByte(Entry.CreationTimeFine + location.DirectorySectorIndex * 32, 0);
             directory.SetUShort(Entry.CreationTime + location.DirectorySectorIndex * 32, 0);
@@ -623,7 +674,7 @@ namespace MOOS.FS
                     directory.SetString(Entry.DOSName + loc.DirectorySectorIndex * 32, "..");
                     directory.SetUShort(Entry.FirstCluster + loc.DirectorySectorIndex * 32, (ushort)FatCurrentDirectoryEntry);
                 }
-                directory.SetByte(Entry.FileAttributes + loc.DirectorySectorIndex * 32, (byte)0x10);
+                directory.SetByte(Entry.FileAttributes + loc.DirectorySectorIndex * 32, (byte)FatFileAttributes.SubDirectory);
                 directory.SetByte(Entry.Reserved + loc.DirectorySectorIndex * 32, 0);
                 directory.SetByte(Entry.CreationTimeFine + loc.DirectorySectorIndex * 32, 0);
                 directory.SetUShort(Entry.CreationTime + loc.DirectorySectorIndex * 32, 0);

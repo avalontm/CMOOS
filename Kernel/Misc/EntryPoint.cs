@@ -40,11 +40,11 @@ namespace MOOS.Misc
                 for (; ; ) Native.Hlt();
             }
 
+            Interrupts.Initialize();
             Console.Setup();
             IDT.Disable();
             GDT.Initialise();
             IDT.Initialize();
-            Interrupts.Initialize();
             IDT.Enable();
 
             SSE.enable_sse();

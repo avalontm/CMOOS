@@ -225,7 +225,15 @@ unsafe class Program
         string terminal = dictionary["terminal"];
         Console.WriteLine($"execute: {terminal}");
 
-        System.Diagnostics.Process.Start("sys/terminal.mue");
+        byte[] data = RamFile.Instance.ReadAllBytes(terminal);
+       
+        if(data != null )
+        {
+            Console.WriteLine($"Copy file! | {data.Length}");
+            File.Instance.WriteAllBytes(terminal, data);
+        }
+        
+        System.Diagnostics.Process.Start(terminal);
 
         bytes.Dispose();
         texto.Dispose();

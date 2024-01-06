@@ -156,7 +156,29 @@ namespace System
 			return new T[length];
 		}
 
-		public static void Copy(Array sourceArray, ref Array destinationArray)
+        public static void Copy(Array sourceArray, long sourceIndex, Array destinationArray, long destinationIndex, long length)
+        {
+			/*
+            if (sourceIndex > int.MaxValue || sourceIndex < int.MinValue)
+            {
+                throw new ArgumentOutOfRangeException("sourceIndex", Environment.GetResourceString("ArgumentOutOfRange_HugeArrayNotSupported"));
+            }
+
+            if (destinationIndex > int.MaxValue || destinationIndex < int.MinValue)
+            {
+                throw new ArgumentOutOfRangeException("destinationIndex", Environment.GetResourceString("ArgumentOutOfRange_HugeArrayNotSupported"));
+            }
+
+            if (length > int.MaxValue || length < int.MinValue)
+            {
+                throw new ArgumentOutOfRangeException("length", Environment.GetResourceString("ArgumentOutOfRange_HugeArrayNotSupported"));
+            }
+			*/
+
+            Copy(sourceArray, (int)sourceIndex, destinationArray, (int)destinationIndex, (int)length);
+        }
+
+        public static void Copy(Array sourceArray, ref Array destinationArray)
 		{
 			Copy(sourceArray, ref destinationArray, 0);
 		}

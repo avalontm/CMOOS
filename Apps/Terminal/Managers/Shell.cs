@@ -25,6 +25,7 @@ namespace Terminal.Managers
                     file = file + ".mue";
                 }
             }
+
            return Process.Start("sys/app/" + file);
         }
     }
