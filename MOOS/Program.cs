@@ -148,6 +148,7 @@ unsafe class Program
 
     public static void SMain()
     {
+        /*
         string text = "terminal = sys/app/terminal.mue\nshell = sys/app/explorer.mue";
 
         File.Instance.WriteAllBytes("startup.ini", Encoding.UTF8.GetBytes(text));
@@ -185,11 +186,12 @@ unsafe class Program
         Console.WriteLine($"{_files} file(s)                    {_fSize} bytes");
         Console.WriteLine($"{_dirs} dir(s)                    {(1024 * (1024*1024)-_fSize)}  bytes free");
         Console.WriteLine($"");
+        */
 
         Console.WriteLine("Press any key to [ENTER] desktop...");
         Console.ReadKey();
 
-        byte[] bytes = File.ReadAllBytes("startup.ini");
+        byte[] bytes = RamFile.ReadAllBytes("startup.ini");
 
         if (bytes == null)
         {
@@ -224,16 +226,26 @@ unsafe class Program
 
         string terminal = dictionary["terminal"];
         Console.WriteLine($"execute: {terminal}");
-
-        byte[] data = RamFile.Instance.ReadAllBytes(terminal);
-       
-        if(data != null )
-        {
-            Console.WriteLine($"Copy file! | {data.Length}");
-            File.Instance.WriteAllBytes(terminal, data);
-        }
         
-        System.Diagnostics.Process.Start(terminal);
+        /*
+        byte[] data = RamFile.Instance.ReadAllBytes(terminal);
+        
+        Console.WriteLine();
+
+        if (data != null)
+        {
+            Console.WriteLine("Copy");
+
+            File.Instance.WriteAllBytes("terminal.mue", data);
+        }
+        */
+
+        var app = System.Diagnostics.Process.Start(terminal);
+
+        if(app == null)
+        {
+            Console.WriteLine("cant run.");
+        }
 
         bytes.Dispose();
         texto.Dispose();

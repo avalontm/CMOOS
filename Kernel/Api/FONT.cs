@@ -39,10 +39,10 @@ namespace MOOS.Api
 
         public static IntPtr API_FontCreate(string file, int size)
         {
-            string CustomCharset = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-            BitFontDescriptor bitFont = new BitFontDescriptor("Song", CustomCharset, File.ReadAllBytes(file), size);
-            BitFont.RegisterBitFont(bitFont);
-            return bitFont;
+            //string CustomCharset = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+            //BitFontDescriptor bitFont = new BitFontDescriptor("Song", CustomCharset, File.ReadAllBytes(file), size);
+            //BitFont.RegisterBitFont(bitFont);
+            return IntPtr.Zero;
         }
     }
 }

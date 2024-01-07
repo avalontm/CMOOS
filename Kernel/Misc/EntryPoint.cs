@@ -28,9 +28,10 @@ namespace MOOS.Misc
             PageTable.Initialise();
 
             ASC16.Initialise();
+            Console.Setup();
 
             VBEInfo* info = (VBEInfo*)Info->VBEInfo;
-            if (info->PhysBase != 0)
+            if (info != null && info->PhysBase != 0)
             {
                 Framebuffer.Initialize(info->ScreenWidth, info->ScreenHeight, (uint*)info->PhysBase);
                 Framebuffer.Graphics.Clear(0x0);
@@ -40,11 +41,11 @@ namespace MOOS.Misc
                 for (; ; ) Native.Hlt();
             }
 
-            Interrupts.Initialize();
-            Console.Setup();
+
             IDT.Disable();
             GDT.Initialise();
             IDT.Initialize();
+            Interrupts.Initialize();
             IDT.Enable();
 
             SSE.enable_sse();
@@ -89,7 +90,7 @@ namespace MOOS.Misc
             new Ramdisk((IntPtr)(Info->Mods[0]));
            
             new TarFS();
-            new FAT32();
+           // new FAT32();
             
             KMain();
         }

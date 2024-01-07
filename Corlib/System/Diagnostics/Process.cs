@@ -42,7 +42,19 @@ namespace System.Diagnostics
                 return null;
             }
 
+            /*
+            for(int i=0;i < exe.Length;i++)
+            {
+                Console.Write($"{exe[i]}");
+            }
+            */
+
+            Console.WriteLine();
+
+            Console.WriteLine($"bytes: {exe.Length}");
+
             Process process = new Process();
+
 
             fixed (byte* ptr = exe)
             {
@@ -51,6 +63,7 @@ namespace System.Diagnostics
 
                 if (!nthdr->OptionalHeader.BaseRelocationTable.VirtualAddress) return null;
                 if (nthdr->OptionalHeader.ImageBase != 0x140000000) return null;
+               
 
                 byte* newPtr = (byte*)malloc(nthdr->OptionalHeader.SizeOfImage);
                 memset(newPtr, 0, nthdr->OptionalHeader.SizeOfImage);
@@ -58,20 +71,22 @@ namespace System.Diagnostics
 
                 DOSHeader* newdoshdr = (DOSHeader*)newPtr;
                 NtHeaders64* newnthdr = (NtHeaders64*)(newPtr + newdoshdr->e_lfanew);
-
+            
                 IntPtr moduleSeg = IntPtr.Zero;
                 SectionHeader* sections = ((SectionHeader*)(newPtr + newdoshdr->e_lfanew + sizeof(NtHeaders64)));
+
                 for (int i = 0; i < newnthdr->FileHeader.NumberOfSections; i++) 
                 {
                     if (*(ulong*)sections[i].Name == 0x73656C75646F6D2E) moduleSeg = (IntPtr)((ulong)newPtr + sections[i].VirtualAddress);
                     memcpy((byte*)((ulong)newPtr + sections[i].VirtualAddress), ptr + sections[i].PointerToRawData, sections[i].SizeOfRawData);
                 }
+              
                 FixImageRelocations(newdoshdr, newnthdr, (long)((ulong)newPtr - newnthdr->OptionalHeader.ImageBase));
 
                 delegate*<void> p = (delegate*<void>)((ulong)newPtr + newnthdr->OptionalHeader.AddressOfEntryPoint);
                 //TO-DO disposing
                 StartupCodeHelpers.InitializeModules(moduleSeg);
-
+               
                 process.startInfo.FileName = file;
                 process.startInfo.WorkingDirectory = File.GetDirectory(file);
                 process.startInfo.Arguments = arguments;
