@@ -1,4 +1,5 @@
 using MOOS.Misc;
+using static MOOS.Misc.Interrupts;
 
 namespace MOOS.Driver
 {
@@ -6,14 +7,15 @@ namespace MOOS.Driver
     {
         public static ulong Ticks => LocalAPIC.ReadRegister(0x390);
 
-        public static void StartTimer(ulong hz, uint irq)
+        public static void StartTimer(ulong hz, byte irq)
         {
             LocalAPIC.WriteRegister(0x320, 0x00020000 | irq);
             //Divide 16
             LocalAPIC.WriteRegister(0x3e0, 0x3);
             LocalAPIC.WriteRegister(0x380, (uint)((Timer.Bus_Clock / 16) / hz));
-            Interrupts.EnableInterrupt(0x20);
+            Interrupts.EnableInterrupt(irq);
         }
+
 
         public static uint EstimateBusSpeed() 
         {

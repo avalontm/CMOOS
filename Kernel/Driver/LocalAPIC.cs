@@ -74,7 +74,7 @@ namespace MOOS.Driver
                 return;
             }
 
-            WriteRegister((uint)LAPIC_EOI, 0);
+            WriteRegister(LAPIC_EOI, 0);
         }
 
         public static void Initialize()

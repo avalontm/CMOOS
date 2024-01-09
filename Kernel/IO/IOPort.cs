@@ -30,7 +30,7 @@ namespace MOOS.IO
             Native.Out16(aPort, aData);
         }
 
-        static protected void Write32(ushort aPort, uint aData) 
+        static protected void Write32(uint aPort, uint aData) 
         {
             Native.Out32(aPort, aData);
         }
@@ -43,7 +43,7 @@ namespace MOOS.IO
             return Native.In16(aPort); 
         }
 
-        static protected uint Read32(ushort aPort) { 
+        static protected uint Read32(uint aPort) { 
             return Native.In32(aPort);
         }
 

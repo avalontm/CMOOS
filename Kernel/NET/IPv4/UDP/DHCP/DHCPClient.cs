@@ -46,7 +46,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
             int second = 0;
             int _deltaT = 0;
 
-
+            Console.WriteLine($"Receive: {rxBuffer.Count}");
             while (rxBuffer.Count < 1)
             {
                 if (second > (timeout / 1000))
@@ -59,7 +59,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                     _deltaT = RTC.Second;
                 }
             }
-
+            Console.WriteLine("packet");
             var packet = new DHCPPacket(rxBuffer.Dequeue().RawData);
 
             if (packet == null) return -1;

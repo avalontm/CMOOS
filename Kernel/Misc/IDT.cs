@@ -106,7 +106,7 @@ public static class IDT
     [RuntimeExport("intr_handler")]
     public static unsafe void intr_handler(byte irq, IDTStackGeneric* stack)
     {
-       // Console.WriteLine($"[intr_handler] {irq}");
+        //Console.WriteLine($"[intr_handler] {irq}");
         if (irq < 0x20)
         {
             Panic.Error($"CPU{SMP.ThisCPU} KERNEL PANIC!!!", true);
@@ -203,10 +203,9 @@ public static class IDT
                     break;
             }
 
-         
             Interrupts.HandleInterrupt(irq);
         }
-
+        
         if (irq == 0x20)
         {
             ThreadPool.Schedule(stack);

@@ -1,6 +1,9 @@
 using MOOS.Driver;
 using System.Collections.Generic;
 using System.Common.Extentions;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using static MOOS.Misc.Interrupts;
 
 namespace MOOS.Misc
 {

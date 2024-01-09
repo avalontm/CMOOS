@@ -107,13 +107,12 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
-  /*
+  
         #region NETWORK
-
+       /* 
         //Network Config (AvalonTM)
         Network.Initialize();
         NetworkStack.Initialize();
-
 
         if (NetworkDevice.Devices.Count > 0)
         {
@@ -122,14 +121,16 @@ unsafe class Program
             DHCPClient xClient = new DHCPClient();
             int result = xClient.SendDiscoverPacket();
 
-            HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
-            var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
-            Console.WriteLine($"[RESPONSE] {response.Content}");
-            
+            if (result > 0)
+            {
+                HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
+                var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
+                Console.WriteLine($"[RESPONSE] {response.Content}");
+            }
         }
-        
-        #endregion
         */
+        #endregion
+        
 
         /*
         XmlReader reader = XmlReader.Create("info.xml");
@@ -240,9 +241,9 @@ unsafe class Program
         }
         */
 
-        var app = System.Diagnostics.Process.Start(terminal);
+        var process = System.Diagnostics.Process.Start(terminal);
 
-        if(app == null)
+        if(process == null)
         {
             Console.WriteLine("cant run.");
         }
@@ -252,10 +253,12 @@ unsafe class Program
         lineas.Dispose();
         terminal.Dispose();
 
-        for (; ; )
+        while (GetProcess(process.ProcessID) != IntPtr.Zero)
         {
 
         }
     }
+
+
 }
 

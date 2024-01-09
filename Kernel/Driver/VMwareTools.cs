@@ -57,10 +57,10 @@ namespace MOOS
 
             mouse_absolute();
 
-            Interrupts.EnableInterrupt(0x2c, &vmware_handle_mouse);
+            Interrupts.EnableInterrupt(0x2c, &OnInterrupt);
         }
 
-        public static void vmware_handle_mouse()
+        public static void OnInterrupt()
         {
             vmware_cmd cmd;
             /* Read the mouse status */

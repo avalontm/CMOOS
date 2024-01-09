@@ -22,23 +22,15 @@ namespace MOOS.Driver
                 return;
             }
 
-            uint value = In(IOAPICVER);
-            uint count = ((value >> 16) & 0xFF) + 1;
-
+            uint redirEntryCnt = ((In(IOAPICVER) >> 16) & 0xFF) + 1;
+            
             //Disable All Entries
-            for (uint i = 0; i < count; ++i)
+            for (byte i = 0; i < redirEntryCnt; ++i)
             {
-                SetEntry((byte)i, 1 << 16);
+                Interrupts.EndOfInterrupt(i);
             }
-
-            //Interrupts.EnableInterrupt(128, OnInterruptExceptions);
+            
             Console.WriteLine("[I/O APIC] I/O APIC Initialized");
-        }
-
-
-        private static void OnInterruptExceptions()
-        {
-            Console.WriteLine("OnInterruptExceptions");
         }
 
         public static uint In(byte reg)

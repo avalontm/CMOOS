@@ -106,4 +106,9 @@ static unsafe class Native
 
     [DllImport("*")]
     public static extern int Read(int handle, void* source, int count);
+
+    public static void Wait()
+    {
+        Out8(0x80, 0x22);
+    }
 }
