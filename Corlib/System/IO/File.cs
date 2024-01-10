@@ -9,10 +9,10 @@ namespace System.IO
     public unsafe static partial class File
     {
         [DllImport("ReadAllBytes")]
-        public static extern void ReadAllBytes(string file, out ulong size, out byte* data);
+        static extern void ReadAllBytes(string file, out ulong size, out byte* data);
 
         [DllImport("WriteAllBytes")]
-        public static extern void WriteAllBytes(string file, ulong size, byte* data);
+        static extern void WriteAllBytes(string file, ulong size, byte* data);
 
         public static byte[] ReadAllBytes(string file)
         {

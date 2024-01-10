@@ -11,7 +11,7 @@ namespace System.Collections.Generic
         public List(int capacity = 1)
         {
             _items = new T[capacity];
-            _size = 0;
+            _size = (capacity-1);
             _capacity = capacity;
         }
 

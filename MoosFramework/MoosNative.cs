@@ -106,6 +106,9 @@ public static unsafe class MoosNative
     [DllImport("BindOnKeyChangedHandler")]
     static extern void BindOnKeyChangedHandler(IntPtr handler);
 
+    [DllImport("GetWindowScreenBuf")]
+    public static extern IntPtr GetWindowScreenBuf(IntPtr handle);
+
     #endregion
 
 

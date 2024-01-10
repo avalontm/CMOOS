@@ -16,17 +16,18 @@ namespace Terminal.Managers
                 return null;
             }
 
-            if (file.Length > 4)
-            {
-                string ext = file.Substring(file.Length - 4, file.Length);
+            string ext = "";
 
-                if (ext != ".mue")
-                {
-                    file = file + ".mue";
-                }
+            if (file.Length > 3)
+            {
+                ext = file.Substring(file.Length - 4, file.Length);
             }
 
-           return Process.Start("sys/app/" + file);
+            if (ext != ".mue")
+            {
+                file = file + ".mue";
+            }
+            return Process.Start("sys/app/" + file);
         }
     }
 }

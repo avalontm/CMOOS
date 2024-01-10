@@ -36,12 +36,12 @@ namespace System.Windows
         public UIApplication()
         {
             processID = ApplicationCreate(this);
-            SwitchToMode(true);
+            SwitchToMode(false);
         }
 
         public void Run()
         {
-            for(; ; )
+            while (GetProcess(processID) != IntPtr.Zero)
             {
 
             }

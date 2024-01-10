@@ -43,6 +43,8 @@ namespace MOOS
                     return (delegate*<bool>)&API_GetGUI;
                 case "LoadPNG":
                     return (delegate*<string, IntPtr>)&API_LoadPNG;
+                case "GetWindowScreenBuf":
+                    return (delegate*<IntPtr, IntPtr>)&API_GetWindowScreenBuf;
                 case "WriteLine":
                     return (delegate*<void>)&API_WriteLine;
                 case "DebugWriteLine":
@@ -231,6 +233,12 @@ namespace MOOS
         public static bool API_GetGUI()
         {
             return Framebuffer.TripleBuffered;
+        }
+
+        public static IntPtr API_GetWindowScreenBuf(IntPtr handle)
+        {
+            //PortableApp papp = Unsafe.As<IntPtr, PortableApp>(ref handle);
+            return IntPtr.Zero;
         }
 
         static IntPtr API_GetProcess(uint processID)

@@ -38,11 +38,11 @@ namespace MOOS.Api
 
         public static void API_DrawImage(int x, int y, IntPtr handler, bool alpha)
         {
-            if (Framebuffer.TripleBuffered)
-            {
+           // if (Framebuffer.TripleBuffered)
+          //  {
                 Image image = Unsafe.As<IntPtr, Image>(ref handler);
                 Framebuffer.Graphics.DrawImage(x, y, image, alpha);
-            }
+           // }
         }
 
         public static void API_DrawRectangle(int x, int y, int wight, int height, uint color)

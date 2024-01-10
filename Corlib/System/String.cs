@@ -63,7 +63,7 @@ namespace System
 
         private static unsafe string Ctor(char* ptr)
 		{
-			int len = (int)ptr->EEType->BaseSize;
+			int len = (int)ptr->m_pEEType->BaseSize;
             int i = 0;
 
 			while (ptr[i++] != '\0')

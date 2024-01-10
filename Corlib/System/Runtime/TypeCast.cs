@@ -75,7 +75,7 @@ namespace System.Runtime
                 return null;
             }
 
-            EEType* pObjType = obj.EEType;
+            EEType* pObjType = obj.m_pEEType;
 
             // if the types match, we are done
             if (pObjType == pTargetType)

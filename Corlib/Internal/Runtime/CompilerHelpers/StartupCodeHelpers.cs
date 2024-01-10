@@ -15,7 +15,7 @@ namespace Internal.Runtime.CompilerHelpers
             //Debug.Assert(array.EEType->IsArray, "first argument must be an array");
 
             EEType* elemType = (EEType*)elementType;
-            EEType* arrayElemType = array.EEType->RelatedParameterType;
+            EEType* arrayElemType = array.m_pEEType->RelatedParameterType;
 
             if (!AreTypesEquivalent(elemType, arrayElemType))
             {
@@ -53,7 +53,7 @@ namespace Internal.Runtime.CompilerHelpers
         [RuntimeExport("RhUnbox2")]
         public static unsafe ref byte RhUnbox2(EEType* pUnboxToEEType, object obj)
         {
-            if ((obj == null) || !UnboxAnyTypeCompare(obj.EEType, pUnboxToEEType))
+            if ((obj == null) || !UnboxAnyTypeCompare(obj.m_pEEType, pUnboxToEEType))
             {
                 ExceptionIDs exID = obj == null ? ExceptionIDs.NullReference : ExceptionIDs.InvalidCast;
                 //throw pUnboxToEEType->GetClasslibException(exID);
@@ -198,7 +198,7 @@ namespace Internal.Runtime.CompilerHelpers
             {
                 var ptr = (byte*)n;
                 ptr += sizeof(void*);   // Array length is padded to 8 bytes on 64-bit
-                ptr += index * array.EEType->ComponentSize;  // Component size should always be 8, seeing as it's a pointer...
+                ptr += index * array.m_pEEType->ComponentSize;  // Component size should always be 8, seeing as it's a pointer...
                 var pp = (IntPtr*)ptr;
                 *pp = Unsafe.As<object, IntPtr>(ref obj);
             }
@@ -210,10 +210,10 @@ namespace Internal.Runtime.CompilerHelpers
             if (obj == null)
                 return null;
 
-            if (pTargetType == obj.EEType)
+            if (pTargetType == obj.m_pEEType)
                 return obj;
 
-            var bt = obj.EEType->RawBaseType;
+            var bt = obj.m_pEEType->RawBaseType;
 
             
             while (true)

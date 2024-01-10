@@ -8,7 +8,7 @@ namespace System
     public unsafe class Object
     {
         // The layout of object is a contract with the compiler.
-        internal unsafe EEType* EEType;
+        internal unsafe EEType* m_pEEType;
 
         [StructLayout(LayoutKind.Sequential)]
         private class RawData
@@ -23,7 +23,7 @@ namespace System
 
         internal uint GetRawDataSize()
         {
-            return EEType->BaseSize - (uint)sizeof(ObjHeader) - (uint)sizeof(EEType*);
+            return m_pEEType->BaseSize - (uint)sizeof(ObjHeader) - (uint)sizeof(EEType*);
         }
 
         // Creates a new instance of an Object.
@@ -44,7 +44,7 @@ namespace System
                 return false;
             }
 
-            switch (a.EEType->ElementType)
+            switch (a.m_pEEType->ElementType)
             {
                 case EETypeElementType.Byte:
                     return ((Byte)a == (Byte)b);
@@ -96,12 +96,12 @@ namespace System
 
         public virtual int GetHashCode()
         {
-            return (int)this.EEType->HashCode;
+            return (int)this.m_pEEType->HashCode;
         }
 
         public virtual string ToString()
         {
-            return $"Type: {(int)EEType->ElementType}";// GetType().ToString();
+            return $"Type: {(int)m_pEEType->ElementType}";// GetType().ToString();
         }
 
 
