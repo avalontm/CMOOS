@@ -80,10 +80,10 @@ namespace MOOS.Api
 
         public static void API_DrawUpdate()
         {
-            if (Framebuffer.TripleBuffered)
-            {
+            //if (Framebuffer.TripleBuffered)
+          //  {
                 Framebuffer.Update();
-            }
+            //}
         }
     }
 }

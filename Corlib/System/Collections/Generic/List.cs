@@ -10,9 +10,15 @@ namespace System.Collections.Generic
 
         public List(int capacity = 1)
         {
+            if(capacity < 1)
+            {
+                capacity = 1;
+            }
+
             _items = new T[capacity];
-            _size = (capacity-1);
             _capacity = capacity;
+            _size = (_capacity-1);
+            
         }
 
         public List(T[] t)
@@ -140,7 +146,9 @@ namespace System.Collections.Generic
 
         public void Clear()
         {
+            _items = new T[0];
             _size = 0;
+            _capacity = 0;
         }
     }
 }

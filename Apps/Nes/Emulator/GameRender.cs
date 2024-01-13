@@ -1,5 +1,6 @@
 using System;
-using System.Drawing;
+using System.Windows.Media;
+
 
 namespace NES
 {
@@ -12,7 +13,7 @@ namespace NES
 
         public void InitializeGame()
         {
-            colorBG = Color.Blue;
+            colorBG = new Color(0, 0, 255);
         }
 
         public unsafe void WriteBitmap(byte[] byteToWrite, Color XColor)
@@ -21,9 +22,9 @@ namespace NES
             {
                 fixed (int* ptr = App.ScreenBuf.RawData)
                 {
-                    for (int i = 0; i < App.ScreenBuf.Width * App.ScreenBuf.Height; i++) ptr[i] = (int)XColor.ToArgb();
+                    for (int i = 0; i < (App.ScreenBuf.Width * App.ScreenBuf.Height); i++) ptr[i] = (int)XColor.ToArgb();
                 }
-
+                
                 int w = 0;
                 int h = 0;
 
@@ -34,6 +35,7 @@ namespace NES
                     {
                         App.ScreenBuf.RawData[App.ScreenBuf.Width * h + w] = (int)color.ToArgb();
                     }
+                    color.Dispose();
                     //
                     w++;
                     //256*240

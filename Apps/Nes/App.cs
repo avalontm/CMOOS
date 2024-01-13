@@ -82,7 +82,7 @@ namespace NES
         {
             screenWidth = GDI.GetWidth();
             screenHeight = GDI.GetHeight();
-            ScreenBuf = new Image(256, 240);
+            ScreenBuf = new Image(300, 300);
 
             byte[] data = File.ReadAllBytes("roms/super_mario.nes");
 
@@ -99,7 +99,7 @@ namespace NES
 
             while (GetProcess(processID) != IntPtr.Zero)
             {
-                nes.runGame();
+                GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
                 GDI.DrawImage(0, 0, ScreenBuf, false);
                 GDI.DrawUpdate();
             }

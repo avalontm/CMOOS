@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NES
 {
-    public unsafe partial class NES
+    public partial class NES
     {
         Registers registers;
         MemoryMap memory;
@@ -54,13 +54,13 @@ namespace NES
             }
         }
 
-        public void openROM(byte[] data)
+        public unsafe void openROM(byte[] data)
         {
-            byte* rom = stackalloc byte[data.Length];
+            byte* rom;
 
-            for (int i = 0; i < data.Length; i++)
+            fixed (byte* romp = data)
             {
-                rom[i] = data[i];
+                rom = romp;
             }
 
             byte[] temp = new byte[16];
@@ -72,6 +72,7 @@ namespace NES
                     p[i] = rom[i];
                 }
             }
+
             rom += temp.Length;
             memory.byteMirror = (byte)(temp[6] & 0x01);
 
@@ -83,12 +84,10 @@ namespace NES
 
             memory.memPRG = new List<byte[]>();
 
-            for(int i = 0; i < byteNumPRGBanks; i++)
+            for (int i = 0; i < byteNumPRGBanks; i++ )
             {
-                memory.memPRG.Add(new byte[byteNumPRGBanks]);
+                memory.memPRG.Add(new byte[0]);
             }
-
-            //memory.memPRG.Count = byteNumPRGBanks;
 
             if (byteNumPRGBanks == 0x01)
             {
@@ -135,10 +134,10 @@ namespace NES
             if (byteNumCHRBanks != 0)
             {
                 memory.memCHR = new List<byte[]>(byteNumCHRBanks);
-                //memory.memCHR.Count = byteNumCHRBanks;
+
                 for (int i = 0; i < byteNumCHRBanks; i++)
                 {
-                    memory.memCHR.Add(new byte[byteNumCHRBanks]);
+                    memory.memCHR.Add(new byte[0]);
                 }
 
                 for (int x = 0; x < memory.memCHR.Count; x++)

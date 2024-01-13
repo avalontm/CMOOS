@@ -1,5 +1,6 @@
 using System;
-using System.Drawing;
+using System.Windows.Media;
+
 
 namespace NES
 {
@@ -457,6 +458,7 @@ namespace NES
                 // Set backgound color
                 byte bTemp = (byte)(memory.memPPU[0x3F00] & 0x3F);
                 BGColor = Color.FromArgb(byteColors[bTemp, 0], byteColors[bTemp, 1], byteColors[bTemp, 2]);
+
                 //BGColor.R = byteColors[bTemp, 0]; // R
                 //BGColor.G = byteColors[bTemp, 1]; // G
                 //BGColor.B = byteColors[bTemp, 2]; // B
@@ -748,7 +750,7 @@ namespace NES
         {
             memory = memoryRef;
             tn = tnRef;
-
+            BGColor = new Color(0,0,0);
             spriteToDrawT = new byte[8];    // Stores the location of each sprite found
         }
     }
