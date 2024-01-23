@@ -71,7 +71,9 @@
 											%(Filename) == 'WindowsBase' or
 											%(Filename) == 'System.Diagnostics.Process' or 
 											%(Filename) == 'System.Console' or
-											%(Filename) == 'System.Threading'
+											%(Filename) == 'System.Threading' or
+											%(Filename) == 'System.Timers'
+											
 											" />
 			<ReferencePath Remove="@(ReferencePath)" />
 		</ItemGroup>

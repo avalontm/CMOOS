@@ -36,5 +36,18 @@ namespace System.Text
             }
             return new string(newp, 0, length);
         }
+
+        public string GetString(byte[] bytes, int index, int count)
+        {
+            char[] chars = new char[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                chars[i] = (char)bytes[index + i];
+            }
+
+            return new string(chars);
+        }
     }
 }
+

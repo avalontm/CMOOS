@@ -325,5 +325,18 @@ namespace System
 			}
 			return x;
 		}
-	}
+
+        public static double Log(int value, int divisor)
+        {
+            int result = 0;
+
+            while (value >= divisor)
+            {
+                value /= 2;
+                result++;
+            }
+
+            return result;
+        }
+    }
 }
