@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+
 using System.Text;
 
 namespace SNES.Emulator
@@ -143,6 +144,14 @@ namespace SNES.Emulator
             PPU.Reset();
             //APU.Reset();
             Reset2();
+            data.Dispose();
+
+            Console.WriteLine($"Name: {ROM.Header.Name}");
+            Console.WriteLine($"Type: {ROM.Header.Type}");
+            Console.WriteLine($"Speed: {ROM.Header.Speed}");
+            Console.WriteLine($"Chips: {ROM.Header.Chips}");
+            Console.WriteLine($"RomSize: {ROM.Header.RomSize}");
+            Console.WriteLine($"RamSize: {ROM.Header.RamSize}");
         }
 
         private void Reset1()
@@ -266,22 +275,19 @@ namespace SNES.Emulator
 
                 RunFrame(false);
 
-                int[] pixels = PPU.GetPixels();
+               int[] pixels = PPU.GetPixels();
 
                 int w = 0;
                 int h = 0;
 
                 for (int i = 0; i < pixels.Length; i++)
                 {
-                    Color color = Color.FromArgb(pixels[i]); // Color.FromArgb(pixels[i + 3], pixels[i + 2], pixels[i + 1], pixels[i + 0]);
-                    if (color.A != 0)
-                    {
-                        Render.RawData[Render.Width * h + w] = (int)color.ToArgb();
-                    }
-                    color.Dispose();
+
+                    Render.RawData[Render.Width * h + w] = pixels[i];
                     //
                     w++;
-                    if (w == width)
+                    //256*240
+                    if (w == 256)
                     {
                         w = 0;
                         h++;
@@ -1014,11 +1020,6 @@ namespace SNES.Emulator
                 double bankCount = Math.Pow(2, Math.Ceiling(Math.Log(rom.Length / 0x8000, 2)));
                 header.RomSize = (int)bankCount * 0x8000;
             }
-
-            Console.WriteLine($"ROM: {rom.Length}");
-            Console.WriteLine($"Name: {header.Name}");
-            Console.WriteLine($"Type: {header.Type}");
-            Console.WriteLine($"Speed: {header.Speed}");
 
             return header;
         }

@@ -70,14 +70,16 @@ namespace SNES
 
         public static int screenWidth = 0;
         public static int screenHeight = 0;
-
+        static SNESSystem snes;
         public App()
         {
             screenWidth = GDI.GetWidth();
             screenHeight = GDI.GetHeight();
 
-            SNESSystem snes = new SNESSystem();
+            snes = new SNESSystem();
             snes.LoadROM("roms/super_mario_world.smc");
+           
+            MoosNative.SetBindOnKeyChangedHandler(onSnesPad);
 
             while (GetProcess(processID) != IntPtr.Zero)
             {
@@ -88,5 +90,33 @@ namespace SNES
             }
         }
 
+        void onSnesPad(object sender, ConsoleKeyInfo e)
+        {
+            if (e.KeyState == ConsoleKeyState.Pressed)
+            {
+                switch(e.Key)
+                {
+                    case ConsoleKey.Enter:
+                        snes.SetKeyDown(SNESButton.Start);
+                        break;
+                    case ConsoleKey.A:
+                        snes.SetKeyDown(SNESButton.A);
+                        break;
+                }
+            }
+            else if (e.KeyState == ConsoleKeyState.Released)
+            {
+                switch (e.Key)
+                {
+                    case ConsoleKey.Enter:
+                        snes.SetKeyUp(SNESButton.Start);
+                        break;
+                    case ConsoleKey.A:
+                        snes.SetKeyUp(SNESButton.A);
+                        break;
+                }
+            }
+
+        }
     }
 }
