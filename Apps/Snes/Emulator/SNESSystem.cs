@@ -1,24 +1,23 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SNES.Emulator
 {
-    public class SNESSystem
+    public partial class SNESSystem
     {
-
-        /*
-        public IAPU APU { get; private set; }
-        */
-
+        public APU APU { get; private set; }
         public CPU CPU { get; private set; }
         public PPU PPU { get; private set; }
-        public ROM ROM { get; set; }
+        public ROM ROM { get; private set; }
         public Image Render { get; private set; }
+
         private byte[] _ram;
 
-        //[JsonIgnore]
         private readonly int[] _dmaOffs =
         {
             0, 0, 0, 0,
@@ -31,7 +30,6 @@ namespace SNES.Emulator
             0, 0, 1, 1
         };
 
-        // [JsonIgnore]
         private readonly int[] _dmaOffLengths = { 1, 2, 2, 4, 4, 4, 2, 4 };
 
         private const double _apuCyclesPerMaster = 32040 * 32.0 / (1364.0 * 262 * 60);
@@ -105,31 +103,24 @@ namespace SNES.Emulator
 
         public event EventHandler FrameRendered;
 
-        //[JsonIgnore]
-        // public IRenderer Renderer { get; set; }
-
-        //[JsonIgnore]
-        // public IAudioHandler AudioHandler { get; set; }
-
-        //[JsonIgnore]
         public string GameName { get; set; }
 
         const int width = 256;
         const int height = 224;
 
+        private bool _isExecuting;
+
         public SNESSystem()
         {
-            CPU = new CPU();
-            //Renderer = null; //renderer;
-            //AudioHandler = null; //audioHandler;
-            ROM = new ROM(); // rom;
-            ROM?.SetSystem(this);
-            PPU = new PPU();
-            PPU?.SetSystem(this);
-            // APU = null; // new APU();
-            CPU?.SetSystem(this);
-
             Render = new Image(width, height);
+
+            CPU = new CPU();
+            CPU.SetSystem(this);
+            ROM = new ROM();
+            ROM.SetSystem(this);
+            PPU = new PPU();
+            PPU.SetSystem(this);
+            APU = new APU();
         }
 
         public void LoadROM(string fileName)
@@ -141,8 +132,88 @@ namespace SNES.Emulator
             Reset1();
             CPU.Reset();
             PPU.Reset();
-            //APU.Reset();
+            APU.Reset();
             Reset2();
+            StartEmulation();
+        }
+
+        public void StopEmulation()
+        {
+            //AudioHandler.Pauze();
+            _isExecuting = false;
+        }
+
+        public void StartEmulation()
+        {
+            _isExecuting = true;
+        }
+
+        public void onRender()
+        {
+            if (_isExecuting)
+            {
+                RunFrame(false);
+
+                RenderBuffer(PPU.GetPixels());
+                FrameRendered?.Invoke(this, null);
+            }
+        }
+
+        void RenderBuffer(int[] buffer)
+        {
+            lock (this)
+            {
+                Render.RawData = buffer;
+            }
+        }
+
+        public int Read(int adr, bool dma = false)
+        {
+            if (!dma)
+            {
+                _cpuMemOps++;
+                _cpuCyclesLeft += GetAccessTime(adr);
+            }
+            int val = Rread(adr);
+            OpenBus = val;
+            return val;
+        }
+
+        public void Write(int adr, int value, bool dma = false)
+        {
+            if (!dma)
+            {
+                _cpuMemOps++;
+                _cpuCyclesLeft += GetAccessTime(adr);
+            }
+            OpenBus = value;
+            adr &= 0xffffff;
+            int bank = adr >> 16;
+            adr &= 0xffff;
+            if (bank == 0x7e || bank == 0x7f)
+            {
+                _ram[((bank & 0x1) << 16) | adr] = (byte)value;
+            }
+            if (adr < 0x8000 && (bank < 0x40 || bank >= 0x80 && bank < 0xc0))
+            {
+                if (adr < 0x2000)
+                {
+                    _ram[adr & 0x1fff] = (byte)value;
+                }
+                if (adr >= 0x2100 && adr < 0x2200)
+                {
+                    WriteBBus(adr & 0xff, value);
+                }
+                if (adr == 0x4016)
+                {
+                    _joypadStrobe = (value & 0x1) > 0;
+                }
+                if (adr >= 0x4200 && adr < 0x4380)
+                {
+                    WriteReg(adr, value);
+                }
+            }
+            ROM.Write(bank, adr, (byte)value);
         }
 
         private void Reset1()
@@ -217,8 +288,8 @@ namespace SNES.Emulator
             }
             else if ((rom.Length - 512) % 0x8000 == 0)
             {
-                byte[] newData = new byte[rom.Length - 0x200];
-                Array.Copy(rom, 0x200, ref newData, newData.Length);
+                var newData = new byte[rom.Length - 0x200];
+                Array.Copy(rom, 0x200, ref newData, 0, newData.Length);
                 rom = newData;
                 header = ParseHeader(rom);
             }
@@ -229,7 +300,6 @@ namespace SNES.Emulator
             GameName = header.Name;
             if (header.Type != 0)
             {
-                Console.WriteLine("Header not zero.");
                 return;
             }
             if (rom.Length < header.RomSize)
@@ -250,100 +320,6 @@ namespace SNES.Emulator
                 rom = nRom;
             }
             ROM.LoadROM(rom, header);
-        }
-
-        public void StopEmulation()
-        {
-            //AudioHandler.Pauze();
-        }
-
-
-        public void onRender()
-        {
-            lock (this)
-            {
-                //AudioHandler.Resume();
-
-                RunFrame(false);
-
-                int[] pixels = PPU.GetPixels();
-
-                int w = 0;
-                int h = 0;
-
-                for (int i = 0; i < pixels.Length; i++)
-                {
-                    Color color = Color.FromArgb(pixels[i]); // Color.FromArgb(pixels[i + 3], pixels[i + 2], pixels[i + 1], pixels[i + 0]);
-                    if (color.A != 0)
-                    {
-                        Render.RawData[Render.Width * h + w] = (int)color.ToArgb();
-                    }
-                    color.Dispose();
-                    //
-                    w++;
-                    if (w == width)
-                    {
-                        w = 0;
-                        h++;
-                    }
-                }
-
-                //Render = Render.ResizeImage(App.screenWidth, App.screenHeight);
-                // Renderer.RenderBuffer(PPU.GetPixels());
-                // APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
-                // AudioHandler.NextBuffer();
-                // FrameRendered?.Invoke(this, null);
-            }
-        }
-
-
-        public int Read(int adr, bool dma = false)
-        {
-            if (!dma)
-            {
-                _cpuMemOps++;
-                _cpuCyclesLeft += GetAccessTime(adr);
-            }
-            int val = Rread(adr);
-            OpenBus = val;
-            return val;
-        }
-
-        public void Write(int adr, int value, bool dma = false)
-        {
-            if (!dma)
-            {
-                _cpuMemOps++;
-                _cpuCyclesLeft += GetAccessTime(adr);
-            }
-            OpenBus = value;
-            adr &= 0xffffff;
-            int bank = adr >> 16;
-            adr &= 0xffff;
-            if (bank == 0x7e || bank == 0x7f)
-            {
-                _ram[((bank & 0x1) << 16) | adr] = (byte)value;
-            }
-            if (adr < 0x8000 && (bank < 0x40 || bank >= 0x80 && bank < 0xc0))
-            {
-                if (adr < 0x2000)
-                {
-                    _ram[adr & 0x1fff] = (byte)value;
-                }
-                if (adr >= 0x2100 && adr < 0x2200)
-                {
-                    WriteBBus(adr & 0xff, value);
-                }
-                if (adr == 0x4016)
-                {
-                    _joypadStrobe = (value & 0x1) > 0;
-                }
-                if (adr >= 0x4200 && adr < 0x4380)
-                {
-                    WriteReg(adr, value);
-                }
-            }
-            ROM.Write(bank, adr, (byte)value);
         }
 
         private void Cycle(bool noPpu)
@@ -466,7 +442,7 @@ namespace SNES.Emulator
             long catchUpCycles = (long)_apuCatchCycles & 0xffffffff;
             for (var i = 0; i < catchUpCycles; i++)
             {
-               // APU.Cycle();
+                APU.Cycle();
             }
             _apuCatchCycles -= catchUpCycles;
         }
@@ -868,7 +844,7 @@ namespace SNES.Emulator
             if (adr >= 0x40 && adr < 0x80)
             {
                 CatchUpApu();
-                return 0;// APU.SpcWritePorts[adr & 0x3];
+                return  APU.SpcWritePorts[adr & 0x3];
             }
             if (adr == 0x80)
             {
@@ -889,7 +865,7 @@ namespace SNES.Emulator
             if (adr >= 0x40 && adr < 0x80)
             {
                 CatchUpApu();
-                //APU.SpcReadPorts[adr & 0x3] = (byte)value;
+                APU.SpcReadPorts[adr & 0x3] = (byte)value;
                 return;
             }
             switch (adr)
@@ -1000,7 +976,7 @@ namespace SNES.Emulator
         private static Header ParseHeader(byte[] rom)
         {
             string str = Encoding.ASCII.GetString(rom, 0x7FC0, 21);
-            Header header = new Header
+            var header = new Header
             {
                 Name = str,
                 Type = rom[0x7fd5] & 0xf,
@@ -1019,7 +995,6 @@ namespace SNES.Emulator
             Console.WriteLine($"Name: {header.Name}");
             Console.WriteLine($"Type: {header.Type}");
             Console.WriteLine($"Speed: {header.Speed}");
-
             return header;
         }
     }

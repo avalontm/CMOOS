@@ -157,7 +157,7 @@ namespace System
 			return new T[length];
 		}
 
-		public static void Copy(byte[] sourceArray, int sourceIndex, ref byte[] destinationArray, int length)
+		public static void Copy(byte[] sourceArray, int sourceIndex, ref byte[] destinationArray, int destinationIndex,int length)
 		{
 			int x = 0;
 			byte[] temp = new byte[length];

@@ -2,7 +2,7 @@
 {
     public class Header
     {
-        public string Name { set; get; }
+        public string? Name { set; get; }
         public int Type { set; get; }
         public int Speed { set; get; }
         public int Chips { set; get; }

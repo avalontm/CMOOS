@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace SNES.Emulator
 {
@@ -197,6 +193,11 @@ namespace SNES.Emulator
         private int[] _optHorBuffer;
         private int[] _optVerBuffer;
         private int[] _lastOrigTileX;
+
+        public PPU()
+        {
+
+        }
 
         public void Reset()
         {
@@ -442,7 +443,7 @@ namespace SNES.Emulator
             {
                 case 0x00:
                     _forcedBlank = (value & 0x80) > 0;
-                    _brightness = value & 0xf;
+                    _brightness =  value & 0xf;
                     return;
                 case 0x01:
                     _sprAdr1 = (value & 0x7) << 13;
@@ -825,6 +826,7 @@ namespace SNES.Emulator
                     var r2 = 0;
                     var g2 = 0;
                     var b2 = 0;
+
                     if (!_forcedBlank)
                     {
                         var (color, item2, item3) = GetColor(false, i, line);

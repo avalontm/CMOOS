@@ -82,7 +82,7 @@ namespace SNES
             while (GetProcess(processID) != IntPtr.Zero)
             {
                 snes.onRender();
-               // GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
                 GDI.DrawImage(250, 100, snes.Render, false);
                 GDI.DrawUpdate();
             }

@@ -9,16 +9,21 @@ namespace SNES.Emulator
 {
     public class ROM
     {
-        public Header Header { get; private set; }
-        private byte[] _data;
-        private byte[] _sram;
+        public Header? Header { get; private set; }
+        private byte[]? _data;
+        private byte[]? _sram;
         private bool _hasSram;
         private int _banks;
         private int _sramSize;
 
-        private SNESSystem _system;
+        private SNESSystem? _system;
 
        // private Timer _sRAMTimer;
+
+        public ROM()
+        {
+          
+        }
 
         public void LoadROM(byte[] data, Header header)
         {
@@ -28,7 +33,6 @@ namespace SNES.Emulator
             _hasSram = header.Chips > 0;
             _banks = header.RomSize / 0x8000;
             _sramSize = header.RamSize;
-            Console.WriteLine("LoadROM!");
         }
 
         public void SetSystem(SNESSystem system)
