@@ -817,8 +817,8 @@ namespace SNES.Emulator
                 _optVerBuffer = new[] { 0, 0 };
                 _lastOrigTileX = new[] { -1, -1 };
                 double bMult = _brightnessMults[_brightness];
-                var i = 0;
-                while (i < 256)
+
+                for (int i = 0; i < 256; i ++)
                 {
                     var r1 = 0;
                     var g1 = 0;
@@ -875,15 +875,20 @@ namespace SNES.Emulator
                             b2 = b2 < 0 ? 0 : b2;
                         }
                     }
+
                     var realColor = ((byte)(b2 * bMult) & 0xff) | (((byte)(g2 * bMult) & 0xff) << 8) | (((byte)(r2 * bMult) & 0xff) << 16);
+
                     _pixelOutput[(line - 1) * 256 + i] = (int)(realColor | 0xFF000000);
-                    i++;
+                    realColor.Dispose();
+
                 }
                 _spriteLineBuffer = new byte[256];
                 if (!_forcedBlank)
                 {
                     EvaluateSprites(line);
                 }
+
+               
             }
         }
 

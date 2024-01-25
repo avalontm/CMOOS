@@ -9,6 +9,8 @@ using System.Runtime;
 using System.Windows;
 using Moos.Framework.Graphics;
 using SNES.Emulator;
+using Moos.Framework.System;
+using Moos.Framework.Fonts;
 
 namespace SNES
 {
@@ -70,23 +72,74 @@ namespace SNES
 
         public static int screenWidth = 0;
         public static int screenHeight = 0;
+        static SNESSystem snes;
+        static FPSMeter pfs = null;
 
         public App()
         {
             screenWidth = GDI.GetWidth();
             screenHeight = GDI.GetHeight();
 
-            SNESSystem snes = new SNESSystem();
-            snes.LoadROM("roms/super_mario_world.smc");
+            FontManager.Load("sys/fonts/Song.btf", 18);
+            pfs = new FPSMeter();
 
+            snes = new SNESSystem();
+            snes.LoadROM("roms/super_mario_world.smc");
+           
+            MoosNative.SetBindOnKeyChangedHandler(onSnesPad);
+
+            onLoop();
+        }
+
+        void onLoop()
+        {
+            long count = 0;
             while (GetProcess(processID) != IntPtr.Zero)
             {
+                pfs.Update();
                 snes.onRender();
                 GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+<<<<<<< HEAD
                 GDI.DrawImage(250, 100, snes.Render, false);
+=======
+                GDI.DrawImage(250, 100, snes.RenderBuff, false);
+                string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes | Count: {count}";
+                FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
+                cpu.Dispose();
+
+>>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
                 GDI.DrawUpdate();
+                count++;
             }
         }
 
+        void onSnesPad(object sender, ConsoleKeyInfo e)
+        {
+            if (e.KeyState == ConsoleKeyState.Pressed)
+            {
+                switch(e.Key)
+                {
+                    case ConsoleKey.Enter:
+                        snes.SetKeyDown(SNESButton.Start);
+                        break;
+                    case ConsoleKey.A:
+                        snes.SetKeyDown(SNESButton.A);
+                        break;
+                }
+            }
+            else if (e.KeyState == ConsoleKeyState.Released)
+            {
+                switch (e.Key)
+                {
+                    case ConsoleKey.Enter:
+                        snes.SetKeyUp(SNESButton.Start);
+                        break;
+                    case ConsoleKey.A:
+                        snes.SetKeyUp(SNESButton.A);
+                        break;
+                }
+            }
+
+        }
     }
 }

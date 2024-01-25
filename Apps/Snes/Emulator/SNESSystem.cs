@@ -14,7 +14,11 @@ namespace SNES.Emulator
         public CPU CPU { get; private set; }
         public PPU PPU { get; private set; }
         public ROM ROM { get; private set; }
+<<<<<<< HEAD
         public Image Render { get; private set; }
+=======
+        public Image RenderBuff { get; private set; }
+>>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
 
         private byte[] _ram;
 
@@ -112,7 +116,11 @@ namespace SNES.Emulator
 
         public SNESSystem()
         {
+<<<<<<< HEAD
             Render = new Image(width, height);
+=======
+            RenderBuff = new Image(width, height);
+>>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
 
             CPU = new CPU();
             CPU.SetSystem(this);
@@ -161,9 +169,23 @@ namespace SNES.Emulator
 
         void RenderBuffer(int[] buffer)
         {
+<<<<<<< HEAD
             lock (this)
             {
                 Render.RawData = buffer;
+=======
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int _color = buffer[y * width + x];
+                    Color color = Color.FromArgb(_color);
+
+                    // Set the pixel in the Bitmap
+                    RenderBuff.SetPixel(x, y, color);
+                    color.Dispose();
+                }
+>>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
             }
         }
 
@@ -289,7 +311,11 @@ namespace SNES.Emulator
             else if ((rom.Length - 512) % 0x8000 == 0)
             {
                 var newData = new byte[rom.Length - 0x200];
+<<<<<<< HEAD
                 Array.Copy(rom, 0x200, ref newData, 0, newData.Length);
+=======
+                Array.Copy(rom, 0x200, ref newData, newData.Length);
+>>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
                 rom = newData;
                 header = ParseHeader(rom);
             }
