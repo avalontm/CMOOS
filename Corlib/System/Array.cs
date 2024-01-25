@@ -161,7 +161,7 @@ namespace System
 		{
 			int x = 0;
 			byte[] temp = new byte[length];
-			for (int i = sourceIndex; i < length; i++)
+			for (int i = sourceIndex; i < sourceArray.Length; i++)
 			{
 				temp[x] = sourceArray[i];
 				x++;

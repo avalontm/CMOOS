@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System.Diagnostics;
+
 
 namespace SNES.Emulator
 {
@@ -178,6 +175,7 @@ namespace SNES.Emulator
                     int instr = _snes.Read((_r[K] << 16) | _br[PC]++);
                     CyclesLeft = _cycles[instr];
                     int mode = _modes[instr];
+
                     if (IrqWanted && !_i || NmiWanted || _aboWanted)
                     {
                         _br[PC]--;

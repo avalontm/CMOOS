@@ -9,16 +9,19 @@ namespace SNES.Emulator
 {
     public class ROM
     {
-        public Header Header { get; private set; }
-        private byte[] _data;
-        private byte[] _sram;
+        public Header? Header { get; private set; }
+        private byte[]? _data;
+        private byte[]? _sram;
         private bool _hasSram;
         private int _banks;
         private int _sramSize;
 
-        private SNESSystem _system;
+        private SNESSystem? _system;
 
-       // private Timer _sRAMTimer;
+        public ROM()
+        {
+          
+        }
 
         public void LoadROM(byte[] data, Header header)
         {
@@ -28,28 +31,11 @@ namespace SNES.Emulator
             _hasSram = header.Chips > 0;
             _banks = header.RomSize / 0x8000;
             _sramSize = header.RamSize;
-            Console.WriteLine("LoadROM!");
         }
 
         public void SetSystem(SNESSystem system)
         {
             _system = system;
-        }
-
-
-        public void LoadSRAM()
-        {
-            /*
-            string fileName = GetSRAMFileName();
-            if (new FileInfo(fileName).Exists)
-            {
-                using (Stream stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
-                {
-                    var bformatter = new BinaryFormatter();
-                    _sram = (byte[])bformatter.Deserialize(stream);
-                }
-            }
-            */
         }
 
         public byte Read(int bank, int adr)
@@ -70,33 +56,7 @@ namespace SNES.Emulator
             if (adr < 0x8000 && bank >= 0x70 && bank < 0x7e && _hasSram)
             {
                 _sram[(((bank - 0x70) << 15) | (adr & 0x7fff)) & (_sramSize - 1)] = value;
-                /*
-                if (_sRAMTimer == null)
-                {
-                    _sRAMTimer = new Timer(SaveSRAM, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
-                }
-                */
             }
         }
-
-        private void SaveSRAM(object state)
-        {
-            /*
-            string fileName = GetSRAMFileName();
-            using (Stream stream = File.Open(fileName, FileMode.Create, FileAccess.Write))
-            {
-                var bformatter = new BinaryFormatter();
-                bformatter.Serialize(stream, _sram);
-            }
-            _sRAMTimer.Dispose();
-            _sRAMTimer = null;
-            */
-        }
-
-        private string GetSRAMFileName()
-        {
-            return _system.FileName.Replace(".smc", ".srm").Replace(".sfc", ".srm"); ;
-        }
-
     }
 }

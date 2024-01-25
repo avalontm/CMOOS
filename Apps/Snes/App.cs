@@ -87,8 +87,8 @@ namespace SNES
                 if (!MoosNative.GetPanic())
                 {
                     snes.onRender();
-                    //GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
-                    GDI.DrawImage(250, 100, snes.Render, false);
+                    GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                    GDI.DrawImage(250, 100, snes.RenderBuff, false);
                     GDI.DrawUpdate();
                 }
             }
