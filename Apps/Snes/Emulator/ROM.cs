@@ -23,11 +23,6 @@ namespace SNES.Emulator
           
         }
 
-        public ROM()
-        {
-          
-        }
-
         public void LoadROM(byte[] data, Header header)
         {
             _data = data;

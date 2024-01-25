@@ -109,6 +109,9 @@ public static unsafe class MoosNative
     [DllImport("GetWindowScreenBuf")]
     public static extern IntPtr GetWindowScreenBuf(IntPtr handle);
 
+    [DllImport("GetPanic")]
+    public static extern bool GetPanic();
+
     #endregion
 
 

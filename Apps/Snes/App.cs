@@ -99,15 +99,11 @@ namespace SNES
                 pfs.Update();
                 snes.onRender();
                 GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
-<<<<<<< HEAD
-                GDI.DrawImage(250, 100, snes.Render, false);
-=======
                 GDI.DrawImage(250, 100, snes.RenderBuff, false);
                 string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes | Count: {count}";
                 FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
                 cpu.Dispose();
 
->>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
                 GDI.DrawUpdate();
                 count++;
             }

@@ -150,10 +150,7 @@ namespace SNES.Emulator
                 catch (Exception)
                 {
                     // ignored
-<<<<<<< HEAD
-=======
                     Console.WriteLine("ignored");
->>>>>>> c05d028da04d0bcd389bdffea2ef41fffbc84f32
                 }
             }
             _cyclesLeft--;
