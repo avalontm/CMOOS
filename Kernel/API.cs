@@ -133,6 +133,8 @@ namespace MOOS
                     return (delegate*<void>)&API_ShutDown;
                 case "Reboot":
                     return (delegate*<void>)&API_Reboot;
+                case "GetPanic":
+                    return (delegate*<bool>)&API_GetPanic;
             }
 
             #region API Controls
@@ -225,6 +227,11 @@ namespace MOOS
             Power.Reboot();
         }
       
+        public static bool API_GetPanic()
+        {
+            return Panic.isPanic;
+        }
+
         public static void API_GUI()
         {
             Framebuffer.TripleBuffered = true;

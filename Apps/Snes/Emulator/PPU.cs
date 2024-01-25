@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -785,7 +786,7 @@ namespace SNES.Emulator
                 _rangeOver = false;
                 _timeOver = false;
                 FrameOverscan = false;
-                _spriteLineBuffer = new byte[256];
+           
                 if (!_forcedBlank)
                 {
                     EvaluateSprites(0);
@@ -816,8 +817,8 @@ namespace SNES.Emulator
                 _optVerBuffer = new[] { 0, 0 };
                 _lastOrigTileX = new[] { -1, -1 };
                 double bMult = _brightnessMults[_brightness];
-                var i = 0;
-                while (i < 256)
+
+                for (int i = 0; i < 256; i++)
                 {
                     var r1 = 0;
                     var g1 = 0;
@@ -825,12 +826,17 @@ namespace SNES.Emulator
                     var r2 = 0;
                     var g2 = 0;
                     var b2 = 0;
+
                     if (!_forcedBlank)
                     {
+                        Console.WriteLine($"RenderLine: {line}");
+                        Console.ReadKey();  
+
                         var (color, item2, item3) = GetColor(false, i, line);
                         r2 = color & 0x1f;
                         g2 = (color & 0x3e0) >> 5;
                         b2 = (color & 0x7c00) >> 10;
+                        
                         if (_colorClip == 3 || _colorClip == 2 && GetWindowState(i, 5) || _colorClip == 1 && !GetWindowState(i, 5))
                         {
                             r2 = 0;
@@ -865,19 +871,23 @@ namespace SNES.Emulator
                                 g2 >>= 1;
                                 b2 >>= 1;
                             }
+                            
                             r2 = r2 > 31 ? 31 : r2;
                             r2 = r2 < 0 ? 0 : r2;
                             g2 = g2 > 31 ? 31 : g2;
                             g2 = g2 < 0 ? 0 : g2;
                             b2 = b2 > 31 ? 31 : b2;
                             b2 = b2 < 0 ? 0 : b2;
+                        
                         }
+                        
                     }
-                    var realColor = ((byte)(b2 * bMult) & 0xff) | (((byte)(g2 * bMult) & 0xff) << 8) | (((byte)(r2 * bMult) & 0xff) << 16);
+                    
+                  //  var realColor = ((byte)(b2 * bMult) & 0xff) | (((byte)(g2 * bMult) & 0xff) << 8) | (((byte)(r2 * bMult) & 0xff) << 16);
+                    int realColor = ((byte)(r2 * bMult) & 0xff) << 16 | ((byte)(g2 * bMult) & 0xff) << 8 | ((byte)(b2 * bMult) & 0xff);
                     _pixelOutput[(line - 1) * 256 + i] = (int)(realColor | 0xFF000000);
-                    i++;
                 }
-                _spriteLineBuffer = new byte[256];
+
                 if (!_forcedBlank)
                 {
                     EvaluateSprites(line);
@@ -967,6 +977,7 @@ namespace SNES.Emulator
             }
             layer = j == count ? 5 : layer;
             ushort color = _cgram[pixel & 0xff];
+            Console.Write($"{color} ");
             if (_directColor && layer < 4 && _bitPerMode[_mode * 4 + layer] == 8)
             {
                 int r = ((pixel & 0x7) << 2) | ((pixel & 0x100) >> 7);
@@ -974,6 +985,7 @@ namespace SNES.Emulator
                 int b = ((pixel & 0xc0) >> 3) | ((pixel & 0x400) >> 8);
                 color = (ushort)((b << 10) | (g << 5) | r);
             }
+         
             return (color, layer, pixel);
         }
 
@@ -1109,6 +1121,9 @@ namespace SNES.Emulator
 
         private void EvaluateSprites(int line)
         {
+            Console.WriteLine($"EvaluateSprites: {line}");
+            Console.ReadKey();
+
             var spriteCount = 0;
             var sliverCount = 0;
             int index = _objPriority ? ((_oamAdr & 0xfe) - 2) & 0xff : 254;

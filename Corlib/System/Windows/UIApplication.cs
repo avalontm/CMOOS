@@ -36,7 +36,7 @@ namespace System.Windows
         public UIApplication()
         {
             processID = ApplicationCreate(this);
-            SwitchToMode(true);
+            //SwitchToMode(true);
         }
 
         public void Run()

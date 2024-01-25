@@ -71,6 +71,7 @@ namespace SNES
         public static int screenWidth = 0;
         public static int screenHeight = 0;
         static SNESSystem snes;
+
         public App()
         {
             screenWidth = GDI.GetWidth();
@@ -83,10 +84,13 @@ namespace SNES
 
             while (GetProcess(processID) != IntPtr.Zero)
             {
-                snes.onRender();
-               // GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
-                GDI.DrawImage(250, 100, snes.Render, false);
-                GDI.DrawUpdate();
+                if (!MoosNative.GetPanic())
+                {
+                    snes.onRender();
+                    //GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                    GDI.DrawImage(250, 100, snes.Render, false);
+                    GDI.DrawUpdate();
+                }
             }
         }
 

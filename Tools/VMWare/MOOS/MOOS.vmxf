@@ -5,4 +5,4 @@
 <ClientMetaData>
 <clientMetaDataAttributes/>
 <HistoryEventList/></ClientMetaData>
-<vmxPathName type="string">MOOS.vmx</vmxPathName></VM></Foundry>
+<vmxPathName type="string">MOOS.vmx</vmxPathName></VM><tools-install-info><installError>21004</installError><updateCounter>1</updateCounter></tools-install-info></Foundry>

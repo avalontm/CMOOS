@@ -15,7 +15,7 @@ namespace SNES.Emulator
 
         public CPU CPU { get; private set; }
         public PPU PPU { get; private set; }
-        public ROM ROM { get; set; }
+        public ROM ROM { get; private set; }
         public Image Render { get; private set; }
         private byte[] _ram;
 
@@ -121,6 +121,7 @@ namespace SNES.Emulator
         public SNESSystem()
         {
             CPU = new CPU();
+            CPU?.SetSystem(this);
             //Renderer = null; //renderer;
             //AudioHandler = null; //audioHandler;
             ROM = new ROM(); // rom;
@@ -128,8 +129,7 @@ namespace SNES.Emulator
             PPU = new PPU();
             PPU?.SetSystem(this);
             // APU = null; // new APU();
-            CPU?.SetSystem(this);
-
+         
             Render = new Image(width, height);
         }
 
@@ -269,39 +269,19 @@ namespace SNES.Emulator
 
         public void onRender()
         {
-            lock (this)
-            {
-                //AudioHandler.Resume();
+            //AudioHandler.Resume();
 
-                RunFrame(false);
+            RunFrame(false);
 
-               int[] pixels = PPU.GetPixels();
+            Render.RawData = PPU.GetPixels();
 
-                int w = 0;
-                int h = 0;
+            //Render = Render.ResizeImage(App.screenWidth, App.screenHeight);
+            // Renderer.RenderBuffer(PPU.GetPixels());
+            // APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
+            // AudioHandler.NextBuffer();
+            // FrameRendered?.Invoke(this, null);
 
-                for (int i = 0; i < pixels.Length; i++)
-                {
-
-                    Render.RawData[Render.Width * h + w] = pixels[i];
-                    //
-                    w++;
-                    //256*240
-                    if (w == 256)
-                    {
-                        w = 0;
-                        h++;
-                    }
-                }
-
-                //Render = Render.ResizeImage(App.screenWidth, App.screenHeight);
-                // Renderer.RenderBuffer(PPU.GetPixels());
-                // APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
-                // AudioHandler.NextBuffer();
-                // FrameRendered?.Invoke(this, null);
-            }
         }
-
 
         public int Read(int adr, bool dma = false)
         {
@@ -874,7 +854,7 @@ namespace SNES.Emulator
             if (adr >= 0x40 && adr < 0x80)
             {
                 CatchUpApu();
-                return 0;// APU.SpcWritePorts[adr & 0x3];
+                return 1;// APU.SpcWritePorts[adr & 0x3];
             }
             if (adr == 0x80)
             {
