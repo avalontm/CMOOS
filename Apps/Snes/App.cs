@@ -9,6 +9,8 @@ using System.Runtime;
 using System.Windows;
 using Moos.Framework.Graphics;
 using SNES.Emulator;
+using Moos.Framework.System;
+using Moos.Framework.Fonts;
 
 namespace SNES
 {
@@ -71,26 +73,39 @@ namespace SNES
         public static int screenWidth = 0;
         public static int screenHeight = 0;
         static SNESSystem snes;
+        static FPSMeter pfs = null;
 
         public App()
         {
             screenWidth = GDI.GetWidth();
             screenHeight = GDI.GetHeight();
 
+            FontManager.Load("sys/fonts/Song.btf", 18);
+            pfs = new FPSMeter();
+
             snes = new SNESSystem();
             snes.LoadROM("roms/super_mario_world.smc");
            
             MoosNative.SetBindOnKeyChangedHandler(onSnesPad);
 
+            onLoop();
+        }
+
+        void onLoop()
+        {
+            long count = 0;
             while (GetProcess(processID) != IntPtr.Zero)
             {
-                if (!MoosNative.GetPanic())
-                {
-                    snes.onRender();
-                    GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
-                    GDI.DrawImage(250, 100, snes.RenderBuff, false);
-                    GDI.DrawUpdate();
-                }
+                pfs.Update();
+                snes.onRender();
+                GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                GDI.DrawImage(250, 100, snes.RenderBuff, false);
+                string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes | Count: {count}";
+                FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
+                cpu.Dispose();
+
+                GDI.DrawUpdate();
+                count++;
             }
         }
 

@@ -159,16 +159,19 @@ namespace SNES.Emulator
             }
         }
 
-        unsafe void RenderBuffer(int[] buffer)
+        void RenderBuffer(int[] buffer)
         {
-            lock (null)
+            for (int y = 0; y < height; y++)
             {
-                fixed (int* ptr = RenderBuff.RawData)
+                for (int x = 0; x < width; x++)
                 {
-                    for (int i = 0; i < (RenderBuff.Width * RenderBuff.Height); i++) ptr[i] = buffer[i];
-                }
+                    int _color = buffer[y * width + x];
+                    Color color = Color.FromArgb(_color);
 
-               // RenderBuff.RawData = buffer;
+                    // Set the pixel in the Bitmap
+                    RenderBuff.SetPixel(x, y, color);
+                    color.Dispose();
+                }
             }
         }
 
