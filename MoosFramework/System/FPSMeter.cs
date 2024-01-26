@@ -11,7 +11,6 @@ namespace Moos.Framework.System
         [DllImport("getTimeSeconds")]
         static extern byte GetTimeSeconds();
 
-
         public int FPS = 0;
 
         public int LastS = -1;

@@ -19,6 +19,24 @@ namespace System.Media
 
         internal static List<Wav> players = new List<Wav>();
 
+        public Wav()
+        {
+            index = 0;
+            CacheSize = MoosNative.AudioCacheSize();
+            isLoaded = false;
+
+            pcm = null;
+            size = 0;
+
+            players.Add(this);
+
+            if (!isSetDoPlay)
+            {
+                isSetDoPlay = true;
+                MoosNative.SndDoPlay(&doPlay);
+            }
+        }
+
         public Wav(string file)
         {
             index = 0;
@@ -40,6 +58,17 @@ namespace System.Media
         public void Play()
         {
             isPlaying = true;
+        }
+
+        public void SubmitSourceBuffer(byte[] buffer)
+        {
+            fixed (byte* p = buffer)
+            {
+                isLoaded = MoosNative.SndLoad(p, out ulong _size, out byte* _pcm);
+
+                pcm = _pcm;
+                size = _size;
+            }
         }
 
         public void Stop()
@@ -64,8 +93,11 @@ namespace System.Media
                         return;
                     }
 
-                    MoosNative.SndWrite(player.pcm + player.index, CacheSize);
-                    player.index += CacheSize;
+                    if (player.pcm != null)
+                    {
+                        MoosNative.SndWrite(player.pcm + player.index, CacheSize);
+                        player.index += CacheSize;
+                    }
                 }
             }
         }

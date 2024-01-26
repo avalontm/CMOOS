@@ -44,5 +44,24 @@ namespace MOOS.Misc
             }
         }
 
+        public static void Decode(byte* PWAV, out byte[] PCM, out Header header)
+        {
+            Header* hdr = (Header*)PWAV;
+
+            if (hdr->AudioFormat != 1)
+            {
+                PCM = null;
+                header = default;
+                return;
+            }
+            PCM = new byte[hdr->Subchunk2Size];
+
+            fixed (byte* PPCM = PCM)
+            {
+                Native.Movsb(PPCM, PWAV + sizeof(Header), (ulong)PCM.Length);
+            }
+            header = *hdr;
+        }
+
     }
 }

@@ -17,6 +17,8 @@ namespace MOOS.Api
             {
                 case "SndLoad":
                     return (delegate*<string, ulong*, byte**, bool>)&API_SndLoad;
+                case "SndLoadBuffer":
+                    return (delegate*<byte*, ulong*, byte**, bool>)&API_SndLoadBuffer;
                 case "AudioCacheSize":
                     return (delegate*<int>)&API_AudioCacheSize;
                 case "API_AudioBytesWritten":
@@ -59,7 +61,7 @@ namespace MOOS.Api
 
         private static bool API_SndLoad(string file, ulong* length, byte** pcm)
         {
-            byte[] data = File.ReadAllBytes(file);
+            byte[] data = RamFile.ReadAllBytes(file);
 
             if (data == null)
             {
@@ -73,6 +75,17 @@ namespace MOOS.Api
             fixed (byte* p = _pcm) Native.Movsb(*pcm, p, *length);
 
             data.Dispose();
+
+            return true;
+        }
+
+        private static bool API_SndLoadBuffer(byte* data, ulong* length, byte** pcm)
+        {
+            WAV.Decode(data, out byte[] _pcm, out Header header);
+
+            *pcm = (byte*)Allocator.Allocate((ulong)_pcm.Length);
+            *length = (ulong)_pcm.Length;
+            fixed (byte* p = _pcm) Native.Movsb(*pcm, p, *length);
 
             return true;
         }

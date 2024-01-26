@@ -35,6 +35,11 @@ namespace System.Drawing
             RawData[y * Width + x] = (int)color.ToArgb();
         }
 
+        public void SetPixel(int x, int y, int color)
+        {
+            RawData[y * Width + x] = color;
+        }
+
         public static unsafe void Resample(void* input, void* output, int oldw, int oldh, int neww, int newh)
         {
             for (int i = 0; i < newh; i++)
@@ -109,6 +114,37 @@ namespace System.Drawing
                     lock (null)
                     {
                         Resample(input, output, Width, Height, NewWidth, NewHeight);
+                    }
+                }
+            }
+
+            Image image = new Image()
+            {
+                Width = NewWidth,
+                Height = NewHeight,
+                Bpp = Bpp,
+                RawData = temp
+            };
+
+            return image;
+        }
+
+        public static unsafe Image ResizeImage(int oldWidth, int oldHeight,int Bpp, int NewWidth, int NewHeight, int[] rawData)
+        {
+            if (NewWidth == 0 || NewHeight == 0)
+            {
+                return new Image();
+            }
+
+            int[] temp = new int[NewWidth * NewHeight];
+
+            fixed (int* output = temp)
+            {
+                fixed (int* input = rawData)
+                {
+                    lock (null)
+                    {
+                        Resample(input, output, oldWidth, oldHeight, NewWidth, NewHeight);
                     }
                 }
             }

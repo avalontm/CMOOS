@@ -6,7 +6,7 @@ using Internal.Runtime.CompilerServices;
 
 namespace System
 {
-	public abstract unsafe partial class Array
+	public abstract unsafe partial class Array 
 	{
 		[DllImport("*")]
 		private static extern void Panic(string message);
@@ -83,7 +83,7 @@ namespace System
 
 				totalLength *= (ulong)length;
 			}
-
+			
 			object v = StartupCodeHelpers.RhpNewArray(eeType._value, (int)totalLength);
 			Array ret = Unsafe.As<object, Array>(ref v);
 
@@ -679,9 +679,35 @@ namespace System
 			}
 			array = o;
 		}
+
+        public static void Clear<T>(T[] array, int index, int length)
+        {
+            if (array == null)
+            {
+               // throw new ArgumentNullException(nameof(array));
+            }
+
+            if (index < 0 || index >= array.Length)
+            {
+               // throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (length < 0 || index + length > array.Length)
+            {
+                //throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
+            // Set the range of elements to their default values
+            for (int i = index; i < index + length; i++)
+            {
+                array[i] = default(T);
+            }
+        }
     }
 
-	public class Array<T> : Array { }
+	public class Array<T> : Array {
+
+    }
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal class RawArrayData
@@ -690,4 +716,6 @@ namespace System
         public uint Padding;
 		public byte Data;
 	}
+
+
 }

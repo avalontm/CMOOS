@@ -9,8 +9,8 @@ namespace SNES.Emulator
 {
     public class DSP 
     {
-        public float[] SamplesL { get; private set; }
-        public float[] SamplesR { get; private set; }
+        public byte[] SamplesL { get; private set; }
+        public byte[] SamplesR { get; private set; }
         public int SampleOffset { get; set; }
 
         private APU _apu;
@@ -107,8 +107,8 @@ namespace SNES.Emulator
             {
                 _rateNums[i * 5 + 3] = 1;
             }
-            SamplesL = new float[534];
-            SamplesR = new float[534];
+            SamplesL = new byte[534];
+            SamplesR = new byte[534];
             SampleOffset = 0;
 
             _pitch = new int[8];
@@ -169,8 +169,8 @@ namespace SNES.Emulator
                 totalR = 0;
             }
             HandleNoise();
-            SamplesL[SampleOffset] = (float)totalL / 0x8000;
-            SamplesR[SampleOffset] = (float)totalR / 0x8000;
+            SamplesL[SampleOffset] = (byte)(totalL / 0x8000);
+            SamplesR[SampleOffset] = (byte)(totalR / 0x8000);
             SampleOffset++;
             if (SampleOffset > 533)
             {

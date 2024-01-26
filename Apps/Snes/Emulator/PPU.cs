@@ -16,7 +16,6 @@ namespace SNES.Emulator
         private int[] _mode7Ycoords;
         private int[] _pixelOutput;
 
-       // [JsonIgnore]
         private readonly int[] _layersPerMode = {
             4, 0, 1, 4, 0, 1, 4, 2, 3, 4, 2, 3,
             4, 0, 1, 4, 0, 1, 4, 2, 4, 2, 5, 5,
@@ -30,7 +29,6 @@ namespace SNES.Emulator
             4, 4, 1, 4, 0, 4, 1, 5, 5, 5, 5, 5
         };
 
-       // [JsonIgnore]
         private readonly int[] _prioPerMode = {
             3, 1, 1, 2, 0, 0, 1, 1, 1, 0, 0, 0,
             3, 1, 1, 2, 0, 0, 1, 1, 0, 0, 5, 5,
@@ -44,7 +42,6 @@ namespace SNES.Emulator
             3, 2, 1, 1, 0, 0, 0, 5, 5, 5, 5, 5
         };
 
-       // [JsonIgnore]
         private readonly int[] _bitPerMode = {
             2, 2, 2, 2,
             4, 4, 2, 5,
@@ -58,13 +55,10 @@ namespace SNES.Emulator
             8, 7, 5, 5
         };
 
-        //[JsonIgnore]
         private readonly int[] _layercountPerMode = { 12, 10, 8, 8, 8, 8, 6, 5, 10, 7 };
 
-        //[JsonIgnore]
         private readonly double[] _brightnessMults = { 0.1, 0.5, 1.1, 1.6, 2.2, 2.7, 3.3, 3.8, 4.4, 4.9, 5.5, 6, 6.6, 7.1, 7.6, 8.2 };
 
-        //[JsonIgnore]
         private readonly int[] _spriteTileOffsets = {
             0, 1, 2, 3, 4, 5, 6, 7,
             16, 17, 18, 19, 20, 21, 22, 23,
@@ -76,7 +70,6 @@ namespace SNES.Emulator
             112, 113, 114, 115, 116, 117, 118, 119
         };
 
-       // [JsonIgnore]
         private readonly int[] _spriteSizes = {
             1, 1, 1, 2, 2, 4, 2, 2,
             2, 4, 8, 4, 8, 8, 4, 4
@@ -194,6 +187,20 @@ namespace SNES.Emulator
         private int[] _optVerBuffer;
         private int[] _lastOrigTileX;
 
+        double bMult = 0;
+        int realColor = 0;
+        int r1 = 0;
+        int g1 = 0;
+        int b1 = 0;
+        int r2 = 0;
+        int g2 = 0;
+        int b2 = 0;
+
+        ushort color;
+        int item2;
+        int item3;
+        (int, int, int) secondLay;
+
         public PPU()
         {
 
@@ -307,7 +314,6 @@ namespace SNES.Emulator
             _lastOrigTileX = new[] { -1, -1 };
         }
 
-        
         public void SetSystem(SNESSystem snes)
         {
             _snes = snes;
@@ -786,7 +792,7 @@ namespace SNES.Emulator
                 _rangeOver = false;
                 _timeOver = false;
                 FrameOverscan = false;
-                _spriteLineBuffer = new byte[256];
+
                 if (!_forcedBlank)
                 {
                     EvaluateSprites(0);
@@ -811,25 +817,14 @@ namespace SNES.Emulator
                 {
                     GenerateMode7Coords(line);
                 }
-                _lastTileFetchedX = new[] { -1, -1, -1, -1 };
-                _lastTileFetchedY = new[] { -1, -1, -1, -1 };
-                _optHorBuffer = new[] { 0, 0 };
-                _optVerBuffer = new[] { 0, 0 };
-                _lastOrigTileX = new[] { -1, -1 };
-                double bMult = _brightnessMults[_brightness];
+
+                bMult = _brightnessMults[_brightness];
 
                 for (int i = 0; i < 256; i ++)
                 {
-                    var r1 = 0;
-                    var g1 = 0;
-                    var b1 = 0;
-                    var r2 = 0;
-                    var g2 = 0;
-                    var b2 = 0;
-
                     if (!_forcedBlank)
                     {
-                        var (color, item2, item3) = GetColor(false, i, line);
+                        (color, item2, item3) = GetColor(false, i, line);
                         r2 = color & 0x1f;
                         g2 = (color & 0x3e0) >> 5;
                         b2 = (color & 0x7c00) >> 10;
@@ -839,7 +834,7 @@ namespace SNES.Emulator
                             g2 = 0;
                             b2 = 0;
                         }
-                        var secondLay = (0, 5, 0);
+                        secondLay = (0, 5, 0);
                         if (_mode == 5 || _mode == 6 || _pseudoHires || GetMathEnabled(i, item2, item3) && _addSub)
                         {
                             secondLay = GetColor(true, i, line);
@@ -876,19 +871,16 @@ namespace SNES.Emulator
                         }
                     }
 
-                    var realColor = ((byte)(b2 * bMult) & 0xff) | (((byte)(g2 * bMult) & 0xff) << 8) | (((byte)(r2 * bMult) & 0xff) << 16);
-
-                    _pixelOutput[(line - 1) * 256 + i] = (int)(realColor | 0xFF000000);
-                    realColor.Dispose();
-
+                    realColor = ((byte)(31 * bMult) & 0xff) << 24 | (((byte)(r2 * bMult) & 0xff) << 16) | (((byte)(g2 * bMult) & 0xff) << 8) | (((byte)(b2 * bMult) & 0xff));
+                    _pixelOutput[(line - 1) * 256 + i] = realColor;
                 }
-                _spriteLineBuffer = new byte[256];
+
+                Array.Clear(_spriteLineBuffer, 0, _spriteLineBuffer.Length);
+
                 if (!_forcedBlank)
                 {
-                    EvaluateSprites(line);
+                   EvaluateSprites(line);
                 }
-
-               
             }
         }
 

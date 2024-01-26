@@ -9,14 +9,14 @@ namespace SNES.Emulator
 {
     public class ROM
     {
-        public Header? Header { get; private set; }
-        private byte[]? _data;
-        private byte[]? _sram;
+        public Header Header { get; private set; }
+        private byte[] _data;
+        private byte[] _sram;
         private bool _hasSram;
         private int _banks;
         private int _sramSize;
 
-        private SNESSystem? _system;
+        private SNESSystem _system;
 
         public ROM()
         {

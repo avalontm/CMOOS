@@ -142,16 +142,9 @@ namespace SNES.Emulator
                 byte instr = _apu.Read(_br[PC]++);
                 int mode = _modes[instr];
                 _cyclesLeft = _cycles[instr];
-                try
-                {
-                    (int item1, int item2) = GetAdr(mode);
-                    _functions[instr](item1, item2, instr);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                    Console.WriteLine("ignored");
-                }
+
+                (int item1, int item2) = GetAdr(mode);
+                _functions[instr](item1, item2, instr);
             }
             _cyclesLeft--;
         }

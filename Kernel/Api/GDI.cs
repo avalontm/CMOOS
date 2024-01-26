@@ -38,11 +38,14 @@ namespace MOOS.Api
 
         public static void API_DrawImage(int x, int y, IntPtr handler, bool alpha)
         {
-           // if (Framebuffer.TripleBuffered)
-          //  {
-                Image image = Unsafe.As<IntPtr, Image>(ref handler);
+            // if (Framebuffer.TripleBuffered)
+            //  {
+            Image image = Unsafe.As<IntPtr, Image>(ref handler);
+            if (image != null)
+            {
                 Framebuffer.Graphics.DrawImage(x, y, image, alpha);
-           // }
+            }
+            // }
         }
 
         public static void API_DrawRectangle(int x, int y, int wight, int height, uint color)
@@ -80,10 +83,10 @@ namespace MOOS.Api
 
         public static void API_DrawUpdate()
         {
-            //if (Framebuffer.TripleBuffered)
-          //  {
+            if (Framebuffer.TripleBuffered)
+            {
                 Framebuffer.Update();
-            //}
+            }
         }
     }
 }

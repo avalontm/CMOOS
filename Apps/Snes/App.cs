@@ -74,6 +74,7 @@ namespace SNES
         public static int screenHeight = 0;
         static SNESSystem snes;
         static FPSMeter pfs = null;
+        public static bool StartRender;
 
         public App()
         {
@@ -85,7 +86,7 @@ namespace SNES
 
             snes = new SNESSystem();
             snes.LoadROM("roms/super_mario_world.smc");
-           
+
             MoosNative.SetBindOnKeyChangedHandler(onSnesPad);
 
             onLoop();
@@ -93,19 +94,18 @@ namespace SNES
 
         void onLoop()
         {
-            long count = 0;
             while (GetProcess(processID) != IntPtr.Zero)
             {
+                GDI.DrawClear();
                 pfs.Update();
                 snes.onRender();
-                GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
-                GDI.DrawImage(250, 100, snes.RenderBuff, false);
-                string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes | Count: {count}";
+               // GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                GDI.DrawImage(snes.screenX, snes.screenY, snes.RenderBuff, false);
+                string cpu = $"FPS:{pfs.FPS}";
                 FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
                 cpu.Dispose();
 
                 GDI.DrawUpdate();
-                count++;
             }
         }
 
@@ -118,8 +118,38 @@ namespace SNES
                     case ConsoleKey.Enter:
                         snes.SetKeyDown(SNESButton.Start);
                         break;
+                    case ConsoleKey.RShiftKey:
+                        snes.SetKeyDown(SNESButton.Sel);
+                        break;
                     case ConsoleKey.A:
                         snes.SetKeyDown(SNESButton.A);
+                        break;
+                    case ConsoleKey.Z:
+                        snes.SetKeyDown(SNESButton.B);
+                        break;
+                    case ConsoleKey.X:
+                        snes.SetKeyDown(SNESButton.X);
+                        break;
+                    case ConsoleKey.S:
+                        snes.SetKeyDown(SNESButton.Y);
+                        break;
+                    case ConsoleKey.Up:
+                        snes.SetKeyDown(SNESButton.Up);
+                        break;
+                    case ConsoleKey.Down:
+                        snes.SetKeyDown(SNESButton.Down);
+                        break;
+                    case ConsoleKey.Left:
+                        snes.SetKeyDown(SNESButton.Left);
+                        break;
+                    case ConsoleKey.Right:
+                        snes.SetKeyDown(SNESButton.Right);
+                        break;
+                    case ConsoleKey.Q:
+                        snes.SetKeyDown(SNESButton.L);
+                        break;
+                    case ConsoleKey.W:
+                        snes.SetKeyDown(SNESButton.R);
                         break;
                 }
             }
@@ -130,8 +160,38 @@ namespace SNES
                     case ConsoleKey.Enter:
                         snes.SetKeyUp(SNESButton.Start);
                         break;
+                    case ConsoleKey.RShiftKey:
+                        snes.SetKeyUp(SNESButton.Sel);
+                        break;
                     case ConsoleKey.A:
                         snes.SetKeyUp(SNESButton.A);
+                        break;
+                    case ConsoleKey.Z:
+                        snes.SetKeyUp(SNESButton.B);
+                        break;
+                    case ConsoleKey.X:
+                        snes.SetKeyUp(SNESButton.X);
+                        break;
+                    case ConsoleKey.S:
+                        snes.SetKeyUp(SNESButton.Y);
+                        break;
+                    case ConsoleKey.Up:
+                        snes.SetKeyUp(SNESButton.Up);
+                        break;
+                    case ConsoleKey.Down:
+                        snes.SetKeyUp(SNESButton.Down);
+                        break;
+                    case ConsoleKey.Left:
+                        snes.SetKeyUp(SNESButton.Left);
+                        break;
+                    case ConsoleKey.Right:
+                        snes.SetKeyUp(SNESButton.Right);
+                        break;
+                    case ConsoleKey.Q:
+                        snes.SetKeyUp(SNESButton.L);
+                        break;
+                    case ConsoleKey.W:
+                        snes.SetKeyUp(SNESButton.R);
                         break;
                 }
             }

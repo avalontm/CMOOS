@@ -250,17 +250,19 @@ namespace MOOS
 
         static IntPtr API_GetProcess(uint processID)
         {
-            for (int i = 0; i < process.Count; i++)
+            if (!Panic.isPanic)
             {
-                if (process[i] != null && process[i].ProcessID == processID)
+                for (int i = 0; i < process.Count; i++)
                 {
-                    if (ThreadPool.Threads[i].State != ThreadState.Dead)
+                    if (process[i] != null && process[i].ProcessID == processID)
                     {
-                        return (IntPtr)process[i];
+                        if (ThreadPool.Threads[i].State != ThreadState.Dead)
+                        {
+                            return (IntPtr)process[i];
+                        }
                     }
                 }
             }
-
             return IntPtr.Zero;
         }
 

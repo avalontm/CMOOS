@@ -116,7 +116,7 @@ namespace MOOS.Graph
             int newG = (fG * alpha + inv_alpha * bG) >> 8;
             int newB = (fB * alpha + inv_alpha * bB) >> 8;
 
-            uint blendedColor = Color.ToArgb((byte)newR, (byte)newG, (byte)newB);
+            uint blendedColor = (uint)(255 << 24 | newR << 16 | newG << 8 | newB);
 
             VideoMemory[Width * Y + X] = blendedColor;
         }

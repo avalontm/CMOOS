@@ -256,5 +256,18 @@ namespace SNES.Emulator
             }
             RAM[adr] = value;
         }
+
+        public void SetSamples(byte[] left, byte[] right)
+        {
+            const double add = 534.0 / 735.0;
+            double total = 0;
+            for (var i = 0; i < 735; i++)
+            {
+                left[i] = _dsp.SamplesL[(byte)total];
+                right[i] = _dsp.SamplesR[(byte)total];
+                total += add;
+            }
+            _dsp.SampleOffset = 0;
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace SNES.Emulator
         public PPU PPU { get; private set; }
         public ROM ROM { get; private set; }
         public Image RenderBuff { get; private set; }
+        public AudioHandler AudioHandler { get; private set; }
 
         private byte[] _ram;
 
@@ -105,6 +106,11 @@ namespace SNES.Emulator
 
         public string GameName { get; set; }
 
+        public int screenX = 0;
+        public int screenY = 0;
+        public int screenW = 0;
+        public int screenH = 0;
+
         const int width = 256;
         const int height = 224;
 
@@ -112,7 +118,12 @@ namespace SNES.Emulator
 
         public SNESSystem()
         {
-            RenderBuff = new Image(width, height);
+            screenW = Math.Min(App.screenWidth, App.screenHeight * width / height);
+            screenH = screenW * height / width;
+            screenX = (App.screenWidth - screenW) / 2;
+            screenY = (App.screenHeight - screenH) / 2;
+
+            RenderBuff = new Image(screenW, screenH);
 
             CPU = new CPU();
             CPU.SetSystem(this);
@@ -121,6 +132,7 @@ namespace SNES.Emulator
             PPU = new PPU();
             PPU.SetSystem(this);
             APU = new APU();
+            AudioHandler = new AudioHandler();
         }
 
         public void LoadROM(string fileName)
@@ -135,16 +147,18 @@ namespace SNES.Emulator
             APU.Reset();
             Reset2();
             StartEmulation();
+            data.Dispose();
         }
 
         public void StopEmulation()
         {
-            //AudioHandler.Pauze();
+            AudioHandler.Pauze();
             _isExecuting = false;
         }
 
         public void StartEmulation()
-        {
+        {  
+            AudioHandler.Resume();
             _isExecuting = true;
         }
 
@@ -155,23 +169,17 @@ namespace SNES.Emulator
                 RunFrame(false);
 
                 RenderBuffer(PPU.GetPixels());
-                FrameRendered?.Invoke(this, null);
+                APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
+                //AudioHandler.NextBuffer();
             }
         }
 
         void RenderBuffer(int[] buffer)
         {
-            for (int y = 0; y < height; y++)
+            lock (null)
             {
-                for (int x = 0; x < width; x++)
-                {
-                    int _color = buffer[y * width + x];
-                    Color color = Color.FromArgb(_color);
-
-                    // Set the pixel in the Bitmap
-                    RenderBuff.SetPixel(x, y, color);
-                    color.Dispose();
-                }
+                RenderBuff.Dispose();
+                RenderBuff = Image.ResizeImage(width, height, 4, screenW,  screenH, buffer);
             }
         }
 
@@ -297,7 +305,7 @@ namespace SNES.Emulator
             else if ((rom.Length - 512) % 0x8000 == 0)
             {
                 var newData = new byte[rom.Length - 0x200];
-                Array.Copy(rom, 0x200, ref newData, newData.Length);
+                Array.Copy(rom, 0x200, ref newData, 0, newData.Length);
                 rom = newData;
                 header = ParseHeader(rom);
             }
@@ -852,7 +860,7 @@ namespace SNES.Emulator
             if (adr >= 0x40 && adr < 0x80)
             {
                 CatchUpApu();
-                return  APU.SpcWritePorts[adr & 0x3];
+                return APU.SpcWritePorts[adr & 0x3];
             }
             if (adr == 0x80)
             {
