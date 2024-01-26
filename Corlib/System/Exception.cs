@@ -44,6 +44,13 @@
         public ArgumentNullException() { }
     }
 
+    internal sealed class ArgumentException : Exception
+    { 
+        public ArgumentException(string message)
+        {
+        }
+    }
+
     internal sealed class NotImplementedException : Exception
     {
         public NotImplementedException() { }

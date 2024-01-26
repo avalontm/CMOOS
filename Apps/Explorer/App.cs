@@ -111,6 +111,7 @@ namespace Explorer
 
                 string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes";
                 FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
+                cpu.Dispose();
 
                 CursorManager.Draw();
 

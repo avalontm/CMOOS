@@ -206,10 +206,10 @@ public static class IDT
             Interrupts.HandleInterrupt(irq);
         }
         
-        if (irq == 0x20)
-        {
+       // if (irq == 0x20)
+       // {
             ThreadPool.Schedule(stack);
-        }
+       // }
 
         Interrupts.EndOfInterrupt(irq);
     }

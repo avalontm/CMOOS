@@ -58,7 +58,7 @@ namespace MOOS
             Out8((ushort)(NABM + 0x15), Index);
             Out8((ushort)(NABM + 0x1B), 0x19);
 
-            Interrupts.EnableInterrupt(device.IRQ, &OnInterrupt);
+            Interrupts.EnableInterrupt(0x20, &OnInterrupt);
             Audio.HasAudioDevice = true;
         }
 

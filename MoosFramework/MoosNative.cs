@@ -85,11 +85,14 @@ public static unsafe class MoosNative
     [DllImport("SndWrite")]
     public static extern void SndWrite(byte* buffer, uint size);
 
+    [DllImport("SndClear")]
+    public static extern void SndClear();
+
     [DllImport("SndLoad")]
     public static extern bool SndLoad(string file, out ulong size, out byte* data);
 
     [DllImport("SndLoadBuffer")]
-    public static extern bool SndLoad(byte* buffer, out ulong size, out byte* data);
+    public static extern bool SndLoadBuffer(byte* buffer, out ulong size, out byte* data);
 
     [DllImport("AudioCacheSize")]
     public static extern int AudioCacheSize();

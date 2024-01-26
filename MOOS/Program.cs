@@ -107,7 +107,6 @@ unsafe class Program
         AC97.Initialize();
         ES1371.Initialize();
 
-  
         #region NETWORK
        /* 
         //Network Config (AvalonTM)

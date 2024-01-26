@@ -96,12 +96,11 @@ namespace SNES
         {
             while (GetProcess(processID) != IntPtr.Zero)
             {
-                GDI.DrawClear();
                 pfs.Update();
                 snes.onRender();
-               // GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF55AAAA);
+                GDI.FillRectangle(0, 0, screenWidth, screenHeight, 0xFF000000);
                 GDI.DrawImage(snes.screenX, snes.screenY, snes.RenderBuff, false);
-                string cpu = $"FPS:{pfs.FPS}";
+                string cpu = $"FPS:{pfs.FPS} | CPU Usage:{MoosNative.CPUUsage()}% | Used Memory: {(MoosNative.MemoryInUse() / 1024)}kbytes";
                 FontManager.font.DrawString(2, 2, cpu, 0xFFFFFFFF);
                 cpu.Dispose();
 

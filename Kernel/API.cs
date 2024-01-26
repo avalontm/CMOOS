@@ -496,7 +496,7 @@ namespace MOOS
 
         public static void API_CreateDirectory(string name)
         {
-            File.Instance.CreateDirectory(name);
+            RamFile.Instance.CreateDirectory(name);
         }
 
         public static void API_ReadAllBytes(string name, ulong* length, byte** data)
@@ -524,7 +524,7 @@ namespace MOOS
                 buffer[i] = data[i];
             }
 
-            File.Instance.WriteAllBytes(name, buffer);
+            RamFile.Instance.WriteAllBytes(name, buffer);
             buffer.Dispose();
         }
         

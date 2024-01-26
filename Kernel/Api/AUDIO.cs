@@ -27,6 +27,8 @@ namespace MOOS.Api
                     return (delegate*<delegate*<void>, void>)&API_SndDoPlay;
                 case "SndWrite":
                     return (delegate*<byte*, int, int>)&API_SndWrite;
+                case "SndClear":
+                    return (delegate*<void>)&API_SndClear;
                 case "HasAudioDevice":
                     return (delegate*<bool>)&API_HasAudioDevice;
             }
@@ -57,6 +59,11 @@ namespace MOOS.Api
         private static int API_AudioBytesWritten()
         {
             return Audio.bytesWritten;
+        }
+
+        static void API_SndClear()
+        {
+            Audio.snd_clear();
         }
 
         private static bool API_SndLoad(string file, ulong* length, byte** pcm)

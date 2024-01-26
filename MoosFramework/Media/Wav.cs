@@ -64,7 +64,7 @@ namespace System.Media
         {
             fixed (byte* p = buffer)
             {
-                isLoaded = MoosNative.SndLoad(p, out ulong _size, out byte* _pcm);
+                isLoaded = MoosNative.SndLoadBuffer(p, out ulong _size, out byte* _pcm);
 
                 pcm = _pcm;
                 size = _size;

@@ -170,7 +170,7 @@ namespace SNES.Emulator
 
                 RenderBuffer(PPU.GetPixels());
                 APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
-                //AudioHandler.NextBuffer();
+                AudioHandler.NextBuffer();
             }
         }
 

@@ -18,7 +18,7 @@ namespace MOOS.Misc
 
         public PNG(string file)
         {
-            onLoad(File.Instance.ReadAllBytes(file), LodePNGColorType.LCT_RGBA, 8);
+            onLoad(RamFile.Instance.ReadAllBytes(file), LodePNGColorType.LCT_RGBA, 8);
         }
 
         public PNG(byte[] file,LodePNGColorType type = LodePNGColorType.LCT_RGBA ,uint bitDepth = 8)
@@ -30,6 +30,15 @@ namespace MOOS.Misc
         {
             lock (this)
             {
+                if (file == null)
+                {
+                    Width = 0;
+                    Height = 0;
+                    Bpp = 4;
+                    RawData =new int[0];
+                    return;
+                }
+
                 fixed (byte* p = file)
                 {
                     lodepng_decode_memory(out uint* _out, out uint w, out uint h, p, file.Length, type, bitDepth);

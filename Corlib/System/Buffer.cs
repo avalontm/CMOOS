@@ -76,6 +76,27 @@ namespace System
                 elementCount * (nuint)Unsafe.SizeOf<T>());
         }
 
+        public static void BlockCopy(byte[] src, int srcOffset, byte[] dst, int dstOffset, int count)
+        {
+            /*
+            if (src == null || dst == null)
+                throw new ArgumentNullException();
+
+            // Verificar si los índices y longitudes son válidos
+            if (srcOffset < 0 || dstOffset < 0 || count < 0 ||
+                srcOffset + count > src.Length || dstOffset + count > dst.Length)
+            {
+                throw new ArgumentException("Invalid offset or count");
+            }
+            */
+
+            // Copiar bloques de bytes
+            for (int i = 0; i < count; i++)
+            {
+                dst[dstOffset + i] = src[srcOffset + i];
+            }
+        }
+
         [DllImport("*")]
         public static unsafe extern void memset(byte* ptr, byte c, ulong count);
 

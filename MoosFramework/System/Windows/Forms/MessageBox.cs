@@ -12,7 +12,7 @@ namespace System.Windows.Forms
 {
     public class MessageBox : Widget
     {
-        public static MessageBox Instance = new MessageBox();
+        public static MessageBox Instance { private set; get; } = new MessageBox();
         string Text { set; get; }
         string Caption { set; get; }
         DialogResult Result = DialogResult.None;

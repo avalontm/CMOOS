@@ -104,7 +104,6 @@ namespace System.Drawing
                 return new Image();
             }
 
-            int w1 = Width, h1 = Height;
             int[] temp = new int[NewWidth * NewHeight];
 
             fixed(int* output = temp)
@@ -148,7 +147,7 @@ namespace System.Drawing
                     }
                 }
             }
-
+            
             Image image = new Image()
             {
                 Width = NewWidth,
