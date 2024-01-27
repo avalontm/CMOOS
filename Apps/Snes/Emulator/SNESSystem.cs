@@ -132,7 +132,7 @@ namespace SNES.Emulator
             PPU = new PPU();
             PPU.SetSystem(this);
             APU = new APU();
-            AudioHandler = new AudioHandler();
+           // AudioHandler = new AudioHandler();
         }
 
         public void LoadROM(string fileName)
@@ -152,13 +152,13 @@ namespace SNES.Emulator
 
         public void StopEmulation()
         {
-            AudioHandler.Pauze();
+            //AudioHandler.Pauze();
             _isExecuting = false;
         }
 
         public void StartEmulation()
         {  
-            AudioHandler.Resume();
+            //AudioHandler.Resume();
             _isExecuting = true;
         }
 
@@ -169,8 +169,8 @@ namespace SNES.Emulator
                 RunFrame(false);
 
                 RenderBuffer(PPU.GetPixels());
-                APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
-                AudioHandler.NextBuffer();
+               // APU.SetSamples(AudioHandler.SampleBufferL, AudioHandler.SampleBufferR);
+                //AudioHandler.NextBuffer();
             }
         }
 
