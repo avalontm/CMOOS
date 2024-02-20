@@ -26,6 +26,7 @@
 	<ItemGroup>
 		<NativeLibrary Include="$(MSBuildStartupDirectory)\x64\Debug\NativeLib.lib" />
 		<NativeLibrary Include="$(MSBuildStartupDirectory)\x64\Debug\LibC.lib" />
+		<NativeLibrary Include="$(MSBuildStartupDirectory)\x64\Debug\snsf9x.lib" />
 	</ItemGroup>
 
 	<ItemGroup>

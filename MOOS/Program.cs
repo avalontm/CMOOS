@@ -17,6 +17,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using static MOOS.Misc.Interrupts;
 using Console = MOOS.Console;
 
 unsafe class Program
