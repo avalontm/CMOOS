@@ -68,7 +68,10 @@ namespace System.Collections.Generic
 
         public void Clear()
         {
+            _items.Dispose();
+            _items = new T[1];
             _size = 0;
+            _capacity = 1;
         }
 
         public override void Dispose()

@@ -42,8 +42,6 @@ namespace System.Net.Http
  
             DnsClient dns = new DnsClient();
 
-            Timer.Sleep(100);
-    
             dns.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address
            
             dns.SendAsk(host);
@@ -55,15 +53,18 @@ namespace System.Net.Http
                 _address = dns.Receive();
             }
 
-            Timer.Sleep(100);
+            Console.WriteLine($"Address: {_address}");
 
             if (!client.IsConnected())
             {
+                Console.WriteLine($"Connecting...");
                 if (!client.Connect(_address, this.port, timeout * 1000))
                 {
                     return http;
                 }
             }
+
+            Console.WriteLine($"IsConenct: {client.IsConnected()}");
 
             string header = $"GET /{path} HTTP/1.1\r\n";
             header += $"Host: {host}\r\n";
@@ -84,13 +85,15 @@ namespace System.Net.Http
 
             if (receive == null || receive.Length == 0)
             {
+                Console.WriteLine($"[STATUS] {http.Status}");
                 return http;
             }
 
             http.Status = 200;
-            Console.WriteLine($"[STATUS ] {http.Status}");
+            Console.WriteLine($"[STATUS] {http.Status}");
             string response = Encoding.UTF8.GetString(receive);
             Console.WriteLine($"[RESPONSE] {response}");
+
             if (!string.IsNullOrEmpty(response))
             {
                 var index = BinaryMatch(receive, Encoding.UTF8.GetBytes("\r\n\r\n")) + 4;

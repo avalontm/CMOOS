@@ -58,7 +58,7 @@ namespace MOOS.NET.IPv4.TCP
         /// <param name="dest">Destination address.</param>
         /// <param name="destPort">Destination port.</param>
         /// <exception cref="Exception">Thrown if TCP Status is not CLOSED.</exception>
-        public bool Connect(Address dest, int destPort, int timeout = 5000)
+        public bool ted(Address dest, int destPort, int timeout = 5000)
         {
             if (StateMachine.Status == Status.ESTABLISHED)
             {
@@ -217,6 +217,7 @@ namespace MOOS.NET.IPv4.TCP
         /// <exception cref="Exception">Thrown if TCP Status is not ESTABLISHED.</exception>
         public byte[] Receive(ref EndPoint source)
         {
+            Console.WriteLine($"Receive: {source.Address}");
             while (StateMachine.rxBuffer.Count < 1)
             {
                 if (StateMachine.Status != Status.ESTABLISHED)
@@ -226,8 +227,10 @@ namespace MOOS.NET.IPv4.TCP
                 }
                 Native.Hlt();
             }
- 
+
+            Console.WriteLine($"Dequeue");
             var packet = StateMachine.rxBuffer.Dequeue();
+            Console.WriteLine($"packet: {packet.RawData.Length}");
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;
 
