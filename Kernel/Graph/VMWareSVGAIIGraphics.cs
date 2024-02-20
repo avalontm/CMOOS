@@ -12,11 +12,11 @@ namespace MOOS.Graph
     {
         VMWareSVGAII svga;
 
-        public VMWareSVGAIIGraphics(ushort Width = 800, ushort Height = 600) : base(Width, Height, null)
+        public VMWareSVGAIIGraphics(ushort Width = 800, ushort Height = 600, ushort bbp = 32) : base(Width, Height, null)
         {
             svga = new VMWareSVGAII();
             svga.SetMode(Width, Height);
-            Framebuffer.Initialize(Width, Height, svga.Video_Memory);
+            Framebuffer.Initialize(Width, Height, bbp, svga.Video_Memory);
             base.VideoMemory = Framebuffer.FirstBuffer;
 
         }

@@ -74,6 +74,7 @@ namespace Terminal
         #endregion
 
         Process process = null;
+        string user = "cmoos";
 
         public App()
         {
@@ -90,8 +91,8 @@ namespace Terminal
         {
             while (GetProcess(processID) != IntPtr.Zero)
             {
-                Console.Write("cmoos>");
-                string s = Console.ReadLine(6);
+                Console.Write($"{user}>");
+                string s = Console.ReadLine(user.Length+1);
                 onCommand(s);
             }
         }

@@ -31,9 +31,13 @@ namespace MOOS.Misc
             Console.Setup();
 
             VBEInfo* info = (VBEInfo*)Info->VBEInfo;
+            //info->ScreenWidth = 640;
+           // info->ScreenHeight = 480;
+            //info->PhysBase = 0xE0000000;
+
             if (info != null && info->PhysBase != 0)
             {
-                Framebuffer.Initialize(info->ScreenWidth, info->ScreenHeight, (uint*)info->PhysBase);
+                Framebuffer.Initialize(info->ScreenWidth, info->ScreenHeight, info->BitsPerPixel, (uint*)info->PhysBase);
                 Framebuffer.Graphics.Clear(0x0);
             }
             else
@@ -90,8 +94,10 @@ namespace MOOS.Misc
             new Ramdisk((IntPtr)(Info->Mods[0]));
            
             new TarFS();
-           // new FAT32();
-            
+            // new FAT32();
+
+            Framebuffer.ChangeResolution(1027, 768, 32);
+
             KMain();
         }
 
