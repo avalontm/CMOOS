@@ -58,7 +58,7 @@ namespace MOOS.NET.IPv4.TCP
         /// <param name="dest">Destination address.</param>
         /// <param name="destPort">Destination port.</param>
         /// <exception cref="Exception">Thrown if TCP Status is not CLOSED.</exception>
-        public bool ted(Address dest, int destPort, int timeout = 5000)
+        public bool Connect(Address dest, int destPort, int timeout = 5000)
         {
             if (StateMachine.Status == Status.ESTABLISHED)
             {
@@ -68,11 +68,12 @@ namespace MOOS.NET.IPv4.TCP
             }
 
             StateMachine.RemoteEndPoint.Address = dest;
+
             StateMachine.LocalEndPoint.Address = IPConfig.FindNetwork(dest);
             StateMachine.RemoteEndPoint.Port = (ushort)destPort;
 
             //Generate Random Sequence Number
-            var rnd = new Random();
+            var rnd = new Random(Tcp.Connections.Count);
             var SequenceNumber = (uint)((rnd.Next(0, Int32.MaxValue)) << 32) | (uint)(rnd.Next(0, Int32.MaxValue));
 
             //Fill TCB
@@ -92,7 +93,7 @@ namespace MOOS.NET.IPv4.TCP
             Tcp.Connections.Add(StateMachine);
 
             StateMachine.SendEmptyPacket(Flags.SYN);
-           
+
             StateMachine.Status = Status.SYN_SENT;
 
             if (StateMachine.WaitStatus(Status.ESTABLISHED, timeout) == false)
@@ -217,7 +218,7 @@ namespace MOOS.NET.IPv4.TCP
         /// <exception cref="Exception">Thrown if TCP Status is not ESTABLISHED.</exception>
         public byte[] Receive(ref EndPoint source)
         {
-            Console.WriteLine($"Receive: {source.Address}");
+            Console.WriteLine($"Receive: here");
             while (StateMachine.rxBuffer.Count < 1)
             {
                 if (StateMachine.Status != Status.ESTABLISHED)
@@ -230,7 +231,7 @@ namespace MOOS.NET.IPv4.TCP
 
             Console.WriteLine($"Dequeue");
             var packet = StateMachine.rxBuffer.Dequeue();
-            Console.WriteLine($"packet: {packet.RawData.Length}");
+
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;
 
@@ -240,7 +241,6 @@ namespace MOOS.NET.IPv4.TCP
             {
                 tmp[i] = StateMachine.Data[i];
             }
-
             StateMachine.Data.Dispose();
 
             return tmp;
@@ -274,9 +274,12 @@ namespace MOOS.NET.IPv4.TCP
         /// Is TCP Connected.
         /// </summary>
         /// <returns>Boolean value.</returns>
-        public bool IsConnected()
+        public bool IsConnected
         {
-            return StateMachine.Status == Status.ESTABLISHED;
+            get
+            {
+                return StateMachine.Status == Status.ESTABLISHED;
+            }
         }
 
         public override void Dispose()

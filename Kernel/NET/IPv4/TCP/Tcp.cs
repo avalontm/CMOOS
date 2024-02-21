@@ -270,6 +270,7 @@ namespace MOOS.NET.IPv4.TCP
             LocalEndPoint = new EndPoint(localIp, localPort);
             RemoteEndPoint = new EndPoint(remoteIp, remotePort);
             TCB = new TransmissionControlBlock();
+            rxBuffer = new Queue<TCPPacket>();
         }
 
         /// <summary>
@@ -517,8 +518,8 @@ namespace MOOS.NET.IPv4.TCP
                     SendEmptyPacket(Flags.ACK);
                     return;
                 }
-if (packet.PSH)
-{
+                if (packet.PSH)
+                {
                     TCB.RcvNxt += packet.TCP_DataLength;
 
                     Data = ArrayHelper.Concat(Data, packet.TCP_Data);
@@ -541,7 +542,7 @@ if (packet.PSH)
 
                 if (packet.TCP_DataLength > 0 && packet.SequenceNumber >= TCB.RcvNxt) //packet sequencing
                 {
-                TCB.RcvNxt += packet.TCP_DataLength;
+                    TCB.RcvNxt += packet.TCP_DataLength;
 
                     Data = ArrayHelper.Concat(Data, packet.TCP_Data);
                 }
@@ -560,7 +561,7 @@ if (packet.PSH)
 
                 Status = Status.CLOSE_WAIT;
 
-                PIT.Wait(300);
+                Timer.Sleep(10);
 
                 SendEmptyPacket(Flags.FIN);
 
@@ -652,7 +653,7 @@ if (packet.PSH)
 
             //TODO: Calculate time value
             //PIT.Wait(300);
-            ACPITimer.Sleep(300);
+            Timer.Sleep(10);
             Status = Status.CLOSED;
         }
 
@@ -718,6 +719,7 @@ if (packet.PSH)
             {
                 TCB.SndNxt++;
             }
+
         }
 
         /// <summary>

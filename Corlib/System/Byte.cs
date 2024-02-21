@@ -57,14 +57,14 @@ namespace System
             return 0;
         }
 
-        public unsafe override string ToString()
+        public override readonly unsafe string ToString()
         {
-            return ((ulong)this).ToString();
+            return ((ushort)this).ToString();
         }
 
-        public string ToString(string format)
+        public readonly string ToString(string format)
         {
-            return ((ulong)this).ToString(format);
+            return ((ushort)this).ToString(format);
         }
     }
 }

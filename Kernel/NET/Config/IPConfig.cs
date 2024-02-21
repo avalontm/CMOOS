@@ -79,7 +79,7 @@ namespace MOOS.NET.Config
                 {
                     return ipConfig.IPAddress;
                 }
-                ipConfig.Dispose();
+
             }
 
             Console.WriteLine($"[FindNetwork] Nothing");

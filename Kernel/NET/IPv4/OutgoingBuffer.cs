@@ -181,6 +181,7 @@ namespace MOOS.NET.IPv4
                                 queue[e].NIC.QueueBytes(arp_request.RawData);
 
                                 queue[e].Status = BufferEntry.EntryStatus.ROUTE_ARP_SENT;
+                                arp_request.Dispose();
                             }
                             continue;
                         }
@@ -198,6 +199,7 @@ namespace MOOS.NET.IPv4
                             queue[e].NIC.QueueBytes(arp_request.RawData);
 
                             queue[e].Status = BufferEntry.EntryStatus.ARP_SENT;
+                            arp_request.Dispose();
                         }
                     }
                     else if (queue[e].Status == BufferEntry.EntryStatus.DHCP_REQUEST)

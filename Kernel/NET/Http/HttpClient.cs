@@ -18,6 +18,7 @@ namespace System.Net.Http
         string protocol;
         string host;
         int timeout = 10;
+        Address address = null;
 
         public HttpClient(string host, int port = 80)
         {
@@ -36,7 +37,6 @@ namespace System.Net.Http
 
         public HttpContent GetAsync(string path)
         {
-           
             HttpContent http = new HttpContent();
             http.Status = 404;
  
@@ -46,32 +46,30 @@ namespace System.Net.Http
            
             dns.SendAsk(host);
 
-            Address _address = null;
-
-            while (_address == null)
+            while (address == null)
             {
-                _address = dns.Receive();
+                address = dns.Receive();
             }
 
-            Console.WriteLine($"Address: {_address}");
+           // Console.WriteLine($"Address: {address}");
 
-            if (!client.IsConnected())
+            if (!client.IsConnected)
             {
-                Console.WriteLine($"Connecting...");
-                if (!client.Connect(_address, this.port, timeout * 1000))
+                Console.WriteLine($"connecting...");
+                if (!client.Connect(this.address, this.port, timeout * 1000))
                 {
                     return http;
                 }
             }
 
-            Console.WriteLine($"IsConenct: {client.IsConnected()}");
+            Console.WriteLine($"IsConenct: {client.IsConnected}");
 
             string header = $"GET /{path} HTTP/1.1\r\n";
             header += $"Host: {host}\r\n";
-            header += "Connection: Keep-Alive\r\n";
-            header += "Accept: */*\r\n";
+            header += "Connection: Close\r\n";
+            header += "Accept: text/html, charset=utf-8\r\n";
             header += "User-Agent: Moos/0.0.1\r\n";
-            header += "Accept-Encoding: gzip, deflate, br\r\n";
+            header += "Accept-Encoding: gzip, deflate, sdch\r\n";
             header += "\r\n\r\n";
 
             byte[] data = Encoding.UTF8.GetBytes(header);
@@ -89,9 +87,16 @@ namespace System.Net.Http
                 return http;
             }
 
+
+            for(int i=0; i  < receive.Length; i++ )
+            {
+                Console.Write($"{receive[i]} ");
+            }
+
+            Console.WriteLine($"[RECEIVE] {receive.Length}");
             http.Status = 200;
             Console.WriteLine($"[STATUS] {http.Status}");
-            string response = Encoding.UTF8.GetString(receive);
+            string response = Encoding.ASCII.GetString(receive);
             Console.WriteLine($"[RESPONSE] {response}");
 
             if (!string.IsNullOrEmpty(response))
@@ -112,7 +117,7 @@ namespace System.Net.Http
 
         public void Close()
         {
-            if (client.IsConnected())
+            if (client.IsConnected)
             {
                 client.Close();
             }

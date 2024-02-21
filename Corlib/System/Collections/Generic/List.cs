@@ -99,10 +99,7 @@ namespace System.Collections.Generic
         {
             for (int i = 0; i < Count; i++)
             {
-                T first = this[i];
-                T second = item;
-
-                if (this[i].Equals( item))
+                if (this[i].Equals(item))
                     return i;
             }
 
@@ -122,20 +119,28 @@ namespace System.Collections.Generic
 
         public void RemoveAt(int index)
         {
+            bool removed = false;   
             var _new = new T[_size-1];
             int a = 0;
             for (int i = 0; i < Count; i++)
             {
-                if (i != index)
+                if (i == index)
                 {
+                    removed = true;
+                }
+                else
+                { 
                     _new[a] = _items[i];
                     a++;
                 }
             }
 
-            _items = _new;
-            _size--;
-            _capacity--;
+            if (removed)
+            {
+                _items = _new;
+                _size--;
+                _capacity--;
+            }
         }
 
         public override void Dispose()
@@ -146,6 +151,7 @@ namespace System.Collections.Generic
 
         public void Clear()
         {
+            _items.Dispose();
             _items = new T[0];
             _size = 0;
             _capacity = 0;
