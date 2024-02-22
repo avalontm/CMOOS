@@ -26,7 +26,6 @@ namespace MOOS.Api
         static IntPtr HttpClient_GetAsync(IntPtr handler, string path)
         {
             HttpClient client = Unsafe.As<IntPtr, HttpClient>(ref handler);
-
             return client.GetAsync(path);
         }
 

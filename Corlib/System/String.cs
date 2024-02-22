@@ -391,8 +391,8 @@ namespace System
 		{
 			if ((Length == 0) && (startIndex == 0))
 			{
-				return Empty;
-			}
+                return new string(new char[0]);
+            }
 			fixed (char* ptr = this)
 			{
 				return new string(ptr, startIndex, Length - startIndex);
@@ -403,7 +403,7 @@ namespace System
 		{
 			if ((Length == 0) && (startIndex == 0))
 			{
-				return Empty;
+				return new string(new char[0]);
 			}
 			fixed(char* ptr = this)
             {
@@ -423,7 +423,6 @@ namespace System
 		{
 			if (value == null)
 			{
-				value.Dispose();
 				return true;
 			}
 
@@ -431,11 +430,9 @@ namespace System
 			{
 				if (!char.IsWhiteSpace(value[i]))
 				{
-					value.Dispose();
 					return false;
 				}
 			}
-			value.Dispose();
 			return true;
 		}
 

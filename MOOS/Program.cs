@@ -124,7 +124,6 @@ unsafe class Program
 
             if (result > 0)
             {
-
                // HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
                // var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
                // Console.WriteLine($"[RESPONSE] {response.Content}");

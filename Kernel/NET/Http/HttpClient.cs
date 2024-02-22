@@ -14,11 +14,11 @@ namespace System.Net.Http
     internal class HttpClient
     {
         private TcpClient client {  get; set; }
-        private int port { get; set; }
-        private string protocol { get; set; }
-        private string host { get; set; }
-        private int timeout { get; set; }
-        private Address address { get; set; }
+        public int port { get; private set; }
+        public string protocol { get; private set; }
+        public string host { get; private  set; }
+        public int timeout { get; private set; }
+        public Address address { get; private set; }
 
         public HttpClient(string host, int port = 80)
         {
@@ -78,6 +78,7 @@ namespace System.Net.Http
 
             if (receive == null || receive.Length == 0)
             {
+                Close();
                 return http;
             }
 

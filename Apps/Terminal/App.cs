@@ -115,7 +115,7 @@ namespace Terminal
             switch (args[0].ToLower())
             {
                 case "net":
-                    onNetClient();
+                    onNetClient(args);
                     break;
                 case "play":
                     onAudioPlay();
@@ -179,14 +179,18 @@ namespace Terminal
             }
         }
 
-        void onNetClient()
+        void onNetClient(string[] args)
         {
-            Console.Write("url: ");
-            string url = Console.ReadLine();
+            if (args.Length <= 1)
+            {
+                Console.WriteLine("Error: Sintaxis incorrecta.");
+                Console.WriteLine("Escriba: net https://google.com/");
+                return;
+            }
 
             HttpClient client = new HttpClient();
-            HttpContent result = client.GetAsync(url);
-            Console.WriteLine(result.Content);
+            HttpContent result = client.GetAsync(args[1]);
+            Console.WriteLine($"Response: {result.Content}");
             client.Dispose();
         }
 
