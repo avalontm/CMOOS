@@ -63,6 +63,13 @@ namespace System.Collections.Generic
         public bool TryGetValue(TKey key, out TValue client)
         {
             int index = Keys.IndexOf(key);
+
+            if (index == -1)
+            {
+                client = default;
+                return false;
+            }
+
             client = Values[index];
             return index != -1;
         }

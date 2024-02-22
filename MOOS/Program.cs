@@ -120,12 +120,14 @@ unsafe class Program
             //This will automatically set the IP config after DHCP response
             DHCPClient xClient = new DHCPClient();
             int result = xClient.SendDiscoverPacket();
+            xClient.Close();
 
             if (result > 0)
             {
-                HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
-                var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
-                Console.WriteLine($"[RESPONSE] {response.Content}");
+
+               // HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
+               // var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
+               // Console.WriteLine($"[RESPONSE] {response.Content}");
             }
         }
         

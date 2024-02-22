@@ -11,14 +11,14 @@ using System.Windows;
 
 namespace System.Net.Http
 {
-    public class HttpClient
+    internal class HttpClient
     {
-        TcpClient client;
-        int port;
-        string protocol;
-        string host;
-        int timeout = 10;
-        Address address = null;
+        private TcpClient client {  get; set; }
+        private int port { get; set; }
+        private string protocol { get; set; }
+        private string host { get; set; }
+        private int timeout { get; set; }
+        private Address address { get; set; }
 
         public HttpClient(string host, int port = 80)
         {
@@ -32,6 +32,7 @@ namespace System.Net.Http
             }
             this.host = host;
             this.port = port;
+            this.timeout = 10;
             this.client = new TcpClient(this.port);
         }
 
@@ -51,23 +52,18 @@ namespace System.Net.Http
                 address = dns.Receive();
             }
 
-           // Console.WriteLine($"Address: {address}");
-
             if (!client.IsConnected)
             {
-                Console.WriteLine($"connecting...");
                 if (!client.Connect(this.address, this.port, timeout * 1000))
                 {
                     return http;
                 }
             }
 
-            Console.WriteLine($"IsConenct: {client.IsConnected}");
-
-            string header = $"GET /{path} HTTP/1.1\r\n";
+            string header = $"GET {path} HTTP/1.1\r\n";
             header += $"Host: {host}\r\n";
-            header += "Connection: Close\r\n";
-            header += "Accept: text/html, charset=utf-8\r\n";
+            header += "Connection: close\r\n";
+            header += "Accept: text/plain; charset=utf-8\r\n";
             header += "User-Agent: Moos/0.0.1\r\n";
             header += "Accept-Encoding: gzip, deflate, sdch\r\n";
             header += "\r\n\r\n";
@@ -75,7 +71,6 @@ namespace System.Net.Http
             byte[] data = Encoding.UTF8.GetBytes(header);
           
             client.Send(data);
-            Console.WriteLine($"[Send] {data.Length}");
 
             /** Receive data **/
             EndPoint endpoint = new EndPoint(Address.Zero, 0);
@@ -83,32 +78,28 @@ namespace System.Net.Http
 
             if (receive == null || receive.Length == 0)
             {
-                Console.WriteLine($"[STATUS] {http.Status}");
                 return http;
             }
 
-
-            for(int i=0; i  < receive.Length; i++ )
-            {
-                Console.Write($"{receive[i]} ");
-            }
-
-            Console.WriteLine($"[RECEIVE] {receive.Length}");
             http.Status = 200;
-            Console.WriteLine($"[STATUS] {http.Status}");
+
             string response = Encoding.ASCII.GetString(receive);
-            Console.WriteLine($"[RESPONSE] {response}");
 
             if (!string.IsNullOrEmpty(response))
             {
-                var index = BinaryMatch(receive, Encoding.UTF8.GetBytes("\r\n\r\n")) + 4;
+                var index = BinaryMatch(receive, Encoding.ASCII.GetBytes("\r\n\r\n")) + 4;
 
-                string result = response.Substring(index, response.Length - 1);
+                string headers = Encoding.ASCII.GetString(receive, 0, index);
 
-                index = BinaryMatch(Encoding.UTF8.GetBytes(result), Encoding.UTF8.GetBytes("\r\n"));
-                string lenght = result.Substring(0, index).Trim();
-                http.Lenght = Convert.HexToDec(lenght);
-                http.Content = result.Substring((lenght.Length + 2), http.Lenght + (lenght.Length + 2));
+                if (headers.IndexOf("Content-Encoding: gzip") > 0)
+                {
+                    Console.WriteLine("Not implement.");
+                }
+                else
+                {
+                    //http.Lenght = Convert.HexToDec(lenght);
+                    http.Content = Encoding.ASCII.GetString(receive, index, receive.Length - index);
+                }
             }
 
             Close();

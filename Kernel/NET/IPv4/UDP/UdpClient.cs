@@ -169,10 +169,17 @@ namespace MOOS.NET.IPv4.UDP
         {
             if (rxBuffer.Count < 1)
             {
-                return null;
+                return new byte[0];
             }
 
-            var packet = new UDPPacket(rxBuffer.Dequeue().RawData);
+            UDPPacket data = rxBuffer.Dequeue();
+
+            if (data == null)
+            {
+                return new byte[0];
+            }
+
+            var packet = new UDPPacket(data.RawData);
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;
 
@@ -189,7 +196,14 @@ namespace MOOS.NET.IPv4.UDP
         {
             while (rxBuffer.Count < 1) ;
 
-            var packet = new UDPPacket(rxBuffer.Dequeue().RawData);
+            UDPPacket data = rxBuffer.Dequeue();
+
+            if (data == null)
+            {
+                return new byte[0];
+            }
+
+            var packet = new UDPPacket(data.RawData);
             if (packet == null) return new byte[0]; //Fix :)
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;

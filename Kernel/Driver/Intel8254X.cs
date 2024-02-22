@@ -513,9 +513,16 @@ namespace MOOS.Driver
         {
             if (mRecvBuffer.Count < 1)
             {
-                return null;
+                return new byte[0];
             }
+
             byte[] data = mRecvBuffer.Dequeue();
+
+            if(data == null)
+            {
+                data = new byte[0];
+            }
+
             return data;
         }
 
@@ -525,7 +532,15 @@ namespace MOOS.Driver
             {
                 return 0;
             }
-            return mRecvBuffer.Peek().Length;
+
+            byte[] data = mRecvBuffer.Peek();
+
+            if (data == null)
+            {
+                data = new byte[0];
+            }
+
+            return data.Length;
         }
 
         public override bool IsSendBufferFull()
@@ -559,8 +574,13 @@ namespace MOOS.Driver
                 {
                     if (mRecvBuffer == null)
                     {
+                        return;
                     }
-                    mRecvBuffer.Enqueue(buffer);
+
+                    if (buffer.Length > 0)
+                    {
+                        mRecvBuffer.Enqueue(buffer);
+                    }
                 }
             }
         }

@@ -218,7 +218,6 @@ namespace MOOS.NET.IPv4.TCP
         /// <exception cref="Exception">Thrown if TCP Status is not ESTABLISHED.</exception>
         public byte[] Receive(ref EndPoint source)
         {
-            Console.WriteLine($"Receive: here");
             while (StateMachine.rxBuffer.Count < 1)
             {
                 if (StateMachine.Status != Status.ESTABLISHED)
@@ -229,7 +228,6 @@ namespace MOOS.NET.IPv4.TCP
                 Native.Hlt();
             }
 
-            Console.WriteLine($"Dequeue");
             var packet = StateMachine.rxBuffer.Dequeue();
 
             source.Address = packet.SourceIP;
@@ -241,6 +239,7 @@ namespace MOOS.NET.IPv4.TCP
             {
                 tmp[i] = StateMachine.Data[i];
             }
+
             StateMachine.Data.Dispose();
 
             return tmp;

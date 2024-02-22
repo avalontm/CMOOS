@@ -65,7 +65,9 @@ namespace MOOS.NET.ARP
                         ARPReply_Ethernet reply = new ARPReply_Ethernet(nic.MACAddress, arp_request.TargetIP, arp_request.SenderMAC, arp_request.SenderIP);
 
                         nic.QueueBytes(reply.RawData);
+                        reply.Dispose();
                     }
+                    arp_request.Dispose();
                 }
             }
             else if (arp_packet.Operation == 0x02)
@@ -76,6 +78,7 @@ namespace MOOS.NET.ARP
                     ARPCache.Update(arp_reply.SenderIP, arp_reply.SenderMAC);
 
                     OutgoingBuffer.ARPCache_Update(arp_reply);
+                    arp_reply.Dispose();
                 }
             }
         }

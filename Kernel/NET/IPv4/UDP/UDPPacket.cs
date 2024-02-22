@@ -26,22 +26,22 @@ namespace MOOS.NET.IPv4.UDP
         {
             UDPPacket udp_packet = new UDPPacket(packetData);
 
-            if (udp_packet.SourcePort == 67)
+            switch(udp_packet.SourcePort)
             {
-                DHCPPacket.DHCPHandler(packetData);
-                return;
-            }
-            else if (udp_packet.SourcePort == 53)
-            {
-                DNS.DNSPacket.DNSHandler(packetData);
-                return;
-            }
-
-            UdpClient receiver = UdpClient.GetClient(udp_packet.DestinationPort);
-            if (receiver != null)
-            {
-                receiver.ReceiveData(udp_packet);
-            }
+                case 67:
+                    DHCPPacket.DHCPHandler(packetData);
+                    break;
+                case 53:
+                    DNS.DNSPacket.DNSHandler(packetData);
+                    break;
+                default:
+                    UdpClient receiver = UdpClient.GetClient(udp_packet.DestinationPort);
+                    if (receiver != null)
+                    {
+                        receiver.ReceiveData(udp_packet);
+                    }
+                    break;
+            } 
         }
 
         /// <summary>

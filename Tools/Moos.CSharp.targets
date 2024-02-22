@@ -72,7 +72,8 @@
 											%(Filename) == 'System.Diagnostics.Process' or 
 											%(Filename) == 'System.Console' or
 											%(Filename) == 'System.Threading' or
-											%(Filename) == 'System.Timers'
+											%(Filename) == 'System.Timers' or
+											%(Filename) == 'System.Net.Http'
 											
 											" />
 			<ReferencePath Remove="@(ReferencePath)" />

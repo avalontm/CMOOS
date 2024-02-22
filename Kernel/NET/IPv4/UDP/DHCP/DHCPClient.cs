@@ -121,7 +121,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                 DHCPDiscover dhcp_discover = new DHCPDiscover(NetworkDevice.Devices[i].MACAddress);
                 OutgoingBuffer.AddPacket(dhcp_discover);
                 NetworkStack.Update();
-          
+                dhcp_discover.Dispose();
                 asked = true;
             }
 
@@ -139,6 +139,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                 var dhcp_request = new DHCPRequest(NetworkDevice.Devices[i].MACAddress, RequestedAddress);
                 OutgoingBuffer.AddPacket(dhcp_request);
                 NetworkStack.Update();
+                dhcp_request.Dispose();
             }
             return Receive();
         }

@@ -561,7 +561,7 @@ namespace MOOS.NET.IPv4.TCP
 
                 Status = Status.CLOSE_WAIT;
 
-                Timer.Sleep(10);
+                PIT.Wait(300);
 
                 SendEmptyPacket(Flags.FIN);
 
@@ -652,8 +652,7 @@ namespace MOOS.NET.IPv4.TCP
             Status = Status.TIME_WAIT;
 
             //TODO: Calculate time value
-            //PIT.Wait(300);
-            Timer.Sleep(10);
+            PIT.Wait(300);
             Status = Status.CLOSED;
         }
 

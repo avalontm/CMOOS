@@ -9,6 +9,7 @@ using System.Runtime;
 using Terminal.Managers;
 using System.Runtime.InteropServices;
 using System.Media;
+using System.Net.Http;
 
 namespace Terminal
 {
@@ -113,6 +114,9 @@ namespace Terminal
 
             switch (args[0].ToLower())
             {
+                case "net":
+                    onNetClient();
+                    break;
                 case "play":
                     onAudioPlay();
                     break;
@@ -173,6 +177,17 @@ namespace Terminal
             {
                 Console.WriteLine();
             }
+        }
+
+        void onNetClient()
+        {
+            Console.Write("url: ");
+            string url = Console.ReadLine();
+
+            HttpClient client = new HttpClient();
+            HttpContent result = client.GetAsync(url);
+            Console.WriteLine(result.Content);
+            client.Dispose();
         }
 
         void onAudioPlay()
