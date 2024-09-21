@@ -3,6 +3,7 @@ using System.Drawing;
 
 namespace MOOS.Graph
 {
+    
     public unsafe class Graphics
     {
         public uint* VideoMemory;

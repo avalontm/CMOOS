@@ -44,6 +44,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Driver\Serial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\SMBIOS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\Timer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)driver\VGADriver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\VGADriverII.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\VGAFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\VMWareSVGAII.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\VMwareTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Driver\EHCI.cs" />
@@ -58,7 +61,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FS\TarFS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Graphics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\GraphicsPath.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graph\VMWareSVGAIIGraphics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)graph\VGAColor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Allocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\ASC16.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc\Audio.cs" />

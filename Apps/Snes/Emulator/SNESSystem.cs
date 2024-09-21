@@ -118,8 +118,8 @@ namespace SNES.Emulator
 
         public SNESSystem()
         {
-            screenW = Math.Min(App.screenWidth, App.screenHeight * width / height);
-            screenH = screenW * height / width;
+            screenW = width;// Math.Min(App.screenWidth, App.screenHeight * width / height);
+            screenH = height;// screenW * height / width;
             screenX = (App.screenWidth - screenW) / 2;
             screenY = (App.screenHeight - screenH) / 2;
 
@@ -178,8 +178,9 @@ namespace SNES.Emulator
         {
             lock (null)
             {
-                RenderBuff.Dispose();
-                RenderBuff = Image.ResizeImage(width, height, 4, screenW,  screenH, buffer);
+                RenderBuff.RawData = buffer;
+                //RenderBuff.Dispose();
+                //RenderBuff = Image.ResizeImage(width, height, 4, screenW,  screenH, buffer);
             }
         }
 

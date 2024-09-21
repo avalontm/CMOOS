@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="backgrounds.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="consoles.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="crt0_snes.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="dmas.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="hdr.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="interrupts.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="libc.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="libm.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="libtcc.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="lzsss.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="maps.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="network.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="objects.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="pads.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="scores.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="sm_spc.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="snesmodwla.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="sounds.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="sprites.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+    <MASM Include="videos.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libc_c.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\background.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\console.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\dma.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\interrupt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\libversion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\lzss.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\map.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\network.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\object.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\pad.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\pixel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\scores.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\snestypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\sound.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\sprite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes\video.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pvsneslib\pvsneslib\include\snes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

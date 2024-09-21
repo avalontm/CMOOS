@@ -820,7 +820,7 @@ namespace SNES.Emulator
 
                 bMult = _brightnessMults[_brightness];
 
-                for (int i = 0; i < 256; i ++)
+                for (int i = 0; i < 256; i++)
                 {
                     if (!_forcedBlank)
                     {

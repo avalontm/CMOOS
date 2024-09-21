@@ -148,6 +148,10 @@ unsafe class Program
 
     public static void SMain()
     {
+        Console.WriteLine($"[SetResolution] 640x480");
+        Console.ReadKey();
+        Framebuffer.SetResolution();
+
         /*
         string text = "terminal = sys/app/terminal.mue\nshell = sys/app/explorer.mue";
 

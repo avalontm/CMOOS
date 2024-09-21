@@ -459,7 +459,7 @@ namespace MOOS.Memory
     /// <summary>
     /// MemoryBlock08 class.
     /// </summary>
-    public class MemoryBlock08
+    public class MemoryBlock08 
     {
         /// <summary>
         /// Base.
@@ -475,7 +475,7 @@ namespace MOOS.Memory
         /// </summary>
         /// <param name="aBase">A base.</param>
         /// <param name="aSize">A size.</param>
-        internal MemoryBlock08(uint aBase, uint aSize)
+        public MemoryBlock08(uint aBase, uint aSize)
         {
             Base = aBase;
             Size = aSize;
@@ -491,7 +491,7 @@ namespace MOOS.Memory
         {
             get
             {
-                if (aByteOffset >= Size)
+                if (aByteOffset >= Size && Size != 0)
                 {
                     //throw new Exception("Memory access violation");
                     Console.WriteLine("Memory access violation");
@@ -501,7 +501,7 @@ namespace MOOS.Memory
             }
             set
             {
-                if (aByteOffset >= Size)
+                if (aByteOffset >= Size && Size != 0)
                 {
                     //throw new Exception("Memory access violation");
                     Console.WriteLine("Memory access violation");

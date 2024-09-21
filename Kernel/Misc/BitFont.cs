@@ -90,7 +90,7 @@ namespace MOOS.Misc
 
         private static BitFontDescriptor GetBitFontDescriptor(string FontName)
         {
-            if(RegisteredBitFont == null)
+            if (RegisteredBitFont == null)
             {
                 Panic.Error("BitFont Descriptor Not Found");
                 return null;
@@ -138,7 +138,7 @@ namespace MOOS.Misc
             for (int i = 0; i < Text.Length; i++)
             {
                 char c = Text[i];
-               
+
                 if (c == '\n' || (LineWidth != -1 && UsedX + bitFontDescriptor.Size > LineWidth))
                 {
                     Line++;

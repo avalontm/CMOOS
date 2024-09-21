@@ -15,7 +15,7 @@ namespace MOOS.Api
             switch (name)
             {
                 case "DrawRectangle":
-                    return (delegate*<int, int, int, int , uint, void>)&API_DrawRectangle;
+                    return (delegate*<int, int, int, int, uint, void>)&API_DrawRectangle;
                 case "AFillRectangle":
                     return (delegate*<int, int, int, int, uint, void>)&API_AFillRectangle;
                 case "FillRectangle":

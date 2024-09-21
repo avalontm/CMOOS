@@ -30,6 +30,8 @@ namespace MOOS.Misc
             ASC16.Initialise();
             Console.Setup();
 
+            Framebuffer.SetResolution();
+            /*
             VBEInfo* info = (VBEInfo*)Info->VBEInfo;
             if (info != null && info->PhysBase != 0)
             {
@@ -39,8 +41,7 @@ namespace MOOS.Misc
             else
             {
                 for (; ; ) Native.Hlt();
-            }
-
+            }*/
 
             IDT.Disable();
             GDT.Initialise();
@@ -90,8 +91,8 @@ namespace MOOS.Misc
             new Ramdisk((IntPtr)(Info->Mods[0]));
            
             new TarFS();
-           // new FAT32();
-            
+            // new FAT32();
+
             KMain();
         }
 

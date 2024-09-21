@@ -13,7 +13,7 @@ namespace MOOS.Misc
             //Kill all CPUs
             LocalAPIC.SendAllInterrupt(0xFD);
             IDT.Disable();
-            Framebuffer.TripleBuffered = false;
+           // Framebuffer.TripleBuffered = false;
 
             ConsoleColor color = Console.ForegroundColor;
 

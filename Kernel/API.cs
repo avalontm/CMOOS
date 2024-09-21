@@ -54,7 +54,7 @@ namespace MOOS
                 case "ConsoleClear":
                     return (delegate*<void>)&API_ConsoleClear;
                 case "ConsoleSetBackgroundColor":
-                     return (delegate*<uint, void>)&API_ConsoleSetBackgroundColor;
+                    return (delegate*<uint, void>)&API_ConsoleSetBackgroundColor;
                 case "ConsoleGetBackgroundColor":
                     return (delegate*<uint>)&API_ConsoleGetBackgroundColor;
                 case "ConsoleSetForegroundColor":
@@ -189,7 +189,7 @@ namespace MOOS
 
         public static uint API_ConsoleGetBackgroundColor()
         {
-          return  (uint)Console.BackgroundColor;
+            return (uint)Console.BackgroundColor;
         }
 
         private static void API_ConsoleSetForegroundColor(uint color)
@@ -226,7 +226,7 @@ namespace MOOS
         {
             Power.Reboot();
         }
-      
+
         public static bool API_GetPanic()
         {
             return Panic.isPanic;
@@ -268,7 +268,7 @@ namespace MOOS
 
         private static bool API_KillProcess(uint processID)
         {
-            for(int i = 0; i < process.Count; i++)
+            for (int i = 0; i < process.Count; i++)
             {
                 if (process[i].ProcessID == processID)
                 {
@@ -284,7 +284,7 @@ namespace MOOS
 
         public static uint API_GetCurrentProcess()
         {
-            for(int i = process.Count -1; i >= 0; i--)
+            for (int i = process.Count - 1; i >= 0; i--)
             {
                 if (process[i] != null)
                 {
@@ -318,7 +318,7 @@ namespace MOOS
         {
             EventHandler<ConsoleKeyInfo> keyboard = Unsafe.As<IntPtr, EventHandler<ConsoleKeyInfo>>(ref handler);
 
-            Keyboard.OnKeyChanged +=  keyboard;
+            Keyboard.OnKeyChanged += keyboard;
         }
 
         public static uint API_StartThread(delegate*<void> func)
@@ -404,7 +404,7 @@ namespace MOOS
         {
             Console.Write(c);
         }
-        
+
         [RuntimeExport("DebugWriteLine")]
         public static void API_DebugWriteLine()
         {
@@ -435,7 +435,7 @@ namespace MOOS
 
             ulong length = buffer.Length;
             *data = (byte*)Allocator.Allocate((ulong)length);
-       
+
             fixed (byte* p = UTF8Encoding.UTF8.GetBytes(buffer))
             {
                 Native.Movsb(*data, p, length);
@@ -503,7 +503,7 @@ namespace MOOS
         {
             byte[] buffer = RamFile.Instance.ReadAllBytes(name);
 
-            if(buffer == null)
+            if (buffer == null)
             {
                 return;
             }
@@ -527,7 +527,7 @@ namespace MOOS
             RamFile.Instance.WriteAllBytes(name, buffer);
             buffer.Dispose();
         }
-        
+
 
         public static void API_Sleep(ulong ms)
         {

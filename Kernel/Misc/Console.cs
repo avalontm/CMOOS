@@ -95,7 +95,7 @@ namespace MOOS
         public static void Wait(uint* provider, int bit)
         {
             int phase = 0;
-            while (!BitHelpers.IsBitSet(*provider, bit)) 
+            while (!BitHelpers.IsBitSet(*provider, bit))
             {
                 switch (phase)
                 {
@@ -131,14 +131,14 @@ namespace MOOS
             }
         }
 
-        public static bool Wait(delegate* <bool> func,int timeOutMS = -1)
+        public static bool Wait(delegate*<bool> func, int timeOutMS = -1)
         {
             ulong prev = Timer.Ticks;
 
             int phase = 0;
             while (!func())
             {
-                if(timeOutMS >= 0 && Timer.Ticks > (prev + (uint)timeOutMS))
+                if (timeOutMS >= 0 && Timer.Ticks > (prev + (uint)timeOutMS))
                 {
                     return false;
                 }
@@ -182,7 +182,7 @@ namespace MOOS
             ConsoleColor col = Console.ForegroundColor;
             for (byte i = 0; i < s.Length; i++)
             {
-                if (s[i] == '[') 
+                if (s[i] == '[')
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 }
@@ -208,7 +208,7 @@ namespace MOOS
         public static void Back(int start)
         {
             if (CursorX == 0) return;
-            if(CursorX == start) return;
+            if (CursorX == start) return;
             WriteFramebuffer(' ');
             CursorX--;
             WriteFramebuffer(' ');
@@ -217,18 +217,18 @@ namespace MOOS
 
         public static void Write(char chr, bool dontInvoke = false)
         {
-            if(chr == '\n') 
+            if (chr == '\n')
             {
                 WriteLine();
                 return;
             }
 #if ASCII
-            if(chr >= 0x20 && chr <= 0x7E)
+            if (chr >= 0x20 && chr <= 0x7E)
 #else
             unsafe
 #endif
             {
-                if(!dontInvoke)
+                if (!dontInvoke)
                 {
                     OnWrite?.Invoke(chr);
                 }
@@ -263,7 +263,7 @@ namespace MOOS
             while (Keyboard.KeyInfo.KeyChar == '\0') Native.Hlt();
             if (!intercept)
             {
-                switch (Keyboard.KeyInfo.Key) 
+                switch (Keyboard.KeyInfo.Key)
                 {
                     case ConsoleKey.Enter:
                         Console.WriteLine();
@@ -344,13 +344,13 @@ namespace MOOS
             return Keyboard.KeyInfo;
         }
 
-        public static string ReadLine() 
+        public static string ReadLine()
         {
             string s = string.Empty;
             ConsoleKeyInfo key;
             while ((key = Console.ReadKey()).Key != ConsoleKey.Enter)
             {
-                switch (key.Key) 
+                switch (key.Key)
                 {
                     case ConsoleKey.Delete:
                     case ConsoleKey.Backspace:
@@ -382,7 +382,7 @@ namespace MOOS
                     case ConsoleKey.Delete:
                     case ConsoleKey.Backspace:
                         if (s.Length == 0) continue;
-                        if (start + s.Length > start)    
+                        if (start + s.Length > start)
                         {
                             s.Length -= 1;
                         }
@@ -412,7 +412,7 @@ namespace MOOS
 
         private static void MoveUpFramebuffer()
         {
-            if(Framebuffer.VideoMemory != null && !Framebuffer.TripleBuffered)
+            if (Framebuffer.VideoMemory != null && !Framebuffer.TripleBuffered)
             {
                 Framebuffer.Graphics.Copy(
                     (Framebuffer.Graphics.Width / 2) - (Width * 8 / 2),

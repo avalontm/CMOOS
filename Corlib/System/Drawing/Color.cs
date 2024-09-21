@@ -22,6 +22,8 @@ namespace System.Drawing
         public static Color Linen { get { return FromArgb(250, 240, 230); } }
         public static Color Blue { get { return FromArgb(0, 0, 255); } }
         public static Color Magenta { get { return FromArgb(255, 0, 255); } }
+        public static Color DarkMagenta { get { return FromArgb(255, 0, 255); } }
+
         public static Color BlueViolet { get { return FromArgb(138, 43, 226); } }
         public static Color Maroon { get { return FromArgb(128, 0, 0); } }
         public static Color Brown { get { return FromArgb(165, 42, 42); } }
@@ -199,7 +201,6 @@ namespace System.Drawing
                 ARGB |= (uint)(value << 0);
             }
         }
-
 
         public uint ToArgb()
         {

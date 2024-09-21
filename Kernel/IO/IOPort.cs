@@ -20,30 +20,30 @@ namespace MOOS.IO
             Port = (ushort)(aBase + aOffset);
         }
 
-        static protected void Write8(ushort aPort, byte aData) 
+        public static void Write8(ushort aPort, byte aData) 
         {
             Native.Out8(aPort, aData);
         }
 
-        static protected void Write16(ushort aPort, ushort aData) 
+        public static void Write16(ushort aPort, ushort aData) 
         {
             Native.Out16(aPort, aData);
         }
 
-        static protected void Write32(uint aPort, uint aData) 
+        public static void Write32(uint aPort, uint aData) 
         {
             Native.Out32(aPort, aData);
         }
 
-        static protected byte Read8(ushort aPort) { 
+        public static byte Read8(ushort aPort) { 
             return Native.In8(aPort); 
         }
 
-        static protected ushort Read16(ushort aPort) { 
+        public static ushort Read16(ushort aPort) { 
             return Native.In16(aPort); 
         }
 
-        static protected uint Read32(uint aPort) { 
+        public static uint Read32(uint aPort) { 
             return Native.In32(aPort);
         }
 

@@ -15,14 +15,14 @@ namespace MOOS.Misc
 
         public int NumRow => image.Width / FontSize;
 
-        public IFont(Image _img, string _charset,int size)
+        public IFont(Image _img, string _charset, int size)
         {
             image = _img;
             charset = _charset;
             FontSize = size;
         }
 
-        public int DrawChar(Graphics g,int X, int Y, char Chr, uint color = 0xFF000000)
+        public int DrawChar(Graphics g, int X, int Y, char Chr, uint color = 0xFF000000)
         {
             int index = charset.IndexOf(Chr);
             if (index == -1)
@@ -32,7 +32,7 @@ namespace MOOS.Misc
             }
 
             int baseX = 0, baseY = 0;
-            for(int i = 0; i <= index; i++)
+            for (int i = 0; i <= index; i++)
             {
                 if ((i % NumRow) == 0 && i != 0)
                 {
@@ -51,7 +51,7 @@ namespace MOOS.Misc
                     uint _color = image.GetPixel(baseX + w, baseY + h);
 
                     if (X >= 0 && Y >= 0 && X <= g.Width && Y <= g.Height)
-                    {   
+                    {
                         //Replace pixel color
                         //_color = ColorConverter.ConvertPixel(_color, color);
                         g.DrawPoint((X + w), (Y + h), _color, true);
@@ -63,7 +63,7 @@ namespace MOOS.Misc
                     }
                     _color.Dispose();
                 }
-                if (w > (FontSize/3) && counter == FontSize) return w;
+                if (w > (FontSize / 3) && counter == FontSize) return w;
             }
 
             return FontSize;
@@ -99,7 +99,7 @@ namespace MOOS.Misc
             for (int i = 0; i < Str.Length; i++)
             {
                 if (h != 0 && w == 0 && Str[i] == ' ') continue;
-                w += DrawChar(Framebuffer.Graphics,X + w, Y + h, Str[i], color);
+                w += DrawChar(Framebuffer.Graphics, X + w, Y + h, Str[i], color);
                 if (w + FontSize > LineLimit && LineLimit != -1 || Str[i] == '\n')
                 {
                     w = 0;

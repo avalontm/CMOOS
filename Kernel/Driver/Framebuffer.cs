@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace MOOS
 {
+    
     public static unsafe class Framebuffer
     {
         public static ushort Width;
@@ -47,6 +48,7 @@ namespace MOOS
 
         public static void Update()
         {
+            /*
             if (TripleBuffered)
             {
                 for(int i = 0; i < Width * Height; i++) 
@@ -58,10 +60,10 @@ namespace MOOS
                 }
                 Native.Movsd(SecondBuffer, FirstBuffer, (ulong)(Width * Height));
             }
-            if(Graphics != null) Graphics.Update();
+            if(Graphics != null) Graphics.Update();*/
         }
 
-        public static void Initialize(ushort XRes, ushort YRes,uint* FB)
+        public static void Initialize(ushort XRes, ushort YRes, uint* FB)
         {
             Width = XRes;
             Height = YRes;
@@ -73,8 +75,19 @@ namespace MOOS
             Mouse.Position.Y = YRes / 2;
             Graphics = new Graphics(Width, Height, FB);
             VideoMemory = FB;
-
             Console.Clear();
+        }
+
+        public static void SetResolution()
+        {
+            VGAScreen vga = new VGAScreen();
+            vga.SetMode0();
+
+            Width = vga.Width;
+            Height = vga.Height;
+        
+            vga.Clear();
+
         }
     }
 }
