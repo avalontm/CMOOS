@@ -56,6 +56,9 @@ namespace MOOS.NET.IPv4
                     case 17:
                         UDPPacket.UDPHandler(packetData);
                         break;
+                    default:
+                        Console.WriteLine($"Protocol: {ip_packet.Protocol} invalid.");
+                        break;
                 }
             }
             else if (NetworkStack.MACMap.ContainsKey(ip_packet.DestinationMAC.Hash))

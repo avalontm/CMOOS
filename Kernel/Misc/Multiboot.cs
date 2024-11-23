@@ -40,6 +40,26 @@ namespace MOOS
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct VESAInfo
+    {
+        public fixed char Signature[4]; // must be "VESA" to indicate valid VBE support
+
+        public ushort Version;         // VBE version; high byte is major version, low byte is minor version
+        public uint Oem;                // segment:offset pointer to OEM
+        public uint Capabilities;       // bitfield that describes card capabilities
+        public uint Video_Modes;        // segment:offset pointer to list of supported video modes
+        public ushort Video_Memory;     // amount of video memory in 64KB blocks
+        public ushort Software_Rev;     // software revision
+        public uint Vendor;             // segment:offset to card vendor string
+        public uint Product_Name;       // segment:offset to card model name
+        public uint Product_Rev;        // segment:offset pointer to product revision
+
+        public fixed char Reserved[222];         // reserved for future expansion
+
+        public fixed char Oem_Data[256];         // OEM BIOSes store their strings in this area
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VBEInfo
     {
         public ushort Attributes;

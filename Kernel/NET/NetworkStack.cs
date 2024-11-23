@@ -149,6 +149,11 @@ namespace MOOS.NET
                 case 0x0800:
                     IPPacket.IPv4Handler(packetData);
                     break;
+                default:
+                    etherType.Dispose();
+                    packetData.Dispose();
+                    //Console.WriteLine($"etherType: {etherType} invalid.");
+                    break;
             }
         }
 

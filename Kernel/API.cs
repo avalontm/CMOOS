@@ -178,6 +178,14 @@ namespace MOOS
                 return _snd;
             }
 
+
+            void* _net = APINET.HandleSystemCall(name);
+
+            if (_net != null)
+            {
+                return _net;
+            }
+
             Panic.Error($"System call \"{name}\" is not found");
             return null;
         }

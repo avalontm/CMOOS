@@ -9,6 +9,7 @@ using System.Runtime;
 using Terminal.Managers;
 using System.Runtime.InteropServices;
 using System.Media;
+using System.Net.Http;
 
 namespace Terminal
 {
@@ -74,6 +75,7 @@ namespace Terminal
         #endregion
 
         Process process = null;
+        string user = "cmoos";
 
         public App()
         {
@@ -90,8 +92,8 @@ namespace Terminal
         {
             while (GetProcess(processID) != IntPtr.Zero)
             {
-                Console.Write("cmoos>");
-                string s = Console.ReadLine(6);
+                Console.Write($"{user}>");
+                string s = Console.ReadLine(user.Length+1);
                 onCommand(s);
             }
         }
@@ -112,6 +114,9 @@ namespace Terminal
 
             switch (args[0].ToLower())
             {
+                case "net":
+                    onNetClient(args);
+                    break;
                 case "play":
                     onAudioPlay();
                     break;
@@ -172,6 +177,21 @@ namespace Terminal
             {
                 Console.WriteLine();
             }
+        }
+
+        void onNetClient(string[] args)
+        {
+            if (args.Length <= 1)
+            {
+                Console.WriteLine("Error: Sintaxis incorrecta.");
+                Console.WriteLine("Escriba: net https://google.com/");
+                return;
+            }
+
+            HttpClient client = new HttpClient();
+            HttpContent result = client.GetAsync(args[1]);
+            Console.WriteLine($"Response: {result.Content}");
+            client.Dispose();
         }
 
         void onAudioPlay()

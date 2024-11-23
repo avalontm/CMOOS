@@ -51,9 +51,10 @@ namespace MOOS.NET.IPv4
             if (buffer == null || buffer.Length < (offset + 4))
             {
                 //throw new ArgumentException("buffer does not contain enough data starting at offset", "buffer");
-                Console.WriteLine("buffer does not contain enough data starting at offset");
+                Console.WriteLine($"buffer does not contain enough data starting at offset: buffer => {buffer.Length}");
                 return;
             }
+
             address[0] = buffer[offset];
             address[1] = buffer[offset + 1];
             address[2] = buffer[offset + 2];
@@ -193,6 +194,13 @@ namespace MOOS.NET.IPv4
 
                 return hash;
             }
+        }
+
+        public override void Dispose()
+        {
+            this.address.Dispose();
+            base.Dispose();
+
         }
 
         #region IComparable Members

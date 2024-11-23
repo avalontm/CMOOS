@@ -68,11 +68,12 @@ namespace MOOS.NET.IPv4.TCP
             }
 
             StateMachine.RemoteEndPoint.Address = dest;
+
             StateMachine.LocalEndPoint.Address = IPConfig.FindNetwork(dest);
             StateMachine.RemoteEndPoint.Port = (ushort)destPort;
 
             //Generate Random Sequence Number
-            var rnd = new Random();
+            var rnd = new Random(Tcp.Connections.Count);
             var SequenceNumber = (uint)((rnd.Next(0, Int32.MaxValue)) << 32) | (uint)(rnd.Next(0, Int32.MaxValue));
 
             //Fill TCB
@@ -92,7 +93,7 @@ namespace MOOS.NET.IPv4.TCP
             Tcp.Connections.Add(StateMachine);
 
             StateMachine.SendEmptyPacket(Flags.SYN);
-           
+
             StateMachine.Status = Status.SYN_SENT;
 
             if (StateMachine.WaitStatus(Status.ESTABLISHED, timeout) == false)
@@ -226,8 +227,9 @@ namespace MOOS.NET.IPv4.TCP
                 }
                 Native.Hlt();
             }
- 
+
             var packet = StateMachine.rxBuffer.Dequeue();
+
             source.Address = packet.SourceIP;
             source.Port = packet.SourcePort;
 
@@ -271,9 +273,12 @@ namespace MOOS.NET.IPv4.TCP
         /// Is TCP Connected.
         /// </summary>
         /// <returns>Boolean value.</returns>
-        public bool IsConnected()
+        public bool IsConnected
         {
-            return StateMachine.Status == Status.ESTABLISHED;
+            get
+            {
+                return StateMachine.Status == Status.ESTABLISHED;
+            }
         }
 
         public override void Dispose()

@@ -46,6 +46,8 @@ namespace System
 
             switch (a.m_pEEType->ElementType)
             {
+                case EETypeElementType.Array:
+                    return ((Array)a == (Array)b);
                 case EETypeElementType.Byte:
                     return ((Byte)a == (Byte)b);
                 case EETypeElementType.SByte:

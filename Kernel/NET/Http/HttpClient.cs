@@ -11,13 +11,14 @@ using System.Windows;
 
 namespace System.Net.Http
 {
-    public class HttpClient
+    internal class HttpClient
     {
-        TcpClient client;
-        int port;
-        string protocol;
-        string host;
-        int timeout = 10;
+        private TcpClient client {  get; set; }
+        public int port { get; private set; }
+        public string protocol { get; private set; }
+        public string host { get; private  set; }
+        public int timeout { get; private set; }
+        public Address address { get; private set; }
 
         public HttpClient(string host, int port = 80)
         {
@@ -31,52 +32,45 @@ namespace System.Net.Http
             }
             this.host = host;
             this.port = port;
+            this.timeout = 10;
             this.client = new TcpClient(this.port);
         }
 
         public HttpContent GetAsync(string path)
         {
-           
             HttpContent http = new HttpContent();
             http.Status = 404;
  
             DnsClient dns = new DnsClient();
 
-            Timer.Sleep(100);
-    
             dns.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address
            
             dns.SendAsk(host);
 
-            Address _address = null;
-
-            while (_address == null)
+            while (address == null)
             {
-                _address = dns.Receive();
+                address = dns.Receive();
             }
 
-            Timer.Sleep(100);
-
-            if (!client.IsConnected())
+            if (!client.IsConnected)
             {
-                if (!client.Connect(_address, this.port, timeout * 1000))
+                if (!client.Connect(this.address, this.port, timeout * 1000))
                 {
                     return http;
                 }
             }
 
-            string header = $"GET /{path} HTTP/1.1\r\n";
+            string header = $"GET {path} HTTP/1.1\r\n";
             header += $"Host: {host}\r\n";
-            header += "Connection: Keep-Alive\r\n";
-            header += "Accept: */*\r\n";
+            header += "Connection: close\r\n";
+            header += "Accept: text/plain; charset=utf-8\r\n";
             header += "User-Agent: Moos/0.0.1\r\n";
-            header += "Accept-Encoding: gzip, deflate, br\r\n";
+            header += "Accept-Encoding: gzip, deflate, sdch\r\n";
             header += "\r\n\r\n";
 
             byte[] data = Encoding.UTF8.GetBytes(header);
           
             client.Send(data);
-            Console.WriteLine($"[Send] {data.Length}");
 
             /** Receive data **/
             EndPoint endpoint = new EndPoint(Address.Zero, 0);
@@ -84,23 +78,29 @@ namespace System.Net.Http
 
             if (receive == null || receive.Length == 0)
             {
+                Close();
                 return http;
             }
 
             http.Status = 200;
-            Console.WriteLine($"[STATUS ] {http.Status}");
-            string response = Encoding.UTF8.GetString(receive);
-            Console.WriteLine($"[RESPONSE] {response}");
+
+            string response = Encoding.ASCII.GetString(receive);
+
             if (!string.IsNullOrEmpty(response))
             {
-                var index = BinaryMatch(receive, Encoding.UTF8.GetBytes("\r\n\r\n")) + 4;
+                var index = BinaryMatch(receive, Encoding.ASCII.GetBytes("\r\n\r\n")) + 4;
 
-                string result = response.Substring(index, response.Length - 1);
+                string headers = Encoding.ASCII.GetString(receive, 0, index);
 
-                index = BinaryMatch(Encoding.UTF8.GetBytes(result), Encoding.UTF8.GetBytes("\r\n"));
-                string lenght = result.Substring(0, index).Trim();
-                http.Lenght = Convert.HexToDec(lenght);
-                http.Content = result.Substring((lenght.Length + 2), http.Lenght + (lenght.Length + 2));
+                if (headers.IndexOf("Content-Encoding: gzip") > 0)
+                {
+                    Console.WriteLine("Not implement.");
+                }
+                else
+                {
+                    //http.Lenght = Convert.HexToDec(lenght);
+                    http.Content = Encoding.ASCII.GetString(receive, index, receive.Length - index);
+                }
             }
 
             Close();
@@ -109,7 +109,7 @@ namespace System.Net.Http
 
         public void Close()
         {
-            if (client.IsConnected())
+            if (client.IsConnected)
             {
                 client.Close();
             }

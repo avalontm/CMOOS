@@ -391,58 +391,26 @@ namespace System
 		{
 			if ((Length == 0) && (startIndex == 0))
 			{
-				return Empty;
-			}
-			// Usually one uses the extension method with non-null values
-			// so all we need to worry about is startIndex compared to value.Length.
-			/*
-			if ((startIndex < 0) || (startIndex >= Length))
-			{
-				ThrowHelpers.ThrowArgumentOutOfRangeException("startIndex");
-			}
-			*/
-
-			/*
-			string substring = "";
-			for (int i = startIndex; i < Length; i++)
-			{
-				substring += this[i];
-			}
-			return substring;
-			*/
+                return new string(new char[0]);
+            }
 			fixed (char* ptr = this)
 			{
 				return new string(ptr, startIndex, Length - startIndex);
 			}
 		}
+
 		public unsafe string Substring(int startIndex, int endIndex)
 		{
 			if ((Length == 0) && (startIndex == 0))
 			{
-				return Empty;
+				return new string(new char[0]);
 			}
-			// Usually one uses the extension method with non-null values
-			// so all we need to worry about is startIndex compared to value.Length.
-			/*
-			if ((startIndex < 0) || (startIndex >= Length) || (endIndex >= Length) || (endIndex <= startIndex))
-			{
-				ThrowHelpers.ThrowArgumentOutOfRangeException("startIndex");
-			}
-			*/
-
-			/*
-			string substring = "";
-			for (int i = startIndex; i < endIndex; i++)
-			{
-				substring += this[i];
-			}
-			return substring;
-			*/
 			fixed(char* ptr = this)
             {
 				return new string(ptr, startIndex, endIndex - startIndex);
             }
 		}
+
 #nullable enable
 		public static bool IsNullOrEmpty(string? value)
 #nullable disable
@@ -455,7 +423,6 @@ namespace System
 		{
 			if (value == null)
 			{
-				value.Dispose();
 				return true;
 			}
 
@@ -463,11 +430,9 @@ namespace System
 			{
 				if (!char.IsWhiteSpace(value[i]))
 				{
-					value.Dispose();
 					return false;
 				}
 			}
-			value.Dispose();
 			return true;
 		}
 

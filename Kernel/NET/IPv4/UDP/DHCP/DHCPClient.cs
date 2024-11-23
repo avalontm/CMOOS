@@ -46,7 +46,6 @@ namespace MOOS.NET.IPv4.UDP.DHCP
             int second = 0;
             int _deltaT = 0;
 
-            Console.WriteLine($"Receive: {rxBuffer.Count}");
             while (rxBuffer.Count < 1)
             {
                 if (second > (timeout / 1000))
@@ -59,7 +58,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                     _deltaT = RTC.Second;
                 }
             }
-            Console.WriteLine("packet");
+
             var packet = new DHCPPacket(rxBuffer.Dequeue().RawData);
 
             if (packet == null) return -1;
@@ -122,7 +121,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                 DHCPDiscover dhcp_discover = new DHCPDiscover(NetworkDevice.Devices[i].MACAddress);
                 OutgoingBuffer.AddPacket(dhcp_discover);
                 NetworkStack.Update();
-          
+                dhcp_discover.Dispose();
                 asked = true;
             }
 
@@ -140,6 +139,7 @@ namespace MOOS.NET.IPv4.UDP.DHCP
                 var dhcp_request = new DHCPRequest(NetworkDevice.Devices[i].MACAddress, RequestedAddress);
                 OutgoingBuffer.AddPacket(dhcp_request);
                 NetworkStack.Update();
+                dhcp_request.Dispose();
             }
             return Receive();
         }

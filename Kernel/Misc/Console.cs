@@ -192,7 +192,7 @@ namespace MOOS
                     Console.ForegroundColor = col;
                 }
             }
-            s.Dispose();
+           // s.Dispose();
         }
 
         public static void Back()
@@ -461,7 +461,7 @@ namespace MOOS
             CursorY++;
             MoveUp();
             UpdateCursor();
-            _s.Dispose();
+            //_s.Dispose();
         }
 
         public static void WriteLine()
