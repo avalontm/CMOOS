@@ -30,8 +30,8 @@ namespace MOOS.Misc
             ASC16.Initialise();
             Console.Setup();
 
-            Framebuffer.SetResolution();
-            /*
+            //Framebuffer.SetResolution();
+            
             VBEInfo* info = (VBEInfo*)Info->VBEInfo;
             if (info != null && info->PhysBase != 0)
             {
@@ -41,7 +41,7 @@ namespace MOOS.Misc
             else
             {
                 for (; ; ) Native.Hlt();
-            }*/
+            }
 
             IDT.Disable();
             GDT.Initialise();

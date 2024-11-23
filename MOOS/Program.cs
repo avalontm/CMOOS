@@ -1,18 +1,11 @@
 //#define NETWORK
 
-using Internal.Runtime.CompilerServices;
-using Moos.Core.System.Windows;
 using MOOS;
 using MOOS.Driver;
 using MOOS.FS;
 using MOOS.Misc;
-using MOOS.NET;
-using MOOS.NET.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
-using System.Common.Extentions;
-using System.Diagnostics;
-using System.Net.Http;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -102,34 +95,34 @@ unsafe class Program
             Console.WriteLine("USB Keyboard not present");
         }
 
-     
+
         Audio.Initialize();
         AC97.Initialize();
         ES1371.Initialize();
 
         #region NETWORK
-       /* 
-        //Network Config (AvalonTM)
-        Network.Initialize();
-        NetworkStack.Initialize();
+        /* 
+         //Network Config (AvalonTM)
+         Network.Initialize();
+         NetworkStack.Initialize();
 
-        if (NetworkDevice.Devices.Count > 0)
-        {
-            //Send a DHCP Discover packet 
-            //This will automatically set the IP config after DHCP response
-            DHCPClient xClient = new DHCPClient();
-            int result = xClient.SendDiscoverPacket();
+         if (NetworkDevice.Devices.Count > 0)
+         {
+             //Send a DHCP Discover packet 
+             //This will automatically set the IP config after DHCP response
+             DHCPClient xClient = new DHCPClient();
+             int result = xClient.SendDiscoverPacket();
 
-            if (result > 0)
-            {
-                HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
-                var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
-                Console.WriteLine($"[RESPONSE] {response.Content}");
-            }
-        }
-        */
+             if (result > 0)
+             {
+                 HttpClient http = new HttpClient("raw.githubusercontent.com", 443);
+                 var response = http.GetAsync("avalontm/CMOOS/master/Api/version.json");
+                 Console.WriteLine($"[RESPONSE] {response.Content}");
+             }
+         }
+         */
         #endregion
-        
+
 
         /*
         XmlReader reader = XmlReader.Create("info.xml");
@@ -205,7 +198,7 @@ unsafe class Program
 
         // Convierte los bytes a texto
         string texto = Encoding.UTF8.GetString(bytes);
-   
+
         // Divide el texto por saltos de linea
         string[] lineas = texto.Split('\n');
 
@@ -230,7 +223,7 @@ unsafe class Program
 
         string terminal = dictionary["terminal"];
         Console.WriteLine($"execute: {terminal}");
-        
+
         /*
         byte[] data = RamFile.Instance.ReadAllBytes(terminal);
         
@@ -246,7 +239,7 @@ unsafe class Program
 
         var process = System.Diagnostics.Process.Start(terminal);
 
-        if(process == null)
+        if (process == null)
         {
             Console.WriteLine("cant run.");
         }
