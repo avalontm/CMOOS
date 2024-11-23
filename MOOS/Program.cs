@@ -96,7 +96,6 @@ unsafe class Program
             Console.WriteLine("USB Keyboard not present");
         }
 
-
         Audio.Initialize();
         AC97.Initialize();
         ES1371.Initialize();
@@ -147,7 +146,6 @@ unsafe class Program
         
 >>>>>>> 6b4f1bb396569c1a9b416c0f77096c6dc0590f16
         #endregion
-
 
         /*
         XmlReader reader = XmlReader.Create("info.xml");
