@@ -68,11 +68,8 @@ namespace MOOS
             if(Graphics != null) Graphics.Update();*/
         }
 
-<<<<<<< HEAD
-        public static void Initialize(ushort XRes, ushort YRes, uint* FB)
-=======
+
         public static void Initialize(ushort XRes, ushort YRes, ushort bpp, uint* FB)
->>>>>>> 6b4f1bb396569c1a9b416c0f77096c6dc0590f16
         {
             Width = XRes;
             Height = YRes;
@@ -88,7 +85,6 @@ namespace MOOS
             Console.Clear();
         }
 
-<<<<<<< HEAD
         public static void SetResolution()
         {
             VGAScreen vga = new VGAScreen();
@@ -100,7 +96,7 @@ namespace MOOS
             vga.Clear();
 
         }
-=======
+
         public static void ChangeResolution(ushort xres, ushort yres, ushort bpp)
         {
             if (ISAModeAvailable())
@@ -195,6 +191,5 @@ namespace MOOS
             DisplayXOffset,
             DisplayYOffset
         };
->>>>>>> 6b4f1bb396569c1a9b416c0f77096c6dc0590f16
     }
 }

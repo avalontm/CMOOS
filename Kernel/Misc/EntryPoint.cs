@@ -97,11 +97,6 @@ namespace MOOS.Misc
             new TarFS();
             // new FAT32();
 
-<<<<<<< HEAD
-=======
-            Framebuffer.ChangeResolution(1027, 768, 32);
-
->>>>>>> 6b4f1bb396569c1a9b416c0f77096c6dc0590f16
             KMain();
         }
 

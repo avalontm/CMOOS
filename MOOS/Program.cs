@@ -4,6 +4,8 @@ using MOOS;
 using MOOS.Driver;
 using MOOS.FS;
 using MOOS.Misc;
+using MOOS.NET;
+using MOOS.NET.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
 using System.Runtime;
@@ -101,7 +103,7 @@ unsafe class Program
         ES1371.Initialize();
 
         #region NETWORK
-<<<<<<< HEAD
+
         /* 
          //Network Config (AvalonTM)
          Network.Initialize();
@@ -122,7 +124,6 @@ unsafe class Program
              }
          }
          */
-=======
        
         //Network Config (AvalonTM)
         Network.Initialize();
@@ -144,7 +145,6 @@ unsafe class Program
             }
         }
         
->>>>>>> 6b4f1bb396569c1a9b416c0f77096c6dc0590f16
         #endregion
 
         /*
